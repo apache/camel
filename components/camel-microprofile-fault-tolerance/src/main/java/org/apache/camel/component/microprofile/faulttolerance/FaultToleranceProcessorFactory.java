@@ -18,12 +18,11 @@ package org.apache.camel.component.microprofile.faulttolerance;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.support.TypedProcessorFactory;
 
 /**
- * To integrate camel-microprofile-faulttolerance with the Camel routes using the Circuit
- * Breaker EIP.
+ * To integrate camel-microprofile-faulttolerance with the Camel routes using the Circuit Breaker EIP.
  */
 public class FaultToleranceProcessorFactory extends TypedProcessorFactory<CircuitBreakerDefinition> {
 

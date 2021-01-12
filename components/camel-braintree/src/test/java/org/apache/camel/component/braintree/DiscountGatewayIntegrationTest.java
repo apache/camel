@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DiscountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiscountGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(DiscountGatewayApiMethod.class).getName();
 
     @Disabled
     @Test
@@ -49,7 +50,7 @@ public class DiscountGatewayIntegrationTest extends AbstractBraintreeTestSupport
             public void configure() {
                 // test route for all
                 from("direct://ALL")
-                    .to("braintree://" + PATH_PREFIX + "/all");
+                        .to("braintree://" + PATH_PREFIX + "/all");
             }
         };
     }

@@ -39,9 +39,8 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
- * To watch for file changes/rollover via JDK file watcher API.
- * This is used to know for example of streaming from a file, that gets rolled-over, so we know about this,
- * and can begin reading the file again from the beginning.
+ * To watch for file changes/rollover via JDK file watcher API. This is used to know for example of streaming from a
+ * file, that gets rolled-over, so we know about this, and can begin reading the file again from the beginning.
  */
 public class FileWatcherStrategy extends ServiceSupport implements CamelContextAware {
 
@@ -104,7 +103,8 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
             String os = ObjectHelper.getSystemProperty("os.name", "");
             if (os.toLowerCase(Locale.US).startsWith("mac")) {
                 // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification integration)
-                Class<WatchEvent.Modifier> clazz = getCamelContext().getClassResolver().resolveClass("com.sun.nio.file.SensitivityWatchEventModifier", WatchEvent.Modifier.class);
+                Class<WatchEvent.Modifier> clazz = getCamelContext().getClassResolver()
+                        .resolveClass("com.sun.nio.file.SensitivityWatchEventModifier", WatchEvent.Modifier.class);
                 if (clazz != null) {
                     WatchEvent.Modifier[] modifiers = clazz.getEnumConstants();
                     for (WatchEvent.Modifier mod : modifiers) {
@@ -115,9 +115,11 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
                     }
                 }
                 if (modifier != null) {
-                    LOG.info("On Mac OS X the JDK WatchService is slow by default so enabling SensitivityWatchEventModifier.HIGH as workaround");
+                    LOG.info(
+                            "On Mac OS X the JDK WatchService is slow by default so enabling SensitivityWatchEventModifier.HIGH as workaround");
                 } else {
-                    LOG.warn("On Mac OS X the JDK WatchService is slow and it may take up till 10 seconds to notice file changes");
+                    LOG.warn(
+                            "On Mac OS X the JDK WatchService is slow and it may take up till 10 seconds to notice file changes");
                 }
             }
 
@@ -128,7 +130,8 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
 
                 task = new WatchFileChangesTask(watcher, path, onChangeEvent);
 
-                executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherStrategy");
+                executorService
+                        = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherStrategy");
                 executorService.submit(task);
             } catch (IOException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -139,7 +142,7 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
     private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher) throws IOException {
         WatchKey key;
         if (modifier != null) {
-            key = path.register(watcher, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+            key = path.register(watcher, new WatchEvent.Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY }, modifier);
         } else {
             key = path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
         }

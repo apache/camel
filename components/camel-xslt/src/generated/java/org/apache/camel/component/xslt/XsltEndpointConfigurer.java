@@ -4,8 +4,10 @@ package org.apache.camel.component.xslt;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XsltEndpoint target = (XsltEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "deleteoutputfile":
@@ -52,32 +52,42 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("deleteOutputFile", boolean.class);
-        answer.put("entityResolver", org.xml.sax.EntityResolver.class);
-        answer.put("errorListener", javax.xml.transform.ErrorListener.class);
-        answer.put("failOnNullBody", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("output", org.apache.camel.component.xslt.XsltOutput.class);
-        answer.put("resultHandlerFactory", org.apache.camel.component.xslt.ResultHandlerFactory.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transformerCacheSize", int.class);
-        answer.put("transformerFactory", javax.xml.transform.TransformerFactory.class);
-        answer.put("transformerFactoryClass", java.lang.String.class);
-        answer.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
-        answer.put("uriResolver", javax.xml.transform.URIResolver.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "deleteoutputfile":
+        case "deleteOutputFile": return boolean.class;
+        case "entityresolver":
+        case "entityResolver": return org.xml.sax.EntityResolver.class;
+        case "errorlistener":
+        case "errorListener": return javax.xml.transform.ErrorListener.class;
+        case "failonnullbody":
+        case "failOnNullBody": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "output": return org.apache.camel.component.xslt.XsltOutput.class;
+        case "resulthandlerfactory":
+        case "resultHandlerFactory": return org.apache.camel.component.xslt.ResultHandlerFactory.class;
+        case "synchronous": return boolean.class;
+        case "transformercachesize":
+        case "transformerCacheSize": return int.class;
+        case "transformerfactory":
+        case "transformerFactory": return javax.xml.transform.TransformerFactory.class;
+        case "transformerfactoryclass":
+        case "transformerFactoryClass": return java.lang.String.class;
+        case "transformerfactoryconfigurationstrategy":
+        case "transformerFactoryConfigurationStrategy": return org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class;
+        case "uriresolver":
+        case "uriResolver": return javax.xml.transform.URIResolver.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XsltEndpoint target = (XsltEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "deleteoutputfile":

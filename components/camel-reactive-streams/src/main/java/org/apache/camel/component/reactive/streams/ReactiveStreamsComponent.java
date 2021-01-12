@@ -114,9 +114,8 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     }
 
     /**
-     * Set the type of the underlying reactive streams implementation to use. The
-     * implementation is looked up from the registry or using a ServiceLoader, the
-     * default implementation is DefaultCamelReactiveStreamsService
+     * Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the
+     * registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService
      *
      * @param serviceType the reactive service implementation name type
      */
@@ -172,10 +171,9 @@ public class ReactiveStreamsComponent extends DefaultComponent {
 
         if (service == null) {
             this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
-                getCamelContext(),
-                this.serviceType,
-                this.reactiveStreamsEngineConfiguration
-            );
+                    getCamelContext(),
+                    this.serviceType,
+                    this.reactiveStreamsEngineConfiguration);
 
             try {
                 // Start the service and add it to the Camel context to expose managed attributes

@@ -39,8 +39,8 @@ public class NIOConverterTest extends ContextTestSupport {
     }
 
     /**
-     * Test if returned array size is only to limit of ByteBuffer. If byteBuffer
-     * capacity is bigger that limit, we MUST return data only to the limit.
+     * Test if returned array size is only to limit of ByteBuffer. If byteBuffer capacity is bigger that limit, we MUST
+     * return data only to the limit.
      */
     @Test
     public void testToByteArrayBigBuffer() {

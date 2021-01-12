@@ -19,11 +19,7 @@ package org.apache.camel.component.vertx.websocket;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.Handler;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.ServerWebSocket;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
@@ -73,6 +69,90 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
     }
 
     @Test
+    public void testCustomRouterSetOnComponent() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Router router = createRouter("/custom", latch);
+
+        VertxWebsocketComponent component = new VertxWebsocketComponent();
+        component.setRouter(router);
+
+        CamelContext context = new DefaultCamelContext();
+        context.addComponent("vertx-websocket", component);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                fromF("vertx-websocket:localhost:%d/test", port)
+                        .to("mock:result");
+            }
+        });
+
+        context.start();
+        try {
+            MockEndpoint mockEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+            mockEndpoint.expectedBodiesReceived("Hello world");
+
+            // Verify the WebSocket consumer we configured in the camel route
+            ProducerTemplate template = context.createProducerTemplate();
+            template.sendBody("vertx-websocket:localhost:" + port + "/test", "Hello world");
+            mockEndpoint.assertIsSatisfied();
+
+            // Verify the WebSocket route manually added to the vertx router
+            String result = template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
+            assertTrue(latch.await(10, TimeUnit.SECONDS));
+            assertEquals("Hello world", result);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testCustomRouterEndpointConfigurationTakesPrecedence() throws Exception {
+        CountDownLatch latchForComponent = new CountDownLatch(1);
+        Router routerForComponent = createRouter("/component", latchForComponent);
+
+        VertxWebsocketComponent component = new VertxWebsocketComponent();
+        component.setRouter(routerForComponent);
+
+        CamelContext context = new DefaultCamelContext();
+        context.addComponent("vertx-websocket", component);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port)
+                        .to("mock:result");
+            }
+        });
+
+        CountDownLatch latchForEndpoint = new CountDownLatch(1);
+        Router routerForEndpoint = createRouter("/endpoint", latchForEndpoint);
+
+        context.getRegistry().bind("customRouter", routerForEndpoint);
+
+        context.start();
+        try {
+            MockEndpoint mockEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+            mockEndpoint.expectedBodiesReceived("Hello world");
+
+            // Verify the WebSocket consumer we configured in the camel route
+            ProducerTemplate template = context.createProducerTemplate();
+            template.sendBody("vertx-websocket:localhost:" + port + "/test", "Hello world");
+            mockEndpoint.assertIsSatisfied();
+
+            // Verify the WebSocket route manually added to the vertx router was the one configured on the endpoint
+            String result
+                    = template.requestBody("vertx-websocket:localhost:" + port + "/endpoint", "Hello world", String.class);
+            assertTrue(latchForEndpoint.await(10, TimeUnit.SECONDS));
+            assertEquals("Hello world", result);
+
+            // Verify the WebSocket route manually added to the component fails since the endpoint configured one takes precedence
+            assertThrows(CamelExecutionException.class, () -> template
+                    .requestBody("vertx-websocket:localhost:" + port + "/component", "Hello world", String.class));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testCustomRouterFallbackFromRegistry() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
@@ -101,40 +181,6 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
             String result = template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
             assertTrue(latch.await(10, TimeUnit.SECONDS));
             assertEquals("Hello world", result);
-        } finally {
-            context.stop();
-        }
-    }
-
-    @Test
-    public void testCustomVertxRouterWebSocketAlreadyClosedException() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                fromF("vertx-websocket:localhost:%d/test", port)
-                        .to("mock:result");
-            }
-        });
-
-        Router router = createRouter("/custom", new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext context) {
-                HttpServerRequest request = context.request();
-                ServerWebSocket webSocket = request.upgrade();
-
-                // Immediately close the socket to simulate an error scenario
-                webSocket.close();
-            }
-        }, null);
-
-        context.getRegistry().bind("vertx-router", router);
-        context.start();
-        try {
-            assertThrows(CamelExecutionException.class, () -> {
-                ProducerTemplate template = context.createProducerTemplate();
-                template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
-            });
         } finally {
             context.stop();
         }

@@ -27,7 +27,9 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Secrets.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-secrets", title = "Kubernetes Secrets", syntax = "kubernetes-secrets:masterUrl", producerOnly = true, category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-secrets", title = "Kubernetes Secrets",
+             syntax = "kubernetes-secrets:masterUrl", producerOnly = true,
+             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesSecretsEndpoint(String uri, KubernetesSecretsComponent component, KubernetesConfiguration config) {

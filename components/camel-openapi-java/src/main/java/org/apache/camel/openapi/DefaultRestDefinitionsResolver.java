@@ -28,7 +28,8 @@ public class DefaultRestDefinitionsResolver implements RestDefinitionsResolver {
     @Override
     public List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception {
         if (camelId != null && !camelContext.getName().equals(camelId)) {
-            throw new UnsupportedOperationException("Must use JmxRestDefinitionsResolver to generate rest model from another CamelContext in the same JVM");
+            throw new UnsupportedOperationException(
+                    "Must use JmxRestDefinitionsResolver to generate rest model from another CamelContext in the same JVM");
         }
 
         Model model = camelContext.getExtension(Model.class);

@@ -31,7 +31,8 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringDeadLetterChannelInvalidDeadLetterUriTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringDeadLetterChannelInvalidDeadLetterUriTest.xml");
     }
 
     @Override
@@ -43,7 +44,9 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             NoSuchEndpointException cause = assertIsInstanceOf(NoSuchEndpointException.class, ftcre.getCause());
-            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", cause.getMessage());
+            assertEquals(
+                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                    cause.getMessage());
         }
     }
 

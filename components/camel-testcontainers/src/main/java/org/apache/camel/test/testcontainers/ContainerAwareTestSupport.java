@@ -76,8 +76,8 @@ public class ContainerAwareTestSupport extends CamelTestSupport {
         GenericContainer<?> container = createContainer();
 
         return container == null
-            ? Collections.emptyList()
-            : Collections.singletonList(container);
+                ? Collections.emptyList()
+                : Collections.singletonList(container);
     }
 
     protected long containersStartupTimeout() {

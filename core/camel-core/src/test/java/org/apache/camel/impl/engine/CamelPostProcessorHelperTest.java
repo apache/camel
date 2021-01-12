@@ -172,7 +172,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
+            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean,
+                    "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -196,7 +197,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
+            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean,
+                    "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -224,7 +226,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
+            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean,
+                    "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -251,7 +254,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
+        Object value
+                = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -276,7 +280,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
+        Object value
+                = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -301,7 +306,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
+        Object value
+                = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -333,7 +339,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         } catch (ResolveEndpointFailedException e) {
             assertEquals("ref://unknown", e.getUri());
             NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals("No bean could be found in the registry for: unknown of type: org.apache.camel.Endpoint", nsbe.getMessage());
+            assertEquals("No bean could be found in the registry for: unknown of type: org.apache.camel.Endpoint",
+                    nsbe.getMessage());
         }
     }
 
@@ -449,7 +456,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             helper.getInjectionBeanValue(type, "bar");
             fail("Should have thrown exception");
         } catch (NoSuchBeanException e) {
-            assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.impl.FooBar", e.getMessage());
+            assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.impl.FooBar",
+                    e.getMessage());
             assertEquals("bar", e.getName());
         }
     }

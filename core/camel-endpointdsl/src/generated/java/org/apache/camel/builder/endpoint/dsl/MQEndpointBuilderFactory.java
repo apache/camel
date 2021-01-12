@@ -42,10 +42,13 @@ public interface MQEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder autoDiscoverClient(boolean autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -56,10 +59,14 @@ public interface MQEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -68,9 +75,12 @@ public interface MQEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -79,10 +89,13 @@ public interface MQEndpointBuilderFactory {
         /**
          * To use a existing configured AmazonMQClient as client.
          * 
-         * The option is a: <code>com.amazonaws.services.mq.AmazonMQ</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.mq.AmazonMQ&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonMqClient the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder amazonMqClient(Object amazonMqClient) {
             doSetProperty("amazonMqClient", amazonMqClient);
@@ -92,9 +105,12 @@ public interface MQEndpointBuilderFactory {
          * To use a existing configured AmazonMQClient as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.mq.AmazonMQ</code> type.
+         * &lt;code&gt;com.amazonaws.services.mq.AmazonMQ&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonMqClient the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder amazonMqClient(String amazonMqClient) {
             doSetProperty("amazonMqClient", amazonMqClient);
@@ -111,10 +127,13 @@ public interface MQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -131,10 +150,14 @@ public interface MQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -145,10 +168,13 @@ public interface MQEndpointBuilderFactory {
          * listBrokers,createBroker,deleteBroker.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.mq.MQOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder operation(MQOperations operation) {
             doSetProperty("operation", operation);
@@ -159,10 +185,13 @@ public interface MQEndpointBuilderFactory {
          * listBrokers,createBroker,deleteBroker.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.mq.MQOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -171,9 +200,12 @@ public interface MQEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the MQ client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -182,9 +214,12 @@ public interface MQEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the MQ client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -193,10 +228,13 @@ public interface MQEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the MQ client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -205,10 +243,14 @@ public interface MQEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MQ client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -217,11 +259,14 @@ public interface MQEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MQ client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -233,9 +278,12 @@ public interface MQEndpointBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -244,9 +292,12 @@ public interface MQEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default MQEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -264,41 +315,16 @@ public interface MQEndpointBuilderFactory {
             return (MQEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMQEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMQEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMQEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -308,10 +334,14 @@ public interface MQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMQEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -355,6 +385,7 @@ public interface MQEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default MQEndpointBuilder awsMq(String path) {
             return MQEndpointBuilderFactory.endpointBuilder("aws-mq", path);
@@ -375,6 +406,7 @@ public interface MQEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default MQEndpointBuilder awsMq(String componentName, String path) {
             return MQEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -26,8 +26,8 @@ import org.slf4j.MarkerFactory;
 /**
  * A logger which logs to a slf4j {@link Logger}.
  * <p/>
- * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
- * which has a <tt>Logger</tt> class.
+ * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits which has a <tt>Logger</tt>
+ * class.
  */
 public class CamelLogger {
     private Logger log;
@@ -83,7 +83,11 @@ public class CamelLogger {
      */
     public void log(String message) {
         if (shouldLog(log, level)) {
-            log(log, level, marker, message);
+            if (marker != null) {
+                log(log, level, marker, message);
+            } else {
+                log(log, level, message);
+            }
         }
     }
 
@@ -93,7 +97,11 @@ public class CamelLogger {
      * @param message the message to log
      */
     public void doLog(String message) {
-        log(log, level, marker, message);
+        if (marker != null) {
+            log(log, level, marker, message);
+        } else {
+            log(log, level, message);
+        }
     }
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
@@ -168,12 +176,6 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, Marker marker, String message) {
-        if (marker == null) {
-            log(log, level, message);
-            return;
-        }
-
-        // marker must be provided
         switch (level) {
             case DEBUG:
                 log.debug(marker, message);

@@ -41,7 +41,8 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
 
                 onException(Exception.class).handled(true).to("mock:exception");
 
-                from("direct:start").throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
+                from("direct:start")
+                        .throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
             }
         };
     }

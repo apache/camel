@@ -6,6 +6,7 @@
 :since: 2.14
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/netty.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -85,9 +86,9 @@ The Netty component supports 72 options, which are listed below.
 | *maximumPoolSize* (consumer) | Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu_core plus 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher value, which then will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17. This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be affected. |  | int
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory
 | *networkInterface* (consumer) | When using UDP then this option can be used to specify a network interface by its name, such as eth0 to join a multicast group. |  | String
-| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
-| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
-| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *serverClosedChannelException{zwsp}CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
+| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializerFactory
 | *usingExecutorService* (consumer) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
 | *connectTimeout* (producer) | Time to wait for a socket connection to be available. Value is in milliseconds. | 10000 | int
@@ -104,7 +105,7 @@ The Netty component supports 72 options, which are listed below.
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: \http://netty.io/wiki/native-transports.html | false | boolean
 | *options* (advanced) | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used. |  | Map
@@ -119,7 +120,7 @@ The Netty component supports 72 options, which are listed below.
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
 | *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
-| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. The value can be one of: LINE, NULL | LINE | TextLineDelimiter
+| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. There are 2 enums and the value can be one of: LINE, NULL | LINE | TextLineDelimiter
 | *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed to be serialized by default. | false | boolean
@@ -156,13 +157,13 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *protocol* | *Required* The protocol to use which can be tcp or udp. The value can be one of: tcp, udp |  | String
+| *protocol* | *Required* The protocol to use which can be tcp or udp. There are 2 enums and the value can be one of: tcp, udp |  | String
 | *host* | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0. For the producer the hostname is the remote host to connect to |  | String
 | *port* | *Required* The host port number |  | int
 |===
 
 
-=== Query Parameters (71 parameters):
+=== Query Parameters (70 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -184,12 +185,12 @@ with the following path and query parameters:
 | *bossGroup* (consumer) | Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint |  | EventLoopGroup
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory
 | *networkInterface* (consumer) | When using UDP then this option can be used to specify a network interface by its name, such as eth0 to join a multicast group. |  | String
-| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
-| *serverClosedChannelException CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
-| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *serverClosedChannelException{zwsp}CaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | DEBUG | LoggingLevel
+| *serverExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializerFactory
 | *usingExecutorService* (consumer) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
 | *connectTimeout* (producer) | Time to wait for a socket connection to be available. Value is in milliseconds. | 10000 | int
@@ -206,7 +207,6 @@ with the following path and query parameters:
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: \http://netty.io/wiki/native-transports.html | false | boolean
 | *options* (advanced) | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used. |  | Map
@@ -222,7 +222,7 @@ with the following path and query parameters:
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
 | *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
-| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. The value can be one of: LINE, NULL | LINE | TextLineDelimiter
+| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. There are 2 enums and the value can be one of: LINE, NULL | LINE | TextLineDelimiter
 | *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed to be serialized by default. | false | boolean

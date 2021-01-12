@@ -48,7 +48,8 @@ public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSu
 
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML
@@ -64,8 +65,8 @@ public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-//              System.setProperty("org.apache.camel.jmx.mbeanObjectDomainName", CUSTOM_DOMAIN_NAME);
-//              Or
+                //              System.setProperty("org.apache.camel.jmx.mbeanObjectDomainName", CUSTOM_DOMAIN_NAME);
+                //              Or
                 getContext().getManagementStrategy().getManagementAgent().setMBeanObjectDomainName(CUSTOM_DOMAIN_NAME);
                 from("direct:start").routeId("foo")
                         .to("log:foo").id("to-log")

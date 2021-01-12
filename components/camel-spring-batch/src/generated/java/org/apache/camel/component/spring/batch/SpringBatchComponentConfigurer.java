@@ -4,8 +4,10 @@ package org.apache.camel.component.spring.batch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,8 @@ public class SpringBatchComponentConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringBatchComponent target = (SpringBatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "joblauncher":
         case "jobLauncher": target.setJobLauncher(property(camelContext, org.springframework.batch.core.launch.JobLauncher.class, value)); return true;
         case "jobregistry":
@@ -32,21 +34,26 @@ public class SpringBatchComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("jobLauncher", org.springframework.batch.core.launch.JobLauncher.class);
-        answer.put("jobRegistry", org.springframework.batch.core.configuration.JobRegistry.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "joblauncher":
+        case "jobLauncher": return org.springframework.batch.core.launch.JobLauncher.class;
+        case "jobregistry":
+        case "jobRegistry": return org.springframework.batch.core.configuration.JobRegistry.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringBatchComponent target = (SpringBatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "joblauncher":
         case "jobLauncher": return target.getJobLauncher();
         case "jobregistry":

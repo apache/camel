@@ -29,8 +29,9 @@ public class GetItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        GetItemResponse result = ddbClient.getItem(GetItemRequest.builder().key(determineKey()).tableName(determineTableName()).attributesToGet(determineAttributeNames())
-            .consistentRead(determineConsistentRead()).build());
+        GetItemResponse result = ddbClient.getItem(GetItemRequest.builder().key(determineKey()).tableName(determineTableName())
+                .attributesToGet(determineAttributeNames())
+                .consistentRead(determineConsistentRead()).build());
         addAttributesToResult(result.item());
     }
 }

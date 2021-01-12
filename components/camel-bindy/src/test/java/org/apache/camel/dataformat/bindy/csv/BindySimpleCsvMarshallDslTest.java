@@ -99,9 +99,8 @@ public class BindySimpleCsvMarshallDslTest {
                     .locale("en")
                     .csv();
 
-            from("direct:start").
-                marshal(bindy)
-                .to("mock:result");
+            from("direct:start").marshal(bindy)
+                    .to("mock:result");
         }
 
     }

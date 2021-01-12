@@ -78,7 +78,8 @@ public class GroupProducer extends AbstractKeystoneProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Group ID");
         final Group result = osV3Client.identity().groups().get(id);
         msg.setBody(result);
@@ -98,7 +99,8 @@ public class GroupProducer extends AbstractKeystoneProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().delete(id);
         checkFailure(response, exchange, "Delete group with ID " + id);

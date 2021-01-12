@@ -38,8 +38,9 @@ public class LanguageLoadScriptFromClasspathTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // load the script from the classpath
-                    .to("language:simple:classpath:org/apache/camel/component/language/mysimplescript.txt").to("mock:result");
+                        // load the script from the classpath
+                        .to("language:simple:classpath:org/apache/camel/component/language/mysimplescript.txt")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

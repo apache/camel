@@ -27,6 +27,7 @@ import com.google.api.services.gmail.model.ListLabelsResponse;
 import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.common.base.Splitter;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -47,13 +48,14 @@ import org.apache.camel.util.ObjectHelper;
              title = "Google Mail Stream",
              syntax = "google-mail-stream:index",
              consumerOnly = true,
-             label = "api,cloud,mail")
+             category = { Category.CLOUD, Category.API, Category.MAIL })
 public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private GoogleMailStreamConfiguration configuration;
 
-    public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component, GoogleMailStreamConfiguration endpointConfiguration) {
+    public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component,
+                                    GoogleMailStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -91,15 +93,15 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Gmail getClient() {
-        return ((GoogleMailStreamComponent)getComponent()).getClient(configuration);
+        return ((GoogleMailStreamComponent) getComponent()).getClient(configuration);
     }
 
     public GoogleMailClientFactory getClientFactory() {
-        return ((GoogleMailStreamComponent)getComponent()).getClientFactory();
+        return ((GoogleMailStreamComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleMailClientFactory clientFactory) {
-        ((GoogleMailStreamComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleMailStreamComponent) getComponent()).setClientFactory(clientFactory);
     }
 
     public GoogleMailStreamConfiguration getConfiguration() {
@@ -107,7 +109,6 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern, com.google.api.services.gmail.model.Message mail) {
-
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());

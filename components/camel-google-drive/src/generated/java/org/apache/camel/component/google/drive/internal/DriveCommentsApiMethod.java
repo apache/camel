@@ -57,8 +57,6 @@ public enum DriveCommentsApiMethod implements ApiMethod {
         arg("commentId", String.class),
         arg("content", com.google.api.services.drive.model.Comment.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveCommentsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

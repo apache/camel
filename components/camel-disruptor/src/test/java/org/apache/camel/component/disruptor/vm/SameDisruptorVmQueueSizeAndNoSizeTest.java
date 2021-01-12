@@ -22,9 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
  *
@@ -67,7 +67,8 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
         } catch (ResolveEndpointFailedException e) {
             IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Cannot use existing queue disruptor-vm://bar as the existing queue size " + 1024
-                    + " does not match given queue size 256", ise.getMessage());
+                         + " does not match given queue size 256",
+                    ise.getMessage());
         }
     }
 

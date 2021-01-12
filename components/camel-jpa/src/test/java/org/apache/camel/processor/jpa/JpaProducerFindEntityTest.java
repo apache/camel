@@ -18,7 +18,6 @@ package org.apache.camel.processor.jpa;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -61,10 +60,9 @@ public class JpaProducerFindEntityTest extends AbstractJpaTest {
         });
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName() + "?findEntity=true").to("mock:result");
             }

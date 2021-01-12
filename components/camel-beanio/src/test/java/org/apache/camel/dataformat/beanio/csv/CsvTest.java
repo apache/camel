@@ -39,24 +39,23 @@ public class CsvTest extends CamelTestSupport {
 
     static final Logger LOG = LoggerFactory.getLogger(CsvTest.class);
 
-    private static final String FIXED_DATA =
-            "James,Strachan,22" + Constants.LS + "Claus,Ibsen,21" + Constants.LS;
+    private static final String FIXED_DATA = "James,Strachan,22" + Constants.LS + "Claus,Ibsen,21" + Constants.LS;
 
     private boolean verbose;
 
-/*
+    /*
     @Test
     void testMarshal() throws Exception {
         List<Employee> employees = getEmployees();
-
+    
         MockEndpoint mock = getMockEndpoint("mock:beanio-marshal");
         mock.expectedBodiesReceived(FIXED_DATA);
-
+    
         template.sendBody("direct:marshal", employees);
-
+    
         mock.assertIsSatisfied();
     }
-*/
+    */
 
     @Test
     void testUnmarshal() throws Exception {
@@ -85,7 +84,8 @@ public class CsvTest extends CamelTestSupport {
         assertRecord(results, 1, "Claus", "Ibsen", 21);
     }
 
-    protected static void assertRecord(List<Map> results, int index, String expectedFirstName, String expectedLastName, int expectedAge) {
+    protected static void assertRecord(
+            List<Map> results, int index, String expectedFirstName, String expectedLastName, int expectedAge) {
         assertTrue(results.size() > index, "Not enough Map messages received: " + results.size());
         Map map = results.get(index);
         assertNotNull(map, "No map result found for index " + index);
@@ -95,7 +95,6 @@ public class CsvTest extends CamelTestSupport {
         assertEquals(expectedLastName, map.get("lastName"), text + "lastName");
         assertEquals(expectedAge, map.get("age"), text + "age");
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -112,7 +111,7 @@ public class CsvTest extends CamelTestSupport {
                 // to java objects
                 from("direct:unmarshal")
                         .unmarshal(format)
-                                // and then split the message body so we get a message for each row
+                        // and then split the message body so we get a message for each row
                         .split(body())
                         .to("mock:beanio-unmarshal");
 

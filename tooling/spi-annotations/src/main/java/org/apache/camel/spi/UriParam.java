@@ -23,11 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents an injection point of a Camel Uri parameter value on an Endpoint or Consumer, usually configured via a URI style query parameter in a URI
+ * Represents an injection point of a Camel Uri parameter value on an Endpoint or Consumer, usually configured via a URI
+ * style query parameter in a URI
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD })
+@Target({ ElementType.FIELD })
 public @interface UriParam {
 
     /**
@@ -47,7 +48,8 @@ public @interface UriParam {
     /**
      * The default value of the parameter.
      * <p/>
-     * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
+     * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the
+     * Java field was assigned.
      */
     String defaultValue() default "";
 
@@ -68,8 +70,8 @@ public @interface UriParam {
     /**
      * Allows to define enums this options accepts.
      * <p/>
-     * If the type is already an enum, then this option should not be used; instead you can use
-     * this option when the type is a String that only accept certain values.
+     * If the type is already an enum, then this option should not be used; instead you can use this option when the
+     * type is a String that only accept certain values.
      * <p/>
      * Multiple values is separated by comma.
      */
@@ -80,7 +82,8 @@ public @interface UriParam {
      * <p/>
      * Multiple labels can be defined as a comma separated value.
      * <p/>
-     * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>, <tt>common</tt>, <tt>security</tt>, etc.
+     * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>,
+     * <tt>common</tt>, <tt>security</tt>, etc.
      */
     String label() default "";
 
@@ -92,7 +95,8 @@ public @interface UriParam {
     /**
      * To re-associate the preferred Java type of this parameter.
      * <p/>
-     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as
+     * from a String.
      */
     String javaType() default "";
 
@@ -111,7 +115,8 @@ public @interface UriParam {
     /**
      * If the parameter can be configured with an optional prefix.
      * <p/>
-     * For example to configure consumer options, the parameters can be prefixed with <tt>consumer.</tt>, eg <tt>consumer.delay=5000</tt>
+     * For example to configure consumer options, the parameters can be prefixed with <tt>consumer.</tt>, eg
+     * <tt>consumer.delay=5000</tt>
      */
     String optionalPrefix() default "";
 

@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.common.StorageSharedKeyCredential;
+import org.apache.camel.Producer;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -35,23 +36,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BlobComponentTest extends CamelTestSupport {
 
     @Test
-    public void testCreateEndpointWithMinConfigForClientOnly() {
+    void testCreateEndpointWithMinConfigForClientOnly() {
         final BlobConfiguration configuration = new BlobConfiguration();
         configuration.setCredentials(storageSharedKeyCredential());
         final BlobServiceClient serviceClient = BlobClientFactory.createBlobServiceClient(configuration);
 
         context.getRegistry().bind("azureBlobClient", serviceClient);
 
-        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&serviceClient=#azureBlobClient");
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&serviceClient=#azureBlobClient");
 
         doTestCreateEndpointWithMinConfig(endpoint, true);
     }
 
     @Test
-    public void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
+    void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
 
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
@@ -77,15 +80,15 @@ class BlobComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateEndpointWithMaxConfig() {
+    void testCreateEndpointWithMaxConfig() {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
         context.getRegistry().bind("metadata", Collections.emptyMap());
 
-        final BlobEndpoint endpoint =
-                (BlobEndpoint) context.getEndpoint(
-                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&blobType=pageblob"
-                                + "&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataCount=1024"
-                                + "&closeStreamAfterRead=false&closeStreamAfterWrite=false");
+        final String uri = "azure-storage-blob://camelazure/container"
+                           + "?blobName=blob&credentials=#creds&blobType=pageblob"
+                           + "&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataCount=1024"
+                           + "&closeStreamAfterRead=false&closeStreamAfterWrite=false";
+        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint(uri);
 
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
         assertEquals("container", endpoint.getConfiguration().getContainerName());
@@ -103,36 +106,25 @@ class BlobComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNoBlobNameProducerWithOpThatNeedsBlobName() throws Exception {
+    void testNoBlobNameProducerWithOpThatNeedsBlobName() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        BlobEndpoint endpointWithOp =
-                (BlobEndpoint) context.getEndpoint(
-                        "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
+        BlobEndpoint endpointWithOp = (BlobEndpoint) context.getEndpoint(
+                "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            endpointWithOp.createProducer().process(new DefaultExchange(context));
-        });
+        Producer producer = endpointWithOp.createProducer();
+        DefaultExchange exchange = new DefaultExchange(context);
+
+        assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
     }
 
     @Test
-    public void testHierarchicalBlobName() throws Exception {
+    void testHierarchicalBlobName() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        BlobEndpoint endpoint =
-                (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
+        BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
-    }
-
-    @Test
-    public void testNoBlobNameConsumer() throws Exception {
-        context.getRegistry().bind("creds", storageSharedKeyCredential());
-
-        BlobEndpoint endpoint =
-                (BlobEndpoint) context.getEndpoint(
-                        "azure-storage-blob://camelazure/container?credentials=#creds");
-
-        assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(null));
     }
 
     private StorageSharedKeyCredential storageSharedKeyCredential() {

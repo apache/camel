@@ -156,28 +156,20 @@ public class CsvRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: marshalRoute
-                from("direct:start").
-                        marshal().csv().
-                        to("mock:result");
+                from("direct:start").marshal().csv().to("mock:result");
                 // END SNIPPET: marshalRoute
 
-                from("direct:startMulti").
-                        marshal().csv().
-                        to("mock:resultMulti");
+                from("direct:startMulti").marshal().csv().to("mock:resultMulti");
 
                 CsvDataFormat customCsv = new CsvDataFormat()
                         .setDelimiter(';')
-                        .setHeader(new String[]{"foo", "baz", "bar"})
+                        .setHeader(new String[] { "foo", "baz", "bar" })
                         .setSkipHeaderRecord(true);
 
-                from("direct:startMultiCustom").
-                        marshal(customCsv).
-                        to("mock:resultMultiCustom");
+                from("direct:startMultiCustom").marshal(customCsv).to("mock:resultMultiCustom");
 
                 // START SNIPPET: unmarshalRoute
-                from("file:src/test/resources/?fileName=daltons.csv&noop=true").
-                        unmarshal().csv().
-                        to("mock:daltons");
+                from("file:src/test/resources/?fileName=daltons.csv&noop=true").unmarshal().csv().to("mock:daltons");
                 // END SNIPPET: unmarshalRoute
             }
         };

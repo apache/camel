@@ -17,5 +17,7 @@
 package org.apache.camel.component.jdbc;
 
 public enum JdbcOutputType {
-    SelectOne, SelectList, StreamList
+    SelectOne,
+    SelectList,
+    StreamList
 }

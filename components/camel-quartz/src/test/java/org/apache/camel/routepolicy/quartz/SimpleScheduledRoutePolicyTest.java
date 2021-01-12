@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -48,7 +49,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -58,16 +60,16 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStartRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();
         context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz", QuartzComponent.class).stop();
@@ -77,7 +79,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -87,16 +90,16 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStopRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:unreachable");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:unreachable");
             }
         });
         context.start();
 
         Thread.sleep(4000);
 
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
 
         boolean consumerStopped = false;
         try {
@@ -111,7 +114,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -121,9 +125,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteSuspendRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:unreachable");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:unreachable");
             }
         });
         context.start();
@@ -146,7 +150,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -156,9 +161,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteResumeRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();
@@ -184,7 +189,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -198,9 +204,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteResumeRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();
@@ -226,7 +232,8 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -239,9 +246,9 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteResumeRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();

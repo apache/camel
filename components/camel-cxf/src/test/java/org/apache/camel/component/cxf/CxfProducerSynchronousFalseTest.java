@@ -31,22 +31,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
 
-    private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() 
-            + "/CxfProducerSynchronousFalseTest/test";
+    private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1()
+                                                        + "/CxfProducerSynchronousFalseTest/test";
     private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-            + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0>"
-            + "</ns1:echo></soap:Body></soap:Envelope>";
+                                                  + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+                                                  + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0>"
+                                                  + "</ns1:echo></soap:Body></soap:Envelope>";
 
     private static final String TEST_MESSAGE = "Hello World!";
     private static String beforeThreadName;
     private static String afterThreadName;
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
-                + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=RAW&synchronous=false";
+                         + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=RAW&synchronous=false";
 
     @BeforeAll
-    public static void startServer() throws Exception {        
+    public static void startServer() throws Exception {
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
@@ -72,20 +72,20 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to(url)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("log:after")
-                    .to("mock:result");
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to(url)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:after")
+                        .to("mock:result");
             }
         };
     }

@@ -69,10 +69,11 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
             public void configure() {
                 from("undertow:http://localhost:" + getPort() + "/test/mute?muteException=true").to("mock:input")
-                    .throwException(new IllegalArgumentException("Camel cannot do this"));
-
-                from("undertow:http://localhost:" + getPort() + "/test/muteWithTransfer?transferException=true&muteException=true").to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
+
+                from("undertow:http://localhost:" + getPort()
+                     + "/test/muteWithTransfer?transferException=true&muteException=true").to("mock:input")
+                             .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

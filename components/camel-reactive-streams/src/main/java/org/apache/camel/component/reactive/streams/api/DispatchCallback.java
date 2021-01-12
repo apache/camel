@@ -23,11 +23,10 @@ package org.apache.camel.component.reactive.streams.api;
 public interface DispatchCallback<T> {
 
     /**
-     * Signals the delivery of the item.
-     * If the item cannot be delivered (no subscribers registered, conversion error)
+     * Signals the delivery of the item. If the item cannot be delivered (no subscribers registered, conversion error)
      * the related {@link Throwable} is specified as parameter.
      *
-     * @param data the item
+     * @param data  the item
      * @param error the error occurred, if any
      */
     void processed(T data, Throwable error);

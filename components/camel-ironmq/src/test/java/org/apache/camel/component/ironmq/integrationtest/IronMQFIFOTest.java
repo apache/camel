@@ -37,7 +37,8 @@ public class IronMQFIFOTest extends CamelTestSupport {
     private String projectId = "replace-this";
     private String token = "replace-this";
 
-    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token + "&maxMessagesPerPoll=20&ironMQCloud=https://mq-v3-aws-us-east-1.iron.io";
+    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
+                                          + "&maxMessagesPerPoll=20&ironMQCloud=https://mq-v3-aws-us-east-1.iron.io";
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;

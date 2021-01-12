@@ -16,8 +16,6 @@ public enum AS2ApiName implements ApiName {
     SERVER("server");
 
 
-    private static final AS2ApiName[] VALUES = values();
-    
     private final String name;
 
     private AS2ApiName(String name) {
@@ -29,12 +27,4 @@ public enum AS2ApiName implements ApiName {
         return name;
     }
 
-    public static AS2ApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

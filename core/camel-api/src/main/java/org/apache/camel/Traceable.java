@@ -17,8 +17,8 @@
 package org.apache.camel;
 
 /**
- * Traceable processors allowing easier tracing using constructed labels to help identify the processor
- * and where it's defined in the route model.
+ * Traceable processors allowing easier tracing using constructed labels to help identify the processor and where it's
+ * defined in the route model.
  */
 public interface Traceable {
 
@@ -27,7 +27,7 @@ public interface Traceable {
      * <p/>
      * The label should be short and precise.
      *
-     * @return  the label
+     * @return the label
      */
     String getTraceLabel();
 

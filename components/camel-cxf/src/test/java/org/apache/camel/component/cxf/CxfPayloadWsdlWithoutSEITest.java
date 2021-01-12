@@ -49,13 +49,13 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     @Override
     public void testInvokingServiceWithCamelProducer() {
         Exchange exchange = sendJaxWsMessage("hello");
-        assertEquals(exchange.isFailed(), false, "The request should be handled sucessfully");
-        org.apache.camel.Message out = exchange.getOut();
-        String result =  out.getBody(String.class);
+        assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
+        org.apache.camel.Message out = exchange.getMessage();
+        String result = out.getBody(String.class);
         assertStringContains(result, "Bonjour");
 
         exchange = sendJaxWsMessage("");
-        assertEquals(exchange.isFailed(), true, "We should get a fault here");
+        assertEquals(true, exchange.isFailed(), "We should get a fault here");
         Throwable ex = exchange.getException();
         assertTrue(ex instanceof SoapFault, "We should get a SoapFault here");
     }
@@ -63,7 +63,8 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     private Exchange sendJaxWsMessage(final String personIdString) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString + "</personId></GetPerson>\n";
+                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString
+                              + "</personId></GetPerson>\n";
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "GetPerson");
             }

@@ -115,7 +115,8 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
     }
 
     private IgniteSetOperation setOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_SETS_OPERATION, endpoint.getOperation(), IgniteSetOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_SETS_OPERATION, endpoint.getOperation(),
+                IgniteSetOperation.class);
     }
 
 }

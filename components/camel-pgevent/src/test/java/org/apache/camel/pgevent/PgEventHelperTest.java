@@ -35,7 +35,7 @@ public class PgEventHelperTest {
     @Test
     public void testToPGConnectionWithNullConnection() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> PgEventHelper.toPGConnection(null));
+                () -> PgEventHelper.toPGConnection(null));
     }
 
     @Test
@@ -60,6 +60,6 @@ public class PgEventHelperTest {
         Connection wrapperConnection = mock(Connection.class);
         when(wrapperConnection.isWrapperFor(PGConnection.class)).thenReturn(false);
         assertThrows(IllegalStateException.class,
-            () -> PgEventHelper.toPGConnection(wrapperConnection));
+                () -> PgEventHelper.toPGConnection(wrapperConnection));
     }
 }

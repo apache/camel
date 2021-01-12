@@ -5,6 +5,7 @@
 :description: Transform strings to various 1D/2D barcode bitmap formats and back.
 :since: 2.14
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/barcode.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -35,7 +36,7 @@ the download page for the latest versions).
 == Barcode Options
 
 // dataformat options: START
-The Barcode dataformat supports 5 options, which are listed below.
+The Barcode dataformat supports 4 options, which are listed below.
 
 
 
@@ -46,10 +47,8 @@ The Barcode dataformat supports 5 options, which are listed below.
 | height |  | Integer | Height of the barcode
 | imageType |  | String | Image type of the barcode such as png
 | barcodeFormat |  | String | Barcode format such as QR-Code
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
-ND
 
 == Using the Java DSL
 
@@ -133,7 +132,16 @@ the barcode data format as header variable:
 |BarcodeFormat |String |Value of com.google.zxing.BarcodeFormat.
 |=======================================================================
  
+If you'll paste the code 39 barcode that is rotated some degrees into the 'barcode_in' folder,
+You can find the ORIENTATION as header variable:
 
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+
+|Name |Type |Description
+
+|ORIENTATION |Integer	 |rotate value in degrees .
+|=======================================================================
  
 
 include::camel-spring-boot::page$barcode-starter.adoc[]

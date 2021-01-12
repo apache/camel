@@ -4,8 +4,10 @@ package org.apache.camel.component.drill;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clusterid":
         case "clusterId": target.setClusterId(property(camelContext, java.lang.String.class, value)); return true;
         case "directory": target.setDirectory(property(camelContext, java.lang.String.class, value)); return true;
@@ -34,24 +34,24 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clusterId", java.lang.String.class);
-        answer.put("directory", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mode", org.apache.camel.component.drill.DrillConnectionMode.class);
-        answer.put("port", java.lang.Integer.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clusterid":
+        case "clusterId": return java.lang.String.class;
+        case "directory": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mode": return org.apache.camel.component.drill.DrillConnectionMode.class;
+        case "port": return java.lang.Integer.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clusterid":
         case "clusterId": return target.getClusterId();
         case "directory": return target.getDirectory();

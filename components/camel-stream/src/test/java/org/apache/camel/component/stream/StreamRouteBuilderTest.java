@@ -37,9 +37,9 @@ public class StreamRouteBuilderTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader("stream", constant(System.out))
-                    .to("stream:err", "stream:out", "stream:header");
+                        .to("stream:err", "stream:out", "stream:header");
             }
         };
     }
-    
+
 }

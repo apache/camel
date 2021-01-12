@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpStartingDirAndFileNameClashTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/hello/?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/hello/?password=admin";
     }
 
     @Override

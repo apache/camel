@@ -30,6 +30,8 @@ public enum JiraType {
     NEWISSUES,
     // retrieve recent comments from any issues
     NEWCOMMENTS,
+
+    WATCHUPDATES,
     // update the fields of an issue
     UPDATEISSUE,
     // transition a status and resolution of an issue

@@ -54,16 +54,16 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
                 interceptSendToEndpoint("direct:(foo|bar)").to("mock:intercepted");
 
                 from("direct:okay")
-                    .transacted()
-                    .to("direct:foo")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .to("direct:foo")
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .to("direct:bar")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .to("direct:bar")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
 
                 from("direct:foo").to("log:okay");
 

@@ -19,25 +19,27 @@ package org.apache.camel.itest.tx;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
- * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
- * that is a Spring class.
+ * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests that is a Spring class.
  */
 @CamelSpringTest
 @ContextConfiguration
 public class JmsToHttpTXWithRollbackTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     // use uri to refer to our mock
-    @EndpointInject("mock:rollback")
+    @EndpointInject("mock:JmsToHttpWithRollbackRoute")
     MockEndpoint mock;
 
     // use the spring id to refer to the endpoint we should send data to
@@ -47,7 +49,7 @@ public class JmsToHttpTXWithRollbackTest {
     private ProducerTemplate template;
 
     // the ok response to expect
-    private String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    private String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Test
     void testSendToTXJmsWithRollback() throws Exception {

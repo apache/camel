@@ -32,7 +32,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri", category = {Category.HTTP}, producerOnly = true, lenientProperties = true)
+@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-http", title = "Vert.x HTTP Client", syntax = "vertx-http:httpUri",
+             category = { Category.HTTP }, producerOnly = true, lenientProperties = true)
 public class VertxHttpEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -79,7 +80,8 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
 
             webClient = WebClient.create(getVertx(), options);
             if (configuration.isSessionManagement()) {
-                CookieStore cookieStore = configuration.getCookieStore() == null ? CookieStore.build() : configuration.getCookieStore();
+                CookieStore cookieStore
+                        = configuration.getCookieStore() == null ? CookieStore.build() : configuration.getCookieStore();
                 webClient = WebClientSession.create(webClient, cookieStore);
             }
         }
@@ -141,9 +143,9 @@ public class VertxHttpEndpoint extends DefaultEndpoint {
 
     private boolean isProxyConfigurationPresent() {
         return ObjectHelper.isNotEmpty(configuration.getProxyHost())
-               || ObjectHelper.isNotEmpty(configuration.getProxyPort())
-               || ObjectHelper.isNotEmpty(configuration.getProxyUsername())
-               || ObjectHelper.isNotEmpty(configuration.getProxyPassword())
-               || ObjectHelper.isNotEmpty(configuration.getProxyType());
+                || ObjectHelper.isNotEmpty(configuration.getProxyPort())
+                || ObjectHelper.isNotEmpty(configuration.getProxyUsername())
+                || ObjectHelper.isNotEmpty(configuration.getProxyPassword())
+                || ObjectHelper.isNotEmpty(configuration.getProxyType());
     }
 }

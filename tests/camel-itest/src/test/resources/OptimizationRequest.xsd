@@ -18,10 +18,9 @@
 
 -->
 <xsd:schema
-	targetNamespace="http://test"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:typens="http://test"
-	elementFormDefault="qualified">
+        targetNamespace="http://test"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
 	<xsd:element name="OptimizationRequestGroup">
 		<xsd:complexType>
 			<xsd:sequence>

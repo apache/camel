@@ -22,21 +22,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A useful base class which ensures that a service is only initialized once and
- * provides some helper methods for enquiring of its status.
+ * A useful base class which ensures that a service is only initialized once and provides some helper methods for
+ * enquiring of its status.
  * <p/>
- * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService}
- * in case they support suspend/resume.
+ * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService} in case they
+ * support suspend/resume.
  * <p/>
  * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()}},
  * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
- * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
- * invoke the operation in a safe manner.
+ * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly invoke
+ * the operation in a safe manner.
  */
 public abstract class BaseService {
 
     protected static final byte NEW = 0;
-    protected static final byte BUILDED = 1;
+    protected static final byte BUILT = 1;
     protected static final byte INITIALIZING = 2;
     protected static final byte INITIALIZED = 3;
     protected static final byte STARTING = 4;
@@ -45,7 +45,7 @@ public abstract class BaseService {
     protected static final byte SUSPENDED = 7;
     protected static final byte STOPPING = 8;
     protected static final byte STOPPED = 9;
-    protected static final byte SHUTTINGDOWN = 10;
+    protected static final byte SHUTTING_DOWN = 10;
     protected static final byte SHUTDOWN = 11;
     protected static final byte FAILED = 12;
 
@@ -64,7 +64,7 @@ public abstract class BaseService {
                     } catch (Exception e) {
                         doFail(e);
                     }
-                    status = BUILDED;
+                    status = BUILT;
                     LOG.trace("Built service: {}", this);
                 }
             }
@@ -73,9 +73,9 @@ public abstract class BaseService {
 
     public void init() {
         // allow to initialize again if stopped or failed
-        if (status <= BUILDED || status >= STOPPED) {
+        if (status <= BUILT || status >= STOPPED) {
             synchronized (lock) {
-                if (status <= BUILDED || status >= STOPPED) {
+                if (status <= BUILT || status >= STOPPED) {
                     build();
                     LOG.trace("Initializing service: {}", this);
                     try (AutoCloseable ignored = doLifecycleChange()) {
@@ -84,7 +84,7 @@ public abstract class BaseService {
                         status = INITIALIZED;
                         LOG.trace("Initialized service: {}", this);
                     } catch (Exception e) {
-                        LOG.trace("Error while initializing service: " + this, e);
+                        LOG.trace("Error while initializing service: {}", this, e);
                         fail(e);
                     }
                 }
@@ -121,9 +121,10 @@ public abstract class BaseService {
                     stop();
                 } catch (Exception e2) {
                     // ignore
-                    LOG.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored", e);
+                    LOG.trace("Error while stopping service after it failed to start: {}. This exception is ignored",
+                            this, e);
                 }
-                LOG.trace("Error while starting service: " + this, e);
+                LOG.trace("Error while starting service: {}", this, e);
                 fail(e);
             }
         }
@@ -141,7 +142,7 @@ public abstract class BaseService {
                 LOG.trace("Service: {} failed and regarded as already stopped", this);
                 return;
             }
-            if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+            if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
                 LOG.trace("Service: {} already stopped", this);
                 return;
             }
@@ -156,7 +157,7 @@ public abstract class BaseService {
                 status = STOPPED;
                 LOG.trace("Stopped: {} service", this);
             } catch (Exception e) {
-                LOG.trace("Error while stopping service: " + this, e);
+                LOG.trace("Error while stopping service: {}", this, e);
                 fail(e);
             }
         }
@@ -185,7 +186,7 @@ public abstract class BaseService {
                 status = SUSPENDED;
                 LOG.trace("Suspended service: {}", this);
             } catch (Exception e) {
-                LOG.trace("Error while suspending service: " + this, e);
+                LOG.trace("Error while suspending service: {}", this, e);
                 fail(e);
             }
         }
@@ -210,7 +211,7 @@ public abstract class BaseService {
                 status = STARTED;
                 LOG.trace("Resumed service: {}", this);
             } catch (Exception e) {
-                LOG.trace("Error while resuming service: " + this, e);
+                LOG.trace("Error while resuming service: {}", this, e);
                 fail(e);
             }
         }
@@ -228,7 +229,7 @@ public abstract class BaseService {
                 LOG.trace("Service: {} already shutdown", this);
                 return;
             }
-            if (status == SHUTTINGDOWN) {
+            if (status == SHUTTING_DOWN) {
                 LOG.trace("Service: {} already shutting down", this);
                 return;
             }
@@ -240,7 +241,7 @@ public abstract class BaseService {
                 LOG.trace("Shutdown service: {}", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
-                LOG.trace("Error shutting down service: " + this, e);
+                LOG.trace("Error shutting down service: {}", this, e);
                 fail(e);
             }
         }
@@ -272,7 +273,7 @@ public abstract class BaseService {
     }
 
     public boolean isBuild() {
-        return status == BUILDED;
+        return status == BUILT;
     }
 
     public boolean isInit() {
@@ -341,16 +342,15 @@ public abstract class BaseService {
     }
 
     /**
-     * Optional build phase of the service.
-     * This method will only be called by frameworks which supports pre-building projects such as camel-quarkus.
+     * Optional build phase of the service. This method will only be called by frameworks which supports pre-building
+     * projects such as camel-quarkus.
      */
     protected void doBuild() throws Exception {
         // noop
     }
 
     /**
-     * Initialize the service.
-     * This method will only be called once before starting.
+     * Initialize the service. This method will only be called once before starting.
      */
     protected void doInit() throws Exception {
         // noop
@@ -370,12 +370,10 @@ public abstract class BaseService {
     /**
      * Implementations override this method to support customized start/stop.
      * <p/>
-     * <b>Important:</b> Camel will invoke this {@link #doStop()} method when
-     * the service is being stopped. This method will <b>also</b> be invoked
-     * if the service is still in <i>uninitialized</i> state (eg has not
-     * been started). The method is <b>always</b> called to allow the service
-     * to do custom logic when the service is being stopped, such as when
-     * {@link org.apache.camel.CamelContext} is shutting down.
+     * <b>Important:</b> Camel will invoke this {@link #doStop()} method when the service is being stopped. This method
+     * will <b>also</b> be invoked if the service is still in <i>uninitialized</i> state (eg has not been started). The
+     * method is <b>always</b> called to allow the service to do custom logic when the service is being stopped, such as
+     * when {@link org.apache.camel.CamelContext} is shutting down.
      *
      * @see #doStart()
      */
@@ -412,8 +410,7 @@ public abstract class BaseService {
     }
 
     /**
-     * Implementations may return an object that will be closed
-     * when the lifecycle action is completed.
+     * Implementations may return an object that will be closed when the lifecycle action is completed.
      */
     protected AutoCloseable doLifecycleChange() {
         return null;

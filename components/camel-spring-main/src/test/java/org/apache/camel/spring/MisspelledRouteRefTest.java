@@ -22,21 +22,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MisspelledRouteRefTest {
 
     @Test
-    public void testApplicationContextFailed() throws Exception {
-        try {
-            Main main = new Main(); 
-            main.setApplicationContextUri("org/apache/camel/spring/MisspelledRouteRefTest.xml");
-            main.start();
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            CamelException ce = assertIsInstanceOf(CamelException.class, e.getCause());
-            assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", ce.getMessage());
-        }
+    public void testApplicationContextFailed() {
+        Main main = new Main();
+        main.setApplicationContextUri("org/apache/camel/spring/MisspelledRouteRefTest.xml");
+
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> main.start());
+
+        CamelException ce = assertIsInstanceOf(CamelException.class, ex.getCause());
+        assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]",
+                ce.getMessage());
+
     }
 }
-

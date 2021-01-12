@@ -38,7 +38,7 @@ public class SqlProducerSeparatorTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         jdbcTemplate = new JdbcTemplate(db);
 
@@ -49,7 +49,7 @@ public class SqlProducerSeparatorTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -62,7 +62,7 @@ public class SqlProducerSeparatorTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals(new Integer(4), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
+        assertEquals(Integer.valueOf(4), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
     }
 
     @Override
@@ -72,8 +72,8 @@ public class SqlProducerSeparatorTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:insert into projects (id, project, license) values (#, #, #)?separator=;")
-                    .to("mock:result");
+                        .to("sql:insert into projects (id, project, license) values (#, #, #)?separator=;")
+                        .to("mock:result");
             }
         };
     }

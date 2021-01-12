@@ -42,13 +42,10 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -72,7 +69,8 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + "/search");
                 from("direct:dummy")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
+                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                            + "/search");
             }
         });
 
@@ -91,7 +89,8 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + ":80/search");
                 from("direct:dummy")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
+                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                            + "/search");
             }
         });
 
@@ -110,7 +109,8 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + "/search");
                 from("direct:dummy")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search");
+                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                            + "/search");
             }
         });
 

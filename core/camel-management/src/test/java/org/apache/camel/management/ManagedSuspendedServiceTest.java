@@ -112,8 +112,8 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
                 MyPolicy myPolicy = new MyPolicy();
 
                 from("file://target/data/suspended?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true")
-                    .routePolicy(myPolicy).id("myRoute")
-                    .to("mock:result");
+                        .routePolicy(myPolicy).id("myRoute")
+                        .to("mock:result");
             }
         };
     }

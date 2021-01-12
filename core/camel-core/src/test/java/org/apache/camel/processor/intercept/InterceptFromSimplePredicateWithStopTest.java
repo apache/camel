@@ -41,10 +41,10 @@ public class InterceptFromSimplePredicateWithStopTest extends ContextTestSupport
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 interceptFrom().when(header("usertype").isEqualTo("test"))
-                    // here we use stop() to tell Camel to NOT continue routing
-                    // the message.
-                    // this let us act as a filter, to drop certain messages.
-                    .stop();
+                        // here we use stop() to tell Camel to NOT continue routing
+                        // the message.
+                        // this let us act as a filter, to drop certain messages.
+                        .stop();
 
                 // and here is our route
                 from("direct:start").to("seda:bar").to("mock:result");

@@ -32,13 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source
- * column-oriented data store of the Apache Hadoop ecosystem.
+ * Interact with <a href="https://kudu.apache.org/">Apache Kudu</a>, a free and open source column-oriented data store
+ * of the Apache Hadoop ecosystem.
  */
 @UriEndpoint(firstVersion = "3.0",
-    scheme = "kudu",
-    title = "Kudu", syntax = "kudu:host:port/tableName",
-    category = {Category.DATABASE, Category.IOT, Category.CLOUD}, producerOnly = true)
+             scheme = "kudu",
+             title = "Kudu", syntax = "kudu:host:port/tableName",
+             category = { Category.DATABASE, Category.IOT, Category.CLOUD }, producerOnly = true)
 public class KuduEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);

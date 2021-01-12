@@ -23,8 +23,9 @@ import org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 
 @ManagedResource(description = "Managed ThrottlingExceptionRoutePolicy")
-public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implements ManagedThrottlingExceptionRoutePolicyMBean {
-    
+public class ManagedThrottlingExceptionRoutePolicy extends ManagedService
+        implements ManagedThrottlingExceptionRoutePolicyMBean {
+
     private final ThrottlingExceptionRoutePolicy policy;
 
     public ManagedThrottlingExceptionRoutePolicy(CamelContext context, ThrottlingExceptionRoutePolicy policy) {
@@ -35,7 +36,7 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implem
     public ThrottlingExceptionRoutePolicy getPolicy() {
         return policy;
     }
-    
+
     @Override
     public Long getHalfOpenAfter() {
         return getPolicy().getHalfOpenAfter();
@@ -65,7 +66,7 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implem
     public void setFailureThreshold(Integer numberOfFailures) {
         getPolicy().setFailureThreshold(numberOfFailures);
     }
-    
+
     @Override
     public String currentState() {
         return getPolicy().dumpState();

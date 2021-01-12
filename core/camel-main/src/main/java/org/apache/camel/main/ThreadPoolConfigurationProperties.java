@@ -20,16 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Global configuration for thread pools
  */
-@Configurer
-public class ThreadPoolConfigurationProperties {
+@Configurer(bootstrap = true)
+public class ThreadPoolConfigurationProperties implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     // default values
     private Integer poolSize;
@@ -49,6 +50,13 @@ public class ThreadPoolConfigurationProperties {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    @Override
+    public void close() {
+        parent = null;
+        config.clear();
+        config = null;
     }
 
     public Integer getPoolSize() {

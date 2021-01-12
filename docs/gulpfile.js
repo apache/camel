@@ -324,8 +324,6 @@ function createComponentLanguagesNav () {
       inject(
         src([
           'components/modules/languages/pages/**/*.adoc',
-          '../core/camel-core-languages/src/main/docs/modules/languages/pages/*.adoc',
-          '../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/*.adoc',
           '!components/modules/languages/pages/index.adoc',
         ]).pipe(sort(compare)),
         {

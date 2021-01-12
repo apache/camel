@@ -35,16 +35,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @WebTest
 public class ResteasyRestDSLTest {
-    
+
     @Resource
     URI baseUri;
-    
+
     @Deployment
     public static Archive<?> createTestArchive() {
-        
+
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(SimpleService.class)
                 .addPackage("org.apache.camel.component.resteasy")

@@ -48,17 +48,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @CamelSpringTest
 @ContextConfiguration
 public class ExecScriptTest {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ExecScriptTest.class);
 
     @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     /**
-     * TODO <b>the test is Disabledd for now to prevent accidental build
-     * failures.</b> Java 1.5 does not offer a method to check if a file is
-     * executable there is only a canRead method, which is not enough to
-     * guarantee that the script can be executed. <br>
+     * TODO <b>the test is Disabledd for now to prevent accidental build failures.</b> Java 1.5 does not offer a method
+     * to check if a file is executable there is only a canRead method, which is not enough to guarantee that the script
+     * can be executed. <br>
      * 
      * @throws Exception
      */
@@ -72,7 +71,7 @@ public class ExecScriptTest {
             Exchange exchange = executeScript(scriptFile, NO_TIMEOUT, classpathArg, PRINT_IN_STDOUT);
             if (exchange != null) {
                 String out = exchange.getIn().getBody(String.class);
-                String err = (String)exchange.getIn().getHeader(EXEC_STDERR);
+                String err = (String) exchange.getIn().getHeader(EXEC_STDERR);
 
                 assertNotNull(out);
                 assertTrue(out.contains(PRINT_IN_STDOUT));

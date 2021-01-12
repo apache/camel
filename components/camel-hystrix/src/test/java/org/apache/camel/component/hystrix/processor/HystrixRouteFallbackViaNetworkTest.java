@@ -40,14 +40,14 @@ public class HystrixRouteFallbackViaNetworkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:start")
-                    .circuitBreaker()
+                        .to("log:start")
+                        .circuitBreaker()
                         .throwException(new IllegalArgumentException("Forced"))
-                    .onFallbackViaNetwork()
+                        .onFallbackViaNetwork()
                         .transform().constant("Fallback message")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

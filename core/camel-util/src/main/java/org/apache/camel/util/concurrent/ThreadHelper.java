@@ -29,10 +29,10 @@ public final class ThreadHelper {
     private static final Pattern INVALID_PATTERN = Pattern.compile(".*#\\w+#.*");
 
     private static AtomicLong threadCounter = new AtomicLong();
-    
+
     private ThreadHelper() {
     }
-    
+
     private static long nextThreadCounter() {
         return threadCounter.getAndIncrement();
     }
@@ -42,9 +42,9 @@ public final class ThreadHelper {
      * <p/>
      * See {@link org.apache.camel.spi.ExecutorServiceManager#setThreadNamePattern(String)} for supported patterns.
      *
-     * @param pattern the pattern
-     * @param name    the name
-     * @return the thread name, which is unique
+     * @param  pattern the pattern
+     * @param  name    the name
+     * @return         the thread name, which is unique
      */
     public static String resolveThreadName(String pattern, String name) {
         if (pattern == null) {

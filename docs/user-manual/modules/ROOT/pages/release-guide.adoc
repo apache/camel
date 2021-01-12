@@ -366,7 +366,7 @@ This will release the artifacts.
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-distro.sh <Camel version>
 
-. Remove the old distribution version from the Apache webstie:
+. Remove the old distribution version from the Apache website:
 
   svn rm https://dist.apache.org/repos/dist/release/camel/apache-camel/OLD_CAMEL_VERSION -m "Removed the old release"
 
@@ -392,4 +392,114 @@ This will release the artifacts.
 
 * On https://github.com/apache/camel-website/tree/master/static/schema the xsd related to blueprint,cxf,spring-security and spring
 must be pushed to make them available to end users.
-* The blueprint one are under the camel-karaf release
+* The blueprint one is under the camel-karaf release
+
+[[Tagging-examples]]
+== Tagging examples
+
+These steps are optional and they could be done later too.
+
+Once the release train (camel, camel-karaf and camel-spring-boot) has been voted and published, there are some additional steps needed for the camel examples.
+
+. Camel-examples
+
+* On https://github.com/apache/camel-examples in the examples/pom.xml file the following steps are needed:
+
+* Update the camel-dependencies version to the version coming from the release-train
+
+* Update the camel.version properties to the version coming from the release-train
+
+* To be sure everything is fine run
+
+  $ ./mvnw clean install
+
+* Commit
+
+  $ git commit -a
+  $ git push origin master (or the branch related to the release, eg. camel-3.4.x)
+  $ git tag -a camel-examples-$version -m "$version"
+  $ git push origin camel-examples-$version
+
+* Now we pushed the tag and we need to advance the version of the examples
+
+* Update the camel-dependencies version to the next version
+
+* Update the camel.version properties to the next version
+
+* Run the following command to advance the version in the examples
+  
+  $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
+
+* To be sure everything is fine run 
+
+  $ ./mvnw clean install
+
+. Camel-spring-boot-examples
+
+* On https://github.com/apache/camel-spring-boot-examples in the examples/pom.xml file the following steps are needed:
+
+* Update the camel-dependencies version to the version coming from the release-train
+    
+* Update the camel.version properties to the version coming from the release-train
+    
+* To be sure everything is fine run
+      
+  $ ./mvnw clean install
+    
+* Commit
+  
+  $ git commit -a
+  $ git push origin master (or the branch related to the release, eg. camel-3.4.x)
+  $ git tag -a camel-spring-boot-examples-$version -m "$version"
+  $ git push origin camel-spring-boot-examples-$version
+
+* Now we pushed the tag and we need to advance the version of the examples
+
+* Update the camel-dependencies version to the next version
+
+* Update the camel.version properties to the next version
+
+* Run the following command to advance the version in the examples
+
+  $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
+   
+* To be sure everything is fine run 
+
+  $ ./mvnw clean install
+
+. Camel-karaf-examples
+
+* On https://github.com/apache/camel-karaf-examples in the examples/pom.xml file the following steps are needed:
+    
+* Update the camel-dependencies version to the version coming from the release-train
+    
+* Update the camel.version properties to the version coming from the release-train
+    
+* Update the camel.karaf.version properties to the version coming from the release-train
+    
+* To be sure everything is fine run
+
+  $ ./mvnw clean install
+
+* Commit
+      
+  $ git commit -a
+  $ git push origin master (or the branch related to the release, eg. camel-3.4.x)
+  $ git tag -a camel-karaf-examples-$version -m "$version"
+  $ git push origin camel-karaf-examples-$version
+
+* Now we pushed the tag and we need to advance the version of the examples
+
+* Update the camel-dependencies version to the next version
+    
+* Update the camel.version properties to the next version
+    
+* Update the camel.karaf.version properties to the next version
+    
+* Run the following command to advance the version in the examples
+
+  $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
+
+* To be sure everything is fine run 
+
+  $ ./mvnw clean install

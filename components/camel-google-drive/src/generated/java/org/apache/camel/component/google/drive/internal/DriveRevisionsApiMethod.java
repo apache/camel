@@ -51,8 +51,6 @@ public enum DriveRevisionsApiMethod implements ApiMethod {
         arg("revisionId", String.class),
         arg("content", com.google.api.services.drive.model.Revision.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveRevisionsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

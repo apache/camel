@@ -40,10 +40,13 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -52,10 +55,14 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -64,10 +71,13 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: producer
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder servicePath(String servicePath) {
             doSetProperty("servicePath", servicePath);
@@ -76,9 +86,12 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder timeout(Long timeout) {
             doSetProperty("timeout", timeout);
@@ -87,9 +100,13 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -98,10 +115,13 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder uris(String uris) {
             doSetProperty("uris", uris);
@@ -118,10 +138,13 @@ public interface EtcdKeysEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -139,10 +162,14 @@ public interface EtcdKeysEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -152,9 +179,12 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To set the lifespan of a key in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder timeToLive(Integer timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -163,10 +193,13 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * To set the lifespan of a key in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder timeToLive(String timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -175,9 +208,12 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -187,9 +223,12 @@ public interface EtcdKeysEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -200,9 +239,12 @@ public interface EtcdKeysEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -212,9 +254,12 @@ public interface EtcdKeysEndpointBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -232,41 +277,16 @@ public interface EtcdKeysEndpointBuilderFactory {
             return (EtcdKeysEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdKeysEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdKeysEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdKeysEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -276,10 +296,14 @@ public interface EtcdKeysEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdKeysEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -302,6 +326,7 @@ public interface EtcdKeysEndpointBuilderFactory {
          * The path the endpoint refers to
          * 
          * @param path path
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder etcdKeys(String path) {
             return EtcdKeysEndpointBuilderFactory.endpointBuilder("etcd-keys", path);
@@ -322,6 +347,7 @@ public interface EtcdKeysEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder etcdKeys(
                 String componentName,

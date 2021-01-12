@@ -25,7 +25,8 @@ public class SpringBuilderRefPropertyInjectTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefPropertyInjectTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringBuilderRefPropertyInjectTest.xml");
     }
 
     @Test

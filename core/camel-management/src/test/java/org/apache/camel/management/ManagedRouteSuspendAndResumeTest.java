@@ -92,7 +92,8 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         // this time the file is consumed
         mock.assertIsSatisfied();
 
-        ManagedSuspendableRouteMBean route = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
+        ManagedSuspendableRouteMBean route
+                = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
         assertNotNull(route);
 
         assertEquals(2, route.getExchangesCompleted());

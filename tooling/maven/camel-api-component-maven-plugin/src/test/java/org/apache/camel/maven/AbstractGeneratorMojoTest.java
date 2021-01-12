@@ -103,7 +103,6 @@ public abstract class AbstractGeneratorMojoTest {
         return null;
     }
 
-
     @Test
     @SuppressWarnings("unchecked")
     public void shouldAddCompilationRootsByDefault() throws Exception {
@@ -124,18 +123,20 @@ public abstract class AbstractGeneratorMojoTest {
         File testDir = new File(OUT_DIR);
         File[] empty = new File[0];
         assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.source, srcDir, testDir,
-            new File[]{srcDir, testDir}, empty);
+                new File[] { srcDir, testDir }, empty);
         assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.test, srcDir, testDir,
-            empty, new File[]{srcDir, testDir});
+                empty, new File[] { srcDir, testDir });
         assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.all, srcDir, testDir,
-            new File[]{srcDir}, new File[]{testDir});
+                new File[] { srcDir }, new File[] { testDir });
         assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots.none, srcDir, testDir,
-            empty, empty);
+                empty, empty);
     }
 
-    private void assertCompilationRootsByConfiguration(AbstractSourceGeneratorMojo.CompileRoots compileRoots,
-                                                       File srcDir, File testDir,
-                                                       File[] expectedSource, File[] expectedTest) throws Exception {
+    private void assertCompilationRootsByConfiguration(
+            AbstractSourceGeneratorMojo.CompileRoots compileRoots,
+            File srcDir, File testDir,
+            File[] expectedSource, File[] expectedTest)
+            throws Exception {
         AbstractSourceGeneratorMojo mojo = createGeneratorMojo();
         assumeTrue(mojo != null, "Ignored because createGeneratorMojo is not implemented");
         mojo.generatedSrcDir = srcDir;

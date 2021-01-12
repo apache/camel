@@ -32,7 +32,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send metrics to Ganglia monitoring system.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "ganglia", title = "Ganglia", syntax = "ganglia:host:port", producerOnly = true, category = {Category.MONITORING})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "ganglia", title = "Ganglia", syntax = "ganglia:host:port", producerOnly = true,
+             category = { Category.MONITORING })
 public class GangliaEndpoint extends DefaultEndpoint {
 
     private Publisher publisher;

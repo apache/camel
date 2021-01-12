@@ -29,7 +29,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", category = {Category.CACHE, Category.DATAGRID, Category.CLUSTERING})
+@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName",
+             category = { Category.CACHE, Category.DATAGRID, Category.CLUSTERING })
 public class InfinispanEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
@@ -40,7 +41,8 @@ public class InfinispanEndpoint extends DefaultEndpoint {
 
     private final InfinispanManager manager;
 
-    public InfinispanEndpoint(String uri, String cacheName, InfinispanComponent component, InfinispanConfiguration configuration) {
+    public InfinispanEndpoint(String uri, String cacheName, InfinispanComponent component,
+                              InfinispanConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;

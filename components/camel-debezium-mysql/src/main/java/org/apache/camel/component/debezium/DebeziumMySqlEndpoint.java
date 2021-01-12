@@ -24,13 +24,15 @@ import org.apache.camel.spi.UriParam;
 /**
  * Capture changes from a MySQL database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mysql", title = "Debezium MySQL Connector", syntax = "debezium-mysql:name", category = {Category.DATABASE, Category.SQL}, consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mysql", title = "Debezium MySQL Connector",
+             syntax = "debezium-mysql:name", category = { Category.DATABASE, Category.SQL }, consumerOnly = true)
 public final class DebeziumMySqlEndpoint extends DebeziumEndpoint<MySqlConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam
     private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumMySqlEndpoint(final String uri, final DebeziumMySqlComponent component, final MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumMySqlEndpoint(final String uri, final DebeziumMySqlComponent component,
+                                 final MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

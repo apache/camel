@@ -28,12 +28,12 @@ import org.slf4j.LoggerFactory;
 public class XmlErrorListener implements ErrorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
-    
+
     @Override
     public void warning(TransformerException e) throws TransformerException {
         LOG.warn(e.getMessage(), e);
     }
-    
+
     @Override
     public void error(TransformerException e) throws TransformerException {
         LOG.error(e.getMessage(), e);

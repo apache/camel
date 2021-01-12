@@ -69,7 +69,6 @@ public class DefaultWebsocket implements Serializable {
         }
     }
 
-
     @OnWebSocketMessage
     public void onMessage(byte[] data, int offset, int length) {
         LOG.debug("onMessage: byte[]");
@@ -90,7 +89,7 @@ public class DefaultWebsocket implements Serializable {
     public Session getSession() {
         return session;
     }
-    
+
     public String getPathSpec() {
         return pathSpec;
     }

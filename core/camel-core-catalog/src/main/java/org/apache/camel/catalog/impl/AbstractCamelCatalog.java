@@ -32,16 +32,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.JSonSchemaResolver;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
+import org.apache.camel.tooling.model.ApiMethodModel;
+import org.apache.camel.tooling.model.ApiModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -52,6 +56,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
@@ -172,6 +177,14 @@ public abstract class AbstractCamelCatalog {
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
+        if (model.isApi()) {
+            String[] apiSyntax = StringHelper.splitWords(model.getApiSyntax());
+            String key = properties.get(apiSyntax[0]);
+            String key2 = apiSyntax.length > 1 ? properties.get(apiSyntax[1]) : null;
+            Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key, key2);
+            rows.putAll(apiProperties);
+        }
+
         // the dataformat component refers to a data format so lets add the properties for the selected
         // data format to the list of rows
         if ("dataformat".equals(scheme)) {
@@ -264,7 +277,9 @@ public abstract class AbstractCamelCatalog {
                 if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
                     boolean found = false;
                     for (String s : enums) {
-                        if (value.equalsIgnoreCase(s)) {
+                        String dashEC = StringHelper.camelCaseToDash(value);
+                        String valueEC = StringHelper.asEnumConstantValue(value);
+                        if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
                             found = true;
                             break;
                         }
@@ -329,6 +344,47 @@ public abstract class AbstractCamelCatalog {
                     }
                     if (!valid) {
                         result.addInvalidNumber(name, value);
+                    }
+                }
+            }
+        }
+
+        // for api component then check that the apiName/methodName combo is valid
+        if (model.isApi()) {
+            String[] apiSyntax = StringHelper.splitWords(model.getApiSyntax());
+            String key1 = properties.get(apiSyntax[0]);
+            String key2 = apiSyntax.length > 1 ? properties.get(apiSyntax[1]) : null;
+
+            if (key1 != null && key2 != null) {
+                ApiModel api = model.getApiOptions().stream().filter(o -> o.getName().equalsIgnoreCase(key1)).findFirst().orElse(null);
+                if (api == null) {
+                    result.addInvalidEnum(apiSyntax[0], key1);
+                    List<String> choices = model.getApiOptions().stream().map(ApiModel::getName).collect(Collectors.toList());
+                    result.addInvalidEnumChoices(apiSyntax[0], choices.toArray(new String[choices.size()]));
+                } else {
+                    // walk each method and match against its name/alias
+                    boolean found = false;
+                    for (ApiMethodModel m : api.getMethods()) {
+                        String key3 = apiMethodAlias(api, m);
+                        if (m.getName().equalsIgnoreCase(key2) || key2.equalsIgnoreCase(key3)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        result.addInvalidEnum(apiSyntax[1], key2);
+                        List<String> choices = api.getMethods().stream()
+                                .map(m -> {
+                                    // favour using method alias in choices
+                                    String answer = apiMethodAlias(api, m);
+                                    if (answer == null) {
+                                        answer = m.getName();
+                                    }
+                                    return answer;
+                                })
+                                .collect(Collectors.toList());
+
+                        result.addInvalidEnumChoices(apiSyntax[1], choices.toArray(new String[choices.size()]));
                     }
                 }
             }
@@ -534,6 +590,18 @@ public abstract class AbstractCamelCatalog {
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
+        // is this an api component then there may be additional options
+        if (model.isApi()) {
+            String[] apiSyntax = StringHelper.splitWords(model.getSyntax());
+            int pos = word.indexOf(apiSyntax[0]);
+            if (pos != -1) {
+                String key = word2.size() > pos ? word2.get(pos) : null;
+                // key2 should be null as its fine to get all the options for api name
+                Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key, null);
+                rows.putAll(apiProperties);
+            }
+        }
+
         // word contains the syntax path elements
         Iterator<String> it = word2.iterator();
         for (int i = 0; i < word.size(); i++) {
@@ -628,6 +696,60 @@ public abstract class AbstractCamelCatalog {
         return answer;
     }
 
+    private Map<String, BaseOptionModel> extractApiProperties(ComponentModel model, String key, String key2) {
+        Map<String, BaseOptionModel> answer = new LinkedHashMap<>();
+        if (key != null) {
+            String matchKey = null;
+            String dashKey = StringHelper.camelCaseToDash(key);
+            String ecKey = StringHelper.asEnumConstantValue(key);
+            String dashKey2 = StringHelper.camelCaseToDash(key2);
+            String ecKey2 = StringHelper.asEnumConstantValue(key2);
+            for (ApiModel am : model.getApiOptions()) {
+                String aKey = am.getName();
+                if (aKey.equalsIgnoreCase("DEFAULT") || aKey.equalsIgnoreCase(key) || aKey.equalsIgnoreCase(ecKey) || aKey.equalsIgnoreCase(dashKey)) {
+                    am.getMethods().stream()
+                            .filter(m -> {
+                                if (key2 == null) {
+                                    // no api method so match all
+                                    return true;
+                                }
+                                String name = m.getName();
+                                if (name.equalsIgnoreCase(key2) || name.equalsIgnoreCase(ecKey2) || name.equalsIgnoreCase(dashKey2)) {
+                                    return true;
+                                }
+                                // is there an alias then we need to compute the alias key and compare against the key2
+                                String key3 = apiMethodAlias(am, m);
+                                if (key3 != null) {
+                                    String dashKey3 = StringHelper.camelCaseToDash(key3);
+                                    String ecKey3 = StringHelper.asEnumConstantValue(key3);
+                                    if (key2.equalsIgnoreCase(key3) || ecKey2.equalsIgnoreCase(ecKey3) || dashKey2.equalsIgnoreCase(dashKey3)) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            })
+                            .forEach(m -> m.getOptions()
+                                    .forEach(o -> answer.put(o.getName(), o)));
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static String apiMethodAlias(ApiModel api, ApiMethodModel method) {
+        String name = method.getName();
+        for (String alias : api.getAliases()) {
+            int pos = alias.indexOf('=');
+            String pattern = alias.substring(0, pos);
+            String aliasMethod = alias.substring(pos + 1);
+            // match ignore case
+            if (Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(name).matches()) {
+                return aliasMethod;
+            }
+        }
+        return null;
+    }
+
     public Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException {
         // need to normalize uri first
 
@@ -720,6 +842,7 @@ public abstract class AbstractCamelCatalog {
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
         Map<String, String> copy = new TreeMap<>(properties);
+
         Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
         while (syntaxMatcher.find()) {
             syntax += syntaxMatcher.group(1);
@@ -742,9 +865,26 @@ public abstract class AbstractCamelCatalog {
             sb.append(syntax);
 
             if (!copy.isEmpty()) {
-                boolean hasQuestionmark = sb.toString().contains("?");
+                // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
+                copy.replaceAll((key, val) -> {
+                    if (val == null) {
+                        return val;
+                    }
+                    BaseOptionModel option = rows.get(key);
+                    if (option == null) {
+                        return val;
+                    }
+
+                    if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
+                        return "RAW(" + val + ")";
+                    }
+
+                    return val;
+                });
+
+                boolean hasQuestionMark = sb.toString().contains("?");
                 // the last option may already contain a ? char, if so we should use & instead of ?
-                sb.append(hasQuestionmark ? ampersand : '?');
+                sb.append(hasQuestionMark ? ampersand : '?');
                 String query = URISupport.createQueryString(copy, ampersand, encode);
                 sb.append(query);
             }
@@ -826,8 +966,28 @@ public abstract class AbstractCamelCatalog {
                 range++;
             }
 
-
             if (!copy.isEmpty()) {
+                // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
+                copy.replaceAll(new BiFunction<String, String, String>() {
+                    @Override
+                    public String apply(String key, String val) {
+
+                        if (val == null) {
+                            return val;
+                        }
+                        BaseOptionModel option = rows.get(key);
+                        if (option == null) {
+                            return val;
+                        }
+
+                        if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
+                            return "RAW(" + val + ")";
+                        }
+
+                        return val;
+                    }
+                });
+
                 // the last option may already contain a ? char, if so we should use & instead of ?
                 sb.append(hasQuestionmark ? ampersand : '?');
                 String query = URISupport.createQueryString(copy, ampersand, encode);
@@ -880,6 +1040,16 @@ public abstract class AbstractCamelCatalog {
         String longKey = CatalogHelper.before(line, "=");
         String key = longKey;
         String value = CatalogHelper.after(line, "=");
+        // trim values
+        if (longKey != null) {
+            longKey = longKey.trim();
+        }
+        if (key != null) {
+            key = key.trim();
+        }
+        if (value != null) {
+            value = value.trim();
+        }
 
         ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
         boolean accept = acceptConfigurationPropertyKey(key);
@@ -1055,8 +1225,11 @@ public abstract class AbstractCamelCatalog {
             List<String> enums = row.getEnums();
             if (!optionPlaceholder && !lookup && enums != null) {
                 boolean found = false;
+                String dashEC = StringHelper.camelCaseToDash(value);
+                String valueEC = StringHelper.asEnumConstantValue(value);
                 for (String s : enums) {
-                    if (value.equalsIgnoreCase(s)) {
+                    // equals as is or using the enum naming style
+                    if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
                         found = true;
                         break;
                     }
@@ -1132,16 +1305,21 @@ public abstract class AbstractCamelCatalog {
 
         LanguageValidationResult answer = new LanguageValidationResult(simple);
 
+        Object context = null;
         Object instance = null;
         Class<?> clazz = null;
         try {
+            // need a simple camel context for the simple language parser to be able to parse
+            clazz = classLoader.loadClass("org.apache.camel.impl.engine.SimpleCamelContext");
+            context = clazz.getDeclaredConstructor(boolean.class).newInstance(false);
             clazz = classLoader.loadClass("org.apache.camel.language.simple.SimpleLanguage");
             instance = clazz.getDeclaredConstructor().newInstance();
+            instance.getClass().getMethod("setCamelContext", CamelContext.class).invoke(instance, context);
         } catch (Exception e) {
             // ignore
         }
 
-        if (clazz != null && instance != null) {
+        if (clazz != null && context != null && instance != null) {
             Throwable cause = null;
             try {
                 if (predicate) {

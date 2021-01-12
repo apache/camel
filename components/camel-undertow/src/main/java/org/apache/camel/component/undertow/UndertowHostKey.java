@@ -54,7 +54,7 @@ public final class UndertowHostKey {
         UndertowHostKey targetKey = (UndertowHostKey) target;
         boolean answer = true;
         return answer && this.host != null && targetKey.host != null
-            && this.host.equals(targetKey.host) && this.port == targetKey.port;
+                && this.host.equals(targetKey.host) && this.port == targetKey.port;
     }
 
     @Override

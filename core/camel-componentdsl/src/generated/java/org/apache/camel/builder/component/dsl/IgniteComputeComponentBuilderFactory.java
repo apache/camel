@@ -37,6 +37,8 @@ public interface IgniteComputeComponentBuilderFactory {
      * Category: compute
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
+     * 
+     * @return the dsl builder
      */
     static IgniteComputeComponentBuilder igniteCompute() {
         return new IgniteComputeComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface IgniteComputeComponentBuilderFactory {
          * The resource from where to load the configuration. It can be a: URL,
          * String or InputStream type.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configurationResource the value to set
+         * @return the dsl builder
          */
         default IgniteComputeComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
@@ -64,9 +69,13 @@ public interface IgniteComputeComponentBuilderFactory {
         /**
          * To use an existing Ignite instance.
          * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * The option is a: &lt;code&gt;org.apache.ignite.Ignite&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param ignite the value to set
+         * @return the dsl builder
          */
         default IgniteComputeComponentBuilder ignite(
                 org.apache.ignite.Ignite ignite) {
@@ -77,10 +86,12 @@ public interface IgniteComputeComponentBuilderFactory {
          * Allows the user to set a programmatic ignite configuration.
          * 
          * The option is a:
-         * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.IgniteConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param igniteConfiguration the value to set
+         * @return the dsl builder
          */
         default IgniteComputeComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
@@ -98,10 +109,13 @@ public interface IgniteComputeComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteComputeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -109,17 +123,24 @@ public interface IgniteComputeComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default IgniteComputeComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default IgniteComputeComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -143,7 +164,7 @@ public interface IgniteComputeComponentBuilderFactory {
             case "ignite": ((IgniteComputeComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "igniteConfiguration": ((IgniteComputeComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
             case "lazyStartProducer": ((IgniteComputeComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((IgniteComputeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((IgniteComputeComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

@@ -35,15 +35,14 @@ import org.apache.maven.plugins.annotations.Parameter;
  * <li>dataformats</li>
  * <li>languages</li>
  * </ul>
- * all contains the needed meta-data such as assigned labels, documentation for
- * each option
+ * all contains the needed meta-data such as assigned labels, documentation for each option
  */
 @Mojo(name = "validate-components", threadSafe = true)
 public class ValidateComponentMojo extends AbstractGeneratorMojo {
 
     /**
-     * Whether to validate if the components, data formats, and languages are
-     * properly documented and have all the needed details.
+     * Whether to validate if the components, data formats, and languages are properly documented and have all the
+     * needed details.
      */
     @Parameter(defaultValue = "true")
     protected Boolean validate;
@@ -57,10 +56,9 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -99,10 +97,12 @@ public class ValidateComponentMojo extends AbstractGeneratorMojo {
                         getLog().warn("Missing @UriPath on endpoint");
                     }
                     if (!detail.getMissingComponentDocumentation().isEmpty()) {
-                        getLog().warn("Missing component documentation for the following options:" + Strings.indentCollection("\n\t", detail.getMissingComponentDocumentation()));
+                        getLog().warn("Missing component documentation for the following options:"
+                                      + Strings.indentCollection("\n\t", detail.getMissingComponentDocumentation()));
                     }
                     if (!detail.getMissingEndpointDocumentation().isEmpty()) {
-                        getLog().warn("Missing endpoint documentation for the following options:" + Strings.indentCollection("\n\t", detail.getMissingEndpointDocumentation()));
+                        getLog().warn("Missing endpoint documentation for the following options:"
+                                      + Strings.indentCollection("\n\t", detail.getMissingEndpointDocumentation()));
                     }
                 }
             }

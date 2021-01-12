@@ -140,7 +140,9 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MAP cache.", operation, HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the MAP cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -194,7 +196,6 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         exchange.getOut().setBody(this.cache.get(oid));
     }
 
-
     /**
      * GET All objects and give it back
      */
@@ -227,7 +228,8 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     }
 
     /**
-     * Puts an entry into this map with a given ttl (time to live) value if the specified key is not already associated with a value.
+     * Puts an entry into this map with a given ttl (time to live) value if the specified key is not already associated
+     * with a value.
      */
     private void putIfAbsent(Object oid, Object ttl, Object ttlUnit, Exchange exchange) {
         Object body = exchange.getIn().getBody();
@@ -249,7 +251,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     }
 
     /**
-     * Evict All operation 
+     * Evict All operation
      */
     private void evictAll() {
         this.cache.evictAll();

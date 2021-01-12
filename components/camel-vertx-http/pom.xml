@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-vertx-http</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Vert.x :: HTTP</name>
-    <description>Camel HTTP client support with Vert.x</description>
+    <description>Send requests to external HTTP servers using Vert.x</description>
 
     <properties>
     </properties>

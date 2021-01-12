@@ -4,8 +4,10 @@ package org.apache.camel.component.weather;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -26,8 +28,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cnt": target.getConfiguration().setCnt(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -68,7 +68,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
@@ -92,51 +92,76 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("appid", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cnt", java.lang.Integer.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("geoLocationProvider", org.apache.camel.component.weather.geolocation.GeoLocationProvider.class);
-        answer.put("geolocationAccessKey", java.lang.String.class);
-        answer.put("geolocationRequestHostIP", java.lang.String.class);
-        answer.put("greedy", boolean.class);
-        answer.put("headerName", java.lang.String.class);
-        answer.put("httpClient", org.apache.http.impl.client.CloseableHttpClient.class);
-        answer.put("ids", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("language", org.apache.camel.component.weather.WeatherLanguage.class);
-        answer.put("lat", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("location", java.lang.String.class);
-        answer.put("lon", java.lang.String.class);
-        answer.put("mode", org.apache.camel.component.weather.WeatherMode.class);
-        answer.put("period", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("repeatCount", long.class);
-        answer.put("rightLon", java.lang.String.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("topLat", java.lang.String.class);
-        answer.put("units", org.apache.camel.component.weather.WeatherUnits.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("weatherApi", org.apache.camel.component.weather.WeatherApi.class);
-        answer.put("zip", java.lang.String.class);
-        answer.put("zoom", java.lang.Integer.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "appid": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cnt": return java.lang.Integer.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "geolocationprovider":
+        case "geoLocationProvider": return org.apache.camel.component.weather.geolocation.GeoLocationProvider.class;
+        case "geolocationaccesskey":
+        case "geolocationAccessKey": return java.lang.String.class;
+        case "geolocationrequesthostip":
+        case "geolocationRequestHostIP": return java.lang.String.class;
+        case "greedy": return boolean.class;
+        case "headername":
+        case "headerName": return java.lang.String.class;
+        case "httpclient":
+        case "httpClient": return org.apache.http.impl.client.CloseableHttpClient.class;
+        case "ids": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "language": return org.apache.camel.component.weather.WeatherLanguage.class;
+        case "lat": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "location": return java.lang.String.class;
+        case "lon": return java.lang.String.class;
+        case "mode": return org.apache.camel.component.weather.WeatherMode.class;
+        case "period": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "rightlon":
+        case "rightLon": return java.lang.String.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "toplat":
+        case "topLat": return java.lang.String.class;
+        case "units": return org.apache.camel.component.weather.WeatherUnits.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "weatherapi":
+        case "weatherApi": return org.apache.camel.component.weather.WeatherApi.class;
+        case "zip": return java.lang.String.class;
+        case "zoom": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -150,8 +175,6 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cnt": return target.getConfiguration().getCnt();
@@ -211,6 +234,15 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "weatherApi": return target.getConfiguration().getWeatherApi();
         case "zip": return target.getConfiguration().getZip();
         case "zoom": return target.getConfiguration().getZoom();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

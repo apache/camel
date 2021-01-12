@@ -19,7 +19,8 @@ package org.apache.camel.component.twitter.data;
 import org.apache.camel.component.twitter.TwitterHelper;
 
 public enum EndpointType {
-    POLLING, DIRECT;
+    POLLING,
+    DIRECT;
 
     private static final EndpointType[] VALUES = values();
 

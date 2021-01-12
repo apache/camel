@@ -42,16 +42,16 @@ public class DebeziumTypeConverterTest {
         assertEquals(12, outputValue.get("id"));
         assertEquals("test-name", outputValue.get("name"));
         assertNull(outputValue.get("extra"));
-        assertTrue((boolean)outputValue.get("valid"));
+        assertTrue((boolean) outputValue.get("valid"));
     }
 
     private Struct createTestStruct(final int id, final String name, final boolean valid) {
         final Schema schema = SchemaBuilder.struct()
-                                .field("id", Schema.INT32_SCHEMA)
-                                .field("name", Schema.STRING_SCHEMA)
-                                .field("valid", Schema.BOOLEAN_SCHEMA)
-                                .field("extra", Schema.STRING_SCHEMA)
-                                .build();
+                .field("id", Schema.INT32_SCHEMA)
+                .field("name", Schema.STRING_SCHEMA)
+                .field("valid", Schema.BOOLEAN_SCHEMA)
+                .field("extra", Schema.STRING_SCHEMA)
+                .build();
 
         final Struct value = new Struct(schema);
         value.put("id", id);

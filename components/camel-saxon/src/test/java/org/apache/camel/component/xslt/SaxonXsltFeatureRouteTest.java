@@ -33,7 +33,7 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
         sendXmlMessage("direct:start1", message);
         sendXmlMessage("direct:start2", message);
     }
-        
+
     public void sendXmlMessage(String uri, String message) {
         try {
             template.sendBody("direct:start1", message);
@@ -43,9 +43,8 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
             assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
             assertTrue(ex.getCause() instanceof UncheckedXPathException, "Get a wrong exception cause");
         }
-       
+
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -53,16 +52,14 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start1")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_text_imported.xsl")
-                    .to("mock:result");
-                
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_text_imported.xsl")
+                        .to("mock:result");
+
                 from("direct:start2")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_text.xsl")
-                    .to("mock:result");
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_text.xsl")
+                        .to("mock:result");
             }
         };
     }
-
-    
 
 }

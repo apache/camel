@@ -23,28 +23,24 @@ import com.rabbitmq.client.AlreadyClosedException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 /**
- * Integration test to check that RabbitMQ Endpoint is able to reconnect to
- * broker when broker is not available.
+ * Integration test to check that RabbitMQ Endpoint is able to reconnect to broker when broker is not available.
  * <ul>
  * <li>Stop the broker</li>
- * <li>Run the test: the producer complains it can not send messages, the
- * consumer is silent</li>
- * <li>Start the broker: the producer sends messages, and the consumer receives
- * messages</li>
- * <li>Stop the broker: the producer complains it can not send messages, the
- * consumer is silent</li>
- * <li>Start the broker: the producer sends messages, and the consumer receives
- * messages</li>
- * <li>Kill all connections from the broker: the producer sends messages, and
- * the consumer receives messages</li>
+ * <li>Run the test: the producer complains it can not send messages, the consumer is silent</li>
+ * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
+ * <li>Stop the broker: the producer complains it can not send messages, the consumer is silent</li>
+ * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
+ * <li>Kill all connections from the broker: the producer sends messages, and the consumer receives messages</li>
  * </ul>
  */
 public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
@@ -52,10 +48,6 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
 
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
-
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest" + "&queue=q3&routingKey=rk3" + "&automaticRecoveryEnabled=true"
-                    + "&requestedHeartbeat=1000" + "&connectionTimeout=5000")
-    private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
@@ -65,13 +57,19 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        String rabbitMQEndpoint = String.format("rabbitmq:localhost:%d/%s?username=%s&password=%s"
+                                                + "&queue=q3&routingKey=rk3&automaticRecoveryEnabled=true&requestedHeartbeat=1000&connectionTimeout=5000",
+                connectionProperties.port(), EXCHANGE, connectionProperties.username(), connectionProperties.password());
+
         return new RouteBuilder() {
 
             @Override
             @SuppressWarnings("unchecked")
             public void configure() throws Exception {
-                from("direct:rabbitMQ").id("producingRoute").onException(AlreadyClosedException.class, ConnectException.class).maximumRedeliveries(10).redeliveryDelay(500L).end()
-                    .log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").onException(AlreadyClosedException.class, ConnectException.class)
+                        .maximumRedeliveries(10).redeliveryDelay(500L).end()
+                        .log("Sending message").to(ExchangePattern.InOnly, rabbitMQEndpoint).to(producingMockEndpoint);
                 from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").to(consumingMockEndpoint);
             }
         };

@@ -17,5 +17,7 @@
 package org.apache.camel.component.pdf;
 
 public enum PdfOperation {
-    create, append, extractText
+    create,
+    append,
+    extractText
 }

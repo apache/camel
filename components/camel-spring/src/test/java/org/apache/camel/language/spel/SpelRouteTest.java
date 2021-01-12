@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.language.spel.SpelExpression.spel;
 
 public class SpelRouteTest extends ContextTestSupport {
-    
+
     @Test
     public void testSpelRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -32,7 +32,7 @@ public class SpelRouteTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:test", "World", "dayOrNight", "day");
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSpelWithLoop() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:loopResult");
@@ -46,7 +46,8 @@ public class SpelRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test").setBody(spel("Hello #{message.body}! What a beautiful #{request.headers['dayOrNight']}")).to("mock:result");
+                from("direct:test").setBody(spel("Hello #{message.body}! What a beautiful #{request.headers['dayOrNight']}"))
+                        .to("mock:result");
                 from("direct:loop").loop(4).setBody(spel("#{body + ':' + properties['CamelLoopIndex']}")).to("mock:loopResult");
             }
         };

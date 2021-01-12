@@ -32,7 +32,8 @@ public final class ExchangeHeaders {
     public static final HttpString AGGREGATED_CORRELATION_KEY = new HttpString("CamelAggregatedCorrelationKey");
     public static final HttpString AGGREGATION_STRATEGY = new HttpString("CamelAggregationStrategy");
     public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS = new HttpString("CamelAggregationCompleteAllGroups");
-    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE = new HttpString("CamelAggregationCompleteAllGroupsInclusive");
+    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE
+            = new HttpString("CamelAggregationCompleteAllGroupsInclusive");
     public static final HttpString ASYNC_WAIT = new HttpString("CamelAsyncWait");
 
     public static final HttpString BATCH_INDEX = new HttpString("CamelBatchIndex");
@@ -101,7 +102,8 @@ public final class ExchangeHeaders {
     public static final HttpString HTTP_SERVLET_RESPONSE = new HttpString("CamelHttpServletResponse");
 
     public static final HttpString INTERCEPTED_ENDPOINT = new HttpString("CamelInterceptedEndpoint");
-    public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = new HttpString("CamelInterceptSendToEndpointWhenMatched");
+    public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED
+            = new HttpString("CamelInterceptSendToEndpointWhenMatched");
 
     public static final HttpString LANGUAGE_SCRIPT = new HttpString("CamelLanguageScript");
     public static final HttpString LOG_DEBUG_BODY_MAX_CHARS = new HttpString("CamelLogDebugBodyMaxChars");

@@ -34,9 +34,9 @@ import static org.junit.Assert.assertThat;
 @ContextConfiguration()
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CamelSpringOverridePropertiesForPropertyInjectTest {
-    
+
     private static final String EXPECTED_PROPERTY_VALUE = "The value is overriden";
-    
+
     @Produce(uri = "direct:start-override-route")
     private ProducerTemplate start;
 
@@ -49,7 +49,7 @@ public class CamelSpringOverridePropertiesForPropertyInjectTest {
 
     @Test
     public void testOverride() throws Exception {
-        String response = start.requestBody((Object)"ignored", String.class);
+        String response = start.requestBody((Object) "ignored", String.class);
 
         assertThat(response, is(EXPECTED_PROPERTY_VALUE));
     }

@@ -41,9 +41,13 @@ public interface FopEndpointBuilderFactory {
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
          * 
-         * The option is a: <code>org.apache.fop.apps.FopFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.fop.apps.FopFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param fopFactory the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder fopFactory(Object fopFactory) {
             doSetProperty("fopFactory", fopFactory);
@@ -54,9 +58,12 @@ public interface FopEndpointBuilderFactory {
          * org.apache.fop.apps.FopFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.fop.apps.FopFactory</code> type.
+         * &lt;code&gt;org.apache.fop.apps.FopFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param fopFactory the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder fopFactory(String fopFactory) {
             doSetProperty("fopFactory", fopFactory);
@@ -73,10 +80,13 @@ public interface FopEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +103,14 @@ public interface FopEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -106,9 +120,12 @@ public interface FopEndpointBuilderFactory {
          * The location of a configuration file which can be loaded from
          * classpath or file system.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param userConfigURL the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder userConfigURL(String userConfigURL) {
             doSetProperty("userConfigURL", userConfigURL);
@@ -126,41 +143,16 @@ public interface FopEndpointBuilderFactory {
             return (FopEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFopEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFopEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -170,10 +162,14 @@ public interface FopEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFopEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -196,10 +192,11 @@ public interface FopEndpointBuilderFactory {
          * Path parameter: outputType (required)
          * The primary output format is PDF but other output formats are also
          * supported.
-         * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
-         * txt
+         * There are 10 enums and the value can be one of: pdf, ps, pcl, png,
+         * jpeg, svg, xml, mif, rtf, txt
          * 
          * @param path outputType
+         * @return the dsl builder
          */
         default FopEndpointBuilder fop(String path) {
             return FopEndpointBuilderFactory.endpointBuilder("fop", path);
@@ -218,12 +215,13 @@ public interface FopEndpointBuilderFactory {
          * Path parameter: outputType (required)
          * The primary output format is PDF but other output formats are also
          * supported.
-         * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
-         * txt
+         * There are 10 enums and the value can be one of: pdf, ps, pcl, png,
+         * jpeg, svg, xml, mif, rtf, txt
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path outputType
+         * @return the dsl builder
          */
         default FopEndpointBuilder fop(String componentName, String path) {
             return FopEndpointBuilderFactory.endpointBuilder(componentName, path);

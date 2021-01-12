@@ -50,8 +50,9 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
         final String basePath = RestDslGenerator.determineBasePathFrom(document);
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(basePath, emitter, filter,
-            destinationGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
+                basePath, emitter, filter,
+                destinationGenerator());
 
         document.paths.getPathItems().forEach(restDslStatement::visit);
 

@@ -46,7 +46,7 @@ public abstract class CryptoCmsMarshallerAbstract implements Processor {
 
         OutputStreamBuilder output = OutputStreamBuilder.withExchange(exchange);
         OutputStream outStream;
-        if (config.getToBase64()) {
+        if (Boolean.TRUE.equals(config.getToBase64())) {
             outStream = new Base64OutputStream(output);
         } else {
             outStream = output;
@@ -64,7 +64,7 @@ public abstract class CryptoCmsMarshallerAbstract implements Processor {
                 marshalInternal(body, outStream, exchange);
             } finally {
                 IOHelper.close(outStream); // base64 stream must be closed,
-                                           // before we fetch the bytes
+                                          // before we fetch the bytes
             }
 
             setBodyAndHeader(out, output.build());
@@ -76,8 +76,7 @@ public abstract class CryptoCmsMarshallerAbstract implements Processor {
     }
 
     /**
-     * Intended for overwriting in order to set headers and body for the out
-     * message.
+     * Intended for overwriting in order to set headers and body for the out message.
      */
     protected void setBodyAndHeader(Message out, Object encodedDataObject) {
         out.setBody(encodedDataObject);

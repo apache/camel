@@ -26,7 +26,6 @@ import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
@@ -37,7 +36,8 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
         InputStream is = getClass().getResourceAsStream("barTemplate.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        RouteTemplatesDefinition templates = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRouteTemplatesDefinition(ecc, is);
+        RouteTemplatesDefinition templates
+                = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRouteTemplatesDefinition(ecc, is);
         context.addRouteTemplateDefinitions(templates.getRouteTemplates());
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());
@@ -53,7 +53,8 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
         InputStream is = getClass().getResourceAsStream("barTemplate.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        RouteTemplatesDefinition templates = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRouteTemplatesDefinition(ecc, is);
+        RouteTemplatesDefinition templates
+                = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRouteTemplatesDefinition(ecc, is);
         context.addRouteTemplateDefinitions(templates.getRouteTemplates());
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());

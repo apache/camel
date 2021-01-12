@@ -78,13 +78,14 @@ public class MultiPartCustomerServiceImpl implements MultiPartCustomerService {
         customer.setRevenue(100000);
         response.getReturn().add(customer);
     }
-    
+
     public Customer getLastSavedCustomer() {
         return lastSavedCustomer;
     }
 
     @Override
-    public void saveCustomerToo(SaveCustomer parameters, Product product,
+    public void saveCustomerToo(
+            SaveCustomer parameters, Product product,
             Holder<Company> company) {
         if (product == null) {
             throw new IllegalArgumentException("product may not be null.");

@@ -29,8 +29,7 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.RecentRep
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportInstance;
 
 /**
- * Class that holds {@link TypeReference} instances needed for Jackson mapper to
- * support generics.
+ * Class that holds {@link TypeReference} instances needed for Jackson mapper to support generics.
  */
 public final class TypeReferences {
 
@@ -40,8 +39,9 @@ public final class TypeReferences {
     public static final TypeReference<List<RestError>> REST_ERROR_LIST_TYPE = new TypeReference<List<RestError>>() {
     };
 
-    public static final TypeReference<List<ReportInstance>> REPORT_INSTANCE_LIST_TYPE = new TypeReference<List<ReportInstance>>() {
-    };
+    public static final TypeReference<List<ReportInstance>> REPORT_INSTANCE_LIST_TYPE
+            = new TypeReference<List<ReportInstance>>() {
+            };
 
     public static final TypeReference<List<RecentReport>> RECENT_REPORT_LIST_TYPE = new TypeReference<List<RecentReport>>() {
     };

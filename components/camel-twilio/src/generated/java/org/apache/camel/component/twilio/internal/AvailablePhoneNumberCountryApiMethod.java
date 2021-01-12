@@ -40,8 +40,6 @@ public enum AvailablePhoneNumberCountryApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AvailablePhoneNumberCountryApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

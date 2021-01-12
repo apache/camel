@@ -287,7 +287,7 @@ Available options:
 | userName | String | The user name to use for basic authentication
 | password | String | The password to use for basic authentication
 | timeout | Long | To set the maximum time an action could take to complete
-| servicePath | String | The path to look for for service discovery, default "/services"
+| servicePath | String | The path to look for service discovery, default "/services"
 | type | String | To set the discovery type, valid values are "on-demand" and "watch"
 |===
 
@@ -441,7 +441,7 @@ And in XML
 
 == Load Balancer
 
-The Service Call EIP comes with its own Load Balancer which is istantiated by default if a custom is not configured and
+The Service Call EIP comes with its own Load Balancer which is instantiated by default if a custom is not configured and
 glues Service Discovery, Service Filer, Service Chooser and Service Expression together to load balance requests among the available services.
 
 If you need a more sophisticate load balancer you can use Ribbon by adding camel-ribbon to the mix,

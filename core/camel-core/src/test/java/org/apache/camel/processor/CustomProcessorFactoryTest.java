@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
@@ -72,43 +70,35 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").setBody().constant("body not altered").to("mock:foo");
 
-                from("direct:foo").split(body()).setBody().constant("body not altered").to("mock:split").end().to("mock:result");
+                from("direct:foo").split(body()).setBody().constant("body not altered").to("mock:split").end()
+                        .to("mock:result");
             }
         };
     }
     // END SNIPPET: e2
 
     // START SNIPPET: e3
-    public static class MyFactory implements ProcessorFactory {
-
-        @Override
-        public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
-            return null;
-        }
+    public static class MyFactory extends DefaultProcessorFactory implements ProcessorFactory {
 
         @Override
         public Processor createProcessor(Route route, NamedNode definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
-                SplitDefinition split = (SplitDefinition)definition;
+                SplitDefinition split = (SplitDefinition) definition;
                 split.addOutput(new ToDefinition("mock:extra"));
             }
 
             if (definition instanceof SetBodyDefinition) {
-                SetBodyDefinition set = (SetBodyDefinition)definition;
+                SetBodyDefinition set = (SetBodyDefinition) definition;
                 set.setExpression(new ConstantExpression("body was altered"));
             }
 
-            // return null to let the default implementation create the
+            // let the default implementation create the
             // processor, we just wanted to alter the definition
             // before the processor was created
-            return null;
+            return super.createProcessor(route, definition);
         }
 
-        @Override
-        public Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception {
-            return null;
-        }
     }
     // END SNIPPET: e3
 

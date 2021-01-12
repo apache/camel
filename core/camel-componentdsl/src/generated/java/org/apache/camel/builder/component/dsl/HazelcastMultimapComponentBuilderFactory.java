@@ -37,6 +37,8 @@ public interface HazelcastMultimapComponentBuilderFactory {
      * Category: cache,datagrid
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder
      */
     static HazelcastMultimapComponentBuilder hazelcastMultimap() {
         return new HazelcastMultimapComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,17 +97,24 @@ public interface HazelcastMultimapComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default HazelcastMultimapComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default HazelcastMultimapComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -107,10 +122,13 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
@@ -122,10 +140,13 @@ public interface HazelcastMultimapComponentBuilderFactory {
          * If you don't specify the mode, then the node mode will be the
          * default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: node
          * Group: advanced
+         * 
+         * @param hazelcastMode the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
@@ -151,7 +172,7 @@ public interface HazelcastMultimapComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((HazelcastMultimapComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HazelcastMultimapComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((HazelcastMultimapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((HazelcastMultimapComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "hazelcastInstance": ((HazelcastMultimapComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
             case "hazelcastMode": ((HazelcastMultimapComponent) component).setHazelcastMode((java.lang.String) value); return true;
             default: return false;

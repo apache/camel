@@ -28,9 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link BeanReaderErrorHandler} to handle errors during parsing. This error handler is prototype scoped
- * and provides access to the current {@link Exchange}.
- * You can perform any custom initialization logic in the {@link #init()} method.
+ * A {@link BeanReaderErrorHandler} to handle errors during parsing. This error handler is prototype scoped and provides
+ * access to the current {@link Exchange}. You can perform any custom initialization logic in the {@link #init()}
+ * method.
  */
 public class BeanIOErrorHandler extends BeanReaderErrorHandlerSupport {
 

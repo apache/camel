@@ -4,8 +4,10 @@ package org.apache.camel.component.jcache;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
         JCacheEndpoint target = (JCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cacheconfiguration":
@@ -70,33 +70,54 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cacheConfiguration", javax.cache.configuration.Configuration.class);
-        answer.put("cacheConfigurationProperties", java.util.Properties.class);
-        answer.put("cacheLoaderFactory", javax.cache.configuration.Factory.class);
-        answer.put("cacheWriterFactory", javax.cache.configuration.Factory.class);
-        answer.put("cachingProvider", java.lang.String.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("createCacheIfNotExists", boolean.class);
-        answer.put("eventFilters", java.util.List.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("expiryPolicyFactory", javax.cache.configuration.Factory.class);
-        answer.put("filteredEvents", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("lookupProviders", boolean.class);
-        answer.put("managementEnabled", boolean.class);
-        answer.put("oldValueRequired", boolean.class);
-        answer.put("readThrough", boolean.class);
-        answer.put("statisticsEnabled", boolean.class);
-        answer.put("storeByValue", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("writeThrough", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cacheconfiguration":
+        case "cacheConfiguration": return javax.cache.configuration.Configuration.class;
+        case "cacheconfigurationproperties":
+        case "cacheConfigurationProperties": return java.util.Properties.class;
+        case "cacheloaderfactory":
+        case "cacheLoaderFactory": return javax.cache.configuration.Factory.class;
+        case "cachewriterfactory":
+        case "cacheWriterFactory": return javax.cache.configuration.Factory.class;
+        case "cachingprovider":
+        case "cachingProvider": return java.lang.String.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "createcacheifnotexists":
+        case "createCacheIfNotExists": return boolean.class;
+        case "eventfilters":
+        case "eventFilters": return java.util.List.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expirypolicyfactory":
+        case "expiryPolicyFactory": return javax.cache.configuration.Factory.class;
+        case "filteredevents":
+        case "filteredEvents": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lookupproviders":
+        case "lookupProviders": return boolean.class;
+        case "managementenabled":
+        case "managementEnabled": return boolean.class;
+        case "oldvaluerequired":
+        case "oldValueRequired": return boolean.class;
+        case "readthrough":
+        case "readThrough": return boolean.class;
+        case "statisticsenabled":
+        case "statisticsEnabled": return boolean.class;
+        case "storebyvalue":
+        case "storeByValue": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "writethrough":
+        case "writeThrough": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -104,8 +125,6 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
         JCacheEndpoint target = (JCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getConfiguration().getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cacheconfiguration":
@@ -149,6 +168,21 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": return target.getConfiguration().isSynchronous();
         case "writethrough":
         case "writeThrough": return target.getConfiguration().isWriteThrough();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cacheloaderfactory":
+        case "cacheLoaderFactory": return javax.cache.integration.CacheLoader.class;
+        case "cachewriterfactory":
+        case "cacheWriterFactory": return javax.cache.integration.CacheWriter.class;
+        case "eventfilters":
+        case "eventFilters": return javax.cache.event.CacheEntryEventFilter.class;
+        case "expirypolicyfactory":
+        case "expiryPolicyFactory": return javax.cache.expiry.ExpiryPolicy.class;
         default: return null;
         }
     }

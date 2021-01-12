@@ -42,9 +42,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Action to use when using the timer type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder action(String action) {
             doSetProperty("action", action);
@@ -53,9 +56,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Increment value when using the counter type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param counterIncrement the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder counterIncrement(
                 Long counterIncrement) {
@@ -65,9 +71,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Increment value when using the counter type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param counterIncrement the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder counterIncrement(
                 String counterIncrement) {
@@ -77,9 +87,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Metric description.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param description the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder description(
                 String description) {
@@ -89,9 +102,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Metric display name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param displayName the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder displayName(
                 String displayName) {
@@ -101,9 +117,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Decrement metric value when using concurrent gauge type.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gaugeDecrement the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder gaugeDecrement(
                 Boolean gaugeDecrement) {
@@ -113,10 +132,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Decrement metric value when using concurrent gauge type.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gaugeDecrement the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder gaugeDecrement(
                 String gaugeDecrement) {
@@ -126,9 +148,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Increment metric value when using the concurrent gauge type.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gaugeIncrement the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
                 Boolean gaugeIncrement) {
@@ -138,10 +163,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Increment metric value when using the concurrent gauge type.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gaugeIncrement the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
                 String gaugeIncrement) {
@@ -151,9 +179,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Decrement metric value when using concurrent gauge type.
          * 
-         * The option is a: <code>java.lang.Number</code> type.
+         * The option is a: &lt;code&gt;java.lang.Number&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gaugeValue the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder gaugeValue(Number gaugeValue) {
             doSetProperty("gaugeValue", gaugeValue);
@@ -162,9 +193,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Decrement metric value when using concurrent gauge type.
          * 
-         * The option will be converted to a <code>java.lang.Number</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Number&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gaugeValue the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder gaugeValue(String gaugeValue) {
             doSetProperty("gaugeValue", gaugeValue);
@@ -181,10 +216,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -202,10 +240,14 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -215,9 +257,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Mark value to set when using the meter type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mark the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder mark(Long mark) {
             doSetProperty("mark", mark);
@@ -226,9 +271,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Mark value to set when using the meter type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mark the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder mark(String mark) {
             doSetProperty("mark", mark);
@@ -237,9 +286,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Metric unit. See org.eclipse.microprofile.metrics.MetricUnits.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param metricUnit the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder metricUnit(String metricUnit) {
             doSetProperty("metricUnit", metricUnit);
@@ -249,9 +301,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Comma delimited list of tags associated with the metric in the format
          * tagName=tagValue.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -260,9 +315,12 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Value to set when using the histogram type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder value(Long value) {
             doSetProperty("value", value);
@@ -271,9 +329,13 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         /**
          * Value to set when using the histogram type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder value(String value) {
             doSetProperty("value", value);
@@ -291,41 +353,16 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return (MicroProfileMetricsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMicroProfileMetricsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMicroProfileMetricsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMicroProfileMetricsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -336,10 +373,14 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMicroProfileMetricsEndpointBuilder synchronous(
                 String synchronous) {
@@ -361,13 +402,14 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricType (required)
          * Metric type
-         * The value can be one of: concurrent gauge, counter, gauge, meter,
-         * histogram, timer, simple timer, invalid
+         * There are 8 enums and the value can be one of: concurrent gauge,
+         * counter, gauge, meter, histogram, timer, simple timer, invalid
          * 
          * Path parameter: metricName (required)
          * Metric name
          * 
          * @param path metricType:metricName
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String path) {
@@ -385,8 +427,8 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricType (required)
          * Metric type
-         * The value can be one of: concurrent gauge, counter, gauge, meter,
-         * histogram, timer, simple timer, invalid
+         * There are 8 enums and the value can be one of: concurrent gauge,
+         * counter, gauge, meter, histogram, timer, simple timer, invalid
          * 
          * Path parameter: metricName (required)
          * Metric name
@@ -394,6 +436,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path metricType:metricName
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String componentName,

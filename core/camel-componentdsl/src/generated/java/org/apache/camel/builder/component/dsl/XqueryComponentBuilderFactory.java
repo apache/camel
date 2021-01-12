@@ -37,6 +37,8 @@ public interface XqueryComponentBuilderFactory {
      * Category: transformation
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-saxon
+     * 
+     * @return the dsl builder
      */
     static XqueryComponentBuilder xquery() {
         return new XqueryComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface XqueryComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface XqueryComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,25 +97,35 @@ public interface XqueryComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default XqueryComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default XqueryComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder configuration(
                 net.sf.saxon.Configuration configuration) {
@@ -117,10 +135,13 @@ public interface XqueryComponentBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder configurationProperties(
                 java.util.Map<java.lang.String, java.lang.Object> configurationProperties) {
@@ -130,10 +151,13 @@ public interface XqueryComponentBuilderFactory {
         /**
          * To use the custom ModuleURIResolver.
          * 
-         * The option is a: <code>net.sf.saxon.lib.ModuleURIResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder moduleURIResolver(
                 net.sf.saxon.lib.ModuleURIResolver moduleURIResolver) {
@@ -159,7 +183,7 @@ public interface XqueryComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((XQueryComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((XQueryComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((XQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((XQueryComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((XQueryComponent) component).setConfiguration((net.sf.saxon.Configuration) value); return true;
             case "configurationProperties": ((XQueryComponent) component).setConfigurationProperties((java.util.Map) value); return true;
             case "moduleURIResolver": ((XQueryComponent) component).setModuleURIResolver((net.sf.saxon.lib.ModuleURIResolver) value); return true;

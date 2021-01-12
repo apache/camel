@@ -70,8 +70,8 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .process(new MyCustomProcessor()).id("custom")
-                    .to("mock:result");
+                        .process(new MyCustomProcessor()).id("custom")
+                        .to("mock:result");
             }
         };
     }

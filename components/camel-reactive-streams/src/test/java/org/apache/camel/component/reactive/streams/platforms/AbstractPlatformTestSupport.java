@@ -77,7 +77,6 @@ public abstract class AbstractPlatformTestSupport extends CamelTestSupport {
 
     }
 
-
     @Test
     public void testSubscriber() throws Exception {
 
@@ -112,7 +111,6 @@ public abstract class AbstractPlatformTestSupport extends CamelTestSupport {
         }
 
     }
-
 
     @Override
     public boolean isUseRouteBuilder() {

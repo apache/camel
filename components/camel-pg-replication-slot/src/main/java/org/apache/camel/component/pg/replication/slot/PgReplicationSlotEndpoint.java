@@ -43,7 +43,8 @@ import org.slf4j.LoggerFactory;
  * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
-        syntax = "pg-replication-slot:host:port/database/slot:outputPlugin", category = {Category.DATABASE, Category.SQL}, consumerOnly = true)
+             syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
+             category = { Category.DATABASE, Category.SQL }, consumerOnly = true)
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);
@@ -224,7 +225,6 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
     public void setStatusInterval(Integer statusInterval) {
         this.statusInterval = statusInterval;
     }
-
 
     public Map<String, Object> getSlotOptions() {
         return slotOptions;

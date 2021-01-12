@@ -6,6 +6,7 @@
 :since: 2.18
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/servicenow.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -47,8 +48,8 @@ The ServiceNow component supports 48 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (producer) | Component configuration |  | ServiceNowConfiguration
-| *display* (producer) | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default. The value can be one of: false, true, all | true | String
-| *displayValue* (producer) | Return the display value (true), actual value (false), or both (all) for reference fields (default: false). The value can be one of: false, true, all | false | String
+| *display* (producer) | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default. There are 3 enums and the value can be one of: false, true, all | true | String
+| *displayValue* (producer) | Return the display value (true), actual value (false), or both (all) for reference fields (default: false). There are 3 enums and the value can be one of: false, true, all | false | String
 | *excludeReferenceLink* (producer) | True to exclude Table API links for reference fields (default: false) |  | Boolean
 | *favorites* (producer) | Set this parameter to true to return only scorecards that are favorites of the querying user. |  | Boolean
 | *includeAggregates* (producer) | Set this parameter to true to always return all available aggregates for an indicator, including when an aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no aggregates. |  | Boolean
@@ -61,19 +62,19 @@ The ServiceNow component supports 48 options, which are listed below.
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *models* (producer) | Defines both request and response models |  | Map
 | *perPage* (producer) | Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is 100. | 10 | Integer
-| *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com. The value can be one of: FUJI, GENEVA, HELSINKI | HELSINKI | ServiceNowRelease
+| *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com. There are 3 enums and the value can be one of: FUJI, GENEVA, HELSINKI | HELSINKI | ServiceNowRelease
 | *requestModels* (producer) | Defines the request model |  | Map
 | *resource* (producer) | The default resource, can be overridden by header CamelServiceNowResource |  | String
 | *responseModels* (producer) | Defines the response model |  | Map
-| *sortBy* (producer) | Specify the value to use when sorting results. By default, queries sort records by value. The value can be one of: value, change, changeperc, gap, gapperc, duedate, name, order, default, group, indicator_group, frequency, target, date, trend, bullet, direction |  | String
-| *sortDir* (producer) | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. The value can be one of: asc, desc |  | String
+| *sortBy* (producer) | Specify the value to use when sorting results. By default, queries sort records by value. There are 17 enums and the value can be one of: value, change, changeperc, gap, gapperc, duedate, name, order, default, group, indicator_group, frequency, target, date, trend, bullet, direction |  | String
+| *sortDir* (producer) | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. There are 2 enums and the value can be one of: asc, desc |  | String
 | *suppressAutoSysField* (producer) | True to suppress auto generation of system fields (default: false) |  | Boolean
 | *suppressPaginationHeader* (producer) | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit |  | Boolean
 | *table* (producer) | The default table, can be overridden by header CamelServiceNowTable |  | String
 | *target* (producer) | Set this parameter to true to return only scorecards that have a target. |  | Boolean
 | *topLevelOnly* (producer) | Gets only those categories whose parent is a catalog. |  | Boolean
 | *apiVersion* (advanced) | The ServiceNow REST API version, default latest |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *dateFormat* (advanced) | The date format used for Json serialization/deserialization | yyyy-MM-dd | String
 | *dateTimeFormat* (advanced) | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy
@@ -117,14 +118,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (46 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *display* (producer) | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default. The value can be one of: false, true, all | true | String
-| *displayValue* (producer) | Return the display value (true), actual value (false), or both (all) for reference fields (default: false). The value can be one of: false, true, all | false | String
+| *display* (producer) | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default. There are 3 enums and the value can be one of: false, true, all | true | String
+| *displayValue* (producer) | Return the display value (true), actual value (false), or both (all) for reference fields (default: false). There are 3 enums and the value can be one of: false, true, all | false | String
 | *excludeReferenceLink* (producer) | True to exclude Table API links for reference fields (default: false) |  | Boolean
 | *favorites* (producer) | Set this parameter to true to return only scorecards that are favorites of the querying user. |  | Boolean
 | *includeAggregates* (producer) | Set this parameter to true to always return all available aggregates for an indicator, including when an aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no aggregates. |  | Boolean
@@ -137,19 +138,18 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *models* (producer) | Defines both request and response models |  | Map
 | *perPage* (producer) | Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is 100. | 10 | Integer
-| *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com. The value can be one of: FUJI, GENEVA, HELSINKI | HELSINKI | ServiceNowRelease
+| *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com. There are 3 enums and the value can be one of: FUJI, GENEVA, HELSINKI | HELSINKI | ServiceNowRelease
 | *requestModels* (producer) | Defines the request model |  | Map
 | *resource* (producer) | The default resource, can be overridden by header CamelServiceNowResource |  | String
 | *responseModels* (producer) | Defines the response model |  | Map
-| *sortBy* (producer) | Specify the value to use when sorting results. By default, queries sort records by value. The value can be one of: value, change, changeperc, gap, gapperc, duedate, name, order, default, group, indicator_group, frequency, target, date, trend, bullet, direction |  | String
-| *sortDir* (producer) | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. The value can be one of: asc, desc |  | String
+| *sortBy* (producer) | Specify the value to use when sorting results. By default, queries sort records by value. There are 17 enums and the value can be one of: value, change, changeperc, gap, gapperc, duedate, name, order, default, group, indicator_group, frequency, target, date, trend, bullet, direction |  | String
+| *sortDir* (producer) | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. There are 2 enums and the value can be one of: asc, desc |  | String
 | *suppressAutoSysField* (producer) | True to suppress auto generation of system fields (default: false) |  | Boolean
 | *suppressPaginationHeader* (producer) | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit |  | Boolean
 | *table* (producer) | The default table, can be overridden by header CamelServiceNowTable |  | String
 | *target* (producer) | Set this parameter to true to return only scorecards that have a target. |  | Boolean
 | *topLevelOnly* (producer) | Gets only those categories whose parent is a catalog. |  | Boolean
 | *apiVersion* (advanced) | The ServiceNow REST API version, default latest |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *dateFormat* (advanced) | The date format used for Json serialization/deserialization | yyyy-MM-dd | String
 | *dateTimeFormat* (advanced) | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy
@@ -253,18 +253,18 @@ with the following path and query parameters:
 |===
 | CamelServiceNowResource | CamelServiceNowAction | Method | API URI
 1.5+<.^|TABLE
-| RETRIEVE | GET | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| CREATE | POST | /api/now/v1/table/\{table_name\}
-| MODIFY | PUT | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| DELETE | DELETE | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| UPDATE | PATCH | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| RETRIEVE | GET | /api/now/v1/table/\{table_name}/\{sys_id}
+| CREATE | POST | /api/now/v1/table/\{table_name}
+| MODIFY | PUT | /api/now/v1/table/\{table_name}/\{sys_id}
+| DELETE | DELETE | /api/now/v1/table/\{table_name}/\{sys_id}
+| UPDATE | PATCH | /api/now/v1/table/\{table_name}/\{sys_id}
 
 | AGGREGATE
-| RETRIEVE | GET | /api/now/v1/stats/\{table_name\}
+| RETRIEVE | GET | /api/now/v1/stats/\{table_name}
 
 1.2+<.^|IMPORT
-| RETRIEVE | GET | /api/now/import/\{table_name\}/\{sys_id\}
-| CREATE | POST | /api/now/import/\{table_name\}
+| RETRIEVE | GET | /api/now/import/\{table_name}/\{sys_id}
+| CREATE | POST | /api/now/import/\{table_name}
 |===
 
 [NOTE]
@@ -278,24 +278,24 @@ http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API
 |===
 | CamelServiceNowResource | CamelServiceNowAction | CamelServiceNowActionSubject | Method | API URI
 1.5+<.^|TABLE
-| RETRIEVE | | GET | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| CREATE | | POST | /api/now/v1/table/\{table_name\}
-| MODIFY | | PUT | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| DELETE | | DELETE | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| UPDATE | | PATCH | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| RETRIEVE | | GET | /api/now/v1/table/\{table_name}/\{sys_id}
+| CREATE | | POST | /api/now/v1/table/\{table_name}
+| MODIFY | | PUT | /api/now/v1/table/\{table_name}/\{sys_id}
+| DELETE | | DELETE | /api/now/v1/table/\{table_name}/\{sys_id}
+| UPDATE | | PATCH | /api/now/v1/table/\{table_name}/\{sys_id}
 
 | AGGREGATE
-| RETRIEVE | | GET | /api/now/v1/stats/\{table_name\}
+| RETRIEVE | | GET | /api/now/v1/stats/\{table_name}
 
 1.2+<.^|IMPORT
-| RETRIEVE | | GET | /api/now/import/\{table_name\}/\{sys_id\}
-| CREATE | | POST | /api/now/import/\{table_name\}
+| RETRIEVE | | GET | /api/now/import/\{table_name}/\{sys_id}
+| CREATE | | POST | /api/now/import/\{table_name}
 
 1.4+<.^|ATTACHMENT
-| RETRIEVE | | GET | /api/now/api/now/attachment/\{sys_id\}
-| CONTENT | | GET | /api/now/attachment/\{sys_id\}/file
+| RETRIEVE | | GET | /api/now/api/now/attachment/\{sys_id}
+| CONTENT | | GET | /api/now/attachment/\{sys_id}/file
 | UPLOAD | | POST | /api/now/api/now/attachment/file
-| DELETE | | DELETE | /api/now/attachment/\{sys_id\}
+| DELETE | | DELETE | /api/now/attachment/\{sys_id}
 
 | SCORECARDS
 | RETRIEVE | PERFORMANCE_ANALYTICS | GET | /api/now/pa/scorecards
@@ -305,26 +305,26 @@ http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API
 | CREATE | IDENTIFY_RECONCILE | POST | /api/now/identifyreconcile
 
 1.2+<.^|SERVICE_CATALOG
-| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/\{sys_id\}
-| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/\{sys_id\}/categories
+| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/\{sys_id}
+| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/\{sys_id}/categories
 
 1.5+<.^|SERVICE_CATALOG_ITEMS
-| RETRIEVE | | GET | /sn_sc/servicecatalog/items/\{sys_id\}
-| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id\}/submit_guide
-| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id\}/checkout_guide
-| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/\{sys_id\}/add_to_cart
-| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/\{sys_id\}/submit_producer
+| RETRIEVE | | GET | /sn_sc/servicecatalog/items/\{sys_id}
+| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id}/submit_guide
+| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id}/checkout_guide
+| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/\{sys_id}/add_to_cart
+| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/\{sys_id}/submit_producer
 
 1.6+<.^|SERVICE_CATALOG_CARTS
 | RETRIEVE | | GET | /sn_sc/servicecatalog/cart
-| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/\{user_id\}
+| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/\{user_id}
 | RETRIEVE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/checkout
-| UPDATE | | POST | /sn_sc/servicecatalog/cart/\{cart_item_id\}
+| UPDATE | | POST | /sn_sc/servicecatalog/cart/\{cart_item_id}
 | UPDATE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/submit_order
-| DELETE | | DELETE | /sn_sc/servicecatalog/cart/\{sys_id\}/empty
+| DELETE | | DELETE | /sn_sc/servicecatalog/cart/\{sys_id}/empty
 
 | SERVICE_CATALOG_CATEGORIES
-| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/\{sys_id\}
+| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/\{sys_id}
 
 |===
 

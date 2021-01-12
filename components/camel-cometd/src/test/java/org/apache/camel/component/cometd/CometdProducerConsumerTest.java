@@ -82,7 +82,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
             assertNotNull(message.getHeader(CometdBinding.COMETD_CLIENT_ID_HEADER_NAME));
         }
     }
-    
+
     @Test
     void testSessionHeaderArgumentSet() throws Exception {
         // setup
@@ -90,17 +90,17 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
 
         // act
         Endpoint result = component
-            .createEndpoint("cometd://127.0.0.1:"
-                            + port
-                            + "/service/testArgs?baseResource=file:./target/test-classes/webapp&"
-                            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2");
+                .createEndpoint("cometd://127.0.0.1:"
+                                + port
+                                + "/service/testArgs?baseResource=file:./target/test-classes/webapp&"
+                                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2");
 
         // assert
         assertTrue(result instanceof CometdEndpoint);
-        CometdEndpoint cometdEndpoint = (CometdEndpoint)result;
+        CometdEndpoint cometdEndpoint = (CometdEndpoint) result;
         assertTrue(cometdEndpoint.isSessionHeadersEnabled());
     }
-    
+
     @Test
     void testSessionInformationTransferred() {
         // act
@@ -112,7 +112,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         assertTrue(exchanges.size() > 0);
         for (Exchange exchange : exchanges) {
             Message message = exchange.getIn();
-            assertTrue((Boolean)message.getHeader(SHOOKHANDS_SESSION_HEADER));
+            assertTrue((Boolean) message.getHeader(SHOOKHANDS_SESSION_HEADER));
         }
     }
 
@@ -121,7 +121,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2";
+              + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2";
 
         super.setUp();
     }
@@ -145,15 +145,17 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         return new SecurityPolicy() {
 
             @Override
-            public boolean canSubscribe(BayeuxServer server, ServerSession session, ServerChannel channel,
-                                        ServerMessage message) {
+            public boolean canSubscribe(
+                    BayeuxServer server, ServerSession session, ServerChannel channel,
+                    ServerMessage message) {
                 session.setAttribute("Subscribed", true);
                 return true;
             }
 
             @Override
-            public boolean canPublish(BayeuxServer server, ServerSession session, ServerChannel channel,
-                                      ServerMessage message) {
+            public boolean canPublish(
+                    BayeuxServer server, ServerSession session, ServerChannel channel,
+                    ServerMessage message) {
                 return true;
             }
 
@@ -164,8 +166,9 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
             }
 
             @Override
-            public boolean canCreate(BayeuxServer server, ServerSession session, String channelId,
-                                     ServerMessage message) {
+            public boolean canCreate(
+                    BayeuxServer server, ServerSession session, String channelId,
+                    ServerMessage message) {
                 return true;
             }
         };
@@ -198,4 +201,3 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         }
     }
 }
-

@@ -44,7 +44,7 @@ public final class JcloudsConstants {
     public static final String SUSPEND_NODE = "CamelJcloudsSuspendNode";
     public static final String RESUME_NODE = "CamelJcloudsResumeNode";
     public static final String RUN_SCRIPT = "CamelJcloudsRunScript";
-    
+
     public static final String CONTENT_LANGUAGE = "CamelJcloudsContentLanguage";
     public static final String CONTENT_DISPOSITION = "CamelJcloudsContentDisposition";
     public static final String PAYLOAD_EXPIRES = "CamelJcloudsPayloadExpires";
@@ -59,8 +59,6 @@ public final class JcloudsConstants {
     public static final String RUN_SCRIPT_ERROR = "CamelJcloudsRunScriptError";
     public static final String RUN_SCRIPT_EXIT_CODE = "CamelJcloudsRunScriptErrorCode";
 
-
-    
     private JcloudsConstants() {
         // utility class
     }

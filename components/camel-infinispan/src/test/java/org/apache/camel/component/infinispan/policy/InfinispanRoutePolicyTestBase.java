@@ -38,7 +38,7 @@ abstract class InfinispanRoutePolicyTestBase {
     // *******************************************
 
     @Test
-    public void testLeadership()throws Exception {
+    public void testLeadership() throws Exception {
         BasicCacheContainer cacheManager = createCacheManager();
 
         InfinispanRoutePolicy policy1 = InfinispanRoutePolicy.withManager(cacheManager);
@@ -57,13 +57,15 @@ abstract class InfinispanRoutePolicyTestBase {
             context = new DefaultCamelContext();
             context.start();
 
-            context.getExtension(Model.class).addRouteDefinition(RouteDefinition.fromUri("direct:r1").routePolicy(policy1).to("mock:p1"));
+            context.getExtension(Model.class)
+                    .addRouteDefinition(RouteDefinition.fromUri("direct:r1").routePolicy(policy1).to("mock:p1"));
 
             for (int i = 0; i < 10 && !policy1.isLeader(); i++) {
                 Thread.sleep(250);
             }
 
-            context.getExtension(Model.class).addRouteDefinition(RouteDefinition.fromUri("direct:r2").routePolicy(policy2).to("mock:p2"));
+            context.getExtension(Model.class)
+                    .addRouteDefinition(RouteDefinition.fromUri("direct:r2").routePolicy(policy2).to("mock:p2"));
 
             assertTrue(policy1.isLeader());
             assertFalse(policy2.isLeader());

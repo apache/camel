@@ -68,7 +68,7 @@ public class TimerAdvancedTest extends ContextTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(timer("foo").period(0).delay(-1).repeatCount(10).advanced().exceptionHandler(myErrorHandler))
-                    .noAutoStartup()
+                        .noAutoStartup()
                         .to("mock:result")
                         .throwException(new IllegalArgumentException("Forced"));
             }

@@ -38,7 +38,8 @@ public class JdbcGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
 
     @Test
     public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() throws Exception {
-        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(
+                "insert into tableWithAutoIncr (content) values ('value2')");
     }
 
     @Override

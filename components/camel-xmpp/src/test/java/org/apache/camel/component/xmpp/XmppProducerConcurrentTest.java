@@ -16,33 +16,15 @@
  */
 package org.apache.camel.component.xmpp;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
-@Disabled("This test is not working at the moment")
-public class XmppProducerConcurrentTest extends CamelTestSupport {
-
-    private EmbeddedXmppTestServer embeddedXmppTestServer;
-
-    @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
-        embeddedXmppTestServer.bindSSLContextTo(registry);
-
-        return registry;
-    }
+public class XmppProducerConcurrentTest extends XmppBaseTest {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -61,12 +43,7 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    template.sendBody("direct:start", "Hello " + index);
-                    return null;
-                }
-            });
+            executor.submit(() -> template.sendBody("direct:start", "Hello " + index));
         }
 
         assertMockEndpointsSatisfied();
@@ -79,22 +56,10 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-                            + "?connectionConfig=#customConnectionConfig&user=camel_consumer&password=secret&serviceName=apache.camel")
-                    .to("mock:result");
+                        .to("xmpp://" + getUrl()
+                            + "?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_consumer&password=secret&serviceName=apache.camel")
+                        .to("mock:result");
             }
         };
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        embeddedXmppTestServer = new EmbeddedXmppTestServer();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        embeddedXmppTestServer.stop();
     }
 }

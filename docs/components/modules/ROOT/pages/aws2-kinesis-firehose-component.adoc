@@ -8,6 +8,7 @@
 :since: 3.2
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-kinesis-firehose.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS 2
 
@@ -50,17 +51,17 @@ The AWS 2 Kinesis Firehose component supports 13 options, which are listed below
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
+| *amazonKinesisFirehoseClient* (producer) | *Autowired* Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
+| *cborEnabled* (common) | This option will set the CBOR_ENABLED property during the execution | true | boolean
 | *configuration* (producer) | Component configuration |  | KinesisFirehose2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to do in case the user don't want to send only a record. The value can be one of: sendBatchRecord, createDeliveryStream, deleteDeliveryStream, updateDestination |  | KinesisFirehose2Operations
+| *operation* (producer) | The operation to do in case the user don't want to send only a record. There are 5 enums and the value can be one of: sendBatchRecord, createDeliveryStream, deleteDeliveryStream, describeDeliveryStream, updateDestination |  | KinesisFirehose2Operations
 | *proxyHost* (producer) | To define a proxy host when instantiating the Kinesis Firehose client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Kinesis Firehose client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Kinesis Firehose client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Kinesis Firehose client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -91,22 +92,21 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
+| *amazonKinesisFirehoseClient* (producer) | *Autowired* Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
+| *cborEnabled* (common) | This option will set the CBOR_ENABLED property during the execution | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to do in case the user don't want to send only a record. The value can be one of: sendBatchRecord, createDeliveryStream, deleteDeliveryStream, updateDestination |  | KinesisFirehose2Operations
+| *operation* (producer) | The operation to do in case the user don't want to send only a record. There are 5 enums and the value can be one of: sendBatchRecord, createDeliveryStream, deleteDeliveryStream, describeDeliveryStream, updateDestination |  | KinesisFirehose2Operations
 | *proxyHost* (producer) | To define a proxy host when instantiating the Kinesis Firehose client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Kinesis Firehose client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Kinesis Firehose client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Kinesis Firehose client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -155,6 +155,7 @@ Camel-AWS s3 component provides the following operation on the producer side:
 - SendBatchRecord
 - CreateDeliveryStream
 - DeleteDeliveryStream
+- DescribeDeliveryStream
 - UpdateDestination
 
 === Send Batch Records Example
@@ -216,7 +217,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::camel-spring-boot::page$aws2-kinesis-starter.adoc[]

@@ -40,7 +40,7 @@ public class StreamCachingInOutTest extends ContextTestSupport {
         template.sendBody("direct:c", message);
 
         assertMockEndpointsSatisfied();
-        assertEquals(c.assertExchangeReceived(0).getIn().getBody(String.class), "James,Guillaume,Hiram,Rob,Roman");
+        assertEquals("James,Guillaume,Hiram,Rob,Roman", c.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class StreamCachingInOutTest extends ContextTestSupport {
         template.sendBody("direct:e", message);
 
         assertMockEndpointsSatisfied();
-        assertEquals(e.assertExchangeReceived(0).getIn().getBody(String.class), "James,Guillaume,Hiram,Rob,Roman");
+        assertEquals("James,Guillaume,Hiram,Rob,Roman", e.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
     @Override

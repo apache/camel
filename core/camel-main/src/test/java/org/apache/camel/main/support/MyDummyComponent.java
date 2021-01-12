@@ -43,7 +43,7 @@ public class MyDummyComponent extends DefaultComponent {
 
     // this method makes camel no able to find a suitable setter
     public void setConfiguration(Object configuration) {
-        this.configuration = (MyDummyConfiguration)configuration;
+        this.configuration = (MyDummyConfiguration) configuration;
     }
 
     public String getComponentValue() {

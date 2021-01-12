@@ -124,8 +124,6 @@ public enum MessageApiMethod implements ApiMethod {
         arg("pathSid", String.class),
         arg("body", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private MessageApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

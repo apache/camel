@@ -120,8 +120,7 @@ public class MinaUdpNoCamelTest {
     private final class UDPClient extends IoHandlerAdapter {
 
         /**
-         * Three optional arguments can be provided (defaults in brackets):
-         * path, host (localhost) and port.
+         * Three optional arguments can be provided (defaults in brackets): path, host (localhost) and port.
          *
          * @param args The command line args.
          */

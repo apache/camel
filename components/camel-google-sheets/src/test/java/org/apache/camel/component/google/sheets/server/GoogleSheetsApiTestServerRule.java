@@ -44,10 +44,14 @@ public class GoogleSheetsApiTestServerRule implements InvocationInterceptor {
         try {
             Map<String, Object> testOptions = getTestOptions(optionFile);
 
-            googleApiTestServer = new GoogleSheetsApiTestServer.Builder(CitrusEndpoints.http().server().port(serverPort).timeout(15000).defaultStatus(HttpStatus.REQUEST_TIMEOUT)
-                .autoStart(true)).keyStorePath(new ClassPathResource(SERVER_KEYSTORE).getFile().toPath()).keyStorePassword(SERVER_KEYSTORE_PASSWORD).securePort(serverPort)
-                    .clientId(testOptions.get("clientId").toString()).clientSecret(testOptions.get("clientSecret").toString())
-                    .accessToken(testOptions.get("accessToken").toString()).refreshToken(testOptions.get("refreshToken").toString()).build();
+            googleApiTestServer = new GoogleSheetsApiTestServer.Builder(
+                    CitrusEndpoints.http().server().port(serverPort).timeout(15000).defaultStatus(HttpStatus.REQUEST_TIMEOUT)
+                            .autoStart(true)).keyStorePath(new ClassPathResource(SERVER_KEYSTORE).getFile().toPath())
+                                    .keyStorePassword(SERVER_KEYSTORE_PASSWORD).securePort(serverPort)
+                                    .clientId(testOptions.get("clientId").toString())
+                                    .clientSecret(testOptions.get("clientSecret").toString())
+                                    .accessToken(testOptions.get("accessToken").toString())
+                                    .refreshToken(testOptions.get("refreshToken").toString()).build();
 
             assertThatGoogleApi(googleApiTestServer).isRunning();
         } catch (Exception e) {
@@ -56,8 +60,10 @@ public class GoogleSheetsApiTestServerRule implements InvocationInterceptor {
     }
 
     @Override
-    public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
-                                    ExtensionContext extensionContext) throws Throwable {
+    public void interceptTestMethod(
+            Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
+            ExtensionContext extensionContext)
+            throws Throwable {
         googleApiTestServer.init();
         try {
             invocation.proceed();
@@ -66,7 +72,7 @@ public class GoogleSheetsApiTestServerRule implements InvocationInterceptor {
         }
     }
 
-   /**
+    /**
      * Read component configuration from TEST_OPTIONS_PROPERTIES.
      * 
      * @return Map of component options.

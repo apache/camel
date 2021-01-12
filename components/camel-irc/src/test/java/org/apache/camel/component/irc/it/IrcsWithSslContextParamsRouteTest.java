@@ -35,16 +35,16 @@ public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
     //    pass reliably, you may need to set a break point in IrcEndpoint#joinChanel in order
     //    to slow the route creation down enough for the event listener to be in place
     //    when camel-con joins the room.
-    
+
     @BindToRegistry("sslContextParameters")
     protected SSLContextParameters loadSslContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("localhost.p12");
         ksp.setPassword("changeit");
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setTrustManagers(tmp);
 
@@ -56,9 +56,9 @@ public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
         return "ircs://camel-prd-user@localhost:6669/#camel-test?nickname=camel-prd&password=password&sslContextParameters=#sslContextParameters";
     }
 
-    @Override    
+    @Override
     protected String fromUri() {
         return "ircs://camel-con-user@localhost:6669/#camel-test?nickname=camel-con&password=password&sslContextParameters=#sslContextParameters";
-    }    
+    }
 
 }

@@ -20,7 +20,13 @@ import com.opengamma.elsql.ElSqlConfig;
 
 public enum ElSqlDatabaseVendor {
 
-    Default, Postgres, HSql, MySql, Oracle, SqlServer2008, Veritca;
+    Default,
+    Postgres,
+    HSql,
+    MySql,
+    Oracle,
+    SqlServer2008,
+    Veritca;
 
     ElSqlConfig asElSqlConfig() {
         if (Postgres.equals(this)) {

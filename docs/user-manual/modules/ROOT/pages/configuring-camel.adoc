@@ -70,4 +70,11 @@ schema then you'd hack that file to add your component &
 xref:contributing.adoc[contribute a patch] to the camel XSD. Otherwise
 you could write your own namespace & schema if you prefer.
 
+[[ConfiguringCamel-PropertyBinding]]
+== Configuring using properties
 
+Camel is very configurable with properties using the following features:
+
+- xref:property-binding.adoc[Property Binding]
+- xref:using-propertyplaceholder.adoc[Property Placeholders]
+- xref:components::properties-component.adoc[Properties Component]

@@ -37,6 +37,8 @@ public interface Aws2TranslateComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-translate
+     * 
+     * @return the dsl builder
      */
     static Aws2TranslateComponentBuilder aws2Translate() {
         return new Aws2TranslateComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * Being able to autodetect the source language.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param autodetectSourceLanguage the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder autodetectSourceLanguage(
                 boolean autodetectSourceLanguage) {
@@ -62,27 +67,15 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2TranslateComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.translate.Translate2Configuration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.translate.Translate2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder configuration(
                 org.apache.camel.component.aws2.translate.Translate2Configuration configuration) {
@@ -100,10 +93,13 @@ public interface Aws2TranslateComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -114,10 +110,13 @@ public interface Aws2TranslateComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.translate.Translate2Operations&lt;/code&gt; type.
          * 
          * Default: translateText
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder operation(
                 org.apache.camel.component.aws2.translate.Translate2Operations operation) {
@@ -127,10 +126,13 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -139,9 +141,12 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the Translate client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder proxyHost(
                 java.lang.String proxyHost) {
@@ -151,9 +156,12 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the Translate client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder proxyPort(
                 java.lang.Integer proxyPort) {
@@ -163,11 +171,14 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Translate client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -180,9 +191,12 @@ public interface Aws2TranslateComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -191,9 +205,12 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * Source language to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceLanguage the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder sourceLanguage(
                 java.lang.String sourceLanguage) {
@@ -203,9 +220,12 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * Target language to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param targetLanguage the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder targetLanguage(
                 java.lang.String targetLanguage) {
@@ -216,9 +236,12 @@ public interface Aws2TranslateComponentBuilderFactory {
          * To use a existing configured AWS Translate as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.translate.TranslateClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.translate.TranslateClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param translateClient the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder translateClient(
                 software.amazon.awssdk.services.translate.TranslateClient translateClient) {
@@ -229,10 +252,13 @@ public interface Aws2TranslateComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -240,25 +266,35 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2TranslateComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2TranslateComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder accessKey(
                 java.lang.String accessKey) {
@@ -268,9 +304,12 @@ public interface Aws2TranslateComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2TranslateComponentBuilder secretKey(
                 java.lang.String secretKey) {
@@ -302,7 +341,6 @@ public interface Aws2TranslateComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "autodetectSourceLanguage": getOrCreateConfiguration((Translate2Component) component).setAutodetectSourceLanguage((boolean) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Translate2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Translate2Component) component).setConfiguration((org.apache.camel.component.aws2.translate.Translate2Configuration) value); return true;
             case "lazyStartProducer": ((Translate2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Translate2Component) component).setOperation((org.apache.camel.component.aws2.translate.Translate2Operations) value); return true;
@@ -315,7 +353,7 @@ public interface Aws2TranslateComponentBuilderFactory {
             case "targetLanguage": getOrCreateConfiguration((Translate2Component) component).setTargetLanguage((java.lang.String) value); return true;
             case "translateClient": getOrCreateConfiguration((Translate2Component) component).setTranslateClient((software.amazon.awssdk.services.translate.TranslateClient) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Translate2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((Translate2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Translate2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Translate2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

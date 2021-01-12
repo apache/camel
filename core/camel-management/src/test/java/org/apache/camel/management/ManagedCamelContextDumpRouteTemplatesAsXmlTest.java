@@ -22,7 +22,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -59,14 +58,14 @@ public class ManagedCamelContextDumpRouteTemplatesAsXmlTest extends ManagementTe
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                    .from("direct:{{foo}}")
+                        .from("direct:{{foo}}")
                         .log("Got ${body}")
                         .to("{{bar}}");
 
                 routeTemplate("myOtherTemplate").templateParameter("aaa")
-                    .from("seda:bar")
+                        .from("seda:bar")
                         .filter().header("{{aaa}}")
-                            .to("ref:bar")
+                        .to("ref:bar")
                         .end();
             }
         };

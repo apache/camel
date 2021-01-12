@@ -85,8 +85,6 @@ public enum SipCredentialApiMethod implements ApiMethod {
         arg("pathCredentialListSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private SipCredentialApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

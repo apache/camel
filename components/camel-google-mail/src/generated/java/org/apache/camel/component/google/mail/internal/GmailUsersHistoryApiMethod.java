@@ -25,8 +25,6 @@ public enum GmailUsersHistoryApiMethod implements ApiMethod {
         "list",
         arg("userId", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private GmailUsersHistoryApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

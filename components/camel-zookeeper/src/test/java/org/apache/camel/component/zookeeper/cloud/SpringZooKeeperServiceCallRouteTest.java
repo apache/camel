@@ -17,10 +17,11 @@
 package org.apache.camel.component.zookeeper.cloud;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
-import org.apache.camel.test.testcontainers.spring.junit5.ContainerAwareSpringTestSupport;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -30,11 +31,14 @@ import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testcontainers.containers.GenericContainer;
 
-public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTestSupport {
+public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+
     private static final String SERVICE_NAME = "http-service";
     private static final String SERVICE_PATH = "/camel";
 
@@ -57,53 +61,48 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
     }
 
     @Override
-    public GenericContainer createContainer() {
-        return new ZooKeeperContainer();
-    }
-
-    @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
         function = new AvailablePortFinderPropertiesFunction();
 
         curator = CuratorFrameworkFactory.builder()
-            .connectString(getContainerHost(ZooKeeperContainer.CONTAINER_NAME) + ":" + getContainerPort(ZooKeeperContainer.CONTAINER_NAME, ZooKeeperContainer.CLIENT_PORT))
-            .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-            .build();
+                .connectString(service.getConnectionString())
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .build();
 
         discovery = ServiceDiscoveryBuilder.builder(ZooKeeperServiceDiscovery.MetaData.class)
-            .client(curator)
-            .basePath(SERVICE_PATH)
-            .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceDiscovery.MetaData.class))
-            .build();
+                .client(curator)
+                .basePath(SERVICE_PATH)
+                .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceDiscovery.MetaData.class))
+                .build();
 
         curator.start();
         discovery.start();
 
         discovery.registerService(
-            ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
-                .address("127.0.0.1")
-                .port(Integer.parseInt(function.apply("service-1")))
-                .name(SERVICE_NAME)
-                .id("service-1")
-                .build());
+                ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                        .address("127.0.0.1")
+                        .port(Integer.parseInt(function.apply("service-1")))
+                        .name(SERVICE_NAME)
+                        .id("service-1")
+                        .build());
 
         discovery.registerService(
-            ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
-                .address("127.0.0.1")
-                .port(Integer.parseInt(function.apply("service-2")))
-                .name(SERVICE_NAME)
-                .id("service-2")
-                .build());
+                ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                        .address("127.0.0.1")
+                        .port(Integer.parseInt(function.apply("service-2")))
+                        .name(SERVICE_NAME)
+                        .id("service-2")
+                        .build());
 
         discovery.registerService(
-            ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
-                .address("127.0.0.1")
-                .port(Integer.parseInt(function.apply("service-3")))
-                .name(SERVICE_NAME)
-                .id("service-3")
-                .build());
+                ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                        .address("127.0.0.1")
+                        .port(Integer.parseInt(function.apply("service-3")))
+                        .name(SERVICE_NAME)
+                        .id("service-3")
+                        .build());
     }
 
     @Override
@@ -136,6 +135,7 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/zookeeper/cloud/SpringZooKeeperServiceCallRouteTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/zookeeper/cloud/SpringZooKeeperServiceCallRouteTest.xml");
     }
 }

@@ -6,6 +6,7 @@
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/webhook.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -57,7 +58,7 @@ The Webhook component supports 8 options, which are listed below.
 | *webhookComponentName* (consumer) | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
 | *webhookExternalUrl* (consumer) | The URL of the current service as seen by the webhook provider |  | String
 | *webhookPath* (consumer) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *configuration* (advanced) | Set the default configuration for the webhook meta-component. |  | WebhookConfiguration
 |===
 // component options: END
@@ -82,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (10 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,8 +96,7 @@ with the following path and query parameters:
 | *webhookExternalUrl* (consumer) | The URL of the current service as seen by the webhook provider |  | String
 | *webhookPath* (consumer) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

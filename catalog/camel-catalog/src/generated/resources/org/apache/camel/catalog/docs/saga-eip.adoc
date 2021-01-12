@@ -69,7 +69,7 @@ Users that want to use the in-memory saga service should add the following code 
 
 [source,java]
 ----
-context.addService(new org.apache.camel.impl.saga.InMemorySagaService());
+context.addService(new org.apache.camel.saga.InMemorySagaService());
 ----
 
 The service belongs to the `camel-core` module.
@@ -77,7 +77,7 @@ The service belongs to the `camel-core` module.
 === Using the LRA Saga Service
 
 The LRA Saga Service is an implementation based on the MicroProfile sandbox LRA specification.
-It leverages a *external Saga coordinator* to control the execution of the various steps of the Saga.
+It leverages an *external Saga coordinator* to control the execution of the various steps of the Saga.
 The proposed reference implementation for the LRA specification is the http://jbossts.blogspot.it/2017/12/narayana-lra-implementation-of-saga.html[Narayana LRA Coordinator].
 Users can follows instructions present on the Narayana website to *startup a remote instance of the coordinator*.
 
@@ -164,10 +164,10 @@ Once done, the Saga EIP can be directly used inside Camel routes and it will use
 == Examples
 
 Suppose you want to place a new order and you have two distinct services in your system: one managing the orders and one managing the credit.
-Logically you can place a order if you have enough credit for it.
+Logically you can place an order if you have enough credit for it.
 
 With the Saga EIP you can model the _direct:buy_ route as a Saga composed of two distinct actions, one to create the order and one to take the credit.
-*Both actions must be executed, or none of them*: a order placed without credit can be considered a inconsistent outcome (as well as a payment without an order).
+*Both actions must be executed, or none of them*: an order placed without credit can be considered an inconsistent outcome (as well as a payment without an order).
 
 [source,java]
 ----
@@ -230,7 +230,7 @@ It may happen that due to a delay in the execution of the _direct:newOrder_ rout
 
 So, when the compensating action _direct:cancelOrder_ is called, it may not find the Order record that should be cancelled.
 It is important, in order to guarantee full global consistency, that *any main action and its corresponding compensating action are commutative*,
-i.e. if compensation occurs before the main action it shoud have the same effect.
+i.e. if compensation occurs before the main action it should have the same effect.
 
 Another possible approach, when using a commutative behavior is not possible,
 is to consistently fail in the compensating action until data produced by the main action is found (or the maximum number of retries is exhausted):

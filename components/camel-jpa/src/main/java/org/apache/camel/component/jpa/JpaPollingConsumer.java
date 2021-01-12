@@ -217,7 +217,8 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         if (queryFactory == null) {
             queryFactory = createQueryFactory();
             if (queryFactory == null) {
-                throw new IllegalArgumentException("No queryType property configured on this consumer, nor an entityType configured on the endpoint so cannot consume");
+                throw new IllegalArgumentException(
+                        "No queryType property configured on this consumer, nor an entityType configured on the endpoint so cannot consume");
             }
         }
     }

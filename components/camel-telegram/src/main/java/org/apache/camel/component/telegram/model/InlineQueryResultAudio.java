@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to an MP3 audio file.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultaudio">
- * https://core.telegram.org/bots/api#inlinequeryresultaudio</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultaudio</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultAudio extends InlineQueryResult {

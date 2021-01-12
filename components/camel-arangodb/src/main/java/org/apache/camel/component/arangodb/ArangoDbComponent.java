@@ -44,7 +44,8 @@ public class ArangoDbComponent extends DefaultComponent {
             throw new IllegalArgumentException("Database name must be specified.");
         }
 
-        final ArangoDbConfiguration configuration = this.configuration != null ? this.configuration.copy() : new ArangoDbConfiguration();
+        final ArangoDbConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new ArangoDbConfiguration();
         configuration.setDatabase(remaining);
         Endpoint endpoint = new ArangoDbEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

@@ -77,7 +77,8 @@ public class SqsProducerTest {
         sqsConfiguration = new SqsConfiguration();
         sqsConfiguration.setDelaySeconds(0);
         sqsConfiguration.setQueueName("queueName");
-        SendMessageResult sendMessageResult = new SendMessageResult().withMD5OfMessageBody(MESSAGE_MD5).withMessageId(MESSAGE_ID);
+        SendMessageResult sendMessageResult
+                = new SendMessageResult().withMD5OfMessageBody(MESSAGE_MD5).withMessageId(MESSAGE_ID);
         lenient().when(amazonSQSClient.sendMessage(any(SendMessageRequest.class))).thenReturn(sendMessageResult);
         lenient().when(sqsEndpoint.getClient()).thenReturn(amazonSQSClient);
         lenient().when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
@@ -164,7 +165,8 @@ public class SqsProducerTest {
         ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(amazonSQSClient).sendMessage(capture.capture());
 
-        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_1, capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1).getStringValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_1,
+                capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1).getStringValue());
         assertNull(capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1).getBinaryValue());
     }
 
@@ -178,7 +180,8 @@ public class SqsProducerTest {
         ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(amazonSQSClient).sendMessage(capture.capture());
 
-        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_2, capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2).getBinaryValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_2,
+                capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2).getBinaryValue());
         assertNull(capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2).getStringValue());
     }
 
@@ -195,9 +198,12 @@ public class SqsProducerTest {
         ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(amazonSQSClient).sendMessage(capture.capture());
 
-        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_1, capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1).getStringValue());
-        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_2, capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2).getBinaryValue());
-        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_3, capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_3).getStringValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_1,
+                capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_1).getStringValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_2,
+                capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_2).getBinaryValue());
+        assertEquals(SAMPLE_MESSAGE_HEADER_VALUE_3,
+                capture.getValue().getMessageAttributes().get(SAMPLE_MESSAGE_HEADER_NAME_3).getStringValue());
         assertEquals(3, capture.getValue().getMessageAttributes().size());
     }
 
@@ -222,7 +228,8 @@ public class SqsProducerTest {
 
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("messageGroupIdStrategy must be set for FIFO queues"), "Bad error message: " + e.getMessage());
+            assertTrue(e.getMessage().startsWith("messageGroupIdStrategy must be set for FIFO queues"),
+                    "Bad error message: " + e.getMessage());
         }
     }
 

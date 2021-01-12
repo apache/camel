@@ -79,7 +79,8 @@ public class DeploymentContextCamelCommandTest {
 
         // Register the RuntimeManager bound camelcontext.
         try {
-            ServiceRegistry.get().register(deploymentId + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX, camelContext);
+            ServiceRegistry.get().register(deploymentId + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX,
+                    camelContext);
 
             WorkItemImpl workItem = new WorkItemImpl();
             workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);

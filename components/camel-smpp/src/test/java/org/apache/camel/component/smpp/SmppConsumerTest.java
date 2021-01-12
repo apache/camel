@@ -70,16 +70,17 @@ public class SmppConsumerTest {
     @Test
     public void doStartShouldStartANewSmppSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
-        BindParameter expectedBindParameter = new BindParameter(BindType.BIND_RX,
-            "smppclient",
-            "password",
-            "cp",
-            TypeOfNumber.UNKNOWN,
-            NumberingPlanIndicator.UNKNOWN,
-            "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
-            .thenReturn("1");
+                .thenReturn("smpp://smppclient@localhost:2775");
+        BindParameter expectedBindParameter = new BindParameter(
+                BindType.BIND_RX,
+                "smppclient",
+                "password",
+                "cp",
+                TypeOfNumber.UNKNOWN,
+                NumberingPlanIndicator.UNKNOWN,
+                "");
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
+                .thenReturn("1");
 
         consumer.doStart();
 
@@ -87,13 +88,13 @@ public class SmppConsumerTest {
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
         verify(session).setMessageReceiverListener(isA(MessageReceiverListener.class));
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 
     @Test
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
 
         consumer.doStop();
     }
@@ -104,7 +105,7 @@ public class SmppConsumerTest {
         reset(endpoint, processor, session);
 
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
 
         consumer.doStop();
 
@@ -116,22 +117,22 @@ public class SmppConsumerTest {
     public void addressRangeFromConfigurationIsUsed() throws Exception {
         configuration.setAddressRange("(111*|222*|333*)");
         BindParameter expectedBindParameter = new BindParameter(
-            BindType.BIND_RX,
-            "smppclient",
-            "password",
-            "cp",
-            TypeOfNumber.UNKNOWN,
-            NumberingPlanIndicator.UNKNOWN,
-            "(111*|222*|333*)");
+                BindType.BIND_RX,
+                "smppclient",
+                "password",
+                "cp",
+                TypeOfNumber.UNKNOWN,
+                NumberingPlanIndicator.UNKNOWN,
+                "(111*|222*|333*)");
         when(session.connectAndBind("localhost",
-                new Integer(2775),
+                Integer.valueOf(2775),
                 expectedBindParameter))
-            .thenReturn("1");
+                        .thenReturn("1");
 
         consumer.doStart();
 
         verify(session).connectAndBind("localhost",
-                new Integer(2775),
+                Integer.valueOf(2775),
                 expectedBindParameter);
     }
 

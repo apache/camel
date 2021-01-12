@@ -21,8 +21,8 @@ import javax.management.AttributeChangeNotificationFilter;
 import javax.management.Notification;
 
 /**
- * {@link javax.management.NotificationFilter} that observes an attribute and optionally
- * matches when the new value matches a string.
+ * {@link javax.management.NotificationFilter} that observes an attribute and optionally matches when the new value
+ * matches a string.
  */
 public class JMXConsumerNotificationFilter extends AttributeChangeNotificationFilter {
 

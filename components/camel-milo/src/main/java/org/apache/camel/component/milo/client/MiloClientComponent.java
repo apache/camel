@@ -40,7 +40,8 @@ public class MiloClientComponent extends DefaultComponent {
     private MiloClientConfiguration configuration = new MiloClientConfiguration();
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         final MiloClientConfiguration configuration = new MiloClientConfiguration(this.configuration);
         configuration.setEndpointUri(remaining);
 
@@ -48,7 +49,9 @@ public class MiloClientComponent extends DefaultComponent {
         return endpoint;
     }
 
-    private synchronized MiloClientEndpoint doCreateEndpoint(final String uri, final MiloClientConfiguration configuration, final Map<String, Object> parameters) throws Exception {
+    private synchronized MiloClientEndpoint doCreateEndpoint(
+            final String uri, final MiloClientConfiguration configuration, final Map<String, Object> parameters)
+            throws Exception {
         final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, configuration.getEndpointUri());
         endpoint.setConfiguration(configuration);
         setProperties(endpoint, parameters);

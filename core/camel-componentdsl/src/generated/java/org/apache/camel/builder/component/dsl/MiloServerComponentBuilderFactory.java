@@ -37,6 +37,8 @@ public interface MiloServerComponentBuilderFactory {
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
      */
     static MiloServerComponentBuilder miloServer() {
         return new MiloServerComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * The application name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -63,9 +68,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * The application URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationUri the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder applicationUri(
                 java.lang.String applicationUri) {
@@ -75,9 +83,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * Set the addresses of the local addresses the server should bind to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param bindAddresses the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder bindAddresses(
                 java.lang.String bindAddresses) {
@@ -88,9 +99,12 @@ public interface MiloServerComponentBuilderFactory {
          * Server build info.
          * 
          * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo</code> type.
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param buildInfo the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder buildInfo(
                 org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo buildInfo) {
@@ -100,10 +114,13 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * The URI of the namespace, defaults to urn:org:apache:camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: urn:org:apache:camel
          * Group: common
+         * 
+         * @param namespaceUri the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder namespaceUri(
                 java.lang.String namespaceUri) {
@@ -114,9 +131,12 @@ public interface MiloServerComponentBuilderFactory {
          * The path to be appended to the end of the endpoint url. (doesn't need
          * to start with '/').
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param path the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder path(java.lang.String path) {
             doSetProperty("path", path);
@@ -125,9 +145,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * The TCP port the server binds to.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder port(int port) {
             doSetProperty("port", port);
@@ -136,9 +159,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * The product URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param productUri the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder productUri(
                 java.lang.String productUri) {
@@ -154,10 +180,13 @@ public interface MiloServerComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -175,10 +204,13 @@ public interface MiloServerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -186,26 +218,36 @@ public interface MiloServerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MiloServerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MiloServerComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Server certificate.
          * 
-         * The option is a: <code>java.security.cert.X509Certificate</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.security.cert.X509Certificate&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param certificate the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder certificate(
                 java.security.cert.X509Certificate certificate) {
@@ -216,9 +258,12 @@ public interface MiloServerComponentBuilderFactory {
          * Server certificate manager.
          * 
          * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateManager</code> type.
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateManager&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param certificateManager the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder certificateManager(
                 org.eclipse.milo.opcua.stack.core.security.CertificateManager certificateManager) {
@@ -229,9 +274,12 @@ public interface MiloServerComponentBuilderFactory {
          * Validator for client certificates.
          * 
          * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateValidator&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder certificateValidator(
                 org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
@@ -241,9 +289,12 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * Validator for client certificates using default file based approach.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param defaultCertificateValidator the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder defaultCertificateValidator(
                 java.lang.String defaultCertificateValidator) {
@@ -253,10 +304,13 @@ public interface MiloServerComponentBuilderFactory {
         /**
          * Enable anonymous authentication, disabled by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param enableAnonymousAuthentication the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder enableAnonymousAuthentication(
                 boolean enableAnonymousAuthentication) {
@@ -267,9 +321,12 @@ public interface MiloServerComponentBuilderFactory {
          * Security policies.
          * 
          * The option is a:
-         * <code>java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy></code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;org.eclipse.milo.opcua.stack.core.security.SecurityPolicy&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityPolicies the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder securityPolicies(
                 java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy> securityPolicies) {
@@ -280,9 +337,12 @@ public interface MiloServerComponentBuilderFactory {
          * Security policies by URI or name. Multiple policies can be separated
          * by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityPoliciesById the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder securityPoliciesById(
                 java.lang.String securityPoliciesById) {
@@ -293,9 +353,12 @@ public interface MiloServerComponentBuilderFactory {
          * Set user password combinations in the form of user1:pwd1,user2:pwd2
          * Usernames and passwords will be URL decoded.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userAuthenticationCredentials the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder userAuthenticationCredentials(
                 java.lang.String userAuthenticationCredentials) {
@@ -306,9 +369,12 @@ public interface MiloServerComponentBuilderFactory {
          * Set the UserTokenPolicy used when.
          * 
          * The option is a:
-         * <code>org.eclipse.milo.opcua.stack.core.security.SecurityPolicy</code> type.
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.SecurityPolicy&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param usernameSecurityPolicyUri the value to set
+         * @return the dsl builder
          */
         default MiloServerComponentBuilder usernameSecurityPolicyUri(
                 org.eclipse.milo.opcua.stack.core.security.SecurityPolicy usernameSecurityPolicyUri) {
@@ -342,7 +408,7 @@ public interface MiloServerComponentBuilderFactory {
             case "productUri": ((MiloServerComponent) component).setProductUri((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((MiloServerComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MiloServerComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MiloServerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MiloServerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "certificate": ((MiloServerComponent) component).setCertificate((java.security.cert.X509Certificate) value); return true;
             case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.security.CertificateManager) value); return true;
             case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((org.eclipse.milo.opcua.stack.core.security.CertificateValidator) value); return true;

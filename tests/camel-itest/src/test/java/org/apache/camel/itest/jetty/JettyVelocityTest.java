@@ -44,7 +44,8 @@ public class JettyVelocityTest extends CamelTestSupport {
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("velocity:org/apache/camel/itest/jetty/header.vm", "", map, String.class);
+        String response
+                = template.requestBodyAndHeaders("velocity:org/apache/camel/itest/jetty/header.vm", "", map, String.class);
 
         assertEquals("Dear Doe, John", response);
     }
@@ -69,7 +70,8 @@ public class JettyVelocityTest extends CamelTestSupport {
         map.put("firstName", "John");
         map.put("lastName", "Doe");
 
-        String response = template.requestBodyAndHeaders("velocity://http://localhost:" + port + "/test?name=header.vm", "", map, String.class);
+        String response = template.requestBodyAndHeaders("velocity://http://localhost:" + port + "/test?name=header.vm", "",
+                map, String.class);
 
         assertEquals("Dear Doe, John", response);
     }
@@ -81,20 +83,21 @@ public class JettyVelocityTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String name = exchange.getIn().getHeader("name", String.class);
-                            ObjectHelper.notNull(name, "name");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String name = exchange.getIn().getHeader("name", String.class);
+                                ObjectHelper.notNull(name, "name");
 
-                            name = "org/apache/camel/itest/jetty/" + name;
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
-                            String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
+                                name = "org/apache/camel/itest/jetty/" + name;
+                                InputStream is
+                                        = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
+                                String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
-                            exchange.getMessage().setBody(xml);
-                            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        }
-                    });
+                                exchange.getMessage().setBody(xml);
+                                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                            }
+                        });
             }
         };
     }

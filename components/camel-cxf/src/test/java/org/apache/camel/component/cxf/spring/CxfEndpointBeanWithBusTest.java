@@ -34,12 +34,11 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     static int port1 = CXFTestSupport.getPort1();
     static int port2 = CXFTestSupport.getPort2();
 
-        
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"};
+        return new String[] { "org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml" };
     }
-    
+
     @Test
     public void testBusInjectedBySpring() throws Exception {
         CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
@@ -56,15 +55,16 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
         }
         fail("Could not find the LoggingInInterceptor on the bus. " + endpoint.getBus().getInInterceptors());
     }
-    
+
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
         assertEquals("http://localhost:" + port1
-                     + "/CxfEndpointBeanWithBusTest/router/", routerEndpoint.getAddress(), "Got the wrong endpoint address");
+                     + "/CxfEndpointBeanWithBusTest/router/",
+                routerEndpoint.getAddress(), "Got the wrong endpoint address");
         assertEquals("org.apache.camel.component.cxf.HelloService",
-                     routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");
-        
+                routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");
+
     }
 
 }

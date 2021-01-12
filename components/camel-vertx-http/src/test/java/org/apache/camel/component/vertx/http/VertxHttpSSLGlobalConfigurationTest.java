@@ -72,7 +72,7 @@ public class VertxHttpSSLGlobalConfigurationTest extends VertxHttpTestSupport {
             @Override
             public void configure() throws Exception {
                 from(getTestServerUri() + "?sslContextParameters=#serverSSLParameters")
-                    .setBody(constant("Hello World"));
+                        .setBody(constant("Hello World"));
             }
         };
     }

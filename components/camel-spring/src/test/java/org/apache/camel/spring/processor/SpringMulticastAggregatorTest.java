@@ -30,10 +30,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class SpringMulticastAggregatorTest {
     @Autowired
     protected ProducerTemplate producer;
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint result;
-    
+
     @Test
     public void multicastAggreatorTest() throws Exception {
         result.expectedBodiesReceived("directA directB");

@@ -51,9 +51,12 @@ public interface ControlBusEndpointBuilderFactory {
          * get statistics for the entire CamelContext. The restart action will
          * restart the route.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder action(String action) {
             doSetProperty("action", action);
@@ -64,10 +67,13 @@ public interface ControlBusEndpointBuilderFactory {
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder async(boolean async) {
             doSetProperty("async", async);
@@ -78,10 +84,14 @@ public interface ControlBusEndpointBuilderFactory {
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder async(String async) {
             doSetProperty("async", async);
@@ -98,10 +108,13 @@ public interface ControlBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -119,10 +132,14 @@ public interface ControlBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -133,10 +150,14 @@ public interface ControlBusEndpointBuilderFactory {
          * Logging level used for logging when task is done, or if any
          * exceptions occurred during processing the task.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: INFO
          * Group: producer
+         * 
+         * @param loggingLevel the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
             doSetProperty("loggingLevel", loggingLevel);
@@ -147,10 +168,13 @@ public interface ControlBusEndpointBuilderFactory {
          * exceptions occurred during processing the task.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: INFO
          * Group: producer
+         * 
+         * @param loggingLevel the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder loggingLevel(String loggingLevel) {
             doSetProperty("loggingLevel", loggingLevel);
@@ -159,10 +183,13 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * The delay in millis to use when restarting a route.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param restartDelay the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder restartDelay(int restartDelay) {
             doSetProperty("restartDelay", restartDelay);
@@ -171,10 +198,13 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * The delay in millis to use when restarting a route.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param restartDelay the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder restartDelay(String restartDelay) {
             doSetProperty("restartDelay", restartDelay);
@@ -184,9 +214,12 @@ public interface ControlBusEndpointBuilderFactory {
          * To specify a route by its id. The special keyword current indicates
          * the current route.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param routeId the value to set
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder routeId(String routeId) {
             doSetProperty("routeId", routeId);
@@ -204,41 +237,16 @@ public interface ControlBusEndpointBuilderFactory {
             return (ControlBusEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedControlBusEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedControlBusEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedControlBusEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -249,10 +257,14 @@ public interface ControlBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedControlBusEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -273,17 +285,18 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * Command can be either route or language
-         * The value can be one of: route, language
+         * There are 2 enums and the value can be one of: route, language
          * 
          * Path parameter: language
          * Allows you to specify the name of a Language to use for evaluating
          * the message body. If there is any result from the evaluation, then
          * the result is put in the message body.
-         * The value can be one of: bean, constant, el, exchangeProperty, file,
-         * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-         * tokenize, xpath, xquery, xtokenize
+         * There are 19 enums and the value can be one of: bean, constant, el,
+         * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
+         * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
          * 
          * @param path command:language
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder controlbus(String path) {
             return ControlBusEndpointBuilderFactory.endpointBuilder("controlbus", path);
@@ -300,19 +313,20 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * Command can be either route or language
-         * The value can be one of: route, language
+         * There are 2 enums and the value can be one of: route, language
          * 
          * Path parameter: language
          * Allows you to specify the name of a Language to use for evaluating
          * the message body. If there is any result from the evaluation, then
          * the result is put in the message body.
-         * The value can be one of: bean, constant, el, exchangeProperty, file,
-         * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-         * tokenize, xpath, xquery, xtokenize
+         * There are 19 enums and the value can be one of: bean, constant, el,
+         * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
+         * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path command:language
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder controlbus(
                 String componentName,

@@ -40,6 +40,7 @@ import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -50,7 +51,11 @@ import org.apache.http.entity.ContentType;
 /**
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName", category = {Category.FILE})
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName",
+             apiSyntax = "apiName/methodName",
+             category = { Category.FILE })
+@Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
+                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriParam
@@ -59,7 +64,6 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     private Object apiProxy;
 
     private AS2ClientConnection as2ClientConnection;
-
     private AS2ServerConnection as2ServerConnection;
 
     public AS2Endpoint(String uri, AS2Component component,
@@ -88,11 +92,9 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         final AS2Consumer consumer = new AS2Consumer(this, processor);
-        // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
     }
-
 
     public String getRequestUri() {
         return configuration.getRequestUri();
@@ -272,8 +274,9 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         try {
             as2ClientConnection = AS2ConnectionHelper.createAS2ClientConnection(configuration);
         } catch (UnknownHostException e) {
-            throw new RuntimeCamelException(String.format("Client HTTP connection failed: Unknown target host '%s'",
-                    configuration.getTargetHostname()));
+            throw new RuntimeCamelException(
+                    String.format("Client HTTP connection failed: Unknown target host '%s'",
+                            configuration.getTargetHostname()));
         } catch (IOException e) {
             throw new RuntimeCamelException("Client HTTP connection failed", e);
         }

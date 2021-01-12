@@ -30,7 +30,7 @@ import org.apache.camel.util.FileUtil;
  */
 public final class CamelJmsTestHelper {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
+    private static AtomicInteger counter = new AtomicInteger();
 
     private CamelJmsTestHelper() {
     }
@@ -42,7 +42,7 @@ public final class CamelJmsTestHelper {
     public static ConnectionFactory createConnectionFactory(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
-        String url = "vm://test-broker-" + id + "?broker.persistent=false&broker.useJmx=false";
+        String url = "vm://localhost?broker.persistent=false&broker.useJmx=false";
         if (options != null) {
             url = url + "&" + options;
         }
@@ -65,10 +65,12 @@ public final class CamelJmsTestHelper {
         return pooled;
     }
 
+    @Deprecated
     public static ConnectionFactory createPersistentConnectionFactory() {
         return createPersistentConnectionFactory(null);
     }
 
+    @Deprecated
     public static ConnectionFactory createPersistentConnectionFactory(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
@@ -79,7 +81,7 @@ public final class CamelJmsTestHelper {
         // remove dir so its empty on startup
         FileUtil.removeDir(new File(dir));
 
-        String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
+        String url = "vm://localhost?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
         if (options != null) {
             url = url + "&" + options;
         }

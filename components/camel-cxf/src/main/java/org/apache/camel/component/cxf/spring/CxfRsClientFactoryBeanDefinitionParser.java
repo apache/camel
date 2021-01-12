@@ -35,29 +35,29 @@ public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         super.doParse(element, ctx, bean);
-        bean.addPropertyValue("beanId", resolveId(element, bean.getBeanDefinition(), ctx));            
+        bean.addPropertyValue("beanId", resolveId(element, bean.getBeanDefinition(), ctx));
     }
-   
+
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
         if ("properties".equals(name) || "headers".equals(name)) {
             Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
-            bean.addPropertyValue(name, map);         
+            bean.addPropertyValue(name, map);
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
-            || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
+                || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("features".equals(name) || "providers".equals(name)
-                   || "schemaLocations".equals(name) || "modelBeans".equals(name)) {
+                || "schemaLocations".equals(name) || "modelBeans".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("model".equals(name)) {
             List<UserResource> resources = ResourceUtils.getResourcesFromElement(el);
             bean.addPropertyValue("modelBeans", resources);
         } else {
-            setFirstChildAsProperty(el, ctx, bean, name);            
-        }        
-    }    
+            setFirstChildAsProperty(el, ctx, bean, name);
+        }
+    }
 }

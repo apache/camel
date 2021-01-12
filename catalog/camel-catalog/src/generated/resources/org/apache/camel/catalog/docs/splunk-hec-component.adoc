@@ -6,6 +6,7 @@
 :since: 3.3
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/splunk-hec.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -43,7 +44,7 @@ The Splunk HEC component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -69,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +81,6 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *source* (producer) | Splunk source argument | camel | String
 | *sourceType* (producer) | Splunk sourcetype argument | camel | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *https* (security) | Contact HEC over https. | true | boolean
 | *skipTlsVerify* (security) | Splunk HEC TLS verification. | false | boolean

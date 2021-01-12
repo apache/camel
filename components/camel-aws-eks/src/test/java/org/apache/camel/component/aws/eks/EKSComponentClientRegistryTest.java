@@ -32,37 +32,38 @@ public class EKSComponentClientRegistryTest extends CamelTestSupport {
         AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
-        EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://TestDomain");
+        EKSEndpoint endpoint = (EKSEndpoint) component.createEndpoint("aws-eks://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEksClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-eks://TestDomain"));
+                () -> component.createEndpoint("aws-eks://TestDomain"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
-        EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://TestDomain?accessKey=xxx&secretKey=yyyy&autoDiscoverClient=false");
+        EKSEndpoint endpoint = (EKSEndpoint) component
+                .createEndpoint("aws-eks://TestDomain?accessKey=xxx&secretKey=yyyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getEksClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
-        EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://TestDomain?accessKey=xxx&secretKey=yyyy");
+        EKSEndpoint endpoint = (EKSEndpoint) component.createEndpoint("aws-eks://TestDomain?accessKey=xxx&secretKey=yyyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getEksClient());
     }

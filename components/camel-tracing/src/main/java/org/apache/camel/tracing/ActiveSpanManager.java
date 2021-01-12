@@ -19,8 +19,7 @@ package org.apache.camel.tracing;
 import org.apache.camel.Exchange;
 
 /**
- * Utility class for managing active spans as a stack associated with
- * an exchange.
+ * Utility class for managing active spans as a stack associated with an exchange.
  */
 public final class ActiveSpanManager {
 
@@ -30,11 +29,10 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * This method returns the current active span associated with the
-     * exchange.
+     * This method returns the current active span associated with the exchange.
      *
-     * @param exchange The exchange
-     * @return The current active span, or null if none exists
+     * @param  exchange The exchange
+     * @return          The current active span, or null if none exists
      */
     public static SpanAdapter getSpan(Exchange exchange) {
         Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
@@ -45,12 +43,11 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * This method activates the supplied span for the supplied exchange.
-     * If an existing span is found for the exchange, this will be pushed
-     * onto a stack.
+     * This method activates the supplied span for the supplied exchange. If an existing span is found for the exchange,
+     * this will be pushed onto a stack.
      *
      * @param exchange The exchange
-     * @param span The span
+     * @param span     The span
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
@@ -58,10 +55,9 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * This method deactivates an existing active span associated with the
-     * supplied exchange. Once deactivated, if a parent span is found
-     * associated with the stack for the exchange, it will be restored
-     * as the current span for that exchange.
+     * This method deactivates an existing active span associated with the supplied exchange. Once deactivated, if a
+     * parent span is found associated with the stack for the exchange, it will be restored as the current span for that
+     * exchange.
      *
      * @param exchange The exchange
      */
@@ -73,9 +69,8 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * Simple holder for the currently active span and an optional reference to
-     * the parent holder. This will be used to maintain a stack for spans, built
-     * up during the execution of a series of chained camel exchanges, and then
+     * Simple holder for the currently active span and an optional reference to the parent holder. This will be used to
+     * maintain a stack for spans, built up during the execution of a series of chained camel exchanges, and then
      * unwound when the responses are processed.
      *
      */

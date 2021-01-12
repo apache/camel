@@ -59,7 +59,7 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
         assertEquals("text/html; charset=iso-8859-1", msg.getContentType());
         assertEquals("<html><body><h1>Hello</h1>World</body></html>", msg.getContent());
     }
-    
+
     @Test
     public void testNullBody() throws Exception {
         Mailbox.clearAll();

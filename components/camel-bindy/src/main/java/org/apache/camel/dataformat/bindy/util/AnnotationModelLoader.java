@@ -48,7 +48,7 @@ public class AnnotationModelLoader {
         annotations.add(Section.class);
         annotations.add(FixedLengthRecord.class);
     }
-    
+
     public AnnotationModelLoader(PackageScanClassResolver resolver, PackageScanFilter filter) {
         this(resolver);
         this.filter = filter;
@@ -56,7 +56,7 @@ public class AnnotationModelLoader {
 
     public Set<Class<?>> loadModels(String... packageNames) throws Exception {
         Set<Class<?>> results = resolver.findAnnotated(annotations, packageNames);
-        
+
         //TODO;  this logic could be moved into the PackageScanClassResolver by creating:
         //          findAnnotated(annotations, packageNames, filter) 
         Set<Class<?>> resultsToRemove = new HashSet<>();
@@ -70,5 +70,5 @@ public class AnnotationModelLoader {
         results.removeAll(resultsToRemove);
         return results;
     }
-    
+
 }

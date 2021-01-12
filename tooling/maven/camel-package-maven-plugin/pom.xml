@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-package-maven-plugin</artifactId>
@@ -43,9 +43,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <dependencies>
 
-        <!-- use our patched ordered json-simple parser -->
+    <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>

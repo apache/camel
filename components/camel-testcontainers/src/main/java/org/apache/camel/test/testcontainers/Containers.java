@@ -38,7 +38,7 @@ public final class Containers {
     public static void start(List<GenericContainer<?>> containers, Network network, long timeout) throws Exception {
         final CountDownLatch latch = new CountDownLatch(containers.size());
 
-        for (GenericContainer<?> container: containers) {
+        for (GenericContainer<?> container : containers) {
             if (ObjectHelper.isEmpty(container.getNetworkAliases())) {
                 throw new IllegalStateException("Container should have at least a network alias");
             }
@@ -49,8 +49,7 @@ public final class Containers {
 
             // Add custom logger
             container.withLogConsumer(
-                new Slf4jLogConsumer(LOGGER).withPrefix(container.getNetworkAliases().stream().collect(joining(",")))
-            );
+                    new Slf4jLogConsumer(LOGGER).withPrefix(container.getNetworkAliases().stream().collect(joining(","))));
 
             new Thread(() -> {
                 container.start();
@@ -64,7 +63,7 @@ public final class Containers {
     public static void stop(List<GenericContainer<?>> containers, long timeout) throws Exception {
         final CountDownLatch latch = new CountDownLatch(containers.size());
 
-        for (GenericContainer<?> container: containers) {
+        for (GenericContainer<?> container : containers) {
             new Thread(() -> {
                 container.stop();
                 latch.countDown();
@@ -75,7 +74,7 @@ public final class Containers {
     }
 
     public static GenericContainer<?> lookup(List<GenericContainer<?>> containers, String containerName) {
-        for (GenericContainer<?> container: containers) {
+        for (GenericContainer<?> container : containers) {
             if (container.getNetworkAliases().contains(containerName)) {
                 return container;
             }

@@ -21,6 +21,9 @@ package org.apache.camel.component.facebook.config;
  */
 public enum FacebookNameStyle {
 
-    EXACT, GET, SEARCH, GET_AND_SEARCH
+    EXACT,
+    GET,
+    SEARCH,
+    GET_AND_SEARCH
 
 }

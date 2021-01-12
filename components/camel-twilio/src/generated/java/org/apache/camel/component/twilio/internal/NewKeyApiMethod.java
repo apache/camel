@@ -29,8 +29,6 @@ public enum NewKeyApiMethod implements ApiMethod {
         "creator",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private NewKeyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -4,8 +4,10 @@ package org.apache.camel.component.azure.storage.blob;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -30,8 +32,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": getOrCreateConfiguration(target).setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
@@ -72,6 +74,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageblobsize":
         case "pageBlobSize": getOrCreateConfiguration(target).setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "regex": getOrCreateConfiguration(target).setRegex(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
@@ -80,36 +83,60 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blobName", java.lang.String.class);
-        answer.put("blobOffset", long.class);
-        answer.put("blobSequenceNumber", java.lang.Long.class);
-        answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
-        answer.put("blockListType", com.azure.storage.blob.models.BlockListType.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("closeStreamAfterRead", boolean.class);
-        answer.put("closeStreamAfterWrite", boolean.class);
-        answer.put("commitBlockListLater", boolean.class);
-        answer.put("configuration", org.apache.camel.component.azure.storage.blob.BlobConfiguration.class);
-        answer.put("createAppendBlob", boolean.class);
-        answer.put("createPageBlob", boolean.class);
-        answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        answer.put("dataCount", java.lang.Long.class);
-        answer.put("downloadLinkExpiration", java.lang.Long.class);
-        answer.put("fileDir", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxResultsPerPage", java.lang.Integer.class);
-        answer.put("maxRetryRequests", int.class);
-        answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
-        answer.put("pageBlobSize", java.lang.Long.class);
-        answer.put("prefix", java.lang.String.class);
-        answer.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
-        answer.put("timeout", java.time.Duration.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "blobname":
+        case "blobName": return java.lang.String.class;
+        case "bloboffset":
+        case "blobOffset": return long.class;
+        case "blobsequencenumber":
+        case "blobSequenceNumber": return java.lang.Long.class;
+        case "blobtype":
+        case "blobType": return org.apache.camel.component.azure.storage.blob.BlobType.class;
+        case "blocklisttype":
+        case "blockListType": return com.azure.storage.blob.models.BlockListType.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return boolean.class;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return boolean.class;
+        case "commitblocklistlater":
+        case "commitBlockListLater": return boolean.class;
+        case "configuration": return org.apache.camel.component.azure.storage.blob.BlobConfiguration.class;
+        case "createappendblob":
+        case "createAppendBlob": return boolean.class;
+        case "createpageblob":
+        case "createPageBlob": return boolean.class;
+        case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "datacount":
+        case "dataCount": return java.lang.Long.class;
+        case "downloadlinkexpiration":
+        case "downloadLinkExpiration": return java.lang.Long.class;
+        case "filedir":
+        case "fileDir": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresultsperpage":
+        case "maxResultsPerPage": return java.lang.Integer.class;
+        case "maxretryrequests":
+        case "maxRetryRequests": return int.class;
+        case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
+        case "pageblobsize":
+        case "pageBlobSize": return java.lang.Long.class;
+        case "prefix": return java.lang.String.class;
+        case "regex": return java.lang.String.class;
+        case "serviceclient":
+        case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "timeout": return java.time.Duration.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -120,8 +147,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blobname":
         case "blobName": return getOrCreateConfiguration(target).getBlobName();
         case "bloboffset":
@@ -162,6 +189,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "pageblobsize":
         case "pageBlobSize": return getOrCreateConfiguration(target).getPageBlobSize();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
+        case "regex": return getOrCreateConfiguration(target).getRegex();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();

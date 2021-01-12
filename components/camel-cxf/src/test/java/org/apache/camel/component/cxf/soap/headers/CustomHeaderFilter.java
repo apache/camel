@@ -28,7 +28,6 @@ public class CustomHeaderFilter implements MessageHeaderFilter {
     public static final String ACTIVATION_NAMESPACE = "http://cxf.apache.org/bindings/custom";
     public static final List<String> ACTIVATION_NAMESPACES = Arrays.asList(ACTIVATION_NAMESPACE);
 
-
     @Override
     public List<String> getActivationNamespaces() {
         return ACTIVATION_NAMESPACES;
@@ -37,7 +36,5 @@ public class CustomHeaderFilter implements MessageHeaderFilter {
     @Override
     public void filter(Direction direction, List<Header> headers) {
     }
-
-
 
 }

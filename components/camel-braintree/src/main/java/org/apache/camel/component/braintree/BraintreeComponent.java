@@ -50,12 +50,13 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     }
 
     @Override
-    protected BraintreeApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return BraintreeApiName.fromValue(apiNameStr);
+    protected BraintreeApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(BraintreeApiName.class, apiNameStr);
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         this.configuration = endpointConfiguration;

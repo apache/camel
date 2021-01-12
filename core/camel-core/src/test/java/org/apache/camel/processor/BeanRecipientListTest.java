@@ -73,7 +73,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        private static AtomicInteger counter = new AtomicInteger(0);
+        private static AtomicInteger counter = new AtomicInteger();
         private int id;
 
         public MyBean() {
@@ -88,7 +88,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
         @org.apache.camel.RecipientList
         public String[] route(String body) {
             LOG.debug("Called {} with body: {}", this, body);
-            return new String[] {"mock:a", "mock:b"};
+            return new String[] { "mock:a", "mock:b" };
         }
     }
 }

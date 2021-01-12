@@ -48,18 +48,18 @@ public class LuceneIndexer {
     private IndexWriter indexWriter;
     private boolean sourceDirectoryIndexed;
 
-    public LuceneIndexer(File sourceDirectory, File indexDirectory, Analyzer analyzer)  throws Exception {
+    public LuceneIndexer(File sourceDirectory, File indexDirectory, Analyzer analyzer) throws Exception {
         if (indexDirectory != null) {
             if (!indexDirectory.exists()) {
                 indexDirectory.mkdir();
-            }   
+            }
             this.setNiofsDirectory(new NIOFSDirectory(indexDirectory.toPath()));
         } else {
             this.setNiofsDirectory(new NIOFSDirectory(new File("./indexDirectory").toPath()));
         }
 
         this.setAnalyzer(analyzer);
-        
+
         if ((sourceDirectory != null) && (!sourceDirectoryIndexed)) {
             this.setSourceDirectory(sourceDirectory);
             add(getSourceDirectory());
@@ -144,8 +144,9 @@ public class LuceneIndexer {
                 LOG.trace("Added {} successfully", file);
             }
         } else {
-            LOG.warn("Directory/File " + file.getAbsolutePath() + " could not be read."
-                + " This directory will not be indexed. Please check permissions and rebuild indexes.");
+            LOG.warn("Directory/File {} could not be read."
+                     + " This directory will not be indexed. Please check permissions and rebuild indexes.",
+                    file.getAbsolutePath());
         }
     }
 

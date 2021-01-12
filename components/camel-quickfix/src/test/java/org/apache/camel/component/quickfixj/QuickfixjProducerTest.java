@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.management.JMException;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import quickfix.ConfigError;
-import quickfix.FieldConvertError;
 import quickfix.FixVersions;
 import quickfix.Message;
 import quickfix.MessageUtils;
@@ -51,35 +47,37 @@ public class QuickfixjProducerTest {
     private SessionID sessionID;
     private Message inboundFixMessage;
     private QuickfixjEngine quickfixjEngine;
+    private CamelContext context;
 
     @BeforeEach
-    public void setUp() throws ConfigError, FieldConvertError, IOException, JMException {
+    public void setUp() throws Exception {
         mockExchange = Mockito.mock(Exchange.class);
         mockEndpoint = Mockito.mock(QuickfixjEndpoint.class);
         mockCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getIn()).thenReturn(mockCamelMessage);
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-        
-        quickfixjEngine = TestSupport.createEngine();
+        context = Mockito.mock(CamelContext.class);
+
+        quickfixjEngine = TestSupport.createEngine(context);
         Mockito.when(mockEndpoint.getEngine()).thenReturn(quickfixjEngine);
-        
+
         inboundFixMessage = new Message();
         inboundFixMessage.getHeader().setString(BeginString.FIELD, FixVersions.BEGINSTRING_FIX44);
         inboundFixMessage.getHeader().setString(SenderCompID.FIELD, "SENDER");
         inboundFixMessage.getHeader().setString(TargetCompID.FIELD, "TARGET");
         sessionID = MessageUtils.getSessionID(inboundFixMessage);
-   
+
         Mockito.when(mockCamelMessage.getBody(Message.class)).thenReturn(inboundFixMessage);
 
-        Mockito.when(mockEndpoint.getSessionID()).thenReturn(sessionID);     
+        Mockito.when(mockEndpoint.getSessionID()).thenReturn(sessionID);
 
         producer = Mockito.spy(new QuickfixjProducer(mockEndpoint));
     }
-    
+
     public class TestException extends RuntimeException {
         private static final long serialVersionUID = 1L;
     }
-    
+
     @Test
     public void setExceptionOnExchange() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
@@ -89,19 +87,19 @@ public class QuickfixjProducerTest {
         producer.process(mockExchange);
         Mockito.verify(mockExchange).setException(isA(TestException.class));
     }
-    
+
     @Test
     public void processInOnlyExchangeSuccess() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doReturn(true).when(mockSession).send(isA(Message.class));
-        
+
         producer.process(mockExchange);
-        
+
         Mockito.verify(mockExchange, Mockito.never()).setException(isA(IllegalStateException.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
     }
-    
+
     @Test
     public void processInOnlyExchangeSendUnsuccessful() throws Exception {
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
@@ -109,28 +107,29 @@ public class QuickfixjProducerTest {
         Mockito.doReturn(false).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
-        
+
         Mockito.verify(mockSession).send(inboundFixMessage);
         Mockito.verify(mockExchange).setException(isA(CannotSendException.class));
-    }    
+    }
 
     @Test
     public void processInOutExchangeSuccess() throws Exception {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        SessionID responseSessionID = new SessionID(sessionID.getBeginString(), sessionID.getTargetCompID(), sessionID.getSenderCompID());
+        SessionID responseSessionID
+                = new SessionID(sessionID.getBeginString(), sessionID.getTargetCompID(), sessionID.getSenderCompID());
         Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
-            new MessagePredicate(responseSessionID, MsgType.EMAIL));
+                new MessagePredicate(responseSessionID, MsgType.EMAIL));
         Mockito.when(mockExchange.getProperty(
-            QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-            1000L, Long.class)).thenReturn(5000L);
-                
+                QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
+                1000L, Long.class)).thenReturn(5000L);
+
         org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getOut()).thenReturn(mockOutboundCamelMessage);
-        
+
         final Message outboundFixMessage = new Email();
         outboundFixMessage.getHeader().setString(SenderCompID.FIELD, "TARGET");
         outboundFixMessage.getHeader().setString(TargetCompID.FIELD, "SENDER");
-        
+
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doAnswer((Answer<Boolean>) invocation -> {
@@ -138,7 +137,8 @@ public class QuickfixjProducerTest {
                 @Override
                 public void run() {
                     try {
-                        quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, outboundFixMessage);
+                        quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
+                                outboundFixMessage);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -148,29 +148,29 @@ public class QuickfixjProducerTest {
         }).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
-        
+
         Mockito.verify(mockExchange, Mockito.never()).setException(isA(IllegalStateException.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
         Mockito.verify(mockOutboundCamelMessage).getHeaders();
         Mockito.verify(mockOutboundCamelMessage).setBody(outboundFixMessage);
     }
-    
+
     @Test
     public void processInOutExchangeSendUnsuccessful() throws Exception {
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY)).thenReturn(
-            new MessagePredicate(sessionID, MsgType.EMAIL));
+                new MessagePredicate(sessionID, MsgType.EMAIL));
         Mockito.when(mockExchange.getProperty(
-            QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-            1000L, Long.class)).thenReturn(5000L);
-                
+                QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
+                1000L, Long.class)).thenReturn(5000L);
+
         org.apache.camel.Message mockOutboundCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getMessage()).thenReturn(mockOutboundCamelMessage);
-                
+
         final Message outboundFixMessage = new Email();
         outboundFixMessage.getHeader().setString(SenderCompID.FIELD, "TARGET");
         outboundFixMessage.getHeader().setString(TargetCompID.FIELD, "SENDER");
-        
+
         Session mockSession = Mockito.spy(TestSupport.createSession(sessionID));
         Mockito.doReturn(mockSession).when(producer).getSession(MessageUtils.getSessionID(inboundFixMessage));
         Mockito.doAnswer((Answer<Boolean>) invocation -> {
@@ -178,7 +178,8 @@ public class QuickfixjProducerTest {
                 @Override
                 public void run() {
                     try {
-                        quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, outboundFixMessage);
+                        quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID,
+                                outboundFixMessage);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -188,9 +189,9 @@ public class QuickfixjProducerTest {
         }).when(mockSession).send(isA(Message.class));
 
         producer.process(mockExchange);
-        
+
         Mockito.verify(mockOutboundCamelMessage, Mockito.never()).setBody(isA(Message.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
         Mockito.verify(mockExchange).setException(isA(CannotSendException.class));
-    }    
+    }
 }

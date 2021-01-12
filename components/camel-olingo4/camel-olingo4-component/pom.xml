@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo4</artifactId>
@@ -70,13 +70,6 @@
             <version>${commons-lang3-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-olingo4-api</artifactId>
-            <classifier>javadoc</classifier>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
@@ -119,11 +112,14 @@
                                 <api>
                                     <apiName />
                                     <proxyClass>org.apache.camel.component.olingo4.api.Olingo4App</proxyClass>
-                                    <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
+                                    <fromJavasource>
+                                        <includeMethods>read|uread|delete|create|update|patch|merge|batch|action</includeMethods>
+                                    </fromJavasource>
                                     <extraOptions>
                                         <extraOption>
                                             <name>keyPredicate</name>
                                             <type>java.lang.String</type>
+                                            <description>OData Key predicate</description>
                                         </extraOption>
                                     </extraOptions>
                                     <nullableOptions>
@@ -138,6 +134,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-olingo4-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

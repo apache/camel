@@ -110,7 +110,6 @@ public final class DockerConstants {
     public static final String DOCKER_SHOW_SIZE = "CamelDockerShowSize";
     public static final String DOCKER_SINCE = "CamelDockerSince";
 
-
     /**
      * Remove Container *
      */
@@ -165,7 +164,6 @@ public final class DockerConstants {
     public static final String DOCKER_REMOVE = "CamelDockerRemove";
     public static final String DOCKER_TAR_INPUT_STREAM = "CamelDockerTarInputStream";
 
-
     /**
      * Commit Container *
      */
@@ -204,7 +202,6 @@ public final class DockerConstants {
     public static final String DOCKER_VOLUMES_FROM = "CamelDockerVolumesFrom";
     public static final String DOCKER_DOMAIN_NAME = "CamelDockerDomainName";
 
-
     /**
      * Start Container *
      */
@@ -223,9 +220,7 @@ public final class DockerConstants {
     public static final String DOCKER_RESTART_POLICY = "CamelDockerRestartPolicy";
 
     /**
-     * Create Network *
-     * Attach to Network *
-     * Remove Network *
+     * Create Network * Attach to Network * Remove Network *
      */
     public static final String DOCKER_NETWORK = "CamelDockerNetwork";
 

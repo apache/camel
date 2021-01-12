@@ -50,9 +50,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Postgres password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -61,10 +64,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Postgres user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: postgres
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -79,10 +85,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -98,10 +107,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -112,10 +125,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -126,10 +142,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -140,9 +160,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -153,9 +176,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -166,9 +192,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -179,9 +208,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -196,9 +228,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -213,9 +248,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -225,10 +263,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -237,10 +278,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -250,10 +294,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -263,10 +310,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -275,10 +326,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -287,10 +341,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder initialDelay(
                 String initialDelay) {
@@ -302,10 +359,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -316,10 +376,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -329,10 +392,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -344,10 +411,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -360,9 +430,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -375,9 +448,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -386,12 +462,32 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default PgReplicationSlotEndpointBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -401,13 +497,17 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder schedulerProperties(
                 String key,
@@ -419,13 +519,16 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -434,10 +537,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder startScheduler(
                 boolean startScheduler) {
@@ -447,10 +553,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder startScheduler(
                 String startScheduler) {
@@ -460,10 +570,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -473,10 +587,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -486,10 +603,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -500,10 +620,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -528,10 +652,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -545,9 +672,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -557,9 +687,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -570,9 +704,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -586,9 +723,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -602,9 +742,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder pollStrategy(
                 String pollStrategy) {
@@ -614,10 +757,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Auto create slot if it does not exist.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreateSlot the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
                 Boolean autoCreateSlot) {
@@ -627,11 +773,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Auto create slot if it does not exist.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreateSlot the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
                 String autoCreateSlot) {
@@ -639,43 +788,19 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Slot options to be passed to the output plugin.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the slotOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
                 String key,
@@ -686,13 +811,16 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Slot options to be passed to the output plugin.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the slotOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(Map values) {
             doSetMultiValueProperties("slotOptions", "slotOptions.", values);
@@ -702,10 +830,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Specifies the number of seconds between status packets sent back to
          * Postgres server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: advanced
+         * 
+         * @param statusInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
                 Integer statusInterval) {
@@ -716,11 +847,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Specifies the number of seconds between status packets sent back to
          * Postgres server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: advanced
+         * 
+         * @param statusInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
                 String statusInterval) {
@@ -731,10 +865,13 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -745,10 +882,14 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(
                 String synchronous) {
@@ -788,6 +929,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Output plugin name
          * 
          * @param path host:port/database/slot:outputPlugin
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
             return PgReplicationSlotEndpointBuilderFactory.endpointBuilder("pg-replication-slot", path);
@@ -824,6 +966,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/database/slot:outputPlugin
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder pgReplicationSlot(
                 String componentName,

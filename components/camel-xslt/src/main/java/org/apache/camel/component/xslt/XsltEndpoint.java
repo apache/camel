@@ -51,7 +51,8 @@ import org.slf4j.LoggerFactory;
  * Transforms XML payload using an XSLT template.
  */
 @ManagedResource(description = "Managed XsltEndpoint")
-@UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true,
+             label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
@@ -60,7 +61,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
@@ -139,14 +141,12 @@ public class XsltEndpoint extends ProcessorEndpoint {
     /**
      * Path to the template.
      * <p/>
-     * The following is supported by the default URIResolver.
-     * You can prefix with: classpath, file, http, ref, or bean.
-     * classpath, file and http loads the resource using these protocols (classpath is default).
-     * ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource.
-     * For bean you can specify the method name after dot, eg bean:myBean.myMethod
+     * The following is supported by the default URIResolver. You can prefix with: classpath, file, http, ref, or bean.
+     * classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the
+     * resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify
+     * the method name after dot, eg bean:myBean.myMethod
      *
-     * @param resourceUri  the resource path
+     * @param resourceUri the resource path
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
@@ -179,8 +179,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of
-     * using custom org.apache.camel.builder.xml.ResultHandler types.
+     * Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom
+     * org.apache.camel.builder.xml.ResultHandler types.
      */
     public void setResultHandlerFactory(ResultHandlerFactory resultHandlerFactory) {
         this.resultHandlerFactory = resultHandlerFactory;
@@ -204,10 +204,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Option to specify which output type to use.
-     * Possible values are: string, bytes, DOM, file. The first three options are all in memory based, where as file is streamed directly to a java.io.File.
-     * For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName.
-     * Also any paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.
+     * Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three
+     * options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify
+     * the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
+     * paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.
      */
     public void setOutput(XsltOutput output) {
         this.output = output;
@@ -218,7 +218,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer().
+     * The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to
+     * Template.newTransformer().
      */
     public void setTransformerCacheSize(int transformerCacheSize) {
         this.transformerCacheSize = transformerCacheSize;
@@ -229,9 +230,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     *  Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error
-     *  listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use.
-     *  So only use this option for special use-cases.
+     * Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default
+     * error listener which captures any errors or fatal errors and store information on the Exchange as properties is
+     * not in use. So only use this option for special use-cases.
      */
     public void setErrorListener(ErrorListener errorListener) {
         this.errorListener = errorListener;
@@ -243,9 +244,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * Cache for the resource content (the stylesheet file) when it is loaded.
-     * If set to false Camel will reload the stylesheet file on each message processing. This is good for development.
-     * A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+     * Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the
+     * stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to
+     * reload at runtime via JMX using the clearCachedStylesheet operation.
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
@@ -267,8 +268,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
     }
 
     /**
-     * If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange
-     * is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use.
+     * If you have output=file then this option dictates whether or not the output file should be deleted when the
+     * Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea
+     * to delete it after use.
      */
     public void setDeleteOutputFile(boolean deleteOutputFile) {
         this.deleteOutputFile = deleteOutputFile;
@@ -311,9 +313,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
     /**
      * Loads the resource.
      *
-     * @param resourceUri  the resource to load
+     * @param  resourceUri          the resource to load
      * @throws TransformerException is thrown if error loading resource
-     * @throws IOException is thrown if error loading resource
+     * @throws IOException          is thrown if error loading resource
      */
     protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
@@ -366,7 +368,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
                     : ((XsltComponent) getComponent()).getTransformerFactoryClass();
             if (trFactoryClass != null) {
                 // provide the class loader of this component to work in OSGi environments
-                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(trFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(trFactoryClass,
+                        TransformerFactory.class, XsltComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
 

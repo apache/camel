@@ -30,7 +30,8 @@ public class SaxonXsltComponentConfigurationTest extends CamelSpringTestSupport 
     @Test
     public void testConfiguration() throws Exception {
         XsltSaxonComponent component = context.getComponent("xslt-saxon", XsltSaxonComponent.class);
-        XsltSaxonEndpoint endpoint = context.getEndpoint("xslt-saxon:org/apache/camel/component/xslt/transform.xsl", XsltSaxonEndpoint.class);
+        XsltSaxonEndpoint endpoint
+                = context.getEndpoint("xslt-saxon:org/apache/camel/component/xslt/transform.xsl", XsltSaxonEndpoint.class);
 
         assertNotNull(component.getSaxonConfiguration());
         assertNotNull(component.getSaxonConfigurationProperties());

@@ -30,7 +30,7 @@ public class ThriftThreadPoolServer extends TThreadPoolServer {
     public static class Args extends TThreadPoolServer.Args {
         private ExecutorService startThreadPool;
         private CamelContext context;
-        
+
         public Args(TServerTransport transport) {
             super(transport);
         }
@@ -50,7 +50,6 @@ public class ThriftThreadPoolServer extends TThreadPoolServer {
     private final CamelContext context;
     private final ExecutorService startExecutor;
 
-
     public ThriftThreadPoolServer(Args args) {
         super(args);
 
@@ -67,7 +66,7 @@ public class ThriftThreadPoolServer extends TThreadPoolServer {
         startExecutor.execute(() -> {
             execute();
             waitForShutdown();
-            
+
             context.getExecutorServiceManager().shutdownGraceful(getExecutorService());
             setServing(false);
         });

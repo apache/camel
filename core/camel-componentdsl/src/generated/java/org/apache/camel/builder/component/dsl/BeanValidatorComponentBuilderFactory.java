@@ -37,6 +37,8 @@ public interface BeanValidatorComponentBuilderFactory {
      * Category: validation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-bean-validator
+     * 
+     * @return the dsl builder
      */
     static BeanValidatorComponentBuilder beanValidator() {
         return new BeanValidatorComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface BeanValidatorComponentBuilderFactory {
         /**
          * Whether to ignore data from the META-INF/validation.xml file.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param ignoreXmlConfiguration the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder ignoreXmlConfiguration(
                 boolean ignoreXmlConfiguration) {
@@ -72,10 +77,13 @@ public interface BeanValidatorComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -83,26 +91,37 @@ public interface BeanValidatorComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default BeanValidatorComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default BeanValidatorComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:
-         * <code>javax.validation.ConstraintValidatorFactory</code> type.
+         * &lt;code&gt;javax.validation.ConstraintValidatorFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param constraintValidatorFactory the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder constraintValidatorFactory(
                 javax.validation.ConstraintValidatorFactory constraintValidatorFactory) {
@@ -112,10 +131,13 @@ public interface BeanValidatorComponentBuilderFactory {
         /**
          * To use a custom MessageInterpolator.
          * 
-         * The option is a: <code>javax.validation.MessageInterpolator</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.validation.MessageInterpolator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageInterpolator the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder messageInterpolator(
                 javax.validation.MessageInterpolator messageInterpolator) {
@@ -125,10 +147,13 @@ public interface BeanValidatorComponentBuilderFactory {
         /**
          * To use a custom TraversableResolver.
          * 
-         * The option is a: <code>javax.validation.TraversableResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.validation.TraversableResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param traversableResolver the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder traversableResolver(
                 javax.validation.TraversableResolver traversableResolver) {
@@ -139,9 +164,13 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option is a:
-         * <code>javax.validation.ValidationProviderResolver</code> type.
+         * &lt;code&gt;javax.validation.ValidationProviderResolver&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param validationProviderResolver the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder validationProviderResolver(
                 javax.validation.ValidationProviderResolver validationProviderResolver) {
@@ -151,9 +180,13 @@ public interface BeanValidatorComponentBuilderFactory {
         /**
          * To use a custom ValidatorFactory.
          * 
-         * The option is a: <code>javax.validation.ValidatorFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.validation.ValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param validatorFactory the value to set
+         * @return the dsl builder
          */
         default BeanValidatorComponentBuilder validatorFactory(
                 javax.validation.ValidatorFactory validatorFactory) {
@@ -179,7 +212,7 @@ public interface BeanValidatorComponentBuilderFactory {
             switch (name) {
             case "ignoreXmlConfiguration": ((BeanValidatorComponent) component).setIgnoreXmlConfiguration((boolean) value); return true;
             case "lazyStartProducer": ((BeanValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((BeanValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((BeanValidatorComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "constraintValidatorFactory": ((BeanValidatorComponent) component).setConstraintValidatorFactory((javax.validation.ConstraintValidatorFactory) value); return true;
             case "messageInterpolator": ((BeanValidatorComponent) component).setMessageInterpolator((javax.validation.MessageInterpolator) value); return true;
             case "traversableResolver": ((BeanValidatorComponent) component).setTraversableResolver((javax.validation.TraversableResolver) value); return true;

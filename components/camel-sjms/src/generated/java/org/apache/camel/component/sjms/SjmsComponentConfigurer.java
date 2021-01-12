@@ -4,8 +4,10 @@ package org.apache.camel.component.sjms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,26 +21,12 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SjmsComponent target = (SjmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "connectionclientid":
-        case "connectionClientId": target.setConnectionClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectioncount":
-        case "connectionCount": target.setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
-        case "connectionmaxwait":
-        case "connectionMaxWait": target.setConnectionMaxWait(property(camelContext, long.class, value)); return true;
-        case "connectionpassword":
-        case "connectionPassword": target.setConnectionPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionresource":
-        case "connectionResource": target.setConnectionResource(property(camelContext, org.apache.camel.component.sjms.jms.ConnectionResource.class, value)); return true;
-        case "connectiontestonborrow":
-        case "connectionTestOnBorrow": target.setConnectionTestOnBorrow(property(camelContext, boolean.class, value)); return true;
-        case "connectionusername":
-        case "connectionUsername": target.setConnectionUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": target.setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
         case "headerfilterstrategy":
@@ -49,67 +37,60 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
-        case "reconnectbackoff":
-        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, long.class, value)); return true;
-        case "reconnectonerror":
-        case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
-        case "timedtaskmanager":
-        case "timedTaskManager": target.setTimedTaskManager(property(camelContext, org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class, value)); return true;
-        case "transactioncommitstrategy":
-        case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
+        case "recoveryinterval":
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "replytoontimeoutmaxconcurrentconsumers":
+        case "replyToOnTimeoutMaxConcurrentConsumers": target.setReplyToOnTimeoutMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": target.setRequestTimeoutCheckerInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connectionClientId", java.lang.String.class);
-        answer.put("connectionCount", java.lang.Integer.class);
-        answer.put("connectionFactory", javax.jms.ConnectionFactory.class);
-        answer.put("connectionMaxWait", long.class);
-        answer.put("connectionPassword", java.lang.String.class);
-        answer.put("connectionResource", org.apache.camel.component.sjms.jms.ConnectionResource.class);
-        answer.put("connectionTestOnBorrow", boolean.class);
-        answer.put("connectionUsername", java.lang.String.class);
-        answer.put("destinationCreationStrategy", org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        answer.put("reconnectBackOff", long.class);
-        answer.put("reconnectOnError", boolean.class);
-        answer.put("timedTaskManager", org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class);
-        answer.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"connectionFactory"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "destinationcreationstrategy":
+        case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return long.class;
+        case "replytoontimeoutmaxconcurrentconsumers":
+        case "replyToOnTimeoutMaxConcurrentConsumers": return int.class;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": return long.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SjmsComponent target = (SjmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "connectionclientid":
-        case "connectionClientId": return target.getConnectionClientId();
-        case "connectioncount":
-        case "connectionCount": return target.getConnectionCount();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
-        case "connectionmaxwait":
-        case "connectionMaxWait": return target.getConnectionMaxWait();
-        case "connectionpassword":
-        case "connectionPassword": return target.getConnectionPassword();
-        case "connectionresource":
-        case "connectionResource": return target.getConnectionResource();
-        case "connectiontestonborrow":
-        case "connectionTestOnBorrow": return target.isConnectionTestOnBorrow();
-        case "connectionusername":
-        case "connectionUsername": return target.getConnectionUsername();
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": return target.getDestinationCreationStrategy();
         case "headerfilterstrategy":
@@ -120,14 +101,12 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return target.getMessageCreatedStrategy();
-        case "reconnectbackoff":
-        case "reconnectBackOff": return target.getReconnectBackOff();
-        case "reconnectonerror":
-        case "reconnectOnError": return target.isReconnectOnError();
-        case "timedtaskmanager":
-        case "timedTaskManager": return target.getTimedTaskManager();
-        case "transactioncommitstrategy":
-        case "transactionCommitStrategy": return target.getTransactionCommitStrategy();
+        case "recoveryinterval":
+        case "recoveryInterval": return target.getRecoveryInterval();
+        case "replytoontimeoutmaxconcurrentconsumers":
+        case "replyToOnTimeoutMaxConcurrentConsumers": return target.getReplyToOnTimeoutMaxConcurrentConsumers();
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": return target.getRequestTimeoutCheckerInterval();
         default: return null;
         }
     }

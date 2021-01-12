@@ -33,7 +33,8 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
 
     @Test
     public void testSendMessage() throws Exception {
-        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>bar</foo></env:Body></env:Envelope>";
+        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
+                              + "<foo>bar</foo></env:Body></env:Envelope>";
 
         Object out = template.requestBodyAndHeader("direct:in", expectedBody, "foo", "bar");
         assertEquals("bar", out);
@@ -45,7 +46,8 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
     @Test
     public void testSendTwoMessages() throws Exception {
         // 1st message
-        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>bar</foo></env:Body></env:Envelope>";
+        String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
+                              + "<foo>bar</foo></env:Body></env:Envelope>";
 
         Object out = template.requestBodyAndHeader("direct:in", expectedBody, "foo", "bar");
         assertEquals("bar", out);
@@ -54,7 +56,8 @@ public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
         assertEquals("bar", myBean.foo, "bean foo: " + myBean);
 
         // 2nd message
-        String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>" + "<foo>baz</foo></env:Body></env:Envelope>";
+        String expectedBody2 = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
+                               + "<foo>baz</foo></env:Body></env:Envelope>";
 
         Object out2 = template.requestBodyAndHeader("direct:in", expectedBody2, "foo", "bar");
         assertEquals("baz", out2);

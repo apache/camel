@@ -62,16 +62,14 @@ public class FtpsConfiguration extends FtpConfiguration {
     }
 
     /**
-     * Returns the security mode(Implicit/Explicit). true - Implicit Mode /
-     * False - Explicit Mode
+     * Returns the security mode(Implicit/Explicit). true - Implicit Mode / False - Explicit Mode
      */
     public boolean isImplicit() {
         return implicit;
     }
 
     /**
-     * Set the security mode (Implicit/Explicit). true - Implicit Mode / False -
-     * Explicit Mode
+     * Set the security mode (Implicit/Explicit). true - Implicit Mode / False - Explicit Mode
      */
     public void setImplicit(boolean implicit) {
         this.implicit = implicit;
@@ -82,11 +80,9 @@ public class FtpsConfiguration extends FtpConfiguration {
     }
 
     /**
-     * Use this option to disable default options when using secure data
-     * channel.
+     * Use this option to disable default options when using secure data channel.
      * <p/>
-     * This allows you to be in full control what the execPbsz and execProt
-     * setting should be used.
+     * This allows you to be in full control what the execPbsz and execProt setting should be used.
      * <p/>
      * Default is <tt>false</tt>
      * 
@@ -104,8 +100,7 @@ public class FtpsConfiguration extends FtpConfiguration {
     /**
      * The exec protection level
      * <p/>
-     * PROT command. C - Clear S - Safe(SSL protocol only) E - Confidential(SSL
-     * protocol only) P - Private
+     * PROT command. C - Clear S - Safe(SSL protocol only) E - Confidential(SSL protocol only) P - Private
      *
      * @param execProt either C, S, E or P
      */
@@ -118,8 +113,7 @@ public class FtpsConfiguration extends FtpConfiguration {
     }
 
     /**
-     * When using secure data channel you can set the exec protection buffer
-     * size
+     * When using secure data channel you can set the exec protection buffer size
      *
      * @param execPbsz the buffer size
      */

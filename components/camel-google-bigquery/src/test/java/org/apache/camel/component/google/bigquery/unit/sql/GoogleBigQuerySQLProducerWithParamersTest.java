@@ -19,15 +19,22 @@ package org.apache.camel.component.google.bigquery.unit.sql;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.api.services.bigquery.model.QueryRequest;
+import com.google.cloud.bigquery.JobId;
+import com.google.cloud.bigquery.QueryJobConfiguration;
+import com.google.cloud.bigquery.QueryParameterValue;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.apache.camel.component.google.bigquery.integration.BigQueryTestSupport.PROJECT_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -47,18 +54,20 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
         body.put("data", "some data");
         producer.process(createExchangeWithBody(body));
 
-        ArgumentCaptor<QueryRequest> dataCaptor = ArgumentCaptor.forClass(QueryRequest.class);
-        verify(bigquery.jobs()).query(eq(projectId), dataCaptor.capture());
+        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
+        verify(bigquery).query(dataCaptor.capture(), any(JobId.class));
 
-        QueryRequest request = dataCaptor.getValue();
+        QueryJobConfiguration request = dataCaptor.getValue();
         assertEquals(sql, request.getQuery());
-        assertEquals(2, request.getQueryParameters().size());
 
-        assertEquals("id", request.getQueryParameters().get(1).getName());
-        assertEquals("100", request.getQueryParameters().get(1).getParameterValue().getValue());
+        Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();
+        assertEquals(2, namedParameters.size());
 
-        assertEquals("data", request.getQueryParameters().get(0).getName());
-        assertEquals("some data", request.getQueryParameters().get(0).getParameterValue().getValue());
+        assertTrue(namedParameters.containsKey("id"));
+        assertEquals("100", namedParameters.get("id").getValue());
+
+        assertTrue(namedParameters.containsKey("data"));
+        assertEquals("some data", namedParameters.get("data").getValue());
     }
 
     @Test
@@ -67,28 +76,62 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
         body.put("id", "100");
 
         Exchange exchange = createExchangeWithBody(body);
-        exchange.getMessage().getHeaders().put("id", "200");
-        exchange.getMessage().getHeaders().put("data", "some data");
+        Message message = exchange.getMessage();
+        message.setHeader("id", "200");
+        message.setHeader("data", "some data");
 
         producer.process(exchange);
 
-        ArgumentCaptor<QueryRequest> dataCaptor = ArgumentCaptor.forClass(QueryRequest.class);
-        verify(bigquery.jobs()).query(eq(projectId), dataCaptor.capture());
+        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
+        verify(bigquery).query(dataCaptor.capture(), any(JobId.class));
 
-        QueryRequest request = dataCaptor.getValue();
+        QueryJobConfiguration request = dataCaptor.getValue();
         assertEquals(sql, request.getQuery());
-        assertEquals(2, request.getQueryParameters().size());
 
-        assertEquals("id", request.getQueryParameters().get(1).getName());
-        assertEquals("Body data must have higher priority", "100", request.getQueryParameters().get(1).getParameterValue().getValue());
+        Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();
+        assertEquals(2, namedParameters.size());
 
-        assertEquals("data", request.getQueryParameters().get(0).getName());
-        assertEquals("some data", request.getQueryParameters().get(0).getParameterValue().getValue());
+        assertTrue(namedParameters.containsKey("id"));
+        assertEquals("100", namedParameters.get("id").getValue(), "Body data must have higher priority");
+
+        assertTrue(namedParameters.containsKey("data"));
+        assertEquals("some data", namedParameters.get("data").getValue());
+    }
+
+    @Test
+    public void sendMessageWithJobIdHeader() throws Exception {
+        Map<String, String> body = new HashMap<>();
+        body.put("id", "100");
+
+        Exchange exchange = createExchangeWithBody(body);
+        Message message = exchange.getMessage();
+        message.setHeader("id", "200");
+        message.setHeader("data", "some data");
+
+        JobId jobId = JobId.of(PROJECT_ID, "a-test-job");
+        message.setHeader(GoogleBigQueryConstants.JOB_ID, jobId);
+
+        producer.process(exchange);
+
+        ArgumentCaptor<QueryJobConfiguration> dataCaptor = ArgumentCaptor.forClass(QueryJobConfiguration.class);
+        verify(bigquery).query(dataCaptor.capture(), eq(jobId));
+
+        QueryJobConfiguration request = dataCaptor.getValue();
+        assertEquals(sql, request.getQuery());
+
+        Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();
+        assertEquals(2, namedParameters.size());
+
+        assertTrue(namedParameters.containsKey("id"));
+        assertEquals("100", namedParameters.get("id").getValue(), "Body data must have higher priority");
+
+        assertTrue(namedParameters.containsKey("data"));
+        assertEquals("some data", namedParameters.get("data").getValue());
     }
 
     @Test
     public void sendMessageWithoutParameters() throws Exception {
         assertThrows(RuntimeExchangeException.class,
-            () -> producer.process(createExchangeWithBody(new HashMap<>())));
+                () -> producer.process(createExchangeWithBody(new HashMap<>())));
     }
 }

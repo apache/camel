@@ -59,7 +59,7 @@ public class MailContentTypeTest extends CamelTestSupport {
         assertTrue(msg.getContentType().startsWith("text/plain"));
         assertEquals("Hello World", msg.getContent());
     }
-    
+
     @Test
     public void testSendMultipartMail() throws Exception {
         Mailbox.clearAll();
@@ -72,7 +72,8 @@ public class MailContentTypeTest extends CamelTestSupport {
         Message msg = box.get(0);
         assertTrue(msg.getContentType().startsWith("multipart/alternative"));
         assertEquals("Hello World", ((MimeMultipart) msg.getContent()).getBodyPart(0).getContent());
-        assertEquals("<html><body><h1>Hello</h1>World</body></html>", ((MimeMultipart) msg.getContent()).getBodyPart(1).getContent());
+        assertEquals("<html><body><h1>Hello</h1>World</body></html>",
+                ((MimeMultipart) msg.getContent()).getBodyPart(1).getContent());
     }
 
     @Override

@@ -33,16 +33,17 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-            {"smtp"},
-            {"smtps"},
-            {"pop3"},
-            {"pop3s"},
-            {"imap"},
-            {"imaps"}
+                { "smtp" },
+                { "smtps" },
+                { "pop3" },
+                { "pop3s" },
+                { "imap" },
+                { "imaps" }
         });
     }
 
-    @ParameterizedTest @MethodSource("data")
+    @ParameterizedTest
+    @MethodSource("data")
     public void testMailEndpointTlsConfig(String protocol) throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
@@ -62,7 +63,8 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
-    @ParameterizedTest @MethodSource("data")
+    @ParameterizedTest
+    @MethodSource("data")
     public void testMailEndpointNoTlsConfig(String protocol) throws Exception {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
@@ -89,7 +91,8 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         }
     }
 
-    @ParameterizedTest @MethodSource("data")
+    @ParameterizedTest
+    @MethodSource("data")
     public void testMailEndpointTlsSslContextParametersConfig(String protocol) throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");

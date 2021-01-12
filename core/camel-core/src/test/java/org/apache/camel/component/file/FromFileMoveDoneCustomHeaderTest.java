@@ -53,8 +53,9 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}").setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
-                    .to("mock:result", "file:target/data/outbox");
+                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}")
+                        .setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
+                        .to("mock:result", "file:target/data/outbox");
             }
         };
     }

@@ -37,6 +37,8 @@ public interface JbpmComponentBuilderFactory {
      * Category: api,workflow
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jbpm
+     * 
+     * @return the dsl builder
      */
     static JbpmComponentBuilder jbpm() {
         return new JbpmComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface JbpmComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JbpmComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,27 +81,36 @@ public interface JbpmComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JbpmComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default JbpmComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JbpmComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -118,7 +132,7 @@ public interface JbpmComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((JBPMComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JBPMComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((JBPMComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JBPMComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

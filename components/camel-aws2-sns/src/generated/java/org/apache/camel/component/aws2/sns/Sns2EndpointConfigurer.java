@@ -4,8 +4,10 @@ package org.apache.camel.component.aws2.sns;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -25,16 +27,16 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": target.getConfiguration().setAmazonSNSClient(property(camelContext, software.amazon.awssdk.services.sns.SnsClient.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": target.getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": target.getConfiguration().setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": target.getConfiguration().setMessageDeduplicationIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": target.getConfiguration().setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "messagestructure":
         case "messageStructure": target.getConfiguration().setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -57,35 +59,62 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonSNSClient", software.amazon.awssdk.services.sns.SnsClient.class);
-        answer.put("autoCreateTopic", boolean.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("kmsMasterKeyId", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageStructure", java.lang.String.class);
-        answer.put("policy", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("queueUrl", java.lang.String.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("serverSideEncryptionEnabled", boolean.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("subscribeSNStoSQS", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustAllCertificates", boolean.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSNSClient"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonsnsclient":
+        case "amazonSNSClient": return software.amazon.awssdk.services.sns.SnsClient.class;
+        case "autocreatetopic":
+        case "autoCreateTopic": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "kmsmasterkeyid":
+        case "kmsMasterKeyId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return java.lang.String.class;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return java.lang.String.class;
+        case "messagestructure":
+        case "messageStructure": return java.lang.String.class;
+        case "policy": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "queueurl":
+        case "queueUrl": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "serversideencryptionenabled":
+        case "serverSideEncryptionEnabled": return boolean.class;
+        case "subject": return java.lang.String.class;
+        case "subscribesnstosqs":
+        case "subscribeSNStoSQS": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -98,16 +127,16 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": return target.getConfiguration().getAmazonSNSClient();
         case "autocreatetopic":
         case "autoCreateTopic": return target.getConfiguration().isAutoCreateTopic();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": return target.getConfiguration().getKmsMasterKeyId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return target.getConfiguration().getMessageDeduplicationIdStrategy();
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return target.getConfiguration().getMessageGroupIdStrategy();
         case "messagestructure":
         case "messageStructure": return target.getConfiguration().getMessageStructure();
         case "policy": return target.getConfiguration().getPolicy();
@@ -130,6 +159,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": return target.isSynchronous();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         default: return null;
         }
     }

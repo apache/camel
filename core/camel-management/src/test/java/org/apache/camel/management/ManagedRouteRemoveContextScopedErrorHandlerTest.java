@@ -52,10 +52,6 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
-        // and one context scoped error handler
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(1, set.size());
-
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
@@ -70,11 +66,7 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no more routes
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(0, set.size());
-
-        // no more error handlers
-        set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
+        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
     }
 
@@ -92,7 +84,7 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
             public void configure() throws Exception {
                 // context scoped error handler
                 errorHandler(deadLetterChannel("mock:dead"));
-                
+
                 // which this route will use
                 from("seda:foo").to("mock:result");
             }

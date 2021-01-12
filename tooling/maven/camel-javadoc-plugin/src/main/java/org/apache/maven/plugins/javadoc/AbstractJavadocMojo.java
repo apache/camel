@@ -17,6 +17,16 @@
 // CHECKSTYLE:OFF
 package org.apache.maven.plugins.javadoc;
 
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
+import java.util.Map.Entry;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,16 +82,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.io.*;
-import java.lang.reflect.Method;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
-import java.util.Map.Entry;
 
 import static org.apache.maven.plugins.javadoc.JavadocUtil.*;
 
@@ -2056,7 +2056,7 @@ public abstract class AbstractJavadocMojo
         arguments.addAll( javadocArguments );
         arguments.addAll( standardDocletArguments );
 
-        if ( arguments.size() > 0 )
+        if ( !arguments.isEmpty() )
         {
             addCommandLineOptions( cmd, arguments, javadocOutputDirectory );
         }
@@ -2778,7 +2778,7 @@ public abstract class AbstractJavadocMojo
                         (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
                                 jdkToolchain );
 
-                if ( tcs != null && tcs.size() > 0 )
+                if ( tcs != null && !tcs.isEmpty())
                 {
                     tc = tcs.get( 0 );
                 }

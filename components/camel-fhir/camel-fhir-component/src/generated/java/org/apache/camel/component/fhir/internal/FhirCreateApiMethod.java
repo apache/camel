@@ -36,8 +36,6 @@ public enum FhirCreateApiMethod implements ApiMethod {
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private FhirCreateApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

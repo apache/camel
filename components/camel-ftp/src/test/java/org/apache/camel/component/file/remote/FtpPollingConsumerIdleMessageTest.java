@@ -23,12 +23,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no
- * results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
 
@@ -38,13 +37,13 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
+        assertNull(mock.getExchanges().get(0).getIn().getBody());
+        assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
 
     @BeforeEach
     public void setup() throws Exception {
-        new File(FTP_ROOT_DIR + "/polling").mkdirs();
+        new File(service.getFtpRootDir() + "/polling").mkdirs();
     }
 
     @Override
@@ -52,7 +51,8 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://admin@localhost:" + getPort() + "/polling?password=admin&delay=50" + "&sendEmptyMessageWhenIdle=true").to("mock:result");
+                from("ftp://admin@localhost:{{ftp.server.port}}/polling?password=admin&delay=50"
+                     + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };
     }

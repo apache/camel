@@ -28,13 +28,13 @@ public enum FopOutputType {
     mif("application/mif"),
     rtf("application/rtf"),
     txt("text/plain");
-    
+
     private final String outputFormatExtended;
 
     FopOutputType(String outputFormatExtended) {
         this.outputFormatExtended = outputFormatExtended;
     }
-    
+
     public String getFormatExtended() {
         return outputFormatExtended;
     }

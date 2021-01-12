@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
 public class IOTAProducerTest extends CamelTestSupport {
 
     private static final String SEED = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
-    private static final String ADDRESS = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
+    private static final String ADDRESS
+            = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
 
     private static final String IOTA_NODE_URL = "https://nodes.thetangle.org:443";
 
@@ -102,30 +103,33 @@ public class IOTAProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:iota-send-message")
-                    .setHeader(IOTAConstants.SEED_HEADER, constant(SEED))
-                    .setHeader(IOTAConstants.TO_ADDRESS_HEADER, constant(ADDRESS))
-                    .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=2&tag=APACHECAMELTEST&depth=3&operation=" + IOTAConstants.SEND_TRANSFER_OPERATION)
-                    .to("mock:iota-send-message-response");
+                        .setHeader(IOTAConstants.SEED_HEADER, constant(SEED))
+                        .setHeader(IOTAConstants.TO_ADDRESS_HEADER, constant(ADDRESS))
+                        .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=2&tag=APACHECAMELTEST&depth=3&operation="
+                            + IOTAConstants.SEND_TRANSFER_OPERATION)
+                        .to("mock:iota-send-message-response");
 
                 from("direct:iota-new-address")
-                    .setHeader(IOTAConstants.SEED_HEADER, constant(SEED))
-                    .setHeader(IOTAConstants.ADDRESS_INDEX_HEADER, constant(1))
-                    .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation=" + IOTAConstants.GET_NEW_ADDRESS_OPERATION)
-                    .to("mock:iota-new-address-response");
-                
+                        .setHeader(IOTAConstants.SEED_HEADER, constant(SEED))
+                        .setHeader(IOTAConstants.ADDRESS_INDEX_HEADER, constant(1))
+                        .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation="
+                            + IOTAConstants.GET_NEW_ADDRESS_OPERATION)
+                        .to("mock:iota-new-address-response");
+
                 from("direct:iota-get-transfers")
-                    .setHeader(IOTAConstants.SEED_HEADER, constant(SEED))
-                    .setHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, constant(1))
-                    .setHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, constant(10))
-                    .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation=" + IOTAConstants.GET_TRANSFERS_OPERATION)
-                    .to("mock:iota-get-transfers-response");
+                        .setHeader(IOTAConstants.SEED_HEADER, constant(SEED))
+                        .setHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, constant(1))
+                        .setHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, constant(10))
+                        .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation="
+                            + IOTAConstants.GET_TRANSFERS_OPERATION)
+                        .to("mock:iota-get-transfers-response");
             }
         };
     }

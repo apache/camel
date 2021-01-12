@@ -60,7 +60,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListAccessKeysResponse resultGet = (ListAccessKeysResponse)exchange.getIn().getBody();
+        ListAccessKeysResponse resultGet = (ListAccessKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.accessKeyMetadata().size());
         assertEquals("1", resultGet.accessKeyMetadata().get(0).accessKeyId());
     }
@@ -79,7 +79,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateUserResponse resultGet = (CreateUserResponse)exchange.getIn().getBody();
+        CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
 
@@ -97,10 +97,10 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateUserResponse resultGet = (CreateUserResponse)exchange.getIn().getBody();
+        CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
-    }    
-    
+    }
+
     @Test
     public void iamDeleteUserTest() throws Exception {
 
@@ -115,7 +115,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteUserResponse resultGet = (DeleteUserResponse)exchange.getIn().getBody();
+        DeleteUserResponse resultGet = (DeleteUserResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -132,7 +132,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListUsersResponse resultGet = (ListUsersResponse)exchange.getIn().getBody();
+        ListUsersResponse resultGet = (ListUsersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.users().size());
         assertEquals("test", resultGet.users().get(0).userName());
     }
@@ -151,7 +151,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse)exchange.getIn().getBody();
+        CreateAccessKeyResponse resultGet = (CreateAccessKeyResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.accessKey().accessKeyId());
         assertEquals("testSecret", resultGet.accessKey().secretAccessKey());
     }
@@ -171,7 +171,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse)exchange.getIn().getBody();
+        DeleteAccessKeyResponse resultGet = (DeleteAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -189,7 +189,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GetUserResponse resultGet = (GetUserResponse)exchange.getIn().getBody();
+        GetUserResponse resultGet = (GetUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());
     }
 
@@ -208,7 +208,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse)exchange.getIn().getBody();
+        UpdateAccessKeyResponse resultGet = (UpdateAccessKeyResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -227,7 +227,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateGroupResponse resultGet = (CreateGroupResponse)exchange.getIn().getBody();
+        CreateGroupResponse resultGet = (CreateGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals("Test", resultGet.group().groupName());
         assertEquals("/test", resultGet.group().path());
@@ -246,7 +246,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteGroupResponse resultGet = (DeleteGroupResponse)exchange.getIn().getBody();
+        DeleteGroupResponse resultGet = (DeleteGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -262,7 +262,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListGroupsResponse resultGet = (ListGroupsResponse)exchange.getIn().getBody();
+        ListGroupsResponse resultGet = (ListGroupsResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
         assertEquals(1, resultGet.groups().size());
         assertEquals("Test", resultGet.groups().get(0).groupName());
@@ -282,7 +282,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        AddUserToGroupResponse resultGet = (AddUserToGroupResponse)exchange.getIn().getBody();
+        AddUserToGroupResponse resultGet = (AddUserToGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -300,7 +300,7 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        RemoveUserFromGroupResponse resultGet = (RemoveUserFromGroupResponse)exchange.getIn().getBody();
+        RemoveUserFromGroupResponse resultGet = (RemoveUserFromGroupResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 

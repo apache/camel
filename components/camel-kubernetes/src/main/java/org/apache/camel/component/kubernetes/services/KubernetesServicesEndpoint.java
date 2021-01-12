@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Services and get notified on Service changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services", syntax = "kubernetes-services:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services",
+             syntax = "kubernetes-services:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {

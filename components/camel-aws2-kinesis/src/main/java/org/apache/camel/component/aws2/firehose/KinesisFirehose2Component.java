@@ -17,14 +17,12 @@
 package org.apache.camel.component.aws2.firehose;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import software.amazon.awssdk.services.firehose.FirehoseClient;
 
 @Component("aws2-kinesis-firehose")
 public class KinesisFirehose2Component extends DefaultComponent {
@@ -44,14 +42,13 @@ public class KinesisFirehose2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisFirehose2Configuration configuration = this.configuration != null ? this.configuration.copy() : new KinesisFirehose2Configuration();
+        KinesisFirehose2Configuration configuration
+                = this.configuration != null ? this.configuration.copy() : new KinesisFirehose2Configuration();
         configuration.setStreamName(remaining);
         KinesisFirehose2Endpoint endpoint = new KinesisFirehose2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration);
-        }
-        if (configuration.getAmazonKinesisFirehoseClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonKinesisFirehoseClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
         }
         return endpoint;
@@ -66,12 +63,5 @@ public class KinesisFirehose2Component extends DefaultComponent {
      */
     public void setConfiguration(KinesisFirehose2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(KinesisFirehose2Configuration configuration) {
-        Set<FirehoseClient> clients = getCamelContext().getRegistry().findByType(FirehoseClient.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonKinesisFirehoseClient(clients.stream().findFirst().get());
-        }
     }
 }

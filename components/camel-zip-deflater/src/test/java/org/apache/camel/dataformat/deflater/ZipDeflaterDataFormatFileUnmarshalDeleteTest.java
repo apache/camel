@@ -46,7 +46,7 @@ public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSuppo
         template.sendBodyAndHeader("file:target/data/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
-        event.matchesMockWaitTime();
+        event.matchesWaitTime();
 
         File in = new File("target/zip/hello.txt");
         assertFalse(in.exists(), "Should have been deleted " + in);
@@ -61,12 +61,12 @@ public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSuppo
             @Override
             public void configure() throws Exception {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
-                    .marshal().zipDeflater()
-                    .to("file:target/data/zip/out?fileName=${file:name}.zip");
+                        .marshal().zipDeflater()
+                        .to("file:target/data/zip/out?fileName=${file:name}.zip");
 
                 from("file:target/data/zip/out?initialDelay=0&delay=10&delete=true")
-                    .unmarshal().zipDeflater()
-                    .to("mock:result");
+                        .unmarshal().zipDeflater()
+                        .to("mock:result");
             }
         };
     }

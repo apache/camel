@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -32,7 +31,7 @@ public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         EKS2Component component = context.getComponent("aws2-eks", EKS2Component.class);
-        EKS2Endpoint endpoint = (EKS2Endpoint)component.createEndpoint("aws2-eks://TestDomain");
+        EKS2Endpoint endpoint = (EKS2Endpoint) component.createEndpoint("aws2-eks://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEksClient());
     }
@@ -45,25 +44,14 @@ public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
             component.createEndpoint("aws2-eks://TestDomain");
         });
     }
-    
+
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+    public void createEndpointWithAutowired() throws Exception {
 
         AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         EKS2Component component = context.getComponent("aws2-eks", EKS2Component.class);
-        EKS2Endpoint endpoint = (EKS2Endpoint)component.createEndpoint("aws2-eks://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(clientMock, endpoint.getConfiguration().getEksClient());
-    }
-    
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
-
-        AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
-        context.getRegistry().bind("amazonEcsClient", clientMock);
-        EKS2Component component = context.getComponent("aws2-eks", EKS2Component.class);
-        EKS2Endpoint endpoint = (EKS2Endpoint)component.createEndpoint("aws2-eks://TestDomain?accessKey=xxx&secretKey=yyy");
+        EKS2Endpoint endpoint = (EKS2Endpoint) component.createEndpoint("aws2-eks://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getEksClient());
     }

@@ -60,7 +60,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
         DefaultExchangeHolder holder = aggregationRepository.getCache().get(key);
         if (holder == null) {
             return false;
-        } 
+        }
         return true;
     }
 
@@ -83,7 +83,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
         Exchange exchange = new DefaultExchange(camelContext);
         aggregationRepository.add(camelContext, key, exchange);
         assertTrue(exists(key));
-        
+
         // When
         Exchange exchange2 = aggregationRepository.get(camelContext, key);
         // Then
@@ -130,7 +130,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     @Test
     public void testGetKeys() {
         // Given
-        String[] keys = {"GetKeys1", "GetKeys2"};
+        String[] keys = { "GetKeys1", "GetKeys2" };
         addExchanges(keys);
         // When
         Set<String> keySet = aggregationRepository.getKeys();
@@ -188,7 +188,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     @Test
     public void testScan() {
         // Given
-        String[] keys = {"Scan1", "Scan2"};
+        String[] keys = { "Scan1", "Scan2" };
         addExchanges(keys);
         // When
         Set<String> exchangeIdSet = aggregationRepository.scan(camelContext);
@@ -201,7 +201,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     @Test
     public void testRecover() {
         // Given
-        String[] keys = {"Recover1", "Recover2"};
+        String[] keys = { "Recover1", "Recover2" };
         addExchanges(keys);
         // When
         Exchange exchange2 = aggregationRepository.recover(camelContext, "Recover2");

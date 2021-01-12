@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FtpReconnectAttemptUnknownHostTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@doesnotexisthost:" + getPort() + "/reconnect?password=admin";
+        return "ftp://admin@doesnotexisthost:{{ftp.server.port}}/reconnect?password=admin";
     }
 
     @Test

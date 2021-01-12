@@ -46,7 +46,8 @@ public class AggregateGroupedExchangeCompletionSizeTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(3).to("mock:result");
+                from("direct:start").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(3)
+                        .to("mock:result");
             }
         };
     }

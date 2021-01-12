@@ -48,10 +48,13 @@ public interface DnsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DnsEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -68,10 +71,14 @@ public interface DnsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -89,41 +96,16 @@ public interface DnsEndpointBuilderFactory {
             return (DnsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDnsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDnsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDnsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -133,10 +115,14 @@ public interface DnsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDnsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -157,9 +143,11 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Path parameter: dnsType (required)
          * The type of the lookup.
-         * The value can be one of: dig, ip, lookup, wikipedia
+         * There are 4 enums and the value can be one of: dig, ip, lookup,
+         * wikipedia
          * 
          * @param path dnsType
+         * @return the dsl builder
          */
         default DnsEndpointBuilder dns(String path) {
             return DnsEndpointBuilderFactory.endpointBuilder("dns", path);
@@ -176,11 +164,13 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Path parameter: dnsType (required)
          * The type of the lookup.
-         * The value can be one of: dig, ip, lookup, wikipedia
+         * There are 4 enums and the value can be one of: dig, ip, lookup,
+         * wikipedia
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path dnsType
+         * @return the dsl builder
          */
         default DnsEndpointBuilder dns(String componentName, String path) {
             return DnsEndpointBuilderFactory.endpointBuilder(componentName, path);

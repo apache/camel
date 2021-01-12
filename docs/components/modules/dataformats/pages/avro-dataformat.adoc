@@ -7,6 +7,7 @@
 :description: Serialize and deserialize messages using Apache Avro binary data format.
 :since: 2.14
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/avro.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -73,7 +74,7 @@ In the same manner you can umarshal using the avro data format.
 == Avro Dataformat Options
 
 // dataformat options: START
-The Avro dataformat supports 2 options, which are listed below.
+The Avro dataformat supports 1 options, which are listed below.
 
 
 
@@ -81,9 +82,7 @@ The Avro dataformat supports 2 options, which are listed below.
 |===
 | Name | Default | Java Type | Description
 | instanceClassName |  | String | Class name to use for marshal and unmarshalling
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
-ND
 
 include::camel-spring-boot::page$avro-starter.adoc[]

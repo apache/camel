@@ -50,8 +50,8 @@ public class AhcProducerConnectionCloseHeadersTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri() + "?connectionClose=true")
-                    .to("mock:result");
+                        .to(getAhcEndpointUri() + "?connectionClose=true")
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         // Remove the message header here

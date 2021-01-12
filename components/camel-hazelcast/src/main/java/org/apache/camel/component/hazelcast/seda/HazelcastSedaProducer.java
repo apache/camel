@@ -27,7 +27,8 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultExchangeHolder;
 
 /**
- * Implementation of Hazelcast SEDA {@link Producer} component. Just appends exchange body into a Hazelcast {@link BlockingQueue}.
+ * Implementation of Hazelcast SEDA {@link Producer} component. Just appends exchange body into a Hazelcast
+ * {@link BlockingQueue}.
  */
 public class HazelcastSedaProducer extends DefaultAsyncProducer {
 

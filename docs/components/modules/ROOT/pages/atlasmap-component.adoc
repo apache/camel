@@ -1,0 +1,117 @@
+[[atlasmap-component]]
+= AtlasMap Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-atlasmap/src/main/docs/atlasmap-component.adoc
+:docTitle: AtlasMap
+:artifactId: camel-atlasmap
+:description: Transforms the message using an AtlasMap transformation.
+:since: 3.7
+:supportLevel: Preview
+:component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/atlasmap.adoc[opts=optional]
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AtlasMap component allows you to process data mapping using an
+http://www.atlasmap.io/[AtlasMap] data mapping definition. It could be
+either an ADM archive file or mapping definition JSON file.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-atlasmap</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------
+atlasmap:mappingName[?options]
+---------------------------
+
+Where *mappingName* is the classpath-local URI of the AtlasMap
+mapping definition, either ADM archive file or mapping definition JSON file
+ to process.
+
+== Options
+
+
+// component options: START
+The AtlasMap component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *atlasContextFactory* (advanced) | To use the AtlasContextFactory otherwise a new engine is created. |  | AtlasContextFactory
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AtlasMap endpoint is configured using URI syntax:
+
+----
+atlasmap:resourceUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+=== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *sourceMapName* (producer) | The Exchange property name for a source message map which hold java.util.Map&lt;String, Message&gt; where the key is AtlasMap Document ID. AtlasMap consumes Message bodies as source documents, as well as message headers as source properties where the scope equals to Document ID. |  | String
+| *targetMapMode* (producer) | TargetMapMode enum value to specify how multiple target documents are delivered if exist. 'MAP': Stores them into a java.util.Map, and the java.util.Map is set to an exchange property if 'targetMapName' is specified, otherwise message body. 'MESSAGE_HEADER': Stores them into message headers. 'EXCHANGE_PROPERTY': Stores them into exchange properties. ). There are 3 enums and the value can be one of: MAP, MESSAGE_HEADER, EXCHANGE_PROPERTY | MAP | TargetMapMode
+| *targetMapName* (producer) | The Exchange property name for a target document map which hold java.util.Map&lt;String, Object&gt; where the key is AtlasMap Document ID. AtlasMap populates multiple target documents into this map. |  | String
+| *propertiesFile* (advanced) | The URI of the properties file which is used for AtlasContextFactory initialization. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+
+
+== Samples
+
+For example you could use something like
+
+[source,java]
+--------------------------------------
+from("activemq:My.Queue").
+  to("atlasmap:atlasmap-mapping.adm");
+--------------------------------------
+
+where you can export an ADM archive file from AtlasMap Data Mapper UI.
+
+
+include::camel-spring-boot::page$atlasmap-starter.adoc[]

@@ -132,7 +132,8 @@ public class BeanParameterValueTest extends ContextTestSupport {
 
                 from("direct:heads").to("bean:foo?method=heads(${body}, ${headers})").to("mock:result");
 
-                from("direct:nobody").to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})").to("mock:result");
+                from("direct:nobody").to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})")
+                        .to("mock:result");
             }
         };
     }

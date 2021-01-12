@@ -23,7 +23,7 @@ import io.swagger.models.Operation;
 
 public final class DirectToOperationId implements DestinationGenerator {
 
-    private final AtomicInteger directRouteCount = new AtomicInteger(0);
+    private final AtomicInteger directRouteCount = new AtomicInteger();
 
     @Override
     public String generateDestinationFor(final Operation operation) {

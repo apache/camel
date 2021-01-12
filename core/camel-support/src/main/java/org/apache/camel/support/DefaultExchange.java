@@ -19,11 +19,11 @@ package org.apache.camel.support;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -176,7 +176,8 @@ public final class DefaultExchange implements ExtendedExchange {
             // safe copy message history using a defensive copy
             List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
             if (history != null) {
-                target.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
+                // use thread-safe list as message history may be accessed concurrently
+                target.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
             }
         }
     }
@@ -349,7 +350,7 @@ public final class DefaultExchange implements ExtendedExchange {
         // lazy create
         if (out == null) {
             out = (in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
+                    ? ((MessageSupport) in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
         return out;
@@ -402,7 +403,6 @@ public final class DefaultExchange implements ExtendedExchange {
             setIn(message);
         }
     }
-
 
     @Override
     public Exception getException() {
@@ -675,8 +675,13 @@ public final class DefaultExchange implements ExtendedExchange {
     }
 
     @Override
+    public boolean isErrorHandlerHandledSet() {
+        return errorHandlerHandled != null;
+    }
+
+    @Override
     public boolean isErrorHandlerHandled() {
-        return errorHandlerHandled != null && errorHandlerHandled;
+        return errorHandlerHandled;
     }
 
     @Override
@@ -689,7 +694,7 @@ public final class DefaultExchange implements ExtendedExchange {
      */
     protected void configureMessage(Message message) {
         if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport)message;
+            MessageSupport messageSupport = (MessageSupport) message;
             messageSupport.setExchange(this);
             messageSupport.setCamelContext(getContext());
         }

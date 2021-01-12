@@ -82,12 +82,12 @@ public class ManagedCanekContextExchangeStatisticsTest extends ManagementTestSup
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .routeId("route1")
-                    .to("log:foo").to("mock:result");
+                        .routeId("route1")
+                        .to("log:foo").to("mock:result");
 
                 from("direct:bar")
-                    .routeId("route2")
-                    .to("log:bar").to("mock:result");
+                        .routeId("route2")
+                        .to("log:bar").to("mock:result");
             }
         };
     }

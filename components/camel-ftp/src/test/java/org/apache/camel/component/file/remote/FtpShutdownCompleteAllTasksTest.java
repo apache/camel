@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/pending?password=admin&initialDelay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/pending?password=admin&initialDelay=5000";
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
-        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/pending/?password=admin";
+        String ftpUrl = "ftp://admin@localhost:{{ftp.server.port}}/pending/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(ftpUrl, "B", Exchange.FILE_NAME, "b.txt");
         template.sendBodyAndHeader(ftpUrl, "C", Exchange.FILE_NAME, "c.txt");
@@ -75,8 +75,8 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from(getFtpUrl()).routeId("route1")
-                    // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).delay(1000).to("seda:foo");
+                        // let it complete all tasks during shutdown
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).delay(1000).to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

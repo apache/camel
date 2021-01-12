@@ -36,13 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class NoSplitRowsTest {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(NoSplitRowsTest.class);
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
+    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
 
     @Test
     public void testHeaderAndTrailer() throws Exception {

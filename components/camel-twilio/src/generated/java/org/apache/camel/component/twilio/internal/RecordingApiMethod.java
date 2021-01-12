@@ -51,8 +51,6 @@ public enum RecordingApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private RecordingApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

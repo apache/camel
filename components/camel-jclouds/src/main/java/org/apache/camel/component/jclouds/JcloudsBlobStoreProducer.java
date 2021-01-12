@@ -89,7 +89,8 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
     }
 
     /**
-     * Retrieves the containerName from the URI or from the exchange headers. The header will take precedence over the URI.
+     * Retrieves the containerName from the URI or from the exchange headers. The header will take precedence over the
+     * URI.
      */
     protected String getContainerName(Exchange exchange) {
         String containerName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getContainer();
@@ -122,7 +123,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         }
         return operation;
     }
-    
+
     /**
      * Retrieves the Blob name list from the exchange headers.
      */

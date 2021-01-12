@@ -45,16 +45,16 @@ public class NettyMDCLoggingTest extends BaseNettyTest {
                 context.setUseMDCLogging(true);
 
                 from("direct:start").routeId("client")
-                    .to("log:client-input")
-                    .to("netty-http:http://localhost:{{port}}/foo")
-                    .to("log:client-output")
-                    .to("mock:result");
+                        .to("log:client-input")
+                        .to("netty-http:http://localhost:{{port}}/foo")
+                        .to("log:client-output")
+                        .to("mock:result");
 
                 from("netty-http:http://0.0.0.0:{{port}}/foo").routeId("server").streamCaching()
-                    .to("log:server-input")
-                    .to("mock:input")
-                    .transform().simple("Bye ${body}")
-                    .to("log:server-output");
+                        .to("log:server-input")
+                        .to("mock:input")
+                        .transform().simple("Bye ${body}")
+                        .to("log:server-output");
             }
         };
     }

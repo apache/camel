@@ -67,7 +67,7 @@ public abstract class AbstractDdbCommand {
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(DdbConstants.ATTRIBUTES, attributes);
     }
-    
+
     protected void addToResults(Map<String, Object> map) {
         Message msg = getMessageForResponse(exchange);
         for (Map.Entry<String, Object> en : map.entrySet()) {

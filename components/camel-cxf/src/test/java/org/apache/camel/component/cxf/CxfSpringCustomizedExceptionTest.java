@@ -43,12 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
+public class CxfSpringCustomizedExceptionTest extends CamelTestSupport {
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
     private AbstractXmlApplicationContext applicationContext;
-   
+
     static {
         // START SNIPPET: FaultDefine
         SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, Fault.FAULT_CODE_CLIENT);
@@ -57,8 +57,8 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         Text tn = doc.createTextNode(DETAIL_TEXT);
         detail.appendChild(tn);
         // END SNIPPET: FaultDefine
-    }    
-   
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -74,31 +74,32 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
+
     @Test
     public void testInvokingServiceFromCamel() throws Exception {
         try {
-            template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world", CxfConstants.OPERATION_NAME, "echo");
+            template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world", CxfConstants.OPERATION_NAME,
+                    "echo");
             fail("Should have thrown an exception");
         } catch (Exception ex) {
             Throwable result = ex.getCause();
             assertTrue(result instanceof SoapFault, "Exception is not instance of SoapFault");
-            assertEquals(DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent(), "Expect to get right detail message");
-            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString(), "Expect to get right fault-code");
+            assertEquals(DETAIL_TEXT, ((SoapFault) result).getDetail().getTextContent(), "Expect to get right detail message");
+            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) result).getFaultCode().toString(),
+                    "Expect to get right fault-code");
         }
-        
+
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
-
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfCustomizedExceptionContext.xml");
     }
-    
+
     public static class SOAPFaultProcessor implements Processor {
 
         @Override
@@ -106,6 +107,5 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
             exchange.getMessage().setBody(SOAP_FAULT);
         }
     }
-
 
 }

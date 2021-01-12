@@ -56,7 +56,8 @@ public class JmsInOutIssueTest extends CamelTestSupport {
 
     @Test
     public void testInOutWithSendExchange() throws Exception {
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOut, exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOut,
+                exchange -> exchange.getIn().setBody("Hello World"));
 
         assertEquals("Bye World", out.getMessage().getBody());
     }

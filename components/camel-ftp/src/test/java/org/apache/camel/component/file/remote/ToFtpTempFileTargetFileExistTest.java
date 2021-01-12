@@ -31,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tempfile?password=admin&binary=false" + "&fileName=./foo/bar/message.txt&tempFileName=${file:onlyname.noext}.tmp";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tempfile?password=admin&binary=false"
+               + "&fileName=./foo/bar/message.txt&tempFileName=${file:onlyname.noext}.tmp";
     }
 
     @Override
@@ -46,7 +47,7 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Again World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/tempfile/foo/bar/message.txt", "Hello Again World");
+        mock.expectedFileExists(service.getFtpRootDir() + "/tempfile/foo/bar/message.txt", "Hello Again World");
 
         template.sendBody("direct:start", "Hello Again World");
 
@@ -65,7 +66,7 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/tempfile/foo/bar/message.txt");
+        File file = new File(service.getFtpRootDir() + "/tempfile/foo/bar/message.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

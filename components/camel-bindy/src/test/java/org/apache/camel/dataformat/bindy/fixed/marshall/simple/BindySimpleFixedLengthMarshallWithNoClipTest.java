@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSupport {
 
@@ -49,21 +49,21 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
                 BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat(Order.class);
 
                 from("direct:start")
-                    .marshal(bindy)
-                    .to("mock:result");
+                        .marshal(bindy)
+                        .to("mock:result");
             }
         };
     }
 
     @Test
     public void testMarshallMessage() throws Exception {
-        try {
-            template.sendBody("direct:start", generateModel());
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Length for the firstName must not be larger than allowed, was: 13, allowed: 9", cause.getMessage());
-        }
+        List<Map<String, Object>> model = generateModel();
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", model));
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertEquals("Length for the firstName must not be larger than allowed, was: 13, allowed: 9",
+                cause.getMessage());
     }
 
     public List<Map<String, Object>> generateModel() {
@@ -127,7 +127,6 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
-
 
         public int getOrderNr() {
             return orderNr;
@@ -219,11 +218,12 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
-                    + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
+                   + String.valueOf(this.orderDate);
         }
     }
-
 
 }

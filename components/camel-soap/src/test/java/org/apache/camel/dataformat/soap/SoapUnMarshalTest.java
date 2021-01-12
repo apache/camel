@@ -35,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Checks that a static soap request is unmarshalled to the correct java
- * objects
+ * Checks that a static soap request is unmarshalled to the correct java objects
  */
 public class SoapUnMarshalTest extends CamelTestSupport {
     private static final String SERVICE_PACKAGE = GetCustomersByName.class
@@ -71,7 +70,7 @@ public class SoapUnMarshalTest extends CamelTestSupport {
             assertEquals(SOAPFaultException.class, e.getCause().getClass());
         }
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -81,7 +80,7 @@ public class SoapUnMarshalTest extends CamelTestSupport {
                 SoapJaxbDataFormat dataFormate = new SoapJaxbDataFormat();
                 dataFormate.setContextPath(SERVICE_PACKAGE);
                 dataFormate.setSchema("classpath:org/apache/camel/dataformat/soap/CustomerService.xsd,classpath:soap.xsd");
-                
+
                 from("direct:start").unmarshal(dataFormate)
                         .to("mock:result");
             }

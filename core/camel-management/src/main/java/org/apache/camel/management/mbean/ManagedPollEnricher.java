@@ -65,6 +65,11 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
+    public Boolean getSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public PollEnrichDefinition getDefinition() {
         return (PollEnrichDefinition) super.getDefinition();
     }
@@ -123,7 +128,8 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
                         hits = 0L;
                     }
 
-                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    CompositeData data
+                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
                     answer.put(data);
                 }
             }

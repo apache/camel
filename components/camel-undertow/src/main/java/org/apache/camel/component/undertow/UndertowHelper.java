@@ -41,9 +41,9 @@ public final class UndertowHelper {
     /**
      * Creates the URL to invoke.
      *
-     * @param exchange the exchange
-     * @param endpoint the endpoint
-     * @return the URL to invoke
+     * @param  exchange the exchange
+     * @param  endpoint the endpoint
+     * @return          the URL to invoke
      */
     public static String createURL(Exchange exchange, UndertowEndpoint endpoint) {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
@@ -85,10 +85,10 @@ public final class UndertowHelper {
     /**
      * Creates the URI to invoke.
      *
-     * @param exchange the exchange
-     * @param url      the url to invoke
-     * @param endpoint the endpoint
-     * @return the URI to invoke
+     * @param  exchange the exchange
+     * @param  url      the url to invoke
+     * @param  endpoint the endpoint
+     * @return          the URI to invoke
      */
     public static URI createURI(Exchange exchange, String url, UndertowEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
@@ -133,7 +133,8 @@ public final class UndertowHelper {
     /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
      */
-    public static HttpString createMethod(Exchange exchange, UndertowEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
+    public static HttpString createMethod(Exchange exchange, UndertowEndpoint endpoint, boolean hasPayload)
+            throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
@@ -174,22 +175,20 @@ public final class UndertowHelper {
 
     public static URI makeHttpURI(String httpURI) {
         return makeHttpURI(
-            URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI))
-        );
+                URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI)));
     }
 
     public static URI makeHttpURI(URI httpURI) {
         if (ObjectHelper.isEmpty(httpURI.getPath())) {
             try {
                 return new URI(
-                    httpURI.getScheme(),
-                    httpURI.getUserInfo(),
-                    httpURI.getHost(),
-                    httpURI.getPort(),
-                    "/",
-                    httpURI.getQuery(),
-                    httpURI.getFragment()
-                );
+                        httpURI.getScheme(),
+                        httpURI.getUserInfo(),
+                        httpURI.getHost(),
+                        httpURI.getPort(),
+                        "/",
+                        httpURI.getQuery(),
+                        httpURI.getFragment());
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(e);
             }

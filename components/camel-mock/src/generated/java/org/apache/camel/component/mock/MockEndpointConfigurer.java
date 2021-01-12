@@ -4,8 +4,10 @@ package org.apache.camel.component.mock;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": target.setAssertPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "copyonexchange":
         case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
         case "expectedcount":
@@ -49,22 +49,33 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("assertPeriod", long.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("copyOnExchange", boolean.class);
-        answer.put("expectedCount", int.class);
-        answer.put("failFast", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("reportGroup", int.class);
-        answer.put("resultMinimumWaitTime", long.class);
-        answer.put("resultWaitTime", long.class);
-        answer.put("retainFirst", int.class);
-        answer.put("retainLast", int.class);
-        answer.put("sleepForEmptyTest", long.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "assertperiod":
+        case "assertPeriod": return long.class;
+        case "copyonexchange":
+        case "copyOnExchange": return boolean.class;
+        case "expectedcount":
+        case "expectedCount": return int.class;
+        case "failfast":
+        case "failFast": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "reportgroup":
+        case "reportGroup": return int.class;
+        case "resultminimumwaittime":
+        case "resultMinimumWaitTime": return long.class;
+        case "resultwaittime":
+        case "resultWaitTime": return long.class;
+        case "retainfirst":
+        case "retainFirst": return int.class;
+        case "retainlast":
+        case "retainLast": return int.class;
+        case "sleepforemptytest":
+        case "sleepForEmptyTest": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -73,8 +84,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": return target.getAssertPeriod();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "copyonexchange":
         case "copyOnExchange": return target.isCopyOnExchange();
         case "expectedcount":

@@ -48,15 +48,19 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder additionalProperties(
                 String key,
@@ -70,15 +74,18 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder additionalProperties(Map values) {
             doSetMultiValueProperties("additionalProperties", "additionalProperties.", values);
@@ -93,10 +100,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -112,10 +122,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -126,10 +140,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalKeyConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder internalKeyConverter(
                 String internalKeyConverter) {
@@ -140,10 +157,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalValueConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder internalValueConverter(
                 String internalValueConverter) {
@@ -157,11 +177,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
+         * 
+         * @param offsetCommitPolicy the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetCommitPolicy(
                 String offsetCommitPolicy) {
@@ -174,10 +197,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetCommitTimeoutMs(
                 long offsetCommitTimeoutMs) {
@@ -190,10 +216,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetCommitTimeoutMs(
                 String offsetCommitTimeoutMs) {
@@ -203,10 +232,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetFlushIntervalMs(
                 long offsetFlushIntervalMs) {
@@ -216,10 +248,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetFlushIntervalMs(
                 String offsetFlushIntervalMs) {
@@ -230,10 +265,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
+         * 
+         * @param offsetStorage the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStorage(
                 String offsetStorage) {
@@ -244,9 +282,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageFileName the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStorageFileName(
                 String offsetStorageFileName) {
@@ -257,9 +298,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStoragePartitions(
                 int offsetStoragePartitions) {
@@ -270,9 +314,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStoragePartitions(
                 String offsetStoragePartitions) {
@@ -283,9 +330,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStorageReplicationFactor(
                 int offsetStorageReplicationFactor) {
@@ -296,9 +346,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStorageReplicationFactor(
                 String offsetStorageReplicationFactor) {
@@ -309,9 +362,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder offsetStorageTopic(
                 String offsetStorageTopic) {
@@ -324,10 +380,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * array (default)'base64' represents binary data as base64-encoded
          * string'hex' represents binary data as hex-encoded (base16) string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: bytes
          * Group: postgres
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder binaryHandlingMode(
                 String binaryHandlingMode) {
@@ -335,11 +394,15 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to exclude from change events.
+         * Regular expressions matching columns to exclude from change events
+         * (deprecated, use column.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param columnBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder columnBlacklist(
                 String columnBlacklist) {
@@ -347,11 +410,63 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to include in change events.
+         * Regular expressions matching columns to exclude from change events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param columnExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder columnExcludeList(
+                String columnExcludeList) {
+            doSetProperty("columnExcludeList", columnExcludeList);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param columnIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder columnIncludeList(
+                String columnIncludeList) {
+            doSetProperty("columnIncludeList", columnIncludeList);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions matching
+         * fully-qualified names of columns that adds the columns original type
+         * and original length as parameters to the corresponding field schemas
+         * in the emitted change records.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param columnPropagateSourceType the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder columnPropagateSourceType(
+                String columnPropagateSourceType) {
+            doSetProperty("columnPropagateSourceType", columnPropagateSourceType);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events
+         * (deprecated, use column.include.list instead).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param columnWhitelist the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder columnWhitelist(
                 String columnWhitelist) {
@@ -363,9 +478,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param converters the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder converters(String converters) {
             doSetProperty("converters", converters);
@@ -374,9 +492,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The name of the database the connector should be monitoring.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseDbname the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseDbname(
                 String databaseDbname) {
@@ -387,9 +508,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The path to the file that will be used to record the database
          * history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseHistoryFileFilename the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseHistoryFileFilename(
                 String databaseHistoryFileFilename) {
@@ -399,9 +523,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Resolvable hostname or IP address of the Postgres database server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseHostname the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseHostname(
                 String databaseHostname) {
@@ -416,9 +543,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * only, but not for executing DML statements. Use doubled semicolon
          * (';;') to use a semicolon as a character and not as a delimiter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseInitialStatements the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseInitialStatements(
                 String databaseInitialStatements) {
@@ -429,10 +559,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Password of the Postgres database user to be used when connecting to
          * the database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: postgres
+         * 
+         * @param databasePassword the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databasePassword(
                 String databasePassword) {
@@ -442,10 +575,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Port of the Postgres database server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5432
          * Group: postgres
+         * 
+         * @param databasePort the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databasePort(int databasePort) {
             doSetProperty("databasePort", databasePort);
@@ -454,10 +590,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Port of the Postgres database server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5432
          * Group: postgres
+         * 
+         * @param databasePort the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databasePort(String databasePort) {
             doSetProperty("databasePort", databasePort);
@@ -469,10 +608,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Each distinct installation should have a separate namespace and be
          * monitored by at most one Debezium connector.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: postgres
+         * 
+         * @param databaseServerName the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseServerName(
                 String databaseServerName) {
@@ -483,9 +625,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * File containing the SSL Certificate for the client. See the Postgres
          * SSL docs for further information.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseSslcert the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseSslcert(
                 String databaseSslcert) {
@@ -497,9 +642,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * org.postgresql.ssl.NonValidatingFactory to disable SSL validation in
          * development environments.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseSslfactory the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseSslfactory(
                 String databaseSslfactory) {
@@ -510,9 +658,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * File containing the SSL private key for the client. See the Postgres
          * SSL docs for further information.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseSslkey the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseSslkey(
                 String databaseSslkey) {
@@ -530,10 +681,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * additionally verify that the server certificate matches the host to
          * which the connection is attempted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: disable
          * Group: postgres
+         * 
+         * @param databaseSslmode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseSslmode(
                 String databaseSslmode) {
@@ -544,9 +698,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Password to access the client private key from the file specified by
          * 'database.sslkey'. See the Postgres SSL docs for further information.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseSslpassword the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseSslpassword(
                 String databaseSslpassword) {
@@ -557,9 +714,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * File containing the root certificate(s) against which the server is
          * validated. See the Postgres JDBC SSL docs for further information.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseSslrootcert the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseSslrootcert(
                 String databaseSslrootcert) {
@@ -570,10 +730,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Enable or disable TCP keep-alive probe to avoid dropping TCP
          * connection.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: postgres
+         * 
+         * @param databaseTcpkeepalive the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseTcpkeepalive(
                 boolean databaseTcpkeepalive) {
@@ -584,10 +747,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Enable or disable TCP keep-alive probe to avoid dropping TCP
          * connection.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: postgres
+         * 
+         * @param databaseTcpkeepalive the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseTcpkeepalive(
                 String databaseTcpkeepalive) {
@@ -598,12 +765,33 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Name of the Postgres database user to be used when connecting to the
          * database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param databaseUser the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder databaseUser(String databaseUser) {
             doSetProperty("databaseUser", databaseUser);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions matching the
+         * database-specific data type names that adds the data type's original
+         * type and original length as parameters to the corresponding field
+         * schemas in the emitted change records.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param datatypePropagateSourceType the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder datatypePropagateSourceType(
+                String datatypePropagateSourceType) {
+            doSetProperty("datatypePropagateSourceType", datatypePropagateSourceType);
             return this;
         }
         /**
@@ -616,10 +804,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * which may not offer the precision but will be far easier to use in
          * consumers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: precise
          * Group: postgres
+         * 
+         * @param decimalHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder decimalHandlingMode(
                 String decimalHandlingMode) {
@@ -634,10 +825,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped;'ignore' the problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: postgres
+         * 
+         * @param eventProcessingFailureHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder eventProcessingFailureHandlingMode(
                 String eventProcessingFailureHandlingMode) {
@@ -645,11 +839,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The query executed with every heartbeat. Defaults to an empty string.
+         * The query executed with every heartbeat.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param heartbeatActionQuery the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder heartbeatActionQuery(
                 String heartbeatActionQuery) {
@@ -661,10 +858,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: postgres
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder heartbeatIntervalMs(
                 int heartbeatIntervalMs) {
@@ -676,10 +876,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: postgres
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder heartbeatIntervalMs(
                 String heartbeatIntervalMs) {
@@ -690,10 +893,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: __debezium-heartbeat
          * Group: postgres
+         * 
+         * @param heartbeatTopicsPrefix the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder heartbeatTopicsPrefix(
                 String heartbeatTopicsPrefix) {
@@ -705,10 +911,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * including:'json' represents values as string-ified JSON
          * (default)'map' represents values as a key/value map.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: json
          * Group: postgres
+         * 
+         * @param hstoreHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder hstoreHandlingMode(
                 String hstoreHandlingMode) {
@@ -721,10 +930,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * converts the field into an implementation dependent binary
          * representation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param includeUnknownDatatypes the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder includeUnknownDatatypes(
                 boolean includeUnknownDatatypes) {
@@ -737,10 +949,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * converts the field into an implementation dependent binary
          * representation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param includeUnknownDatatypes the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder includeUnknownDatatypes(
                 String includeUnknownDatatypes) {
@@ -753,10 +969,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * string'numeric' (default) represents values using the inexact
          * conversion into microseconds.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: numeric
          * Group: postgres
+         * 
+         * @param intervalHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder intervalHandlingMode(
                 String intervalHandlingMode) {
@@ -766,10 +985,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: postgres
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder maxBatchSize(int maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -778,10 +1000,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: postgres
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder maxBatchSize(String maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -792,10 +1017,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: postgres
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder maxQueueSize(int maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
@@ -806,13 +1034,52 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: postgres
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder maxQueueSize(String maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
+            return this;
+        }
+        /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: postgres
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder maxQueueSizeInBytes(
+                long maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
+            return this;
+        }
+        /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: postgres
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder maxQueueSizeInBytes(
+                String maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
             return this;
         }
         /**
@@ -826,9 +1093,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * used as message key.Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param messageKeyColumns the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder messageKeyColumns(
                 String messageKeyColumns) {
@@ -837,13 +1107,17 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The name of the Postgres logical decoding plugin installed on the
-         * server. Supported values are 'decoderbufs' and 'wal2json'. Defaults
-         * to 'decoderbufs'.
+         * server. Supported values are 'decoderbufs', 'wal2json', 'pgoutput',
+         * 'wal2json_streaming', 'wal2json_rds' and 'wal2json_rds_streaming'.
+         * Defaults to 'decoderbufs'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: decoderbufs
          * Group: postgres
+         * 
+         * @param pluginName the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder pluginName(String pluginName) {
             doSetProperty("pluginName", pluginName);
@@ -853,10 +1127,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: postgres
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder pollIntervalMs(
                 long pollIntervalMs) {
@@ -867,10 +1144,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: postgres
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
@@ -880,10 +1160,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
@@ -893,10 +1176,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder provideTransactionMetadata(
                 String provideTransactionMetadata) {
@@ -916,13 +1203,16 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication
          * exists, the connector will create a new publication for all those
          * tables matchingthe current filter configuration (see table/database
-         * whitelist/blacklist properties). If the publication already exists,
+         * include/exclude list properties). If the publication already exists,
          * it will be used. i.e CREATE PUBLICATION FOR TABLE.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: all_tables
          * Group: postgres
+         * 
+         * @param publicationAutocreateMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder publicationAutocreateMode(
                 String publicationAutocreateMode) {
@@ -933,10 +1223,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Postgres 10 publication used for streaming changes
          * from a plugin.Defaults to 'dbz_publication'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: dbz_publication
          * Group: postgres
+         * 
+         * @param publicationName the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder publicationName(
                 String publicationName) {
@@ -944,12 +1237,83 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: postgres
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder queryFetchSize(
+                int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: postgres
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder queryFetchSize(
+                String queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder retriableRestartConnectorWaitMs(
+                String retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder sanitizeFieldNames(
                 boolean sanitizeFieldNames) {
@@ -959,10 +1323,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder sanitizeFieldNames(
                 String sanitizeFieldNames) {
@@ -970,15 +1338,49 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events must not be captured.
+         * The schemas for which events must not be captured (deprecated, use
+         * schema.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param schemaBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder schemaBlacklist(
                 String schemaBlacklist) {
             doSetProperty("schemaBlacklist", schemaBlacklist);
+            return this;
+        }
+        /**
+         * The schemas for which events must not be captured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param schemaExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder schemaExcludeList(
+                String schemaExcludeList) {
+            doSetProperty("schemaExcludeList", schemaExcludeList);
+            return this;
+        }
+        /**
+         * The schemas for which events should be captured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param schemaIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder schemaIncludeList(
+                String schemaIncludeList) {
+            doSetProperty("schemaIncludeList", schemaIncludeList);
             return this;
         }
         /**
@@ -995,10 +1397,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * possible for the in-memory schema to become outdated if TOASTable
          * columns are dropped from the table.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: columns_diff
          * Group: postgres
+         * 
+         * @param schemaRefreshMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder schemaRefreshMode(
                 String schemaRefreshMode) {
@@ -1006,11 +1411,15 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events should be captured.
+         * The schemas for which events should be captured (deprecated, use
+         * schema.include.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param schemaWhitelist the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder schemaWhitelist(
                 String schemaWhitelist) {
@@ -1022,9 +1431,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
          * default, no operations will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param skippedOperations the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder skippedOperations(
                 String skippedOperations) {
@@ -1036,10 +1448,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connector finishes orderlyBy default the replication is kept so that
          * on restart progress can resume from the last recorded location.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param slotDropOnStop the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotDropOnStop(
                 boolean slotDropOnStop) {
@@ -1051,10 +1466,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * connector finishes orderlyBy default the replication is kept so that
          * on restart progress can resume from the last recorded location.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param slotDropOnStop the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotDropOnStop(
                 String slotDropOnStop) {
@@ -1065,10 +1484,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * How many times to retry connecting to a replication slot when an
          * attempt fails.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 6
          * Group: postgres
+         * 
+         * @param slotMaxRetries the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotMaxRetries(
                 int slotMaxRetries) {
@@ -1079,10 +1501,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * How many times to retry connecting to a replication slot when an
          * attempt fails.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 6
          * Group: postgres
+         * 
+         * @param slotMaxRetries the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotMaxRetries(
                 String slotMaxRetries) {
@@ -1093,10 +1518,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The name of the Postgres logical decoding slot created for streaming
          * changes from a plugin.Defaults to 'debezium.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: debezium
          * Group: postgres
+         * 
+         * @param slotName the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotName(String slotName) {
             doSetProperty("slotName", slotName);
@@ -1106,10 +1534,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The number of milli-seconds to wait between retry attempts when the
          * connector fails to connect to a replication slot.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: postgres
+         * 
+         * @param slotRetryDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotRetryDelayMs(
                 long slotRetryDelayMs) {
@@ -1120,10 +1551,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The number of milli-seconds to wait between retry attempts when the
          * connector fails to connect to a replication slot.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: postgres
+         * 
+         * @param slotRetryDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotRetryDelayMs(
                 String slotRetryDelayMs) {
@@ -1135,9 +1569,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * separated. E.g.
          * 'add-tables=public.table,public.table2;include-lsn=true'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param slotStreamParams the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder slotStreamParams(
                 String slotStreamParams) {
@@ -1151,9 +1588,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * called on each app boot to determine whether to do a snapshot and how
          * to build queries.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param snapshotCustomClass the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotCustomClass(
                 String snapshotCustomClass) {
@@ -1163,10 +1603,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: postgres
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotDelayMs(
                 long snapshotDelayMs) {
@@ -1176,10 +1619,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: postgres
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotDelayMs(
                 String snapshotDelayMs) {
@@ -1190,9 +1636,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
@@ -1203,9 +1652,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotFetchSize(
                 String snapshotFetchSize) {
@@ -1213,14 +1665,33 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * this setting must be set to specify a list of tables/collections
+         * whose snapshot must be taken on creating or restarting the connector.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param snapshotIncludeCollectionList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder snapshotIncludeCollectionList(
+                String snapshotIncludeCollectionList) {
+            doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
          * The maximum number of millis to wait for table locks at the beginning
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: postgres
+         * 
+         * @param snapshotLockTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotLockTimeoutMs(
                 long snapshotLockTimeoutMs) {
@@ -1232,14 +1703,51 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: postgres
+         * 
+         * @param snapshotLockTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotLockTimeoutMs(
                 String snapshotLockTimeoutMs) {
             doSetProperty("snapshotLockTimeoutMs", snapshotLockTimeoutMs);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: postgres
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder snapshotMaxThreads(
+                int snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: postgres
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder snapshotMaxThreads(
+                String snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
             return this;
         }
         /**
@@ -1257,10 +1765,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * to specify a custom class with 'snapshot.custom_class' which will be
          * loaded and used to determine the snapshot, see docs for more details.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: initial
          * Group: postgres
+         * 
+         * @param snapshotMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotMode(String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
@@ -1280,9 +1791,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * setting a specific point where to start (resume) snapshotting, in
          * case a previous snapshotting was interrupted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param snapshotSelectStatementOverrides the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder snapshotSelectStatementOverrides(
                 String snapshotSelectStatementOverrides) {
@@ -1293,10 +1807,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * A version of the format of the publicly visible source part in the
          * message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: v2
          * Group: postgres
+         * 
+         * @param sourceStructVersion the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder sourceStructVersion(
                 String sourceStructVersion) {
@@ -1307,10 +1824,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Frequency in milliseconds for sending replication connection status
          * updates to the server. Defaults to 10 seconds (10000 ms).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: postgres
+         * 
+         * @param statusUpdateIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder statusUpdateIntervalMs(
                 int statusUpdateIntervalMs) {
@@ -1321,10 +1841,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Frequency in milliseconds for sending replication connection status
          * updates to the server. Defaults to 10 seconds (10000 ms).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: postgres
+         * 
+         * @param statusUpdateIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder statusUpdateIntervalMs(
                 String statusUpdateIntervalMs) {
@@ -1332,12 +1855,16 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'table.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring
+         * (deprecated, use table.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param tableBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder tableBlacklist(
                 String tableBlacklist) {
@@ -1345,12 +1872,31 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param tableExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder tableExcludeList(
+                String tableExcludeList) {
+            doSetProperty("tableExcludeList", tableExcludeList);
+            return this;
+        }
+        /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: postgres
+         * 
+         * @param tableIgnoreBuiltin the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder tableIgnoreBuiltin(
                 boolean tableIgnoreBuiltin) {
@@ -1360,10 +1906,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: postgres
+         * 
+         * @param tableIgnoreBuiltin the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder tableIgnoreBuiltin(
                 String tableIgnoreBuiltin) {
@@ -1373,9 +1923,28 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * The tables for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: postgres
+         * 
+         * @param tableIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder tableIncludeList(
+                String tableIncludeList) {
+            doSetProperty("tableIncludeList", tableIncludeList);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured (deprecated, use
+         * table.include.list instead).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param tableWhitelist the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder tableWhitelist(
                 String tableWhitelist) {
@@ -1392,10 +1961,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * representations for Time, Date, and Timestamp, which uses millisecond
          * precision regardless of the database columns' precision .
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: adaptive
          * Group: postgres
+         * 
+         * @param timePrecisionMode the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder timePrecisionMode(
                 String timePrecisionMode) {
@@ -1405,13 +1977,16 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Specify the constant that will be provided by Debezium to indicate
          * that the original value is a toasted value not provided by the
-         * database.If starts with 'hex:' prefix it is expected that the rest of
-         * the string repesents hexadecimally encoded octets.
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string repesents hexadecimally encoded octets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: __debezium_unavailable_value
          * Group: postgres
+         * 
+         * @param toastedValuePlaceholder the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder toastedValuePlaceholder(
                 String toastedValuePlaceholder) {
@@ -1425,10 +2000,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder tombstonesOnDelete(
                 boolean tombstonesOnDelete) {
@@ -1442,10 +2020,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: postgres
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
@@ -1462,10 +2044,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * but the lower the performance penalty. The default is set to 0 ms,
          * which disables tracking xmin.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: postgres
+         * 
+         * @param xminFetchIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder xminFetchIntervalMs(
                 long xminFetchIntervalMs) {
@@ -1482,10 +2067,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * but the lower the performance penalty. The default is set to 0 ms,
          * which disables tracking xmin.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: postgres
+         * 
+         * @param xminFetchIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder xminFetchIntervalMs(
                 String xminFetchIntervalMs) {
@@ -1510,10 +2098,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumPostgresEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1527,9 +2118,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumPostgresEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1539,9 +2133,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumPostgresEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1552,9 +2150,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumPostgresEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -1562,41 +2163,16 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDebeziumPostgresEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDebeziumPostgresEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumPostgresEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1607,10 +2183,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumPostgresEndpointBuilder synchronous(
                 String synchronous) {
@@ -1635,6 +2215,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * same name will fail.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
             return DebeziumPostgresEndpointBuilderFactory.endpointBuilder("debezium-postgres", path);
@@ -1656,6 +2237,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder debeziumPostgres(
                 String componentName,

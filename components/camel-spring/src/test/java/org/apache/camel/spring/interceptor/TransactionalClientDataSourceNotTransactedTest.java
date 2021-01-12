@@ -39,7 +39,7 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         } catch (RuntimeCamelException e) {
             // expected as we fail
             assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals(e.getCause().getMessage(), "We don't have Donkeys, only Camels");
+            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
@@ -52,12 +52,12 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

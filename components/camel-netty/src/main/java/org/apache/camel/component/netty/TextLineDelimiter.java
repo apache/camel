@@ -20,5 +20,6 @@ package org.apache.camel.component.netty;
  * Possible text line delimiters to be used with the textline codec.
  */
 public enum TextLineDelimiter {
-    LINE, NULL
+    LINE,
+    NULL
 }

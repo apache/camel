@@ -37,6 +37,8 @@ public interface CmisComponentBuilderFactory {
      * Category: cms,database
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-cmis
+     * 
+     * @return the dsl builder
      */
     static CmisComponentBuilder cmis() {
         return new CmisComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface CmisComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CmisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,27 +81,36 @@ public interface CmisComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CmisComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CmisComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CmisComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -104,10 +118,12 @@ public interface CmisComponentBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default CmisComponentBuilder sessionFacadeFactory(
                 org.apache.camel.component.cmis.CMISSessionFacadeFactory sessionFacadeFactory) {
@@ -133,7 +149,7 @@ public interface CmisComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((CMISComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CMISComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((CMISComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CMISComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sessionFacadeFactory": ((CMISComponent) component).setSessionFacadeFactory((org.apache.camel.component.cmis.CMISSessionFacadeFactory) value); return true;
             default: return false;
             }

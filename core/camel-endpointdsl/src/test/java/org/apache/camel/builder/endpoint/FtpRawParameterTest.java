@@ -29,7 +29,8 @@ public class FtpRawParameterTest extends ContextTestSupport {
 
     @Test
     public void testRaw() throws Exception {
-        FtpEndpoint ftp = (FtpEndpoint) context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("ftp")).findFirst().get();
+        FtpEndpoint ftp = (FtpEndpoint) context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("ftp"))
+                .findFirst().get();
         assertNotNull(ftp);
         assertEquals(5000L, ftp.getDelay());
         assertTrue(ftp.getConfiguration().isBinary());
@@ -42,9 +43,9 @@ public class FtpRawParameterTest extends ContextTestSupport {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
                 from(ftp("localhost:2121/inbox").username("scott").password("RAW(sec+%ret)").binary(true).delay(5000))
-                    .routeId("myroute").noAutoStartup()
-                    .convertBodyTo(String.class)
-                    .to(mock("result"));
+                        .routeId("myroute").noAutoStartup()
+                        .convertBodyTo(String.class)
+                        .to(mock("result"));
             }
         };
     }

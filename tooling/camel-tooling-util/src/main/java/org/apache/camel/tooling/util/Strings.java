@@ -56,9 +56,9 @@ public final class Strings {
     /**
      * Returns the string after the given token
      *
-     * @param text  the text
-     * @param after the token
-     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     * @param  text  the text
+     * @param  after the token
+     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
         int index = text.indexOf(after);
@@ -98,10 +98,10 @@ public final class Strings {
     /**
      * Wraps the text in the given quote text
      *
-     * @param text the text to wrap in quotes
-     * @param quote the quote text added to the prefix and postfix of the text
+     * @param  text  the text to wrap in quotes
+     * @param  quote the quote text added to the prefix and postfix of the text
      *
-     * @return the text wrapped in the given quotes
+     * @return       the text wrapped in the given quotes
      */
     public static String quote(String text, String quote) {
         return quote + text + quote;
@@ -121,8 +121,8 @@ public final class Strings {
     /**
      * Capitalizes the name as a title
      *
-     * @param name  the name
-     * @return as a title
+     * @param  name the name
+     * @return      as a title
      */
     public static String asTitle(String name) {
         StringBuilder sb = new StringBuilder();

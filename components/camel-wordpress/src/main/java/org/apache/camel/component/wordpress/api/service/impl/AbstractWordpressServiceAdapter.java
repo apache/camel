@@ -46,7 +46,8 @@ abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
         this.apiVersion = apiVersion;
 
         // @formatter:off
-        this.spi = JAXRSClientFactory.create(wordpressUrl, this.getSpiType(), Collections.singletonList(new JacksonJsonProvider()));
+        this.spi = JAXRSClientFactory.create(wordpressUrl, this.getSpiType(),
+                Collections.singletonList(new JacksonJsonProvider()));
         // @formatter:on
         WebClient.client(spi).type(MediaType.APPLICATION_JSON_TYPE);
         WebClient.client(spi).accept(MediaType.APPLICATION_JSON_TYPE);

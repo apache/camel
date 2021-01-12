@@ -78,14 +78,16 @@ public class QuartzComponentCamelContextSharedSchedulerTest {
         mock1.assertIsSatisfied();
 
         JobDetail detail = mock1.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/2 * * * * ?"), is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/2 * * * * ?"),
+                is(true));
 
         camel1.stop();
 
         mock2.assertIsSatisfied();
 
         detail = mock2.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"), is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"),
+                is(true));
 
         camel2.stop();
     }

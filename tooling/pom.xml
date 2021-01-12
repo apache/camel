@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -47,6 +47,15 @@
     <properties>
         <camel.osgi.export.pkg />
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-format-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
     <!-- profiles>
       <profile>
         <id>build.manual</id>

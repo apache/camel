@@ -44,7 +44,7 @@ public class SqlConsumerTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -83,7 +83,7 @@ public class SqlConsumerTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects order by id?initialDelay=0&delay=50")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

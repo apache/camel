@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MockSpanAdapter implements SpanAdapter {
-    
+
     private List<LogEntry> logEntries = new ArrayList<>();
     private HashMap<String, Object> tags = new HashMap<>();
 
@@ -38,35 +38,43 @@ public class MockSpanAdapter implements SpanAdapter {
         return tags;
     }
 
-    @Override public void setComponent(String component) {
+    @Override
+    public void setComponent(String component) {
         this.tags.put(Tag.COMPONENT.name(), component);
     }
 
-    @Override public void setError(boolean error) {
+    @Override
+    public void setError(boolean error) {
         this.tags.put(Tag.ERROR.name(), error);
     }
 
-    @Override public void setTag(Tag key, String value) {
+    @Override
+    public void setTag(Tag key, String value) {
         this.tags.put(key.name(), value);
     }
 
-    @Override public void setTag(Tag key, Number value) {
+    @Override
+    public void setTag(Tag key, Number value) {
         this.tags.put(key.name(), value);
     }
 
-    @Override public void setTag(String key, String value) {
+    @Override
+    public void setTag(String key, String value) {
         this.tags.put(key, value);
     }
 
-    @Override public void setTag(String key, Number value) {
+    @Override
+    public void setTag(String key, Number value) {
         this.tags.put(key, value);
     }
 
-    @Override public void setTag(String key, Boolean value) {
+    @Override
+    public void setTag(String key, Boolean value) {
         this.tags.put(key, value);
     }
 
-    @Override public void log(Map<String, String> fields) {
+    @Override
+    public void log(Map<String, String> fields) {
         this.logEntries.add(new LogEntry(nowMicros(), fields));
     }
 

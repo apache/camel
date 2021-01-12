@@ -35,10 +35,9 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
 
     public StompComponent() {
     }
-    
+
     // Implementation methods
     // -------------------------------------------------------------------------
-
 
     @Override
     protected void doInit() throws Exception {
@@ -54,11 +53,11 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
         StompConfiguration config = getConfiguration().copy();
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, remaining);
-        
+
         // set header filter strategy and then call set properties 
         // if user wants to add CustomHeaderFilterStrategy
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
-        
+
         setProperties(endpoint, parameters);
 
         if (config.getSslContextParameters() == null) {

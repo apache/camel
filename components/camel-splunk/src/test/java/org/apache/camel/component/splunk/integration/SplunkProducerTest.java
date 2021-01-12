@@ -68,14 +68,20 @@ public class SplunkProducerTest extends SplunkTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:stream").to("splunk://stream?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
-                                             + "&sourceType=StreamSourceType&source=StreamSource").to("mock:stream-result");
+                from("direct:stream")
+                        .to("splunk://stream?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
+                            + "&sourceType=StreamSourceType&source=StreamSource")
+                        .to("mock:stream-result");
 
-                from("direct:submit").to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX + "&sourceType=testSource&source=test")
-                    .to("mock:submitresult");
+                from("direct:submit")
+                        .to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
+                            + "&sourceType=testSource&source=test")
+                        .to("mock:submitresult");
 
-                from("direct:tcp").to("splunk://tcp?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&tcpReceiverPort=" + TCP_RECIEVER_PORT + "&index=" + INDEX
-                                          + "&sourceType=testSource&source=test").to("mock:tcpresult");
+                from("direct:tcp").to("splunk://tcp?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD
+                                      + "&tcpReceiverPort=" + TCP_RECIEVER_PORT + "&index=" + INDEX
+                                      + "&sourceType=testSource&source=test")
+                        .to("mock:tcpresult");
             }
         };
     }

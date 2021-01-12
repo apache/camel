@@ -71,7 +71,6 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
         //assert the received Host header is localhost:port3 (where port3 matches the /bar destination server)
         assertEquals("localhost:" + port3, receivedHostHeaderEndpoint2);
 
-
         //The next two calls will use/test the jetty producers in the round robin load balancer
 
         //The first has the preserveHostHeader option set to true, so we would expect to receive a Host header matching the /myapp proxied service
@@ -111,10 +110,12 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jetty:http://localhost:" + port + "/myapp?matchOnUriPrefix=true")
-                    .loadBalance().roundRobin()
-                        .to("http://localhost:" + port2 + "/foo?bridgeEndpoint=true&throwExceptionOnFailure=false&preserveHostHeader=true")
+                        .loadBalance().roundRobin()
+                        .to("http://localhost:" + port2
+                            + "/foo?bridgeEndpoint=true&throwExceptionOnFailure=false&preserveHostHeader=true")
                         .to("http://localhost:" + port3 + "/bar?bridgeEndpoint=true&throwExceptionOnFailure=false")
-                        .to("http://localhost:" + port4 + "/jbar?bridgeEndpoint=true&throwExceptionOnFailure=false&preserveHostHeader=true")
+                        .to("http://localhost:" + port4
+                            + "/jbar?bridgeEndpoint=true&throwExceptionOnFailure=false&preserveHostHeader=true")
                         .to("http://localhost:" + port5 + "/jbarf?bridgeEndpoint=true&throwExceptionOnFailure=false");
 
                 from("jetty:http://localhost:" + port2 + "/foo")
@@ -156,4 +157,3 @@ public class JettyBridgeHostHeaderIssueTest extends CamelTestSupport {
         };
     }
 }
-

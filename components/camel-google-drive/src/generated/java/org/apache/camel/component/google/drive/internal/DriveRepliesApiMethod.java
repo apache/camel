@@ -63,8 +63,6 @@ public enum DriveRepliesApiMethod implements ApiMethod {
         arg("replyId", String.class),
         arg("content", com.google.api.services.drive.model.CommentReply.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveRepliesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

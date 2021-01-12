@@ -19,7 +19,8 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
-public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest extends TransactionalClientDataSourceTransactedWithFileOnExceptionTest {
+public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
+        extends TransactionalClientDataSourceTransactedWithFileOnExceptionTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -27,18 +28,18 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
             public void configure() throws Exception {
 
                 from("file://target/transacted/okay?initialDelay=0&delay=10")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("file://target/transacted/fail?initialDelay=0&delay=10&moveFailed=../failed")
-                    .onException(IllegalArgumentException.class)
+                        .onException(IllegalArgumentException.class)
                         .handled(false)
                         .to("mock:error")
-                    .end()
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .end()
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

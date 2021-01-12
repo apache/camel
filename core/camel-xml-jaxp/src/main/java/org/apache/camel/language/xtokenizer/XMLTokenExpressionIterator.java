@@ -39,15 +39,12 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.converter.jaxp.StaxConverter;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -57,7 +54,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An {@link org.apache.camel.language.xtokenizer.XMLTokenizeLanguage} based iterator.
  */
-public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware, GeneratedPropertyConfigurer {
+public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware {
     protected final String path;
     protected char mode;
     protected int group;
@@ -73,25 +70,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.headerName = headerName;
         this.path = path;
         this.mode = mode;
-        this.group = group > 1 ? group : 1;
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            case "mode":
-                setMode(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            case "group":
-                setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value)); return true;
-            default:
-                return false;
-        }
+        this.group = Math.max(group, 1);
     }
 
     @Override
@@ -128,7 +107,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.headerName = headerName;
     }
 
-    protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
+    protected Iterator<?> createIterator(InputStream in, String charset)
+            throws XMLStreamException, UnsupportedEncodingException {
         return createIterator(new InputStreamReader(in, charset));
     }
 
@@ -153,9 +133,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     /**
      * Strategy to evaluate the exchange
      *
-     * @param exchange   the exchange
-     * @param closeStream whether to close the stream before returning from this method.
-     * @return the evaluated value
+     * @param  exchange    the exchange
+     * @param  closeStream whether to close the stream before returning from this method.
+     * @return             the evaluated value
      */
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
         Reader reader = null;
@@ -169,17 +149,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 reader = new InputStreamReader(in, charset);
             }
             return createIterator(reader);
-        } catch (InvalidPayloadException e) {
-            exchange.setException(e);
-            // must close input stream
-            IOHelper.close(reader);
-            return null;
-        } catch (XMLStreamException e) {
-            exchange.setException(e);
-            // must close input stream
-            IOHelper.close(reader);
-            return null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (InvalidPayloadException | XMLStreamException | UnsupportedEncodingException e) {
             exchange.setException(e);
             // must close input stream
             IOHelper.close(reader);
@@ -190,7 +160,6 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
         }
     }
-
 
     static class XMLTokenIterator implements Iterator<Object>, Closeable {
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
@@ -224,9 +193,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 if (s.length() > 0) {
                     int d = s.indexOf(':');
                     String pfx = d > 0 ? s.substring(0, d) : "";
-                    this.splitpath[i] =
-                            new AttributedQName(
-                                    "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                    this.splitpath[i] = new AttributedQName(
+                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }
             }
 
@@ -336,7 +304,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private void pushNamespaces(XMLStreamReader reader) {
             Map<String, String> m = new HashMap<>();
-            if (namespaces.size() > 0) {
+            if (!namespaces.isEmpty()) {
                 m.putAll(namespaces.get(namespaces.size() - 1));
             }
             for (int i = 0; i < reader.getNamespaceCount(); i++) {
@@ -535,7 +503,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         break;
                     case XMLStreamConstants.END_ELEMENT:
                         if ((backtrack || (trackdepth > 0 && depth == trackdepth))
-                                && (mode == 'w' && group > 1 && tokens.size() > 0)) {
+                                && (mode == 'w' && group > 1 && !tokens.isEmpty())) {
                             // flush the left over using the current context
                             code = XMLStreamConstants.END_ELEMENT;
                             return getGroupedToken();
@@ -578,7 +546,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         break;
                     case XMLStreamConstants.END_DOCUMENT:
                         LOG.trace("depth={}", depth);
-                        if (group > 1 && tokens.size() > 0) {
+                        if (group > 1 && !tokens.isEmpty()) {
                             // flush the left over before really going EoD
                             code = XMLStreamConstants.END_DOCUMENT;
                             return getGroupedToken();
@@ -653,8 +621,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         public boolean matches(QName qname) {
             return (nsany || getNamespaceURI().equals(qname.getNamespaceURI()))
                     && (lcpattern != null
-                    ? lcpattern.matcher(qname.getLocalPart()).matches()
-                    : getLocalPart().equals(qname.getLocalPart()));
+                            ? lcpattern.matcher(qname.getLocalPart()).matches()
+                            : getLocalPart().equals(qname.getLocalPart()));
         }
 
         private void checkWildcard(String nsa, String lcp) {

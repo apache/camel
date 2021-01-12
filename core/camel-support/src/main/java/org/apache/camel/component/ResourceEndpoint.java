@@ -36,8 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A useful base class for endpoints which depend on a resource
- * such as things like Velocity or XQuery based components.
+ * A useful base class for endpoints which depend on a resource such as things like Velocity or XQuery based components.
  */
 @ManagedResource(description = "Managed ResourceEndpoint")
 public abstract class ResourceEndpoint extends ProcessorEndpoint implements ManagedResourceEndpointMBean {
@@ -45,19 +44,19 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     private volatile byte[] buffer;
 
     @UriPath(description = "Path to the resource."
-        + " You can prefix with: classpath, file, http, ref, or bean."
-        + " classpath, file and http loads the resource using these protocols (classpath is default)."
-        + " ref will lookup the resource in the registry."
-        + " bean will call a method on a bean to be used as the resource."
-        + " For bean you can specify the method name after dot, eg bean:myBean.myMethod.")
+                           + " You can prefix with: classpath, file, http, ref, or bean."
+                           + " classpath, file and http loads the resource using these protocols (classpath is default)."
+                           + " ref will lookup the resource in the registry."
+                           + " bean will call a method on a bean to be used as the resource."
+                           + " For bean you can specify the method name after dot, eg bean:myBean.myMethod.")
     @Metadata(required = true)
     private String resourceUri;
     @UriParam(defaultValue = "false", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
     @UriParam(defaultValue = "false", description = "Sets whether the context map should allow access to all details."
-            + " By default only the message body and headers can be accessed."
-            + " This option can be enabled for full access to the current Exchange and CamelContext."
-            + " Doing so impose a potential security risk as this opens access to the full power of CamelContext API.")
+                                                    + " By default only the message body and headers can be accessed."
+                                                    + " This option can be enabled for full access to the current Exchange and CamelContext."
+                                                    + " Doing so impose a potential security risk as this opens access to the full power of CamelContext API.")
     private boolean allowContextMapAll;
 
     public ResourceEndpoint() {
@@ -71,10 +70,10 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     /**
      * Gets the resource as an input stream considering the cache flag as well.
      * <p/>
-     * If cache is enabled then the resource content is cached in an internal buffer and this content is
-     * returned to avoid loading the resource over and over again.
+     * If cache is enabled then the resource content is cached in an internal buffer and this content is returned to
+     * avoid loading the resource over and over again.
      *
-     * @return the input stream
+     * @return             the input stream
      * @throws IOException is thrown if error loading the content of the resource to the local cache buffer
      */
     public InputStream getResourceAsInputStream() throws IOException {
@@ -104,8 +103,8 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     /**
      * Loads the given resource.
      *
-     * @param uri uri of the resource.
-     * @return the loaded resource
+     * @param  uri         uri of the resource.
+     * @return             the loaded resource
      * @throws IOException is thrown if resource is not found or cannot be loaded
      */
     protected InputStream loadResource(String uri) throws IOException {
@@ -135,10 +134,9 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     }
 
     /**
-     * Sets whether the context map should allow access to all details.
-     * By default only the message body and headers can be accessed.
-     * This option can be enabled for full access to the current Exchange and CamelContext.
-     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     * Sets whether the context map should allow access to all details. By default only the message body and headers can
+     * be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose
+     * a potential security risk as this opens access to the full power of CamelContext API.
      */
     public void setAllowContextMapAll(boolean allowContextMapAll) {
         this.allowContextMapAll = allowContextMapAll;
@@ -177,13 +175,11 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     /**
      * Path to the resource.
      * <p/>
-     * You can prefix with: classpath, file, http, ref, or bean.
-     * classpath, file and http loads the resource using these protocols (classpath is default).
-     * ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource.
-     * For bean you can specify the method name after dot, eg bean:myBean.myMethod
+     * You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these
+     * protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean
+     * to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod
      *
-     * @param resourceUri  the resource path
+     * @param resourceUri the resource path
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;

@@ -41,7 +41,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Send e-mails through AWS SES service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS 2 Simple Email Service (SES)", syntax = "aws2-ses:from", producerOnly = true, category = {Category.CLOUD, Category.MAIL})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS 2 Simple Email Service (SES)", syntax = "aws2-ses:from",
+             producerOnly = true, category = { Category.CLOUD, Category.MAIL })
 public class Ses2Endpoint extends DefaultEndpoint {
 
     private SesClient sesClient;
@@ -96,7 +97,8 @@ public class Ses2Endpoint extends DefaultEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -104,7 +106,8 @@ public class Ses2Endpoint extends DefaultEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -121,8 +124,7 @@ public class Ses2Endpoint extends DefaultEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

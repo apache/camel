@@ -52,10 +52,11 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsApiIntegrationTest.class);
     private static final int RETRY_DELAY = 5000;
     private static final int REPORT_RESULT_RETRIES = 5;
-    private static final String[] REPORT_OPTIONS = new String[] {SalesforceReportResultsToListConverter.INCLUDE_HEADERS, SalesforceReportResultsToListConverter.INCLUDE_DETAILS,
-                                                                 SalesforceReportResultsToListConverter.INCLUDE_SUMMARY};
+    private static final String[] REPORT_OPTIONS = new String[] {
+            SalesforceReportResultsToListConverter.INCLUDE_HEADERS, SalesforceReportResultsToListConverter.INCLUDE_DETAILS,
+            SalesforceReportResultsToListConverter.INCLUDE_SUMMARY };
     private static final int NUM_OPTIONS = REPORT_OPTIONS.length;
-    private static final int[] POWERS = new int[] {4, 2, 1};
+    private static final int[] POWERS = new int[] { 4, 2, 1 };
 
     private static final String TEST_REPORT_NAME = "Test_Report";
     private boolean bodyMetadata;
@@ -63,11 +64,11 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
     /**
      * Get test report developer names as data points.
      * 
-     * @return test report developer names in test-salesforce-login.properties
+     * @return           test report developer names in test-salesforce-login.properties
      * @throws Exception
      */
     public static String[] getTestReportDeveloperNames() throws Exception {
-        return new String[] {TEST_REPORT_NAME};
+        return new String[] { TEST_REPORT_NAME };
     }
 
     @Test
@@ -80,13 +81,15 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         LOG.debug("getRecentReports: {}", recentReports);
     }
 
-    @ParameterizedTest @MethodSource("getTestReportDeveloperNames")
+    @ParameterizedTest
+    @MethodSource("getTestReportDeveloperNames")
     public void testReport(String reportName) throws Exception {
 
         LOG.info("Testing report {}...", reportName);
 
         // get Report Id
-        final QueryRecordsReport reports = template().requestBody("direct:queryReport", "SELECT Id FROM Report WHERE DeveloperName='" + reportName + "'", QueryRecordsReport.class);
+        final QueryRecordsReport reports = template().requestBody("direct:queryReport",
+                "SELECT Id FROM Report WHERE DeveloperName='" + reportName + "'", QueryRecordsReport.class);
 
         assertNotNull(reports, "query");
         final List<Report> reportsRecords = reports.getRecords();
@@ -95,7 +98,8 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         assertNotNull(testReportId);
 
         // 1. getReportDescription
-        final ReportDescription reportDescription = template().requestBody("direct:getReportDescription", testReportId, ReportDescription.class);
+        final ReportDescription reportDescription
+                = template().requestBody("direct:getReportDescription", testReportId, ReportDescription.class);
 
         assertNotNull(reportDescription, "getReportDescriptions");
         LOG.debug("getReportDescriptions: {}", reportDescription);
@@ -103,8 +107,9 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // 2. executeSyncReport
         // execute with no metadata
-        SyncReportResults reportResults = template().requestBodyAndHeader("direct:executeSyncReport", testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.TRUE,
-                                                                          SyncReportResults.class);
+        SyncReportResults reportResults = template().requestBodyAndHeader("direct:executeSyncReport", testReportId,
+                SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.TRUE,
+                SyncReportResults.class);
 
         assertNotNull(reportResults, "executeSyncReport");
         LOG.debug("executeSyncReport: {}", reportResults);
@@ -126,8 +131,9 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // 3. executeAsyncReport
         // execute with no metadata
-        ReportInstance reportInstance = template().requestBodyAndHeader("direct:executeAsyncReport", testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, true,
-                                                                        ReportInstance.class);
+        ReportInstance reportInstance = template().requestBodyAndHeader("direct:executeAsyncReport", testReportId,
+                SalesforceEndpointConfig.INCLUDE_DETAILS, true,
+                ReportInstance.class);
 
         assertNotNull(reportInstance, "executeAsyncReport");
         LOG.debug("executeAsyncReport: {}", reportInstance);
@@ -162,10 +168,12 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         int tries = 0;
         AsyncReportResults asyncReportResults = null;
         while (!done) {
-            asyncReportResults = template().requestBodyAndHeader("direct:getReportResults", testReportId, SalesforceEndpointConfig.INSTANCE_ID, testReportInstanceId,
-                                                                 AsyncReportResults.class);
+            asyncReportResults = template().requestBodyAndHeader("direct:getReportResults", testReportId,
+                    SalesforceEndpointConfig.INSTANCE_ID, testReportInstanceId,
+                    AsyncReportResults.class);
             done = asyncReportResults != null
-                   && (asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Success || asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Error);
+                    && (asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Success
+                            || asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Error);
             if (!done) {
                 // avoid flooding calls
                 Thread.sleep(RETRY_DELAY);
@@ -189,7 +197,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // permutations of include details, include headers, include summary
         final boolean[] values = new boolean[NUM_OPTIONS];
-        final int nIterations = (int)Math.pow(2, NUM_OPTIONS);
+        final int nIterations = (int) Math.pow(2, NUM_OPTIONS);
 
         for (int i = 0; i < nIterations; i++) {
 

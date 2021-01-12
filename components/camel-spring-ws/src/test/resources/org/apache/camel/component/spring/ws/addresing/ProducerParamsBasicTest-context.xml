@@ -54,6 +54,12 @@
 				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;replyTo=mailto://replyTo@chocolatejar.eu&amp;endpointMapping=#endpointMapping&amp;faultTo=http://fault.to" />
 		</route>
 		<route>
+			<from uri="direct:replyTo-customMessageIdStrategy" />
+			<to uri="bean:wsaResponseProcessor" />
+			<to
+				uri="spring-ws:http://google.com?wsAddressingAction=http://wsaAction.com&amp;webServiceTemplate=#webServiceTemplate&amp;replyTo=mailto://replyTo@chocolatejar.eu&amp;endpointMapping=#endpointMapping&amp;faultTo=http://fault.to&amp;messageIdStrategy=#staticId" />
+		</route>
+		<route>
 			<from uri="direct:faultTo" />
 			<to uri="bean:wsaResponseProcessor" />
 			<to
@@ -91,7 +97,10 @@
 	<bean id="wsaResponseProcessor"
 		class="org.apache.camel.component.spring.ws.processor.OkResponseProcessor">
 	</bean>
-	
+
+	<bean id="staticId"
+		  class="org.apache.camel.component.spring.ws.addressing.StaticIdStrategy">
+	</bean>
 
 
 	<!-- ============================== -->

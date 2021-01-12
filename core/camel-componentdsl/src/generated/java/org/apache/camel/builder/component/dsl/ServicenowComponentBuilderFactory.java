@@ -37,6 +37,8 @@ public interface ServicenowComponentBuilderFactory {
      * Category: api,cloud,management
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
+     * 
+     * @return the dsl builder
      */
     static ServicenowComponentBuilder servicenow() {
         return new ServicenowComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface ServicenowComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.servicenow.ServiceNowConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.servicenow.ServiceNowConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder configuration(
                 org.apache.camel.component.servicenow.ServiceNowConfiguration configuration) {
@@ -67,10 +72,13 @@ public interface ServicenowComponentBuilderFactory {
          * return scorecards with any Display field value. This parameter is
          * true by default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param display the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder display(java.lang.String display) {
             doSetProperty("display", display);
@@ -80,10 +88,13 @@ public interface ServicenowComponentBuilderFactory {
          * Return the display value (true), actual value (false), or both (all)
          * for reference fields (default: false).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param displayValue the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder displayValue(
                 java.lang.String displayValue) {
@@ -94,9 +105,12 @@ public interface ServicenowComponentBuilderFactory {
          * True to exclude Table API links for reference fields (default:
          * false).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param excludeReferenceLink the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder excludeReferenceLink(
                 java.lang.Boolean excludeReferenceLink) {
@@ -107,9 +121,12 @@ public interface ServicenowComponentBuilderFactory {
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param favorites the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder favorites(java.lang.Boolean favorites) {
             doSetProperty("favorites", favorites);
@@ -121,9 +138,12 @@ public interface ServicenowComponentBuilderFactory {
          * applied. If a value is not specified, this parameter defaults to
          * false and returns no aggregates.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param includeAggregates the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder includeAggregates(
                 java.lang.Boolean includeAggregates) {
@@ -136,9 +156,12 @@ public interface ServicenowComponentBuilderFactory {
          * specified, this parameter defaults to false and returns no
          * aggregates.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param includeAvailableAggregates the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder includeAvailableAggregates(
                 java.lang.Boolean includeAvailableAggregates) {
@@ -150,9 +173,12 @@ public interface ServicenowComponentBuilderFactory {
          * indicator. If a value is not specified, this parameter defaults to
          * false and returns no breakdowns.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param includeAvailableBreakdowns the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder includeAvailableBreakdowns(
                 java.lang.Boolean includeAvailableBreakdowns) {
@@ -164,9 +190,12 @@ public interface ServicenowComponentBuilderFactory {
          * score. The note element contains the note text as well as the author
          * and timestamp when the note was added.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param includeScoreNotes the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder includeScoreNotes(
                 java.lang.Boolean includeScoreNotes) {
@@ -178,9 +207,12 @@ public interface ServicenowComponentBuilderFactory {
          * value is not specified, this parameter defaults to false and returns
          * only the most recent score value.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param includeScores the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder includeScores(
                 java.lang.Boolean includeScores) {
@@ -190,9 +222,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * True to set raw value of input fields (default: false).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param inputDisplayValue the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder inputDisplayValue(
                 java.lang.Boolean inputDisplayValue) {
@@ -203,9 +238,12 @@ public interface ServicenowComponentBuilderFactory {
          * Set this parameter to true to return only scorecards for key
          * indicators.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder key(java.lang.Boolean key) {
             doSetProperty("key", key);
@@ -222,10 +260,13 @@ public interface ServicenowComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -235,10 +276,14 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Defines both request and response models.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Class<java.lang.Object>></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param models the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder models(
                 java.util.Map<java.lang.String, java.lang.Class<java.lang.Object>> models) {
@@ -249,10 +294,13 @@ public interface ServicenowComponentBuilderFactory {
          * Enter the maximum number of scorecards each query can return. By
          * default this value is 10, and the maximum is 100.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer
+         * 
+         * @param perPage the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder perPage(java.lang.Integer perPage) {
             doSetProperty("perPage", perPage);
@@ -263,11 +311,13 @@ public interface ServicenowComponentBuilderFactory {
          * https://docs.servicenow.com.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.servicenow.ServiceNowRelease&lt;/code&gt; type.
          * 
          * Default: HELSINKI
          * Group: producer
+         * 
+         * @param release the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder release(
                 org.apache.camel.component.servicenow.ServiceNowRelease release) {
@@ -277,10 +327,14 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Defines the request model.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Class<java.lang.Object>></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param requestModels the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder requestModels(
                 java.util.Map<java.lang.String, java.lang.Class<java.lang.Object>> requestModels) {
@@ -291,9 +345,12 @@ public interface ServicenowComponentBuilderFactory {
          * The default resource, can be overridden by header
          * CamelServiceNowResource.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param resource the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder resource(java.lang.String resource) {
             doSetProperty("resource", resource);
@@ -302,10 +359,14 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Defines the response model.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Class<java.lang.Object>></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param responseModels the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder responseModels(
                 java.util.Map<java.lang.String, java.lang.Class<java.lang.Object>> responseModels) {
@@ -316,9 +377,12 @@ public interface ServicenowComponentBuilderFactory {
          * Specify the value to use when sorting results. By default, queries
          * sort records by value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sortBy the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder sortBy(java.lang.String sortBy) {
             doSetProperty("sortBy", sortBy);
@@ -329,9 +393,12 @@ public interface ServicenowComponentBuilderFactory {
          * queries sort records in descending order. Use sysparm_sortdir=asc to
          * sort in ascending order.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sortDir the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder sortDir(java.lang.String sortDir) {
             doSetProperty("sortDir", sortDir);
@@ -340,9 +407,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * True to suppress auto generation of system fields (default: false).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param suppressAutoSysField the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder suppressAutoSysField(
                 java.lang.Boolean suppressAutoSysField) {
@@ -354,9 +424,12 @@ public interface ServicenowComponentBuilderFactory {
          * The Link header allows you to request additional pages of data when
          * the number of records matching your query exceeds the query limit.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param suppressPaginationHeader the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder suppressPaginationHeader(
                 java.lang.Boolean suppressPaginationHeader) {
@@ -366,9 +439,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The default table, can be overridden by header CamelServiceNowTable.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param table the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder table(java.lang.String table) {
             doSetProperty("table", table);
@@ -378,9 +454,12 @@ public interface ServicenowComponentBuilderFactory {
          * Set this parameter to true to return only scorecards that have a
          * target.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param target the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder target(java.lang.Boolean target) {
             doSetProperty("target", target);
@@ -389,9 +468,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Gets only those categories whose parent is a catalog.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param topLevelOnly the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder topLevelOnly(
                 java.lang.Boolean topLevelOnly) {
@@ -401,9 +483,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The ServiceNow REST API version, default latest.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder apiVersion(
                 java.lang.String apiVersion) {
@@ -411,26 +496,36 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ServicenowComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ServicenowComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The date format used for Json serialization/deserialization.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: yyyy-MM-dd
          * Group: advanced
+         * 
+         * @param dateFormat the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder dateFormat(
                 java.lang.String dateFormat) {
@@ -440,10 +535,13 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The date-time format used for Json serialization/deserialization.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: yyyy-MM-dd HH:mm:ss
          * Group: advanced
+         * 
+         * @param dateTimeFormat the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder dateTimeFormat(
                 java.lang.String dateTimeFormat) {
@@ -454,9 +552,12 @@ public interface ServicenowComponentBuilderFactory {
          * To configure http-client.
          * 
          * The option is a:
-         * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
+         * &lt;code&gt;org.apache.cxf.transports.http.configuration.HTTPClientPolicy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientPolicy the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder httpClientPolicy(
                 org.apache.cxf.transports.http.configuration.HTTPClientPolicy httpClientPolicy) {
@@ -466,9 +567,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The ServiceNow instance name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param instanceName the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder instanceName(
                 java.lang.String instanceName) {
@@ -479,9 +583,13 @@ public interface ServicenowComponentBuilderFactory {
          * Sets Jackson's ObjectMapper to use for request/reply.
          * 
          * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param mapper the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder mapper(
                 com.fasterxml.jackson.databind.ObjectMapper mapper) {
@@ -492,9 +600,12 @@ public interface ServicenowComponentBuilderFactory {
          * To configure proxy authentication.
          * 
          * The option is a:
-         * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
+         * &lt;code&gt;org.apache.cxf.configuration.security.ProxyAuthorizationPolicy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param proxyAuthorizationPolicy the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder proxyAuthorizationPolicy(
                 org.apache.cxf.configuration.security.ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
@@ -506,10 +617,13 @@ public interface ServicenowComponentBuilderFactory {
          * import set api. The import set result is then replaced by the target
          * record.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param retrieveTargetRecordOnImport the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder retrieveTargetRecordOnImport(
                 java.lang.Boolean retrieveTargetRecordOnImport) {
@@ -519,10 +633,13 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The time format used for Json serialization/deserialization.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: HH:mm:ss
          * Group: advanced
+         * 
+         * @param timeFormat the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder timeFormat(
                 java.lang.String timeFormat) {
@@ -532,9 +649,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The proxy host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -543,9 +663,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The proxy port number.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -554,9 +677,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * The ServiceNow REST API url.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param apiUrl the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder apiUrl(java.lang.String apiUrl) {
             doSetProperty("apiUrl", apiUrl);
@@ -565,9 +691,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * OAuth2 ClientID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthClientId the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder oauthClientId(
                 java.lang.String oauthClientId) {
@@ -577,9 +706,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * OAuth2 ClientSecret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthClientSecret the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder oauthClientSecret(
                 java.lang.String oauthClientSecret) {
@@ -589,9 +721,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * OAuth token Url.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthTokenUrl the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder oauthTokenUrl(
                 java.lang.String oauthTokenUrl) {
@@ -601,9 +736,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * ServiceNow account password, MUST be provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -612,9 +750,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Password for proxy authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder proxyPassword(
                 java.lang.String proxyPassword) {
@@ -624,9 +765,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Username for proxy authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param proxyUserName the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder proxyUserName(
                 java.lang.String proxyUserName) {
@@ -638,9 +782,12 @@ public interface ServicenowComponentBuilderFactory {
          * http://camel.apache.org/camel-configuration-utilities.html.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -650,10 +797,13 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -663,9 +813,12 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * ServiceNow user account name, MUST be provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default ServicenowComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);
@@ -722,7 +875,7 @@ public interface ServicenowComponentBuilderFactory {
             case "target": getOrCreateConfiguration((ServiceNowComponent) component).setTarget((java.lang.Boolean) value); return true;
             case "topLevelOnly": getOrCreateConfiguration((ServiceNowComponent) component).setTopLevelOnly((java.lang.Boolean) value); return true;
             case "apiVersion": getOrCreateConfiguration((ServiceNowComponent) component).setApiVersion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ServiceNowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ServiceNowComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "dateFormat": getOrCreateConfiguration((ServiceNowComponent) component).setDateFormat((java.lang.String) value); return true;
             case "dateTimeFormat": getOrCreateConfiguration((ServiceNowComponent) component).setDateTimeFormat((java.lang.String) value); return true;
             case "httpClientPolicy": getOrCreateConfiguration((ServiceNowComponent) component).setHttpClientPolicy((org.apache.cxf.transports.http.configuration.HTTPClientPolicy) value); return true;

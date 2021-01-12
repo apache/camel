@@ -42,7 +42,8 @@ public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveCo
             paths.add(new HttpRestConsumerPath(entry.getValue()));
         }
 
-        RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer> best
+                = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
             answer = best.getConsumer();
         }

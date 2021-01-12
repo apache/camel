@@ -137,12 +137,14 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private BlobContainerOperations getContainerOperations(final Exchange exchange) {
-        return new BlobContainerOperations(configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
+        return new BlobContainerOperations(
+                configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
     }
 
     private BlobOperations getBlobOperations(final Exchange exchange) {
-        final BlobClientWrapper clientWrapper = blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange))
-                .getBlobClientWrapper(determineBlobName(exchange));
+        final BlobClientWrapper clientWrapper
+                = blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange))
+                        .getBlobClientWrapper(determineBlobName(exchange));
 
         return new BlobOperations(configuration, clientWrapper);
     }

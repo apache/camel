@@ -66,7 +66,7 @@ public class ManagedMarshalTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .marshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
+                        .marshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
                         .to("mock:foo");
             }
         };

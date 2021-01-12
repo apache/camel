@@ -26,8 +26,6 @@ public enum BoxEventsManagerApiMethod implements ApiMethod {
         arg("listener", com.box.sdk.EventListener.class),
         arg("startingPosition", Long.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private BoxEventsManagerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

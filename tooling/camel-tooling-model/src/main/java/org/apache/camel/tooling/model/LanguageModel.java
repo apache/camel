@@ -20,6 +20,7 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
 
     protected String modelName;
     protected String modelJavaType;
+
     public static class LanguageOptionModel extends BaseOptionModel {
 
     }

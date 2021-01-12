@@ -1,4 +1,4 @@
-[[microprofile-config-component]]
+[[microprofile-config-other]]
 = Microprofile Config Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-config/src/main/docs/microprofile-config.adoc
@@ -7,6 +7,7 @@
 :description: Bridging Eclipse MicroProfile Config with Camel properties
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-config.adoc[opts=optional]
 
 *Since Camel {since}*
 

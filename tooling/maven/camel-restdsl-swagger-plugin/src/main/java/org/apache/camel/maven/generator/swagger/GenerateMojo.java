@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 @Mojo(name = "generate", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-    requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+      requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateMojo extends AbstractGenerateMojo {
 
     @Parameter
@@ -60,8 +60,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
         final Swagger swagger = swaggerParser.read(specificationUri);
 
         if (swagger == null) {
-            throw new MojoExecutionException("Unable to generate REST DSL Swagger sources from specification: "
-                + specificationUri + ", make sure that the specification is available at the given URI");
+            throw new MojoExecutionException(
+                    "Unable to generate REST DSL Swagger sources from specification: "
+                                             + specificationUri
+                                             + ", make sure that the specification is available at the given URI");
         }
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(swagger);
@@ -107,16 +109,18 @@ public class GenerateMojo extends AbstractGenerateMojo {
                         if (pName != null) {
                             packageName = pName;
                             generator.withPackageName(packageName);
-                            getLog().info("Detected @SpringBootApplication, and will be using its package name: " + packageName);
+                            getLog().info(
+                                    "Detected @SpringBootApplication, and will be using its package name: " + packageName);
                         }
                     }
-                    getLog().info("Generating Camel Rest Controller source with package name " + packageName + " in source directory: " + outputPath);
+                    getLog().info("Generating Camel Rest Controller source with package name " + packageName
+                                  + " in source directory: " + outputPath);
                     SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName).generate(outputPath);
                     // the Camel Rest Controller allows to use root as context-path
                     generator.withRestContextPath("/");
                 } catch (final IOException e) {
                     throw new MojoExecutionException(
-                        "Unable to generate Camel Rest Controller source due " + e.getMessage(), e);
+                            "Unable to generate Camel Rest Controller source due " + e.getMessage(), e);
                 }
             }
         }
@@ -131,7 +135,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
             generator.generate(outputPath);
         } catch (final IOException e) {
             throw new MojoExecutionException(
-                "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
+                    "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
         }
     }
 

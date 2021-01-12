@@ -25,8 +25,6 @@ public enum CalendarFreebusyApiMethod implements ApiMethod {
         "query",
         arg("content", com.google.api.services.calendar.model.FreeBusyRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CalendarFreebusyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

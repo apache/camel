@@ -42,9 +42,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder apiVersion(
                 String apiVersion) {
@@ -54,9 +57,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder dnsDomain(
                 String dnsDomain) {
@@ -67,9 +73,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -80,9 +89,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -100,10 +112,13 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -121,10 +136,14 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -134,9 +153,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Producer operation to do on Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder operation(
                 String operation) {
@@ -146,9 +168,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder portName(
                 String portName) {
@@ -158,10 +183,13 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: producer
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder portProtocol(
                 String portProtocol) {
@@ -171,9 +199,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder caCertData(
                 String caCertData) {
@@ -183,9 +214,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder caCertFile(
                 String caCertFile) {
@@ -195,9 +229,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -207,9 +244,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -219,9 +259,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -231,9 +274,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -243,9 +289,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -255,9 +304,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -267,9 +319,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder oauthToken(
                 String oauthToken) {
@@ -279,9 +334,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder password(
                 String password) {
@@ -291,9 +349,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
@@ -303,10 +364,13 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder trustCerts(
                 String trustCerts) {
@@ -316,9 +380,12 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder username(
                 String username) {
@@ -338,40 +405,15 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
             return (KubernetesServiceAccountsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -382,10 +424,13 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -396,10 +441,13 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -410,10 +458,14 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
                 String synchronous) {
@@ -437,6 +489,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
                 String path) {
@@ -458,6 +511,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
                 String componentName,

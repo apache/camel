@@ -48,10 +48,13 @@ public interface GraphqlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -69,10 +72,14 @@ public interface GraphqlEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -82,9 +89,12 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The query or mutation name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operationName the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder operationName(String operationName) {
             doSetProperty("operationName", operationName);
@@ -93,9 +103,12 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The proxy host in the format hostname:port.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -104,9 +117,12 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The query text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder query(String query) {
             doSetProperty("query", query);
@@ -115,9 +131,12 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The query file name located in the classpath.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queryFile the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder queryFile(String queryFile) {
             doSetProperty("queryFile", queryFile);
@@ -126,10 +145,13 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The JsonObject instance containing the operation variables.
          * 
-         * The option is a: <code>org.apache.camel.util.json.JsonObject</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.util.json.JsonObject&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param variables the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder variables(Object variables) {
             doSetProperty("variables", variables);
@@ -139,9 +161,12 @@ public interface GraphqlEndpointBuilderFactory {
          * The JsonObject instance containing the operation variables.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.util.json.JsonObject</code> type.
+         * &lt;code&gt;org.apache.camel.util.json.JsonObject&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param variables the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder variables(String variables) {
             doSetProperty("variables", variables);
@@ -150,20 +175,42 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The access token sent in the Authorization header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
+         * The JWT Authorization type. Default is Bearer.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: Bearer
+         * Group: security
+         * 
+         * @param jwtAuthorizationType the value to set
+         * @return the dsl builder
+         */
+        default GraphqlEndpointBuilder jwtAuthorizationType(
+                String jwtAuthorizationType) {
+            doSetProperty("jwtAuthorizationType", jwtAuthorizationType);
+            return this;
+        }
+        /**
          * The password for Basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -172,9 +219,12 @@ public interface GraphqlEndpointBuilderFactory {
         /**
          * The username for Basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -192,41 +242,16 @@ public interface GraphqlEndpointBuilderFactory {
             return (GraphqlEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGraphqlEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGraphqlEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGraphqlEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -236,10 +261,14 @@ public interface GraphqlEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGraphqlEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -262,6 +291,7 @@ public interface GraphqlEndpointBuilderFactory {
          * The GraphQL server URI.
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder graphql(String path) {
             return GraphqlEndpointBuilderFactory.endpointBuilder("graphql", path);
@@ -282,6 +312,7 @@ public interface GraphqlEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder graphql(String componentName, String path) {
             return GraphqlEndpointBuilderFactory.endpointBuilder(componentName, path);

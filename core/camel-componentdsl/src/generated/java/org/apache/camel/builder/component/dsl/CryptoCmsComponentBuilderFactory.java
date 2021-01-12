@@ -37,6 +37,8 @@ public interface CryptoCmsComponentBuilderFactory {
      * Category: security,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-crypto-cms
+     * 
+     * @return the dsl builder
      */
     @Deprecated
     static CryptoCmsComponentBuilder cryptoCms() {
@@ -60,10 +62,13 @@ public interface CryptoCmsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -71,17 +76,24 @@ public interface CryptoCmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CryptoCmsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CryptoCmsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -89,9 +101,12 @@ public interface CryptoCmsComponentBuilderFactory {
          * determines the uri parameters for the decrypt operation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param envelopedDataDecryptorConfiguration the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder envelopedDataDecryptorConfiguration(
                 org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
@@ -103,9 +118,12 @@ public interface CryptoCmsComponentBuilderFactory {
          * determines the uri parameters for the verify operation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param signedDataVerifierConfiguration the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder signedDataVerifierConfiguration(
                 org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration signedDataVerifierConfiguration) {
@@ -130,7 +148,7 @@ public interface CryptoCmsComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((CryptoCmsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((CryptoCmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CryptoCmsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "envelopedDataDecryptorConfiguration": ((CryptoCmsComponent) component).setEnvelopedDataDecryptorConfiguration((org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration) value); return true;
             case "signedDataVerifierConfiguration": ((CryptoCmsComponent) component).setSignedDataVerifierConfiguration((org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration) value); return true;
             default: return false;

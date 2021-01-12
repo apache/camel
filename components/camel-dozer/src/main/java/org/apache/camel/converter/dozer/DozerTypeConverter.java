@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <code>DozerTypeConverter</code> is a standard {@link TypeConverter} that
- * delegates to a {@link Mapper} from the Dozer framework to convert between
- * types. <code>DozerTypeConverter</code>s are created and installed into a
+ * <code>DozerTypeConverter</code> is a standard {@link TypeConverter} that delegates to a {@link Mapper} from the Dozer
+ * framework to convert between types. <code>DozerTypeConverter</code>s are created and installed into a
  * {@link CamelContext} by an instance of {@link DozerTypeConverterLoader}.
  * <p>
  * See <a href="https://github.com/DozerMapper/dozer">dozer project page</a> or more information on configuring Dozer

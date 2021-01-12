@@ -69,8 +69,9 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
     public void testWriteResultAsHeaderWithWriteOp() {
         // Prepare test
         assertEquals(0, testCollection.countDocuments());
-        Object[] req = new Object[] {new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
-                                     new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").toJson()};
+        Object[] req = new Object[] {
+                new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
+                new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").toJson() };
         // Object result =
         template.requestBody("direct:insert", req);
         // assertTrue(result instanceof WriteResult);
@@ -90,11 +91,12 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
             }
         });
         assertTrue(resultExch.getMessage().getBody() instanceof Document);
-        assertTrue(resultExch.getMessage().getBody().equals(record1));
+        assertEquals(record1, resultExch.getMessage().getBody());
         assertTrue(resultExch.getMessage().getHeader(MongoDbConstants.WRITERESULT) instanceof UpdateResult);
 
         Document record2 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
-        assertEquals("Darwin", record2.get("scientist"), "Scientist field of 'testSave1' must equal 'Darwin' after save operation");
+        assertEquals("Darwin", record2.get("scientist"),
+                "Scientist field of 'testSave1' must equal 'Darwin' after save operation");
 
     }
 
@@ -118,12 +120,16 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
             public void configure() {
 
                 // tested routes
-                from("direct:count").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
-                from("direct:save").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeResultAsHeader=true");
-                from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats&writeResultAsHeader=true");
+                from("direct:count").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
+                from("direct:save").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeResultAsHeader=true");
+                from("direct:getDbStats").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats&writeResultAsHeader=true");
 
                 // supporting routes
-                from("direct:insert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                from("direct:insert")
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
 
             }
         };

@@ -30,7 +30,8 @@ public class GsonUnmarshalTypeFromHeaderTest extends CamelTestSupport {
     public void testUnmarshalTypeFromHeader() {
         String body = "{\"name\":\"my-name\"}";
         String unmarshallType = "org.apache.camel.component.gson.TestPojo";
-        TestPojo pojo = template.requestBodyAndHeader("direct:unmarshalTypeFromHeader", body, GsonConstants.UNMARSHAL_TYPE, unmarshallType, TestPojo.class);
+        TestPojo pojo = template.requestBodyAndHeader("direct:unmarshalTypeFromHeader", body, GsonConstants.UNMARSHAL_TYPE,
+                unmarshallType, TestPojo.class);
         assertNotNull(pojo);
         assertEquals("my-name", pojo.getName());
     }

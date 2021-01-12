@@ -227,7 +227,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
         public String getContentType() {
             String content = con.getContentType();
-            return content != null  && content.contains(";")
+            return content != null && content.contains(";")
                     ? content.substring(0, content.indexOf(";"))
                     : content;
         }
@@ -279,12 +279,11 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         }
 
         public String toString() {
-            StringBuffer sb = new StringBuffer(2048).append("Error on HTTP request: ");
+            StringBuilder sb = new StringBuilder().append("Error on HTTP request: ");
             sb.append(code);
             if (message != null) {
                 sb.append(" ");
                 sb.append(message);
-                sb.append("");
             }
             if (url != null) {
                 sb.append(" [");

@@ -41,9 +41,6 @@ public class BlobServiceOperations {
     }
 
     public BlobOperationResponse listBlobContainers(final Exchange exchange) {
-        if (exchange == null) {
-            return new BlobOperationResponse(client.listBlobContainers(null, null));
-        }
         final ListBlobContainersOptions listBlobContainersOptions = configurationProxy.getListBlobContainersOptions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 

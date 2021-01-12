@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -206,6 +207,12 @@ public class StringHelperTest {
 
         assertTrue(StringHelper.before("mykey:ignore", ":", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
+
+        assertEquals("", StringHelper.before("Hello World", "Test", ""));
+        assertNull(StringHelper.before("Hello World", "Test", (String) null));
+
+        assertEquals("a:b", StringHelper.beforeLast("a:b:c", ":"));
+        assertEquals("", StringHelper.beforeLast("a:b:c", "_", ""));
     }
 
     @Test
@@ -216,6 +223,12 @@ public class StringHelperTest {
 
         assertTrue(StringHelper.after("ignore:mykey", ":", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
+
+        assertEquals("", StringHelper.after("Hello World", "Test", ""));
+        assertNull(StringHelper.after("Hello World", "Test", (String) null));
+
+        assertEquals("c", StringHelper.afterLast("a:b:c", ":"));
+        assertEquals("", StringHelper.afterLast("a:b:c", "_", ""));
     }
 
     @Test
@@ -333,4 +346,26 @@ public class StringHelperTest {
         assertEquals("helloGreatWorld", StringHelper.dashToCamelCase("hello-great-world"));
     }
 
+    public void testStartsWithIgnoreCase() {
+        assertTrue(StringHelper.startsWithIgnoreCase(null, null));
+        assertFalse(StringHelper.startsWithIgnoreCase("foo", null));
+        assertFalse(StringHelper.startsWithIgnoreCase(null, "bar"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "bar"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "Hello"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "hello"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "Helo"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "HelloWorld"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "helloWORLD"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "HELLO"));
+        assertTrue(StringHelper.startsWithIgnoreCase("helloworld", "helloWORLD"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HELLOWORLD", "HELLO"));
+    }
+
+    @Test
+    public void testSplitAsStream() {
+        List<String> items = StringHelper.splitAsStream("a,b,c", ",").collect(Collectors.toList());
+        assertTrue(items.contains("a"));
+        assertTrue(items.contains("b"));
+        assertTrue(items.contains("c"));
+    }
 }

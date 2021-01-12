@@ -26,7 +26,8 @@ import org.apache.camel.component.wordpress.api.service.spi.TagsSPI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAdapter<TagsSPI, Tag, TagSearchCriteria> implements WordpressServiceTags {
+public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAdapter<TagsSPI, Tag, TagSearchCriteria>
+        implements WordpressServiceTags {
 
     public WordpressServiceTagsAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);
@@ -41,8 +42,10 @@ public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAda
     @Override
     public List<Tag> list(TagSearchCriteria criteria) {
         checkNotNull(criteria, "The search criteria must be defined");
-        return this.getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(), criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
-                                  criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getPostId(), criteria.getSlug());
+        return this.getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
+                criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
+                criteria.getOffset(), criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getPostId(),
+                criteria.getSlug());
     }
     // @formatter:on
 

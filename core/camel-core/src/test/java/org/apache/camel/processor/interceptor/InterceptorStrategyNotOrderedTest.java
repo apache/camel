@@ -56,7 +56,9 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
     private static class FooInterceptStrategy implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget)
+                throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);
@@ -74,7 +76,9 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
     private static class BarInterceptStrategy implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, final Processor target, Processor nextTarget)
+                throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);

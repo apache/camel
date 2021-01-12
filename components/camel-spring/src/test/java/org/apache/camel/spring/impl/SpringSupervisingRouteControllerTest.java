@@ -84,12 +84,11 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
         }
     }
 
-    public static  class MyJmsEndpoint extends SedaEndpoint {
+    public static class MyJmsEndpoint extends SedaEndpoint {
 
         private String name;
 
         public MyJmsEndpoint(String name) {
-            super();
             this.name = name;
         }
 
@@ -104,7 +103,7 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
         }
     }
 
-    public static  class MyJmsConsumer extends SedaConsumer {
+    public static class MyJmsConsumer extends SedaConsumer {
 
         private int counter;
 

@@ -39,7 +39,6 @@ import org.openstack4j.openstack.networking.domain.NeutronRouterInterface;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -126,7 +125,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
         producer.process(exchange);
 
         final List<Router> result = msg.getBody(List.class);
-        assertTrue(result.size() == 2);
+        assertEquals(2, result.size());
         assertEquals(testOSrouter, result.get(0));
     }
 

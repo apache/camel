@@ -30,13 +30,10 @@ public class BeanConfig {
     String version;
     String licenseUrl;
     String license;
-    
+
     Info info;
     String host;
     String basePath;
-
-    
-    
 
     public String[] getSchemes() {
         return schemes;
@@ -62,19 +59,18 @@ public class BeanConfig {
         this.version = version;
     }
 
-    
     public String getLicenseUrl() {
         return this.licenseUrl;
     }
-    
+
     public void setLicenseUrl(String licenseUrl) {
         this.licenseUrl = licenseUrl;
     }
-    
+
     public String getLicense() {
         return this.license;
     }
-    
+
     public void setLicense(String license) {
         this.license = license;
     }
@@ -95,8 +91,6 @@ public class BeanConfig {
         this.host = host;
     }
 
-    
-    
     public String getBasePath() {
         return basePath;
     }
@@ -110,12 +104,12 @@ public class BeanConfig {
             }
         }
     }
-    
+
     public OasDocument configure(OasDocument openApi) {
         if (openApi instanceof Oas20Document) {
-            configureOas20((Oas20Document)openApi);
+            configureOas20((Oas20Document) openApi);
         } else if (openApi instanceof Oas30Document) {
-            configureOas30((Oas30Document)openApi);
+            configureOas30((Oas30Document) openApi);
         }
         return openApi;
     }
@@ -127,7 +121,8 @@ public class BeanConfig {
             info._parent = openApi;
         }
         Server server = openApi.createServer();
-        String serverUrl = new StringBuilder().append(this.schemes[0]).append("://").append(this.host).append(this.basePath).toString();
+        String serverUrl
+                = new StringBuilder().append(this.schemes[0]).append("://").append(this.host).append(this.basePath).toString();
         server.url = serverUrl;
         openApi.addServer(server);
     }
@@ -149,7 +144,7 @@ public class BeanConfig {
         openApi.host = host;
         openApi.basePath = basePath;
     }
-    
+
     public boolean isOpenApi3() {
         return this.version == null || this.version.startsWith("3");
     }

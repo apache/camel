@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BatchDeleteAttributesCommandTest {
-    
+
     private BatchDeleteAttributesCommand command;
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
@@ -42,7 +42,7 @@ public class BatchDeleteAttributesCommandTest {
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new BatchDeleteAttributesCommand(sdbClient, configuration, exchange);
     }
 
@@ -51,9 +51,9 @@ public class BatchDeleteAttributesCommandTest {
         List<Item> deletableItems = new ArrayList<>();
         deletableItems.add(new Item());
         exchange.getIn().setHeader(SdbConstants.DELETABLE_ITEMS, deletableItems);
-        
+
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.batchDeleteAttributesRequest.getDomainName());
         assertEquals(deletableItems, sdbClient.batchDeleteAttributesRequest.getItems());
     }
@@ -61,11 +61,11 @@ public class BatchDeleteAttributesCommandTest {
     @Test
     public void determineDeletableItems() {
         assertNull(this.command.determineDeletableItems());
-        
+
         List<Item> deletableItems = new ArrayList<>();
         deletableItems.add(new Item());
         exchange.getIn().setHeader(SdbConstants.DELETABLE_ITEMS, deletableItems);
-        
+
         assertEquals(deletableItems, this.command.determineDeletableItems());
     }
 }

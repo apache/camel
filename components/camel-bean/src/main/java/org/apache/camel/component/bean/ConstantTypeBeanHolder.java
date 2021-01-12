@@ -32,8 +32,9 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     private final BeanInfo beanInfo;
     private Map<String, Object> options;
 
-    public ConstantTypeBeanHolder(Class<?> type, CamelContext context) {
-        this(type, new BeanInfo(context, type));
+    public ConstantTypeBeanHolder(Class<?> type, CamelContext context, ParameterMappingStrategy parameterMappingStrategy,
+                                  BeanComponent beanComponent) {
+        this(type, new BeanInfo(context, type, parameterMappingStrategy, beanComponent));
     }
 
     public ConstantTypeBeanHolder(Class<?> type, BeanInfo beanInfo) {
@@ -42,6 +43,13 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
 
         this.type = type;
         this.beanInfo = beanInfo;
+    }
+
+    @Override
+    public void setErrorHandler(Processor errorHandler) {
+        for (MethodInfo mi : beanInfo.getMethods()) {
+            mi.setErrorHandler(errorHandler);
+        }
     }
 
     @Override
@@ -59,7 +67,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
      *
      * @return a new {@link org.apache.camel.component.bean.BeanHolder} that has cached the lookup of the bean.
      */
-    public ConstantBeanHolder createCacheHolder() throws Exception {
+    public ConstantBeanHolder createCacheHolder() {
         Object bean = getBean(null);
         return new ConstantBeanHolder(bean, beanInfo);
     }
@@ -70,7 +78,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     }
 
     @Override
-    public Object getBean(Exchange exchange)  {
+    public Object getBean(Exchange exchange) {
         // only create a bean if we have a default no-arg constructor
         if (beanInfo.hasPublicNoArgConstructors()) {
             Object bean = getBeanInfo().getCamelContext().getInjector().newInstance(type, false);

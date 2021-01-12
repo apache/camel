@@ -19,30 +19,36 @@ package org.apache.camel.language.xpath;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
  * XPath language.
  */
 @Language("xpath")
-public class XPathLanguage extends LanguageSupport {
-    private QName resultType;
+public class XPathLanguage extends LanguageSupport implements PropertyConfigurer {
+    private Class<?> resultType;
+    private QName resultQName;
+    private Class<?> documentType;
     private XPathFactory xpathFactory;
     private Boolean useSaxon;
     private String objectModelUri;
     private Boolean threadSafety;
     private Boolean logNamespaces;
     private String headerName;
+    private Boolean preCompile;
 
     @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder);
+        configureBuilder(builder, null);
         return builder;
     }
 
@@ -51,16 +57,46 @@ public class XPathLanguage extends LanguageSupport {
         expression = loadResource(expression);
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
-        configureBuilder(builder);
+        configureBuilder(builder, null);
         return builder;
     }
 
-    public QName getResultType() {
+    @Override
+    public Predicate createPredicate(String expression, Object[] properties) {
+        return (Predicate) createExpression(expression, properties);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Object[] properties) {
+        expression = loadResource(expression);
+
+        XPathBuilder builder = XPathBuilder.xpath(expression);
+        configureBuilder(builder, properties);
+        return builder;
+    }
+
+    public Class<?> getResultType() {
         return resultType;
     }
 
-    public void setResultType(QName resultType) {
+    public void setResultQName(QName qName) {
+        this.resultQName = qName;
+    }
+
+    public QName getResultQName() {
+        return resultQName;
+    }
+
+    public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public Class<?> getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(Class<?> documentType) {
+        this.documentType = documentType;
     }
 
     public XPathFactory getXpathFactory() {
@@ -111,38 +147,116 @@ public class XPathLanguage extends LanguageSupport {
         this.headerName = headerName;
     }
 
-    private boolean isUseSaxon() {
-        return useSaxon != null && useSaxon;
+    public Boolean getPreCompile() {
+        return preCompile;
     }
 
-    protected void configureBuilder(XPathBuilder builder) {
-        if (threadSafety != null) {
-            builder.setThreadSafety(threadSafety);
-        }
-        if (resultType != null) {
-            builder.setResultQName(resultType);
-        }
-        if (logNamespaces != null) {
-            builder.setLogNamespaces(logNamespaces);
-        }
-        if (headerName != null) {
-            builder.setHeaderName(headerName);
-        }
+    public void setPreCompile(Boolean preCompile) {
+        this.preCompile = preCompile;
+    }
 
-        if (isUseSaxon()) {
-            builder.enableSaxon();
-        } else {
-            if (xpathFactory != null) {
-                builder.setXPathFactory(xpathFactory);
+    private boolean isPreCompile() {
+        return preCompile != null && preCompile;
+    }
+
+    protected void configureBuilder(XPathBuilder builder, Object[] properties) {
+        Class<?> clazz = property(Class.class, properties, 0, documentType);
+        if (clazz != null) {
+            builder.setDocumentType(clazz);
+        }
+        QName qname = property(QName.class, properties, 1, resultQName);
+        if (qname != null) {
+            builder.setResultQName(qname);
+        }
+        clazz = property(Class.class, properties, 2, resultType);
+        if (clazz != null) {
+            builder.setResultType(clazz);
+        }
+        Boolean bool = property(Boolean.class, properties, 3, useSaxon);
+        if (bool != null) {
+            builder.setUseSaxon(bool);
+            if (bool) {
+                builder.enableSaxon();
             }
-            if (objectModelUri != null) {
-                builder.setObjectModelUri(objectModelUri);
+        }
+        if (!builder.isUseSaxon()) {
+            // xpath factory can only be set if not saxon is enabled as saxon has its own factory and object model
+            XPathFactory fac = property(XPathFactory.class, properties, 4, xpathFactory);
+            if (fac != null) {
+                builder.setXPathFactory(fac);
             }
+            String str = property(String.class, properties, 5, objectModelUri);
+            if (str != null) {
+                builder.setObjectModelUri(str);
+            }
+        }
+        bool = property(Boolean.class, properties, 6, threadSafety);
+        if (bool != null) {
+            builder.setThreadSafety(bool);
+        }
+        bool = property(Boolean.class, properties, 7, preCompile);
+        if (bool != null) {
+            builder.setPreCompile(bool);
+        }
+        bool = property(Boolean.class, properties, 8, logNamespaces);
+        if (bool != null) {
+            builder.setLogNamespaces(bool);
+        }
+        String str = property(String.class, properties, 9, headerName);
+        if (str != null) {
+            builder.setHeaderName(str);
         }
     }
 
     @Override
-    public boolean isSingleton() {
-        return false;
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "resulttype":
+            case "resultType":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
+            case "resultqname":
+            case "resultQName":
+                setResultQName(PropertyConfigurerSupport.property(camelContext, QName.class, value));
+                return true;
+            case "documenttype":
+            case "documentType":
+                setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
+            case "xpathfactory":
+            case "xpathFactory":
+                setXpathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value));
+                return true;
+            case "usesaxon":
+            case "useSaxon":
+                setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "objectmodeluri":
+            case "objectModelUri":
+                setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "threadsafety":
+            case "threadSafety":
+                setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "lognamespaces":
+            case "logNamespaces":
+                setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "headername":
+            case "headerName":
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "preCompile":
+            case "precompile":
+                setPreCompile(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            default:
+                return false;
+        }
     }
+
 }

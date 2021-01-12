@@ -53,9 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the MetaData extension {@link MetaDataExtension} that
- * retrieve information about ServiceNow objects as Json Schema as per draft-04
- * specs.
+ * An implementation of the MetaData extension {@link MetaDataExtension} that retrieve information about ServiceNow
+ * objects as Json Schema as per draft-04 specs.
  */
 final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowMetaDataExtension.class);
@@ -73,11 +72,12 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     @Override
     public Optional<MetaData> meta(Map<String, Object> parameters) {
-        final String objectType = (String)parameters.get("objectType");
-        final String metaType = (String)parameters.getOrDefault("metaType", "definition");
+        final String objectType = (String) parameters.get("objectType");
+        final String metaType = (String) parameters.getOrDefault("metaType", "definition");
 
         // Retrieve the table definition as json-scheme
-        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE) && ObjectHelper.equalIgnoreCase(metaType, "definition")) {
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE)
+                && ObjectHelper.equalIgnoreCase(metaType, "definition")) {
             final MetaContext context = new MetaContext(parameters);
 
             // validate meta parameters
@@ -92,7 +92,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         }
 
         // retrieve the list of tables excluding those used for import sets
-        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE) && ObjectHelper.equalIgnoreCase(metaType, "list")) {
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_TABLE)
+                && ObjectHelper.equalIgnoreCase(metaType, "list")) {
             final MetaContext context = new MetaContext(parameters);
 
             // validate meta parameters
@@ -106,7 +107,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         }
 
         // retrieve the list of import set tables
-        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_IMPORT) && ObjectHelper.equalIgnoreCase(metaType, "list")) {
+        if (ObjectHelper.equalIgnoreCase(objectType, ServiceNowConstants.RESOURCE_IMPORT)
+                && ObjectHelper.equalIgnoreCase(metaType, "list")) {
             final MetaContext context = new MetaContext(parameters);
 
             // validate mate parameters
@@ -125,7 +127,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private Optional<MetaData> tableDefinition(MetaContext context) throws Exception {
         final List<String> names = getObjectHierarchy(context);
         final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
-        final String baseUrn = (String)context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
+        final String baseUrn
+                = (String) context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
 
         // Schema
         root.put("$schema", "http://json-schema.org/schema#");
@@ -158,8 +161,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                         .withAttribute("time.format", timeFormat)
                         .withAttribute("date-time.format", dateFormat + " " + timeFormat)
                         .withPayload(root)
-                        .build()
-        );
+                        .build());
     }
 
     private Optional<MetaData> importSetList(MetaContext context) throws Exception {
@@ -210,8 +212,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                                 .withAttribute(MetaData.CONTENT_TYPE, "application/json")
                                 .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
                                 .withPayload(root)
-                                .build()
-                );
+                                .build());
             }
         }
 
@@ -280,8 +281,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                                 .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
                                 .withAttribute("Meta-Context", ServiceNowConstants.RESOURCE_IMPORT)
                                 .withPayload(root)
-                                .build()
-                );
+                                .build());
             }
         }
 
@@ -316,8 +316,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 if (n.hasNonNull("name") && n.hasNonNull("value")) {
                     properties.putIfAbsent(
                             n.findValue("name").asText(),
-                            n.findValue("value").asText()
-                    );
+                            n.findValue("value").asText());
                 }
             }));
 
@@ -369,13 +368,14 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             if (ObjectHelper.isNotEmpty(id)) {
                 String includeKey = "object." + context.getObjectName() + ".fields";
                 String excludeKey = "object." + context.getObjectName() + ".fields.exclude.pattern";
-                String fields = (String)context.getParameters().get(includeKey);
-                String exclude = (String)context.getParameters().get(excludeKey);
+                String fields = (String) context.getParameters().get(includeKey);
+                String exclude = (String) context.getParameters().get(excludeKey);
 
                 boolean included = true;
 
                 if (ObjectHelper.isNotEmpty(fields) && ObjectHelper.isNotEmpty(exclude)) {
-                    boolean isIncluded = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase);
+                    boolean isIncluded = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull)
+                            .anyMatch(id::equalsIgnoreCase);
                     boolean isExcluded = Pattern.compile(exclude).matcher(id).matches();
 
                     // if both include/exclude list is provided check if the
@@ -386,7 +386,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     included = isIncluded || !isExcluded;
                 } else if (ObjectHelper.isNotEmpty(fields)) {
                     // Only include fields that are explicit included
-                    included = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull).anyMatch(id::equalsIgnoreCase);
+                    included = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull)
+                            .anyMatch(id::equalsIgnoreCase);
                 } else if (ObjectHelper.isNotEmpty(exclude)) {
                     // Only include fields non excluded
                     included = !Pattern.compile(exclude).matcher(id).matches();
@@ -400,8 +401,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 LOGGER.debug("Load dictionary element <{}>", context.getStack());
 
                 try {
-                    final DictionaryEntry entry = context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
-                    final ObjectNode property = ((ObjectNode)root.get("properties")).putObject(id);
+                    final DictionaryEntry entry
+                            = context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
+                    final ObjectNode property = ((ObjectNode) root.get("properties")).putObject(id);
 
                     // Add custom fields for code generation, json schema
                     // validators are not supposed to use this extensions.
@@ -456,7 +458,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     }
 
                     if (entry.isMandatory()) {
-                        ArrayNode required = (ArrayNode)root.get("required");
+                        ArrayNode required = (ArrayNode) root.get("required");
                         if (required == null) {
                             required = root.putArray("required");
                         }
@@ -570,9 +572,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 throw new IllegalStateException(e);
             }
 
-            this.instanceName = (String)parameters.get("instanceName");
-            this.objectType = (String)parameters.getOrDefault("objectType", ServiceNowConstants.RESOURCE_TABLE);
-            this.objectName = (String)parameters.getOrDefault("objectName", configuration.getTable());
+            this.instanceName = (String) parameters.get("instanceName");
+            this.objectType = (String) parameters.getOrDefault("objectType", ServiceNowConstants.RESOURCE_TABLE);
+            this.objectName = (String) parameters.getOrDefault("objectName", configuration.getTable());
 
             ObjectHelper.notNull(instanceName, "instanceName");
 

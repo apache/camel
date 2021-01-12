@@ -26,6 +26,6 @@ public class SpringLogProcessorWithProvidedLoggerTest extends LogProcessorWithPr
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
-            "org/apache/camel/spring/processor/logProcessorWithProvidedLoggerTest.xml");
+                "org/apache/camel/spring/processor/logProcessorWithProvidedLoggerTest.xml");
     }
 }

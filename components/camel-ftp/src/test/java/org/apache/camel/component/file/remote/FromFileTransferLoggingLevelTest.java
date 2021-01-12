@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FromFileTransferLoggingLevelTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&transferLoggingLevel=INFO";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tmp2/camel?password=admin&transferLoggingLevel=INFO";
     }
 
     @Test

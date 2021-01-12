@@ -39,11 +39,11 @@ public class SpelNonSpringTest extends LanguageTestSupport {
             assertStringContains(ex.getMessage(), "Could not resolve bean reference against Registry");
         }
     }
-    
+
     @Test
     public void testSpelBeanPredicates() throws Exception {
         context.getRegistry().bind("myDummy", new Dummy());
-        
+
         assertPredicate("@myDummy.foo == 'xyz'");
         assertPredicate("@myDummy.bar == 789");
         assertPredicate("@myDummy.bar instanceof T(Integer)");

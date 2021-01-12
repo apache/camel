@@ -32,10 +32,10 @@ public class ReflectionInOutProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
-        if (body instanceof Object[] && ((Object[])body).length == 0) {
+        if (body instanceof Object[] && ((Object[]) body).length == 0) {
             exchange.getMessage().setBody(testReflection.getTestPojo());
         } else if (body instanceof Object) {
-            exchange.getMessage().setBody(testReflection.increaseAge((Integer)body));
+            exchange.getMessage().setBody(testReflection.increaseAge((Integer) body));
         }
     }
 }

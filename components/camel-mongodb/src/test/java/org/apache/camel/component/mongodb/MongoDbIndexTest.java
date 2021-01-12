@@ -49,7 +49,8 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.countDocuments());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
-        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals), "The otherDB database should not exist");
+        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
+                "The otherDB database should not exist");
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<>();
@@ -70,7 +71,8 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         assertEquals(Document.class, result.getClass(), "Response isn't of type WriteResult");
 
-        MongoCollection<Document> localDynamicCollection = mongo.getDatabase("otherDB").getCollection("otherCollection", Document.class);
+        MongoCollection<Document> localDynamicCollection
+                = mongo.getDatabase("otherDB").getCollection("otherCollection", Document.class);
 
         ListIndexesIterable<Document> indexInfos = localDynamicCollection.listIndexes(Document.class);
 
@@ -88,7 +90,8 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         b = testCollection.find(new Document(MONGO_ID, "testInsertDynamicityEnabledDBOnly")).first();
         assertNull(b, "There is a record with 'testInsertDynamicityEnabledDBAndCollection' _id in the test collection");
 
-        assertTrue(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals), "The otherDB database should exist");
+        assertTrue(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
+                "The otherDB database should exist");
     }
 
     @Test
@@ -96,7 +99,8 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.countDocuments());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
-        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals), "The otherDB database should not exist");
+        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
+                "The otherDB database should not exist");
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<>();
@@ -136,7 +140,8 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.countDocuments());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
-        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals), "The otherDB database should not exist");
+        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
+                "The otherDB database should not exist");
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<>();
@@ -158,9 +163,11 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertNotNull(b, "No record with 'testInsertDynamicityEnabledCollectionOnlyAndURIIndex' _id");
 
         b = testCollection.find(eq(MONGO_ID, "testInsertDynamicityEnabledCollectionOnlyAndURIIndex")).first();
-        assertNull(b, "There is a record with 'testInsertDynamicityEnabledCollectionOnlyAndURIIndex' _id in the test collection");
+        assertNull(b,
+                "There is a record with 'testInsertDynamicityEnabledCollectionOnlyAndURIIndex' _id in the test collection");
 
-        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals), "The otherDB database should not exist");
+        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
+                "The otherDB database should not exist");
     }
 
     @Disabled
@@ -190,18 +197,20 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         b = testCollection.find(eq(MONGO_ID, "testInsertAutoCreateCollectionAndURIIndex")).first();
         assertNull(b, "There is a record with 'testInsertAutoCreateCollectionAndURIIndex' _id in the test collection");
 
-        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals), "The otherDB database should not exist");
+        assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
+                "The otherDB database should not exist");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:dynamicityEnabled").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true");
+                from("direct:dynamicityEnabled").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true");
                 from("direct:dynamicityEnabledWithIndexUri")
-                    .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":1}&operation=insert&dynamicity=true");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":1}&operation=insert&dynamicity=true");
                 from("direct:dynamicityDisabled")
-                    .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false");
             }
         };
     }

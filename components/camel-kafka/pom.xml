@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kafka</artifactId>
@@ -48,18 +48,29 @@
             <artifactId>kafka-clients</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-testcontainers-junit5</artifactId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>kafka</artifactId>
-            <version>${testcontainers-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-kafka</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
+        <!-- Required by the admin client-->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
@@ -92,7 +103,6 @@
             <version>${commons-lang3-version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <profiles>

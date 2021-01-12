@@ -29,21 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfHolderConsumerTest extends CamelTestSupport {
     protected static final String ADDRESS = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
+                                            + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
     protected static final String CXF_ENDPOINT_URI = "cxf://" + ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
-        + "&loggingFeatureEnabled=true";
-       
-    
+                                                     + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
+                                                     + "&loggingFeatureEnabled=true";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(CXF_ENDPOINT_URI).process(new MyProcessor()); 
+                from(CXF_ENDPOINT_URI).process(new MyProcessor());
             }
         };
     }
-    
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
@@ -51,9 +49,9 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ADDRESS);
         clientBean.setServiceClass(MyOrderEndpoint.class);
-        
+
         MyOrderEndpoint client = (MyOrderEndpoint) proxyFactory.create();
-        
+
         Holder<String> strPart = new Holder<>();
         strPart.value = "parts";
         Holder<String> strCustomer = new Holder<>();
@@ -64,24 +62,23 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         assertEquals("parts", strPart.value, "Get a wrong parts");
         assertEquals("newCustomer", strCustomer.value, "Get a wrong customer");
     }
-    
-    
+
     @Test
     public void testInvokingServiceWithSoapHeaderFromCXFClient() throws Exception {
         JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ADDRESS);
         clientBean.setServiceClass(MyOrderEndpoint.class);
-        
+
         MyOrderEndpoint client = (MyOrderEndpoint) proxyFactory.create();
-        
+
         Holder<String> header = new Holder<>();
         header.value = "parts";
 
         String result = client.mySecureOrder(1, header);
         assertEquals("Ordered ammount 1", result, "Get a wrong order result");
         assertEquals("secureParts", header.value, "Get a wrong parts");
-        
+
     }
 
 }

@@ -43,10 +43,11 @@ public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.asyncSendBody("direct:start", "Hello World");
-        
+
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[] { false, true },
+                new String[] { "boolean", "boolean" });
         log.info(xml);
 
         // should be valid XML

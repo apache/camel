@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "redis",
+    "title": "Redis",
+    "description": "Aggregation repository using Redis as datastore",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "database",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-redis",
+    "version": "3.8.0-SNAPSHOT"
+  }
+}

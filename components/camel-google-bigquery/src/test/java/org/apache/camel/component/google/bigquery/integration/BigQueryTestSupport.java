@@ -17,24 +17,28 @@
 package org.apache.camel.component.google.bigquery.integration;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.services.bigquery.model.QueryRequest;
-import com.google.api.services.bigquery.model.QueryResponse;
-import com.google.api.services.bigquery.model.Table;
-import com.google.api.services.bigquery.model.TableFieldSchema;
-import com.google.api.services.bigquery.model.TableReference;
-import com.google.api.services.bigquery.model.TableSchema;
+import com.google.cloud.bigquery.Field;
+import com.google.cloud.bigquery.FieldList;
+import com.google.cloud.bigquery.JobId;
+import com.google.cloud.bigquery.QueryJobConfiguration;
+import com.google.cloud.bigquery.Schema;
+import com.google.cloud.bigquery.StandardSQLTypeName;
+import com.google.cloud.bigquery.StandardTableDefinition;
+import com.google.cloud.bigquery.TableDefinition;
+import com.google.cloud.bigquery.TableId;
+import com.google.cloud.bigquery.TableInfo;
+import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
+import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +50,6 @@ public class BigQueryTestSupport extends CamelTestSupport {
     public static final String SERVICE_ACCOUNT;
     public static final String PROJECT_ID;
     public static final String DATASET_ID;
-    public static final String SERVICE_URL;
     public static final String CREDENTIALS_FILE_LOCATION;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BigQueryTestSupport.class);
@@ -59,7 +62,6 @@ public class BigQueryTestSupport extends CamelTestSupport {
         SERVICE_ACCOUNT = testProperties.getProperty("service.account");
         PROJECT_ID = testProperties.getProperty("project.id");
         DATASET_ID = testProperties.getProperty("bigquery.datasetId");
-        SERVICE_URL = testProperties.getProperty("test.serviceURL");
         CREDENTIALS_FILE_LOCATION = testProperties.getProperty("service.credentialsFileLocation");
     }
 
@@ -79,9 +81,7 @@ public class BigQueryTestSupport extends CamelTestSupport {
     protected void addBigqueryComponent(CamelContext context) {
 
         connectionFactory = new GoogleBigQueryConnectionFactory()
-                .setServiceAccount(SERVICE_ACCOUNT)
-                .setServiceAccountKey(SERVICE_KEY)
-                .setServiceURL(SERVICE_URL);
+                .setCredentialsFileLocation(CREDENTIALS_FILE_LOCATION);
 
         GoogleBigQueryComponent component = new GoogleBigQueryComponent();
         component.setConnectionFactory(connectionFactory);
@@ -90,10 +90,23 @@ public class BigQueryTestSupport extends CamelTestSupport {
         context.getPropertiesComponent().setLocation("ref:prop");
     }
 
+    protected void addBigquerySqlComponent(CamelContext context) {
+
+        connectionFactory = new GoogleBigQueryConnectionFactory()
+                .setCredentialsFileLocation(CREDENTIALS_FILE_LOCATION);
+
+        GoogleBigQuerySQLComponent component = new GoogleBigQuerySQLComponent();
+        component.setConnectionFactory(connectionFactory);
+
+        context.addComponent("google-bigquery-sql", component);
+        context.getPropertiesComponent().setLocation("ref:prop");
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         addBigqueryComponent(context);
+        addBigquerySqlComponent(context);
         return context;
     }
 
@@ -107,35 +120,25 @@ public class BigQueryTestSupport extends CamelTestSupport {
     }
 
     protected void assertRowExist(String tableName, Map<String, String> row) throws Exception {
-        QueryRequest queryRequest = new QueryRequest();
         String query = "SELECT * FROM " + DATASET_ID + "." + tableName + " WHERE "
-                + row.entrySet().stream()
-                .map(e -> e.getKey() + " = '" + e.getValue() + "'")
-                .collect(Collectors.joining(" AND "));
+                       + row.entrySet().stream()
+                               .map(e -> e.getKey() + " = '" + e.getValue() + "'")
+                               .collect(Collectors.joining(" AND "));
         LOGGER.debug("Query: {}", query);
-        queryRequest.setQuery(query);
-        QueryResponse queryResponse = getConnectionFactory()
+        QueryJobConfiguration queryJobConfiguration = QueryJobConfiguration.of(query);
+        TableResult tableResult = getConnectionFactory()
                 .getDefaultClient()
-                .jobs()
-                .query(PROJECT_ID, queryRequest)
-                .execute();
-        assertEquals(1, queryResponse.getRows().size());
+                .query(queryJobConfiguration, JobId.of(PROJECT_ID, UUID.randomUUID().toString()));
+        assertEquals(1, tableResult.getTotalRows());
     }
 
     protected void createBqTable(String tableId) throws Exception {
-        TableReference reference = new TableReference()
-                .setTableId(tableId)
-                .setDatasetId(DATASET_ID)
-                .setProjectId(PROJECT_ID);
-        InputStream in = this.getClass().getResourceAsStream("/schema/simple-table.json");
-        TableSchema schema = readDefinition(in);
-        Table table = new Table()
-                .setTableReference(reference)
-                .setSchema(schema);
+        Schema schema = createSchema();
+        TableId id = TableId.of(PROJECT_ID, DATASET_ID, tableId);
+        TableDefinition.Builder builder = StandardTableDefinition.newBuilder().setSchema(schema);
+        TableInfo tableInfo = TableInfo.of(id, builder.build());
         try {
-            getConnectionFactory().getDefaultClient().tables()
-                    .insert(PROJECT_ID, DATASET_ID, table)
-                    .execute();
+            getConnectionFactory().getDefaultClient().create(tableInfo);
         } catch (GoogleJsonResponseException e) {
             if (e.getDetails().getCode() == 409) {
                 LOGGER.info("Table {} already exist");
@@ -145,14 +148,11 @@ public class BigQueryTestSupport extends CamelTestSupport {
         }
     }
 
-    private TableSchema readDefinition(InputStream schemaInputStream) throws Exception {
-        TableSchema schema = new TableSchema();
-
-        ObjectMapper mapper = new ObjectMapper();
-        List<TableFieldSchema> fields = mapper.readValue(schemaInputStream, ArrayList.class);
-
-        schema.setFields(fields);
-
-        return schema;
+    private Schema createSchema() throws Exception {
+        FieldList fields = FieldList.of(
+                Field.of("id", StandardSQLTypeName.NUMERIC),
+                Field.of("col1", StandardSQLTypeName.STRING),
+                Field.of("col2", StandardSQLTypeName.STRING));
+        return Schema.of(fields);
     }
 }

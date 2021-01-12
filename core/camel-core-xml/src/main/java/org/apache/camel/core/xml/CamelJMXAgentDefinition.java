@@ -16,6 +16,8 @@
  */
 package org.apache.camel.core.xml;
 
+import java.util.StringJoiner;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * JMX configuration.
@@ -33,31 +34,44 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentDefinition extends IdentifiedType {
 
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String disabled;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String onlyRegisterProcessorWithCustomId;
-    @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
+    @XmlAttribute
+    @Metadata(defaultValue = "org.apache.camel")
     private String mbeanServerDefaultDomain;
-    @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
+    @XmlAttribute
+    @Metadata(defaultValue = "org.apache.camel")
     private String mbeanObjectDomainName;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String usePlatformMBeanServer;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String registerAlways;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String registerNewRoutes;
-    @XmlAttribute @Metadata(defaultValue = "Default")
+    @XmlAttribute
+    @Metadata(defaultValue = "Default")
     private String statisticsLevel;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String loadStatisticsEnabled;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String endpointRuntimeStatisticsEnabled;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String includeHostName;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
     private String useHostIPAddress;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
+    @Metadata(defaultValue = "true")
     private String mask;
 
     public String getDisabled() {
@@ -186,7 +200,8 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     }
 
     /**
-     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and
+     * attributes.
      */
     public void setMask(String mask) {
         this.mask = mask;
@@ -205,53 +220,47 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("CamelJMXAgent[");
-
-        CollectionStringBuffer csb = new CollectionStringBuffer();
+        StringJoiner buffer = new StringJoiner(", ", "CamelJMXAgent[", "]");
         if (disabled != null) {
-            csb.append("disabled=" + disabled);
+            buffer.add("disabled=" + disabled);
         }
         if (usePlatformMBeanServer != null) {
-            csb.append("usePlatformMBeanServer=" + usePlatformMBeanServer);
+            buffer.add("usePlatformMBeanServer=" + usePlatformMBeanServer);
         }
         if (mbeanServerDefaultDomain != null) {
-            csb.append("mbeanServerDefaultDomain=" + mbeanServerDefaultDomain);
+            buffer.add("mbeanServerDefaultDomain=" + mbeanServerDefaultDomain);
         }
         if (mbeanObjectDomainName != null) {
-            csb.append("mbeanObjectDomainName=" + mbeanObjectDomainName);
+            buffer.add("mbeanObjectDomainName=" + mbeanObjectDomainName);
         }
         if (statisticsLevel != null) {
-            csb.append("statisticsLevel=" + statisticsLevel);
+            buffer.add("statisticsLevel=" + statisticsLevel);
         }
         if (loadStatisticsEnabled != null) {
-            csb.append("loadStatisticsEnabled=" + loadStatisticsEnabled);
+            buffer.add("loadStatisticsEnabled=" + loadStatisticsEnabled);
         }
         if (endpointRuntimeStatisticsEnabled != null) {
-            csb.append("endpointRuntimeStatisticsEnabled=" + endpointRuntimeStatisticsEnabled);
+            buffer.add("endpointRuntimeStatisticsEnabled=" + endpointRuntimeStatisticsEnabled);
         }
         if (onlyRegisterProcessorWithCustomId != null) {
-            csb.append("onlyRegisterProcessorWithCustomId=" + onlyRegisterProcessorWithCustomId);
+            buffer.add("onlyRegisterProcessorWithCustomId=" + onlyRegisterProcessorWithCustomId);
         }
         if (registerAlways != null) {
-            csb.append("registerAlways=" + registerAlways);
+            buffer.add("registerAlways=" + registerAlways);
         }
         if (registerNewRoutes != null) {
-            csb.append("registerNewRoutes=" + registerNewRoutes);
+            buffer.add("registerNewRoutes=" + registerNewRoutes);
         }
         if (includeHostName != null) {
-            csb.append("includeHostName=" + includeHostName);
+            buffer.add("includeHostName=" + includeHostName);
         }
         if (useHostIPAddress != null) {
-            csb.append("useHostIPAddress=" + useHostIPAddress);
+            buffer.add("useHostIPAddress=" + useHostIPAddress);
         }
         if (mask != null) {
-            csb.append("mask=" + mask);
+            buffer.add("mask=" + mask);
         }
-
-        sb.append(csb.toString());
-        sb.append("]");
-        return sb.toString();
+        return buffer.toString();
     }
 
 }

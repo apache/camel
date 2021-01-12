@@ -31,12 +31,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
 @ExtendWith(SpringExtension.class)
 public class Camel1145RouteTest {
-   
+
     @Test
     public void testCamel1145Route() throws Exception {
         URL wsdlURL = new URL("http://localhost:9000/PersonService/?wsdl");

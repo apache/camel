@@ -5,6 +5,7 @@
 :description: Evaluate a Groovy script.
 :since: 1.3
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/groovy.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -111,34 +112,6 @@ And the Spring DSL:
         </route>
 -----------------------------------------------------------------------------
 
-== ScriptContext
-
-The JSR-223 scripting languages ScriptContext is pre configured with the
-following attributes all set at `ENGINE_SCOPE`:
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Attribute |Type |Value
-
-|context |`org.apache.camel.CamelContext` |The Camel Context ( It cannot be used in groovy)
-
-|camelContext |`org.apache.camel.CamelContext` |The Camel Context
-
-|exchange |`org.apache.camel.Exchange` |The current Exchange
-
-|request |`org.apache.camel.Message` |The message (IN message)
-
-|response |`org.apache.camel.Message` |*Deprecated*: The OUT message. The OUT message if null by default. Use
-IN message instead.
-
-|properties |`org.apache.camel.builder.script.PropertiesFunction` |Function with a `resolve` method to make it easier to use
-Camels xref:ROOT:properties-component.adoc[Properties] component from scripts. See
-further below for example.
-|=======================================================================
-
-See Scripting Languages for the list of
-languages with explicit DSL support.
-
 == Additional arguments to ScriptingEngine
 
 *Since Camel 2.8*
@@ -146,28 +119,6 @@ languages with explicit DSL support.
 You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`. +
  See this example:
-
-== Using properties function
-
-*Since Camel 2.9*
-
-If you need to use the xref:ROOT:properties-component.adoc[Properties] component from a
-script to lookup property placeholders, then its a bit cumbersome to do
-so.
-For example to set a header name myHeader with a value from a property
-placeholder, which key is provided in a header named "foo".
-
-[source,java]
-------------------------------------------------------------------------------------------------------------------------------
-.setHeader("myHeader").groovy(""context.resolvePropertyPlaceholders( + '{{' + request.headers.get(&#39;foo&#39;) + '}}' + ")")
-------------------------------------------------------------------------------------------------------------------------------
-
-You can use the properties function and the same example is simpler:
-
-[source,java]
----------------------------------------------------------------------------------------
-.setHeader("myHeader").groovy("properties.resolve(request.headers.get(&#39;foo&#39;))")
----------------------------------------------------------------------------------------
 
 == Loading script from external resource
 
@@ -187,8 +138,8 @@ eg to refer to a file on the classpath you can do:
 
 *Since Camel 2.14*
 
-As the scripteengine evale method just return a Null if it runs a
-multiple statments script. Camel now look up the value of script result
+As the scripteengine evaluate method just return a Null if it runs a
+multiple statements script. Camel now look up the value of script result
 by using the key of "result" from the value set. If you have multiple
 statements script, you need to make sure you set the value of result
 variable as the script return value.

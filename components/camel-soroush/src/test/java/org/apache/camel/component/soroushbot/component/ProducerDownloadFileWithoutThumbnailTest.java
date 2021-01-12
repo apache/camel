@@ -43,7 +43,6 @@ public class ProducerDownloadFileWithoutThumbnailTest extends SoroushBotTestSupp
     @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
 
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -83,7 +82,8 @@ public class ProducerDownloadFileWithoutThumbnailTest extends SoroushBotTestSupp
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
-        assertEquals(new String(IOUtils.readFully(mockedMessage.getFile(), 1000, false)), fileContent, "download file successfully");
+        assertEquals(new String(IOUtils.readFully(mockedMessage.getFile(), 1000, false)), fileContent,
+                "download file successfully");
         assertNull(mockedMessage.getThumbnail(), "download thumbnail successfully");
     }
 

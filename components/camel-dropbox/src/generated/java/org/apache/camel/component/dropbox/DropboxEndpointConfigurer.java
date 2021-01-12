@@ -4,8 +4,10 @@ package org.apache.camel.component.dropbox;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "client": target.getConfiguration().setClient(property(camelContext, com.dropbox.core.v2.DbxClientV2.class, value)); return true;
@@ -49,23 +49,33 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("client", com.dropbox.core.v2.DbxClientV2.class);
-        answer.put("clientIdentifier", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("localPath", java.lang.String.class);
-        answer.put("newRemotePath", java.lang.String.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("remotePath", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("uploadMode", org.apache.camel.component.dropbox.util.DropboxUploadMode.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "client": return com.dropbox.core.v2.DbxClientV2.class;
+        case "clientidentifier":
+        case "clientIdentifier": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "localpath":
+        case "localPath": return java.lang.String.class;
+        case "newremotepath":
+        case "newRemotePath": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "remotepath":
+        case "remotePath": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "uploadmode":
+        case "uploadMode": return org.apache.camel.component.dropbox.util.DropboxUploadMode.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -74,8 +84,6 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getConfiguration().getAccessToken();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "client": return target.getConfiguration().getClient();

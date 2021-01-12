@@ -18,6 +18,8 @@ package org.apache.camel.component.pdf.text;
 
 public interface TextProcessingAbstractFactory {
     WriteStrategy createWriteStrategy();
+
     SplitStrategy createSplitStrategy();
+
     LineBuilderStrategy createLineBuilderStrategy();
 }

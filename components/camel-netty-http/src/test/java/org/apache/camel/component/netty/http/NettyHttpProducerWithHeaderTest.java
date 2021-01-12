@@ -29,7 +29,8 @@ public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
         getMockEndpoint("mock:input").expectedHeaderReceived("myTraceId", "mockCorrelationID");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, "myTraceId", "mockCorrelationID", String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, "myTraceId",
+                "mockCorrelationID", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -41,7 +42,8 @@ public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived("myTraceId", "mockCorrelationID");
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "myTraceId", "mockCorrelationID", String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "myTraceId",
+                "mockCorrelationID", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -53,8 +55,8 @@ public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

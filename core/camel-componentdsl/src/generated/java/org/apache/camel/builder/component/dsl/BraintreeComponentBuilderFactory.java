@@ -37,6 +37,8 @@ public interface BraintreeComponentBuilderFactory {
      * Category: cloud,payment
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
+     * 
+     * @return the dsl builder
      */
     static BraintreeComponentBuilder braintree() {
         return new BraintreeComponentBuilderImpl();
@@ -49,25 +51,6 @@ public interface BraintreeComponentBuilderFactory {
             extends
                 ComponentBuilder<BraintreeComponent> {
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BraintreeComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -78,10 +61,13 @@ public interface BraintreeComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BraintreeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,26 +75,36 @@ public interface BraintreeComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default BraintreeComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default BraintreeComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.braintree.BraintreeConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.braintree.BraintreeConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default BraintreeComponentBuilder configuration(
                 org.apache.camel.component.braintree.BraintreeConfiguration configuration) {
@@ -132,9 +128,8 @@ public interface BraintreeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((BraintreeComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((BraintreeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;
             default: return false;
             }

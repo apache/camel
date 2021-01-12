@@ -25,8 +25,7 @@ import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
 /**
- * Provides abstract test for fault and output params for spring-ws:to: and
- * spring-ws:action: endpoints
+ * Provides abstract test for fault and output params for spring-ws:to: and spring-ws:action: endpoints
  */
 public abstract class AbstractConsumerTests extends AbstractWSATests {
 

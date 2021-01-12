@@ -23,21 +23,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class DozerComponentTest extends CamelTestSupport {
-    
+
     private static final String NAME = "examplename";
     private static final String MARSHAL_ID = "marshal123";
     private static final String UNMARSHAL_ID = "unmarshal456";
     private static final String SOURCE_MODEL = "org.example.A";
     private static final String TARGET_MODEL = "org.example.B";
     private static final String DOZER_CONFIG_PATH = "mapping.xml";
-    private static final String TRANSFORM_EP_1 =
-            "dozer:" + NAME 
-            + "?marshalId=" + MARSHAL_ID 
-            + "&unmarshalId=" + UNMARSHAL_ID 
-            + "&sourceModel=" + SOURCE_MODEL 
-            + "&targetModel=" + TARGET_MODEL
-            + "&mappingFile=" + DOZER_CONFIG_PATH;
-    
+    private static final String TRANSFORM_EP_1 = "dozer:" + NAME
+                                                 + "?marshalId=" + MARSHAL_ID
+                                                 + "&unmarshalId=" + UNMARSHAL_ID
+                                                 + "&sourceModel=" + SOURCE_MODEL
+                                                 + "&targetModel=" + TARGET_MODEL
+                                                 + "&mappingFile=" + DOZER_CONFIG_PATH;
+
     @Test
     void testCreateEndpoint() {
         DozerEndpoint ep = context.getEndpoint(TRANSFORM_EP_1, DozerEndpoint.class);
@@ -49,7 +48,7 @@ public class DozerComponentTest extends CamelTestSupport {
         assertEquals(TARGET_MODEL, config.getTargetModel());
         assertEquals(DOZER_CONFIG_PATH, config.getMappingFile());
     }
-    
+
     @Test
     void requiredTargetModelMissing() {
         try {

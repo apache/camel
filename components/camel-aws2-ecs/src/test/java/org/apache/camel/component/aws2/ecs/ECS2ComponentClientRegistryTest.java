@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -32,7 +31,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain");
+        ECS2Endpoint endpoint = (ECS2Endpoint) component.createEndpoint("aws2-ecs://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getEcsClient());
     }
@@ -45,25 +44,25 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
             component.createEndpoint("aws2-ecs://TestDomain");
         });
     }
-    
+
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        ECS2Endpoint endpoint = (ECS2Endpoint) component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
 
-        assertNotSame(clientMock, endpoint.getConfiguration().getEcsClient());
+        assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }
-    
+
     @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowireAndNoCreds() throws Exception {
 
         AmazonECSClientMock clientMock = new AmazonECSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://TestDomain?accessKey=xxx&secretKey=yyy");
+        ECS2Endpoint endpoint = (ECS2Endpoint) component.createEndpoint("aws2-ecs://TestDomain");
 
         assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }

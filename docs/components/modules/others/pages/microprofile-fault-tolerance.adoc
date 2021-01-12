@@ -1,4 +1,4 @@
-[[microprofile-fault-tolerance-component]]
+[[microprofile-fault-tolerance-other]]
 = Microprofile Fault Tolerance Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-fault-tolerance/src/main/docs/microprofile-fault-tolerance.adoc
@@ -6,7 +6,8 @@
 :artifactId: camel-microprofile-fault-tolerance
 :description: Circuit Breaker EIP using MicroProfile Fault Tolerance
 :since: 3.3
-:supportLevel: Preview
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-fault-tolerance.adoc[opts=optional]
 
 *Since Camel {since}*
 

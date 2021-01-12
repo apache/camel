@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityTest extends CamelTestSupport {
-    
+
     @Test
     public void testVelocityLetter() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -44,7 +44,7 @@ public class VelocityTest extends CamelTestSupport {
         assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
-    
+
     @Test
     public void testVelocityContext() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -73,8 +73,8 @@ public class VelocityTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                        to("velocity:org/apache/camel/component/velocity/example.vm?allowTemplateFromHeader=true&allowContextMapAll=true");
+                from("direct:a").to(
+                        "velocity:org/apache/camel/component/velocity/example.vm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

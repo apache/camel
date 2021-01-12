@@ -27,6 +27,7 @@ import org.dizitart.no2.NitriteId;
  */
 public class GetByIdOperation extends AbstractNitriteOperation implements CommonOperation {
     private NitriteId id;
+
     public GetByIdOperation(NitriteId id) {
         this.id = id;
     }

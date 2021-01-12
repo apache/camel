@@ -118,7 +118,7 @@ Exchange will continue its route, and thus it will
 continue to `mock:first`.
 
 You can also attach a Predicate to only trigger if
-certain conditions is meet. For instance in the route below we intercept
+certain conditions are meet. For instance in the route below we intercept
 when a test message is send to us, so we can do some custom processing
 before we continue routing:
 
@@ -152,7 +152,7 @@ default Camel will send to the original intended destination after the
 intercepted route completes. And as the regular intercept you can also
 define an `when` Predicate so we only intercept if
 the Predicate evaluates to *true*. This allows you
-do do a bit of filtering, to only intercept when certain criteria is
+do a bit of filtering, to only intercept when certain criteria is
 meet. And finally you can send the Exchange to an endpoint with the `afterUrl` option. You can use this to process the response from the original endpoint.
 
 Let start with a simple example, where we want to intercept when an
@@ -230,8 +230,8 @@ And in XML DSL:
 --------------------------------------
 
 
-[[Intercept-AdvancedusageofIntercpt]]
-== Advanced usage of Intercpt
+[[Intercept-AdvancedusageofIntercept]]
+== Advanced usage of Intercept
 
 The `interceptFrom` and `interceptSendToEndpoint` supports endpoint URI
 matching by the following rules in the given order:

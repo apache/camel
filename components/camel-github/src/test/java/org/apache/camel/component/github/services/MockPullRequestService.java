@@ -44,7 +44,7 @@ public class MockPullRequestService extends PullRequestService {
 
     @Override
     public List<CommitComment> getComments(IRepositoryIdProvider repository, int pullRequestId) {
-        Long id = new Long(pullRequestId);
+        Long id = Long.valueOf(pullRequestId);
         if (allComments.containsKey(id)) {
             List<CommitComment> comments = allComments.get(id);
             return comments;

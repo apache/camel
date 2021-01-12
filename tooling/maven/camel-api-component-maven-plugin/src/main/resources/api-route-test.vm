@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link ${proxyType.Name}} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
+ * TODO Move the file to src/test/java, populate parameter values, and remove @Disabled annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class ${testName} extends Abstract${componentName}TestSupport {

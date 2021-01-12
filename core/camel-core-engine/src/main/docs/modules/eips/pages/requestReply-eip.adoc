@@ -27,7 +27,7 @@ request/responses).
 ====
 *Related* 
 
-See the related Event Message message
+See the related xref:eips:event-message.adoc[Event Message] message
 ====
 
 [[RequestReply-ExplicitlyspecifyingInOut]]

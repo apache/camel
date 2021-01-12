@@ -40,8 +40,8 @@ public interface LiteralNode extends SimpleNode {
     /**
      * Whether to quote embedded nodes.
      * <p/>
-     * Some functions such as the <tt>bean:</tt> function would need to quote its embedded nodes
-     * as they are parameter values for method names.
+     * Some functions such as the <tt>bean:</tt> function would need to quote its embedded nodes as they are parameter
+     * values for method names.
      */
     boolean quoteEmbeddedNodes();
 

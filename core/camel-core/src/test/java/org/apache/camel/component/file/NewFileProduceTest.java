@@ -45,7 +45,8 @@ public class NewFileProduceTest extends ContextTestSupport {
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 
-        Endpoint endpoint = comp.createEndpoint("file://target/data/producefile", "target/data/producefile", new HashMap<String, Object>());
+        Endpoint endpoint = comp.createEndpoint("file://target/data/producefile", "target/data/producefile",
+                new HashMap<String, Object>());
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "bye.txt");

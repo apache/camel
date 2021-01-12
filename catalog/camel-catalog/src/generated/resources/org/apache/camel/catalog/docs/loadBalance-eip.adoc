@@ -14,7 +14,7 @@ Camel provides the following policies out-of-the-box:
 [width="100%",cols="3,6",options="header"]
 |=======================================================================
 | Policy | Description
-| Round Robin | The exchanges are selected from in a round robin fashion. This is a well known and classic policy, which spreads the load evenly.
+| Round Robin | The exchanges are selected in a round robin fashion. This is a well known and classic policy, which spreads the load evenly.
 | Random | A random endpoint is selected for each exchange.
 | Sticky | Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
 | Topic | Topic which sends to all destinations (rather like JMS Topics)
@@ -193,10 +193,7 @@ The parameters that can be used are
 An example using Java DSL:
 [source,java]
 ----
-List<integer> distributionRatio = new ArrayList<integer>();
-distributionRatio.add(4);
-distributionRatio.add(2);
-distributionRatio.add(1);
+String distributionRatio = "4,2,1"
 
 // round-robin
 from("direct:start")

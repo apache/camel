@@ -58,7 +58,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
     @Override
     public RabbitMQEndpoint getEndpoint() {
-        return (RabbitMQEndpoint)super.getEndpoint();
+        return (RabbitMQEndpoint) super.getEndpoint();
     }
 
     /**
@@ -74,13 +74,11 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
      * Returns the exiting open connection or opens a new one
      */
     protected synchronized Connection getConnection() throws IOException, TimeoutException {
-        if (this.conn == null) {
+        if (this.conn == null || !this.conn.isOpen()) {
+            LOG.debug("The existing connection is closed or not opened yet.");
             openConnection();
             return this.conn;
-        } else if (this.conn.isOpen() || (!this.conn.isOpen() && isAutomaticRecoveryEnabled())) {
-            return this.conn;
         } else {
-            LOG.debug("The existing connection is closed");
             openConnection();
             return this.conn;
         }
@@ -134,7 +132,8 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         }
         // Open connection, and start message listener in background
         Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
-        final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
+        final long connectionRetryInterval
+                = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
         startConsumerCallable = new StartConsumerCallable(connectionRetryInterval);
         executor.submit(startConsumerCallable);
     }
@@ -195,8 +194,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     }
 
     /**
-     * Task in charge of opening connection and adding listener when consumer is
-     * started and broker is not available.
+     * Task in charge of opening connection and adding listener when consumer is started and broker is not available.
      */
     private class StartConsumerCallable implements Callable<Void> {
         private final long connectionRetryInterval;
@@ -222,7 +220,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
                     }
                     connectionFailed = false;
                 } catch (Exception e) {
-                    LOG.info("Connection failed, will retry in " + connectionRetryInterval + "ms", e);
+                    LOG.info("Connection failed, will retry in {} ms", connectionRetryInterval, e);
                     Thread.sleep(connectionRetryInterval);
                 }
             }

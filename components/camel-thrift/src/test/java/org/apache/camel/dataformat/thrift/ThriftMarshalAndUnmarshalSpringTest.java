@@ -35,12 +35,12 @@ public class ThriftMarshalAndUnmarshalSpringTest extends CamelSpringTestSupport 
     private static final int WORK_TEST_NUM1 = 1;
     private static final int WORK_TEST_NUM2 = 100;
     private static final Operation WORK_TEST_OPERATION = Operation.MULTIPLY;
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/thrift/springDataFormat.xml");
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");
@@ -73,7 +73,7 @@ public class ThriftMarshalAndUnmarshalSpringTest extends CamelSpringTestSupport 
 
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
         Work input = new Work();
-        
+
         input.num1 = WORK_TEST_NUM1;
         input.num2 = WORK_TEST_NUM2;
         input.op = WORK_TEST_OPERATION;

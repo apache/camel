@@ -69,7 +69,8 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
                 break;
 
             default:
-                exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite ID Generator producer."));
+                exchange.setException(
+                        new UnsupportedOperationException("Operation not supported by Ignite ID Generator producer."));
                 break;
         }
 
@@ -78,7 +79,8 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
     }
 
     private IgniteIdGenOperation idGenOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(), IgniteIdGenOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(),
+                IgniteIdGenOperation.class);
     }
 
 }

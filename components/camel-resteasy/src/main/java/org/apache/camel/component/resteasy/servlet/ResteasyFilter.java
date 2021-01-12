@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Customer Filter used for wrapping requests and responses to clone respectively
- * with ResteasyHttpServletRequestWrapper and ResteasyHttpServletResponseWrapper
+ * Customer Filter used for wrapping requests and responses to clone respectively with ResteasyHttpServletRequestWrapper
+ * and ResteasyHttpServletResponseWrapper
  */
 @WebFilter("/*")
 public class ResteasyFilter implements Filter {
@@ -41,7 +41,8 @@ public class ResteasyFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
         if (response.getCharacterEncoding() == null) {
             response.setCharacterEncoding("UTF-8"); // Or whatever default. UTF-8 is good for World Domination.
         }
@@ -49,7 +50,8 @@ public class ResteasyFilter implements Filter {
             request.setCharacterEncoding("UTF-8"); // Or whatever default. UTF-8 is good for World Domination.
         }
 
-        ResteasyHttpServletResponseWrapper responseCopier = new ResteasyHttpServletResponseWrapper((HttpServletResponse) response);
+        ResteasyHttpServletResponseWrapper responseCopier
+                = new ResteasyHttpServletResponseWrapper((HttpServletResponse) response);
         ResteasyHttpServletRequestWrapper requestCopier = new ResteasyHttpServletRequestWrapper((HttpServletRequest) request);
 
         chain.doFilter(requestCopier, responseCopier);
@@ -62,6 +64,5 @@ public class ResteasyFilter implements Filter {
     public void destroy() {
 
     }
-
 
 }

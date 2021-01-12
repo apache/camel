@@ -39,6 +39,8 @@ public interface SplunkHecComponentBuilderFactory {
      * Category: log,monitoring
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
+     * 
+     * @return the dsl builder
      */
     static SplunkHecComponentBuilder splunkHec() {
         return new SplunkHecComponentBuilderImpl();
@@ -61,10 +63,13 @@ public interface SplunkHecComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkHecComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -72,17 +77,24 @@ public interface SplunkHecComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default SplunkHecComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SplunkHecComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -103,7 +115,7 @@ public interface SplunkHecComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((SplunkHECComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((SplunkHECComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SplunkHECComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.couchbase;
 
-import java.util.List;
-
+import com.couchbase.client.core.deps.com.fasterxml.jackson.databind.JsonNode;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
@@ -113,18 +112,21 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         LOG.info("Received result set from Couchbase");
         Collection collection = bucket.defaultCollection();
 
-
         if (LOG.isTraceEnabled()) {
             LOG.trace("ViewResponse =  {}", result);
         }
 
         String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
         for (ViewRow row : result.rows()) {
-
+            Object doc;
             String id = row.id().get();
-            Object doc = collection.get(id);
+            if (endpoint.isFullDocument()) {
+                doc = collection.get(id);
+            } else {
+                doc = row.valueAs(Object.class);
+            }
 
-            String key = (String) row.keyAs(List.class).get().get(0);
+            String key = row.keyAs(JsonNode.class).get().asText();
             String designDocumentName = endpoint.getDesignDocumentName();
             String viewName = endpoint.getViewName();
 

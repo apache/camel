@@ -53,7 +53,8 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "mock:bar").throwException(new IllegalArgumentException("Damn")).to("mock:baz");
+                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "mock:bar")
+                        .throwException(new IllegalArgumentException("Damn")).to("mock:baz");
             }
         });
         context.start();

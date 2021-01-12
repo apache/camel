@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerReplyStringTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/reply?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/reply?password=admin";
     }
 
     @Test

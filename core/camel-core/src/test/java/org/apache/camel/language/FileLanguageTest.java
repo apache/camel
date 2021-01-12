@@ -27,7 +27,6 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
@@ -94,7 +93,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:size}", file.length());
 
         // modified is a long object
-        Long modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, Long.class);
+        Long modified = context.resolveLanguage("simple").createExpression("${file:modified}").evaluate(exchange, Long.class);
         assertEquals(file.lastModified(), modified.longValue());
     }
 
@@ -114,7 +113,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("$simple{file:size}", file.length());
 
         // modified is a long object
-        long modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, long.class);
+        long modified = context.resolveLanguage("simple").createExpression("${file:modified}").evaluate(exchange, long.class);
         assertEquals(file.lastModified(), modified);
     }
 
@@ -164,8 +163,10 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testSimpleAndFileAndBean() throws Exception {
-        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak", "backup-abc-generatorbybean-test" + File.separator + "hello.bak");
-        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak", "backup-abc-generatorbybean-hello.bak");
+        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak",
+                "backup-abc-generatorbybean-test" + File.separator + "hello.bak");
+        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak",
+                "backup-abc-generatorbybean-hello.bak");
     }
 
     @Test

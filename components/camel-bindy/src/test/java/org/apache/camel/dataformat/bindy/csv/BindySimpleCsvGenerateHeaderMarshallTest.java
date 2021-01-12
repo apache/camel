@@ -39,8 +39,9 @@ import org.springframework.test.context.ContextConfiguration;
 public class BindySimpleCsvGenerateHeaderMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
-    private String result = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
-                            + "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+    private String result
+            = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
+              + "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -87,8 +88,8 @@ public class BindySimpleCsvGenerateHeaderMarshallTest {
 
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat =
-                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassgenerateheader.Order.class);
+            BindyCsvDataFormat camelDataFormat
+                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassgenerateheader.Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");

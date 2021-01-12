@@ -75,9 +75,9 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").removeHeaders("dude*")
-                    // remove all beers, excluding Heineken or Tuborg, which we
-                    // want to keep
-                    .removeHeaders("Beer*", ".*Heineken.*", ".*Tuborg.*").removeHeaders("foo").to("mock:end");
+                        // remove all beers, excluding Heineken or Tuborg, which we
+                        // want to keep
+                        .removeHeaders("Beer*", ".*Heineken.*", ".*Tuborg.*").removeHeaders("foo").to("mock:end");
             }
         };
     }

@@ -51,10 +51,13 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ZooKeeperMasterEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,10 +73,14 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ZooKeeperMasterEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -97,10 +104,13 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedZooKeeperMasterEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -114,9 +124,12 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedZooKeeperMasterEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -126,9 +139,13 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedZooKeeperMasterEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -139,9 +156,12 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedZooKeeperMasterEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -149,41 +169,16 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedZooKeeperMasterEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -194,10 +189,14 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedZooKeeperMasterEndpointBuilder synchronous(
                 String synchronous) {
@@ -225,6 +224,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The consumer endpoint to use in master/slave mode
          * 
          * @param path groupName:consumerEndpointUri
+         * @return the dsl builder
          */
         default ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
             return ZooKeeperMasterEndpointBuilderFactory.endpointBuilder("zookeeper-master", path);
@@ -249,6 +249,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path groupName:consumerEndpointUri
+         * @return the dsl builder
          */
         default ZooKeeperMasterEndpointBuilder zookeeperMaster(
                 String componentName,

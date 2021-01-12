@@ -4,8 +4,10 @@ package org.apache.camel.component.hazelcast.atomicnumber;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,8 @@ public class HazelcastAtomicnumberComponentConfigurer extends PropertyConfigurer
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastAtomicnumberComponent target = (HazelcastAtomicnumberComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "hazelcastinstance":
         case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "hazelcastmode":
@@ -32,21 +34,26 @@ public class HazelcastAtomicnumberComponentConfigurer extends PropertyConfigurer
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("hazelcastInstance", com.hazelcast.core.HazelcastInstance.class);
-        answer.put("hazelcastMode", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "hazelcastinstance":
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastmode":
+        case "hazelcastMode": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HazelcastAtomicnumberComponent target = (HazelcastAtomicnumberComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "hazelcastinstance":
         case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastmode":

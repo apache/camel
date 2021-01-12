@@ -62,10 +62,10 @@ public class JmsMessageIDNotOverridenAMQTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        
+
         JmsComponent jms = camelContext.getComponent("activemq", JmsComponent.class);
         jms.setMessageCreatedStrategy(new MyMessageCreatedStrategy());
-        
+
         return camelContext;
     }
 
@@ -75,14 +75,14 @@ public class JmsMessageIDNotOverridenAMQTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?includeSentJMSMessageID=true")
-                    .to("mock:done");
+                        .to("activemq:queue:foo?includeSentJMSMessageID=true")
+                        .to("mock:done");
             }
         };
     }
-    
+
     private class MyMessageCreatedStrategy implements MessageCreatedStrategy {
-     
+
         @Override
         public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {
             try {

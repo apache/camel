@@ -21,8 +21,7 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 /**
  * A copy of {@code org.apache.camel.http.common.HttpHeaderFilterStrategy}. Keep in sync or refactor
  * {@code camel-http-common} not to depend on {@code javax.servlet-api} and then use the
- * {@code HttpHeaderFilterStrategy}
- * from there.
+ * {@code HttpHeaderFilterStrategy} from there.
  */
 public class PlatformHttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

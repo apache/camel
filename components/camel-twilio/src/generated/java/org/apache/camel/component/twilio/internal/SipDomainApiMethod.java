@@ -73,8 +73,6 @@ public enum SipDomainApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private SipDomainApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

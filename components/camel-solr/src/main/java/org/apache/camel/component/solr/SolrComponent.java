@@ -63,7 +63,7 @@ public class SolrComponent extends DefaultComponent {
         public void setUpdateSolrServer(ConcurrentUpdateSolrClient updateSolrServer) {
             this.updateSolrServer = updateSolrServer;
         }
-        
+
         public CloudSolrClient getCloudSolrServer() {
             return cloudSolrServer;
         }
@@ -110,7 +110,7 @@ public class SolrComponent extends DefaultComponent {
     void shutdownServers(SolrServerReference ref) {
         shutdownServers(ref, false);
     }
-    
+
     private void shutdownServer(SolrClient server) throws IOException {
         if (server != null) {
             LOG.info("Shutting down solr server: {}", server);
@@ -129,7 +129,7 @@ public class SolrComponent extends DefaultComponent {
         } catch (Exception e) {
             LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
-        
+
         try {
             shutdownServer(ref.getCloudSolrServer());
         } catch (Exception e) {

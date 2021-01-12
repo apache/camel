@@ -20,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -38,6 +40,12 @@ public abstract class MainSupport extends BaseMainSupport {
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
     protected MainShutdownStrategy shutdownStrategy;
 
+    protected volatile ProducerTemplate camelTemplate;
+
+    private int durationMaxIdleSeconds;
+    private int durationMaxMessages;
+    private long durationMaxSeconds;
+    private int durationHitExitCode;
 
     protected MainSupport(Class<?>... configurationClasses) {
         this();
@@ -95,6 +103,17 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     private void internalBeforeStart() {
+        // used while waiting to be done
+        durationMaxIdleSeconds = mainConfigurationProperties.getDurationMaxIdleSeconds();
+        durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
+        durationMaxSeconds = mainConfigurationProperties.getDurationMaxSeconds();
+        durationHitExitCode = mainConfigurationProperties.getDurationHitExitCode();
+
+        // register main as bootstrap
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
+        }
     }
 
     /**
@@ -151,8 +170,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the duration (in seconds) to run the application until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <=
+     * 0 will run forever.
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -166,10 +186,10 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the maximum idle duration (in seconds) when running the application, and
-     * if there has been no message processed after being idle for more than this duration
-     * then the application should be terminated.
-     * Defaults to -1. Any value <= 0 will run forever.
+     * Sets the maximum idle duration (in seconds) when running the application, and if there has been no message
+     * processed after being idle for more than this duration then the application should be terminated. Defaults to -1.
+     * Any value <= 0 will run forever.
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -183,8 +203,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the duration to run the application to process at most max messages until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration to run the application to process at most max messages until it should be terminated. Defaults
+     * to -1. Any value <= 0 will run forever.
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -194,6 +215,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Sets the exit code for the application if duration was hit
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -223,8 +245,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Set the {@link MainShutdownStrategy} used to properly shut-down the main instance. By default a {@link DefaultMainShutdownStrategy}
-     * will be used.
+     * Set the {@link MainShutdownStrategy} used to properly shut-down the main instance. By default a
+     * {@link DefaultMainShutdownStrategy} will be used.
+     *
      * @param shutdownStrategy the shutdown strategy
      */
     public void setShutdownStrategy(MainShutdownStrategy shutdownStrategy) {
@@ -243,14 +266,15 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
+        if (mainConfigurationProperties.getDurationMaxMessages() > 0
+                || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
             EventNotifier notifier = new MainDurationEventNotifier(
-                camelContext,
-                mainConfigurationProperties.getDurationMaxMessages(),
-                mainConfigurationProperties.getDurationMaxIdleSeconds(),
-                shutdownStrategy,
-                true);
+                    camelContext,
+                    mainConfigurationProperties.getDurationMaxMessages(),
+                    mainConfigurationProperties.getDurationMaxIdleSeconds(),
+                    shutdownStrategy,
+                    true);
 
             // register our event notifier
             ServiceHelper.startService(notifier);
@@ -264,13 +288,14 @@ public abstract class MainSupport extends BaseMainSupport {
     protected void waitUntilCompleted() {
         while (shutdownStrategy.isRunAllowed()) {
             try {
-                int idle = mainConfigurationProperties.getDurationMaxIdleSeconds();
-                int max = mainConfigurationProperties.getDurationMaxMessages();
-                long sec = mainConfigurationProperties.getDurationMaxSeconds();
+                int idle = durationMaxIdleSeconds;
+                int max = durationMaxMessages;
+                long sec = durationMaxSeconds;
+                int exit = durationHitExitCode;
                 if (sec > 0) {
                     LOG.info("Waiting for: {} seconds", sec);
                     shutdownStrategy.await(sec, TimeUnit.SECONDS);
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
                     if (idle > 0 && max > 0) {
@@ -280,7 +305,7 @@ public abstract class MainSupport extends BaseMainSupport {
                     } else {
                         LOG.info("Waiting until: {} messages has been processed", max);
                     }
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
                     shutdownStrategy.await();
                     shutdownStrategy.shutdown();
                 } else {
@@ -292,5 +317,24 @@ public abstract class MainSupport extends BaseMainSupport {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    protected abstract ProducerTemplate findOrCreateCamelTemplate();
+
+    protected abstract CamelContext createCamelContext();
+
+    public ProducerTemplate getCamelTemplate() throws Exception {
+        if (camelTemplate == null) {
+            camelTemplate = findOrCreateCamelTemplate();
+        }
+        return camelTemplate;
+    }
+
+    protected void initCamelContext() throws Exception {
+        camelContext = createCamelContext();
+        if (camelContext == null) {
+            throw new IllegalStateException("Created CamelContext is null");
+        }
+        postProcessCamelContext(camelContext);
     }
 }

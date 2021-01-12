@@ -1,4 +1,4 @@
-[[lra-component]]
+[[lra-other]]
 = LRA Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-lra/src/main/docs/lra.adoc
@@ -7,6 +7,7 @@
 :description: Camel saga binding for Long-Running-Action framework
 :since: 2.21
 :supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/lra.adoc[opts=optional]
 
 *Since Camel {since}*
 

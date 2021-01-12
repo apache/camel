@@ -19,22 +19,18 @@ package org.apache.camel.example;
 import org.apache.camel.builder.RouteBuilder;
 
 public class DataFormatComponentTest extends DataFormatTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("dataformat:jaxb:marshal?contextPath=org.apache.camel.example").
-                        to("direct:marshalled");
+                from("direct:start").to("dataformat:jaxb:marshal?contextPath=org.apache.camel.example").to("direct:marshalled");
 
-                from("direct:marshalled").
-                        to("dataformat:jaxb:unmarshal?contextPath=org.apache.camel.example").
-                        to("mock:result");
-                
-                from("direct:prettyPrint").
-                        to("dataformat:jaxb:marshal?contextPath=org.apache.camel.foo.bar&prettyPrint=true").
-                        to("mock:result");
+                from("direct:marshalled").to("dataformat:jaxb:unmarshal?contextPath=org.apache.camel.example")
+                        .to("mock:result");
+
+                from("direct:prettyPrint").to("dataformat:jaxb:marshal?contextPath=org.apache.camel.foo.bar&prettyPrint=true")
+                        .to("mock:result");
             }
         };
     }

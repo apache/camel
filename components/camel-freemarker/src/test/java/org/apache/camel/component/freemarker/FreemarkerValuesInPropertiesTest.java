@@ -25,7 +25,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
@@ -36,7 +36,8 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
         template.send("direct:a", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE, "Dear ${exchange.properties.name}. You ordered item ${exchange.properties.item}.");
+                exchange.getIn().setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE,
+                        "Dear ${exchange.properties.name}. You ordered item ${exchange.properties.item}.");
                 exchange.setProperty("name", "Christian");
                 exchange.setProperty("item", "7");
             }
@@ -54,8 +55,8 @@ public class FreemarkerValuesInPropertiesTest extends CamelTestSupport {
                 fc.setAllowContextMapAll(true);
 
                 from("direct:a")
-                    .to("freemarker:dummy")
-                    .to("mock:result");
+                        .to("freemarker:dummy")
+                        .to("mock:result");
             }
         };
     }

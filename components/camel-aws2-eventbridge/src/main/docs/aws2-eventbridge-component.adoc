@@ -1,0 +1,339 @@
+[[aws2-eventbridge-component]]
+= AWS 2 Eventbridge Component
+:docTitle: AWS 2 Eventbridge
+:artifactId: camel-aws2-eventbridge
+:description: Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+:since: 3.6
+:supportLevel: Stable
+:component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-eventbridge.adoc[opts=optional]
+//Manually maintained attributes
+:group: AWS 2
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Eventbridge component supports assumeRole operation.
+https://aws.amazon.com/eventbridge/[AWS Eventbridge].
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Eventbridge. More information is available at
+https://aws.amazon.com/eventbridge/[Amazon Eventbridge].
+
+[NOTE]
+====
+The AWS2 Eventbridge component is not supported in OSGI
+====
+
+[NOTE]
+====
+To create a rule that triggers on an action by an AWS service that does not emit events, you can base the rule on API calls made by that service. The API calls are recorded by AWS CloudTrail, so you'll need to have CloudTrail enabled. For more information https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html[Services Supported by CloudTrail Event History].
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-eventbridge://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 Eventbridge component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (producer) | Component configuration |  | EventbridgeConfiguration
+| *eventbridgeClient* (producer) | *Autowired* To use a existing configured AWS Eventbridge as client |  | EventBridgeClient
+| *eventPatternFile* (producer) | EventPattern File |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. There are 10 enums and the value can be one of: putRule, putTargets, removeTargets, deleteRule, enableRule, disableRule, describeRule, listRules, listTargetsByRule, listRuleNamesByTarget | putRule | EventbridgeOperations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the Eventbridge client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Eventbridge client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Eventbridge client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 Eventbridge endpoint is configured using URI syntax:
+
+----
+aws2-eventbridge://eventbusNameOrArn
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *eventbusNameOrArn* | *Required* Event bus name or ARN |  | String
+|===
+
+
+=== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *eventbridgeClient* (producer) | *Autowired* To use a existing configured AWS Eventbridge as client |  | EventBridgeClient
+| *eventPatternFile* (producer) | EventPattern File |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. There are 10 enums and the value can be one of: putRule, putTargets, removeTargets, deleteRule, enableRule, disableRule, describeRule, listRules, listTargetsByRule, listRuleNamesByTarget | putRule | EventbridgeOperations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the Eventbridge client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Eventbridge client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Eventbridge client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+=== AWS2-Eventbridge Producer operations
+
+Camel-AWS2-Eventbridge component provides the following operation on the producer side:
+
+- putRule
+- putTargets
+- removeTargets
+- deleteRule
+- enableRule
+- disableRule
+- listRules
+- describeRule
+- listTargetsByRule
+- listRuleNamesByTarget
+
+- PutRule: this operation create a rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:putRule").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will create a rule named firstrule and it will use a json file for defining the EventPattern.
+
+- PutTargets: this operation will add a target to the rule 
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+          Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                .build();
+          List<Target> targets = new ArrayList<Target>();
+          targets.add(target);
+          exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
+      }
+  })
+  .to("aws2-eventbridge://test?operation=putTargets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will add the target sqs-queue with the arn reported to the targets of the firstrule rule.
+
+- RemoveTargets: this operation will remove a collection of target from the rule 
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+          List<String> ids = new ArrayList<String>();
+          targets.add("sqs-queue");
+          exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
+      }
+  })
+  .to("aws2-eventbridge://test?operation=removeTargets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will remove the target sqs-queue from the firstrule rule.
+
+- DeleteRule: this operation will delete a rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=deleteRule")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will remove the firstrule rule from the test eventbus.
+
+- EnableRule: this operation will enable a rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=enableRule")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will enable the firstrule rule from the test eventbus.
+
+- DisableRule: this operation will disable a rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=disableRule")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will disable the firstrule rule from the test eventbus.
+
+- ListRules: this operation will list all the rules related to an eventbus with prefix first
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME_PREFIX, "first");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=listRules")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list all the rules with prefix first from the test eventbus.
+
+- DescribeRule: this operation will describe a specified rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=describeRule")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will describe the firstrule rule from the test eventbus.
+
+- ListTargetsByRule: this operation will return a list of targets associated with a rule
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=listTargetsByRule")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+this operation will return a list of targets associated with the firstrule rule.
+
+- ListRuleNamesByTarget: this operation will return a list of rule associated with a target
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.TARGET_ARN, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=listRuleNamesByTarget")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+this operation will return a list of rule associated with a target.
+
+== Updating the rule
+
+To update a rule you'll need to perform the putRule operation again. 
+There is not explicit update rule operation in the Java SDK.
+
+== Automatic detection of EventbridgeClient client in registry
+
+The component is capable of detecting the presence of an EventbridgeClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-eventbridge</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-eventbridge-starter.adoc[]

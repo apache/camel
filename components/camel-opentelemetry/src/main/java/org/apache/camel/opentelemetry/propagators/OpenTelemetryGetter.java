@@ -16,12 +16,24 @@
  */
 package org.apache.camel.opentelemetry.propagators;
 
-import io.opentelemetry.context.propagation.HttpTextFormat;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import org.apache.camel.tracing.ExtractAdapter;
 
-public class OpenTelemetryGetter implements HttpTextFormat.Getter<ExtractAdapter> {
+public class OpenTelemetryGetter implements TextMapPropagator.Getter<ExtractAdapter> {
 
-    @Override public String get(ExtractAdapter adapter, String key) {
+    ExtractAdapter adapter;
+
+    public OpenTelemetryGetter(ExtractAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    @Override
+    public Iterable<String> keys(ExtractAdapter extractAdapter) {
+        return adapter.keys();
+    }
+
+    @Override
+    public String get(ExtractAdapter adapter, String key) {
         return (String) adapter.get(key);
     }
 }

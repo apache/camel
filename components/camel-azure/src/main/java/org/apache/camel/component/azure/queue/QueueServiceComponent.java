@@ -30,15 +30,16 @@ import org.apache.camel.support.DefaultComponent;
 @Component("azure-queue")
 public class QueueServiceComponent extends DefaultComponent {
 
-    public static final String MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE =
-            "One of azureQueueClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
-    
+    public static final String MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE
+            = "One of azureQueueClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
+
     @Metadata(label = "advanced")
     private QueueServiceConfiguration configuration;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final QueueServiceConfiguration configuration = this.configuration != null ? this.configuration.copy() : new QueueServiceConfiguration();
+        final QueueServiceConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new QueueServiceConfiguration();
 
         String[] parts = null;
         if (remaining != null) {
@@ -85,7 +86,7 @@ public class QueueServiceComponent extends DefaultComponent {
             throw new IllegalArgumentException(MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE);
         }
     }
-    
+
     private void checkAndSetRegistryClient(QueueServiceConfiguration configuration) {
         Set<CloudQueue> clients = getCamelContext().getRegistry().findByType(CloudQueue.class);
         if (clients.size() == 1) {

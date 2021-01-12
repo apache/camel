@@ -130,12 +130,12 @@ public class ExecParseUtilsTest {
     @Test
     public void testWhiteSpaceSeparatedArgsNotClosed() {
         assertThrows(IllegalArgumentException.class,
-            () -> splitToWhiteSpaceSeparatedTokens("arg 0 \" arg1 \"arg 2\""));
+                () -> splitToWhiteSpaceSeparatedTokens("arg 0 \" arg1 \"arg 2\""));
     }
 
     @Test
     public void testInvalidQuotes() {
         assertThrows(IllegalArgumentException.class,
-            () -> splitToWhiteSpaceSeparatedTokens("\"\"arg 0 \" arg1 \"arg 2\""));
+                () -> splitToWhiteSpaceSeparatedTokens("\"\"arg 0 \" arg1 \"arg 2\""));
     }
 }

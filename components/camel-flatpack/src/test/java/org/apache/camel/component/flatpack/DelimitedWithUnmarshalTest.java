@@ -41,7 +41,7 @@ public class DelimitedWithUnmarshalTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedItemDesc = {"SOME VALVE", "AN ENGINE", "A BELT", "A BOLT"};
+    protected String[] expectedItemDesc = { "SOME VALVE", "AN ENGINE", "A BELT", "A BOLT" };
 
     @Test
     public void testCamel() throws Exception {

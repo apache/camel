@@ -30,16 +30,19 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 
 /**
- * A Camel extended {@link ModelConverters} where we appending vendor extensions to include the java class
- * name of the model classes.
+ * A Camel extended {@link ModelConverters} where we appending vendor extensions to include the java class name of the
+ * model classes.
  */
 public class RestModelConverters {
 
     public List<? extends OasSchema> readClass(OasDocument oasDocument, Class<?> clazz) {
-        if (oasDocument instanceof Oas20Document) {
-            return readClassOas20((Oas20Document)oasDocument, clazz);
+        if (clazz.equals(java.io.File.class)) {
+            // File is a special type in OAS2 / OAS3 (no model)
+            return null;
+        } else if (oasDocument instanceof Oas20Document) {
+            return readClassOas20((Oas20Document) oasDocument, clazz);
         } else if (oasDocument instanceof Oas30Document) {
-            return readClassOas30((Oas30Document)oasDocument, clazz);
+            return readClassOas30((Oas30Document) oasDocument, clazz);
         } else {
             return null;
         }

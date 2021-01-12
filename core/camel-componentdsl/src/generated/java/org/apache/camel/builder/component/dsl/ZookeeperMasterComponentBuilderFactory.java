@@ -39,6 +39,8 @@ public interface ZookeeperMasterComponentBuilderFactory {
      * Category: clustering,management,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zookeeper-master
+     * 
+     * @return the dsl builder
      */
     static ZookeeperMasterComponentBuilder zookeeperMaster() {
         return new ZookeeperMasterComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ZookeeperMasterComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -72,10 +77,13 @@ public interface ZookeeperMasterComponentBuilderFactory {
         /**
          * Timeout in millis to use when connecting to the zookeeper ensemble.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param maximumConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder maximumConnectionTimeout(
                 int maximumConnectionTimeout) {
@@ -87,10 +95,13 @@ public interface ZookeeperMasterComponentBuilderFactory {
          * nodes are master/slave etc. Will by default use:
          * /camel/zookeepermaster/clusters/master.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /camel/zookeepermaster/clusters/master
          * Group: consumer
+         * 
+         * @param zkRoot the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder zkRoot(java.lang.String zkRoot) {
             doSetProperty("zkRoot", zkRoot);
@@ -99,10 +110,13 @@ public interface ZookeeperMasterComponentBuilderFactory {
         /**
          * The url for the zookeeper ensemble.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: localhost:2181
          * Group: consumer
+         * 
+         * @param zooKeeperUrl the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder zooKeeperUrl(
                 java.lang.String zooKeeperUrl) {
@@ -110,26 +124,36 @@ public interface ZookeeperMasterComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ZookeeperMasterComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ZookeeperMasterComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a custom ContainerIdFactory for creating container ids.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.zookeepermaster.ContainerIdFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.zookeepermaster.ContainerIdFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param containerIdFactory the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder containerIdFactory(
                 org.apache.camel.component.zookeepermaster.ContainerIdFactory containerIdFactory) {
@@ -141,9 +165,12 @@ public interface ZookeeperMasterComponentBuilderFactory {
          * zookeeper ensemble.
          * 
          * The option is a:
-         * <code>org.apache.curator.framework.CuratorFramework</code> type.
+         * &lt;code&gt;org.apache.curator.framework.CuratorFramework&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param curator the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder curator(
                 org.apache.curator.framework.CuratorFramework curator) {
@@ -153,9 +180,12 @@ public interface ZookeeperMasterComponentBuilderFactory {
         /**
          * The password to use when connecting to the zookeeper ensemble.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param zooKeeperPassword the value to set
+         * @return the dsl builder
          */
         default ZookeeperMasterComponentBuilder zooKeeperPassword(
                 java.lang.String zooKeeperPassword) {
@@ -183,7 +213,7 @@ public interface ZookeeperMasterComponentBuilderFactory {
             case "maximumConnectionTimeout": ((MasterComponent) component).setMaximumConnectionTimeout((int) value); return true;
             case "zkRoot": ((MasterComponent) component).setZkRoot((java.lang.String) value); return true;
             case "zooKeeperUrl": ((MasterComponent) component).setZooKeeperUrl((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MasterComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "containerIdFactory": ((MasterComponent) component).setContainerIdFactory((org.apache.camel.component.zookeepermaster.ContainerIdFactory) value); return true;
             case "curator": ((MasterComponent) component).setCurator((org.apache.curator.framework.CuratorFramework) value); return true;
             case "zooKeeperPassword": ((MasterComponent) component).setZooKeeperPassword((java.lang.String) value); return true;

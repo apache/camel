@@ -44,16 +44,16 @@ public class EC2OperationsTest {
 
     @Test
     public void testToString() {
-        assertEquals(AWS2EC2Operations.createAndRunInstances.toString(), "createAndRunInstances");
-        assertEquals(AWS2EC2Operations.startInstances.toString(), "startInstances");
-        assertEquals(AWS2EC2Operations.stopInstances.toString(), "stopInstances");
-        assertEquals(AWS2EC2Operations.terminateInstances.toString(), "terminateInstances");
-        assertEquals(AWS2EC2Operations.describeInstances.toString(), "describeInstances");
-        assertEquals(AWS2EC2Operations.describeInstancesStatus.toString(), "describeInstancesStatus");
-        assertEquals(AWS2EC2Operations.rebootInstances.toString(), "rebootInstances");
-        assertEquals(AWS2EC2Operations.monitorInstances.toString(), "monitorInstances");
-        assertEquals(AWS2EC2Operations.unmonitorInstances.toString(), "unmonitorInstances");
-        assertEquals(AWS2EC2Operations.createTags.toString(), "createTags");
-        assertEquals(AWS2EC2Operations.deleteTags.toString(), "deleteTags");
+        assertEquals("createAndRunInstances", AWS2EC2Operations.createAndRunInstances.toString());
+        assertEquals("startInstances", AWS2EC2Operations.startInstances.toString());
+        assertEquals("stopInstances", AWS2EC2Operations.stopInstances.toString());
+        assertEquals("terminateInstances", AWS2EC2Operations.terminateInstances.toString());
+        assertEquals("describeInstances", AWS2EC2Operations.describeInstances.toString());
+        assertEquals("describeInstancesStatus", AWS2EC2Operations.describeInstancesStatus.toString());
+        assertEquals("rebootInstances", AWS2EC2Operations.rebootInstances.toString());
+        assertEquals("monitorInstances", AWS2EC2Operations.monitorInstances.toString());
+        assertEquals("unmonitorInstances", AWS2EC2Operations.unmonitorInstances.toString());
+        assertEquals("createTags", AWS2EC2Operations.createTags.toString());
+        assertEquals("deleteTags", AWS2EC2Operations.deleteTags.toString());
     }
 }

@@ -21,16 +21,11 @@ import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
@@ -116,15 +111,19 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         Integer converters = (Integer) mbeanServer.getAttribute(name, "NumberOfTypeConverters");
         assertTrue(converters >= 150, "Should be more than 150 converters, was: " + converters);
 
-        Boolean has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"String", "java.io.InputStream"}, new String[]{"java.lang.String", "java.lang.String"});
-        assertTrue(has.booleanValue(), "Should have type converter");
+        Boolean has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter",
+                new Object[] { "java.lang.String", "java.io.InputStream" },
+                new String[] { "java.lang.String", "java.lang.String" });
+        assertTrue(has, "Should have type converter");
 
-        has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[]{"java.math.BigInteger", "int"}, new String[]{"java.lang.String", "java.lang.String"});
-        assertFalse(has.booleanValue(), "Should not have type converter");
+        has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter", new Object[] { "java.math.BigInteger", "int" },
+                new String[] { "java.lang.String", "java.lang.String" });
+        assertTrue(has, "Should have type converter");
 
-        // we have more than 150 converters out of the box
-        TabularData data = (TabularData) mbeanServer.invoke(name, "listTypeConverters", null, null);
-        assertTrue(data.size() >= 150, "Should be more than 150 converters, was: " + data.size());
+        has = (Boolean) mbeanServer.invoke(name, "hasTypeConverter",
+                new Object[] { "java.math.BigInteger", "java.util.Random" },
+                new String[] { "java.lang.String", "java.lang.String" });
+        assertFalse(has, "Should not have type converter");
     }
 
     @Override
@@ -133,8 +132,8 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .convertBodyTo(int.class)
-                    .to("mock:a");
+                        .convertBodyTo(int.class)
+                        .to("mock:a");
             }
         };
     }

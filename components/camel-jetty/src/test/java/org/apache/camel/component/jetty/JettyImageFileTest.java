@@ -41,8 +41,8 @@ public class JettyImageFileTest extends BaseJettyTest {
         }
         template.send(endpoint, exchange);
 
-        assertNotNull(exchange.getOut().getBody());
-        assertEquals(MessageHelper.getContentType(exchange.getOut()), "image/jpeg", "Get a wrong content-type");
+        assertNotNull(exchange.getMessage().getBody());
+        assertEquals("image/jpeg", MessageHelper.getContentType(exchange.getMessage()), "Get a wrong content-type");
     }
 
     @Test
@@ -67,8 +67,8 @@ public class JettyImageFileTest extends BaseJettyTest {
     public class MyImageService implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(new File("src/test/data/logo.jpeg"));
-            exchange.getOut().setHeader("Content-Type", "image/jpeg");
+            exchange.getMessage().setBody(new File("src/test/data/logo.jpeg"));
+            exchange.getMessage().setHeader("Content-Type", "image/jpeg");
         }
     }
 

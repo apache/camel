@@ -37,6 +37,8 @@ public interface GuavaEventbusComponentBuilderFactory {
      * Category: eventbus
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-guava-eventbus
+     * 
+     * @return the dsl builder
      */
     static GuavaEventbusComponentBuilder guavaEventbus() {
         return new GuavaEventbusComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface GuavaEventbusComponentBuilderFactory {
         /**
          * To use the given Guava EventBus instance.
          * 
-         * The option is a: <code>com.google.common.eventbus.EventBus</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.google.common.eventbus.EventBus&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventBus the value to set
+         * @return the dsl builder
          */
         default GuavaEventbusComponentBuilder eventBus(
                 com.google.common.eventbus.EventBus eventBus) {
@@ -70,10 +75,13 @@ public interface GuavaEventbusComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GuavaEventbusComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -87,9 +95,13 @@ public interface GuavaEventbusComponentBuilderFactory {
          * creating multi-event listeners and for handling DeadEvent properly.
          * This option cannot be used together with eventClass option.
          * 
-         * The option is a: <code>java.lang.Class<java.lang.Object></code> type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventbusComponentBuilder listenerInterface(
                 java.lang.Class<java.lang.Object> listenerInterface) {
@@ -107,10 +119,13 @@ public interface GuavaEventbusComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GuavaEventbusComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -118,17 +133,24 @@ public interface GuavaEventbusComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GuavaEventbusComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GuavaEventbusComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -152,7 +174,7 @@ public interface GuavaEventbusComponentBuilderFactory {
             case "bridgeErrorHandler": ((GuavaEventBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "listenerInterface": ((GuavaEventBusComponent) component).setListenerInterface((java.lang.Class) value); return true;
             case "lazyStartProducer": ((GuavaEventBusComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((GuavaEventBusComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GuavaEventBusComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

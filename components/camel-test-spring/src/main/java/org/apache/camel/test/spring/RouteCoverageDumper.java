@@ -44,19 +44,22 @@ public final class RouteCoverageDumper {
             String dir = "target/camel-route-coverage";
             String name = testClassName + "-" + testName + ".xml";
 
-            ManagedCamelContextMBean managedCamelContext = context.getExtension(ManagedCamelContext.class).getManagedCamelContext();
+            ManagedCamelContextMBean managedCamelContext
+                    = context.getExtension(ManagedCamelContext.class).getManagedCamelContext();
             if (managedCamelContext == null) {
-                LOG.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
+                LOG.warn(
+                        "Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 String xml = managedCamelContext.dumpRoutesCoverageAsXml();
-                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml(testClassName, testName) + xml + "\n</camelRouteCoverage>";
+                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml(testClassName, testName) + xml
+                                  + "\n</camelRouteCoverage>";
 
                 File file = new File(dir);
                 // ensure dir exists
                 file.mkdirs();
                 file = new File(dir, name);
 
-                LOG.info("Dumping route coverage to file: " + file);
+                LOG.info("Dumping route coverage to file: {}", file);
                 InputStream is = new ByteArrayInputStream(combined.getBytes());
                 OutputStream os = new FileOutputStream(file, false);
                 IOHelper.copyAndCloseInput(is, os);

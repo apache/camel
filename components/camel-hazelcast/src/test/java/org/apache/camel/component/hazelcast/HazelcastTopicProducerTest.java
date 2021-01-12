@@ -37,7 +37,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getTopic("bar")).thenReturn(topic);
+        when(hazelcastInstance.<String> getTopic("bar")).thenReturn(topic);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
     @Test
     public void testWithInvalidOperation() {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:publishInvalid", "foo"));
+                () -> template.sendBody("direct:publishInvalid", "foo"));
     }
 
     @Test
@@ -75,9 +75,11 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
                 from("direct:no-operation").to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH)).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
             }
         };
     }

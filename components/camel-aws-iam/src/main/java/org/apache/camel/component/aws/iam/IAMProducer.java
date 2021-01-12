@@ -52,8 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon IAM Service
- * <a href="http://aws.amazon.com/iam/">AWS IAM</a>
+ * A Producer which sends messages to the Amazon IAM Service <a href="http://aws.amazon.com/iam/">AWS IAM</a>
  */
 public class IAMProducer extends DefaultProducer {
 
@@ -133,7 +132,7 @@ public class IAMProducer extends DefaultProducer {
 
     @Override
     public IAMEndpoint getEndpoint() {
-        return (IAMEndpoint)super.getEndpoint();
+        return (IAMEndpoint) super.getEndpoint();
     }
 
     private void listAccessKeys(AmazonIdentityManagement iamClient, Exchange exchange) {

@@ -49,7 +49,7 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         switch (endpoint.getConfig().getFunction()) {
             case MESSAGES:
                 url.append(YammerConstants.YAMMER_BASE_API_URL);
-                url.append(endpoint.getConfig().getFunction().name());
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
                 url.append(".json");
                 break;
             case ALGO:
@@ -60,11 +60,13 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
             case RECEIVED:
                 url.append(YammerConstants.YAMMER_BASE_API_URL);
                 url.append("messages/");
-                url.append(endpoint.getConfig().getFunction().name());
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
                 url.append(".json");
                 break;
             default:
-                throw new Exception(String.format("%s is not a valid Yammer message function type.", endpoint.getConfig().getFunction().name()));
+                throw new Exception(
+                        String.format("%s is not a valid Yammer message function type.",
+                                endpoint.getConfig().getFunction().name()));
         }
 
         StringBuilder args = new StringBuilder();
@@ -110,7 +112,6 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
 
         return url.toString();
     }
-
 
     @Override
     protected int poll() throws Exception {

@@ -72,7 +72,6 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
             return null;
         });
 
-
         // now get started and send the first message that gets the ball rolling
         JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
@@ -92,11 +91,11 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
 
             public void configure() throws Exception {
                 from("activemq:queue:hello")
-                    .process(exchange -> exchange.getMessage().setBody("What's your name"))
-                    // use in out to get a reply as well
-                    .to(ExchangePattern.InOut, "activemq:queue:nameRequestor?replyTo=queue:namedReplyQueue")
-                    // and send the reply to our mock for validation
-                    .to("mock:result");
+                        .process(exchange -> exchange.getMessage().setBody("What's your name"))
+                        // use in out to get a reply as well
+                        .to(ExchangePattern.InOut, "activemq:queue:nameRequestor?replyTo=queue:namedReplyQueue")
+                        // and send the reply to our mock for validation
+                        .to("mock:result");
             }
         };
     }
@@ -109,6 +108,5 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
         amq = camelContext.getComponent("activemq", JmsComponent.class);
         return camelContext;
     }
-
 
 }

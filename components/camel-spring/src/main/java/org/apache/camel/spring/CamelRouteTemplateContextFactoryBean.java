@@ -37,7 +37,8 @@ import org.springframework.beans.factory.FactoryBean;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelRouteTemplateContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteTemplateDefinition>> {
 
-    @XmlElement(name = "routeTemplate", required = true)  @Metadata(description = "Route Templates")
+    @XmlElement(name = "routeTemplate", required = true)
+    @Metadata(description = "Route Templates")
     private List<RouteTemplateDefinition> routeTemplates = new ArrayList<>();
 
     @Override
@@ -62,5 +63,5 @@ public class CamelRouteTemplateContextFactoryBean extends IdentifiedType impleme
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }
-    
+
 }

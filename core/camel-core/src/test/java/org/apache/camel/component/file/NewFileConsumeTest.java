@@ -66,7 +66,8 @@ public class NewFileConsumeTest extends ContextTestSupport {
             fos.close();
         }
 
-        Endpoint endpoint = comp.createEndpoint("file://target/data/consumefile", "target/data/consumefile", new HashMap<String, Object>());
+        Endpoint endpoint = comp.createEndpoint("file://target/data/consumefile", "target/data/consumefile",
+                new HashMap<String, Object>());
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 assertNotNull(exchange);

@@ -17,22 +17,30 @@
 package org.apache.camel.component.jcache;
 
 public enum JCacheProviders implements JCacheProvider {
-    hazelcast    {{
+    hazelcast {
+        {
             shortName = "hazelcast";
             className = "com.hazelcast.cache.HazelcastCachingProvider";
-        }},
-    ehcache      {{
+        }
+    },
+    ehcache {
+        {
             shortName = "ehcache";
             className = "org.ehcache.jsr107.EhcacheCachingProvider";
-        }},
-    caffeine     {{
+        }
+    },
+    caffeine {
+        {
             shortName = "caffeine";
             className = "com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider";
-        }},
-    ispnEmbedded {{
+        }
+    },
+    ispnEmbedded {
+        {
             shortName = "infinispan-embedded";
             className = "org.infinispan.jcache.embedded.JCachingProvider";
-        }};
+        }
+    };
 
     protected String shortName;
     protected String className;

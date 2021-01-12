@@ -19,6 +19,7 @@ package org.apache.camel.tracing.propagation;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.tracing.ExtractAdapter;
 
@@ -27,8 +28,8 @@ public final class CamelHeadersExtractAdapter implements ExtractAdapter {
 
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries
-        map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e ->
-                this.map.put(e.getKey(), (String) e.getValue()));
+        map.entrySet().stream().filter(e -> e.getValue() instanceof String)
+                .forEach(e -> this.map.put(e.getKey(), (String) e.getValue()));
     }
 
     @Override
@@ -36,7 +37,13 @@ public final class CamelHeadersExtractAdapter implements ExtractAdapter {
         return map.entrySet().iterator();
     }
 
-    @Override public Object get(String key) {
+    @Override
+    public Object get(String key) {
         return this.map.get(key);
+    }
+
+    @Override
+    public Set<String> keys() {
+        return map.keySet();
     }
 }

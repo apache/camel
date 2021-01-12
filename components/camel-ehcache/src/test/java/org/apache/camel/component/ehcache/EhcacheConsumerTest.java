@@ -59,11 +59,11 @@ public class EhcacheConsumerTest extends EhcacheTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("ehcache://%s?cacheManager=#cacheManager&eventTypes=CREATED", TEST_CACHE_NAME)
-                    .to("mock:created");
+                        .to("mock:created");
                 fromF("ehcache://%s?cacheManager=#cacheManager&eventTypes=UPDATED", TEST_CACHE_NAME)
-                    .to("mock:updated");
+                        .to("mock:updated");
                 fromF("ehcache://%s?cacheManager=#cacheManager", TEST_CACHE_NAME)
-                    .to("mock:all");
+                        .to("mock:all");
             }
         };
     }

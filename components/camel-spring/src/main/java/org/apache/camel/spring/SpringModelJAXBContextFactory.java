@@ -21,9 +21,9 @@ import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 public class SpringModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
 
     public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES = ":"
-            + "org.apache.camel.core.xml:"
-            + "org.apache.camel.spring:"
-            + "org.apache.camel.util.spring:";
+                                                                  + "org.apache.camel.core.xml:"
+                                                                  + "org.apache.camel.spring:"
+                                                                  + "org.apache.camel.util.spring:";
 
     @Override
     protected String getPackages() {

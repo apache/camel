@@ -35,33 +35,33 @@ public interface FactoryFinder {
     /**
      * Creates a new class instance using the key to lookup
      *
-     * @param key is the key to add to the path to find a text file containing the factory name
-     * @return a newly created instance (if exists)
+     * @param  key is the key to add to the path to find a text file containing the factory name
+     * @return     a newly created instance (if exists)
      */
     Optional<Object> newInstance(String key);
 
     /**
      * Creates a new class instance using the key to lookup
      *
-     * @param key is the key to add to the path to find a text file containing the factory name
-     * @param type the class type
-     * @return a newly created instance (if exists)
+     * @param  key  is the key to add to the path to find a text file containing the factory name
+     * @param  type the class type
+     * @return      a newly created instance (if exists)
      */
     <T> Optional<T> newInstance(String key, Class<T> type);
 
     /**
      * Finds the given factory class using the key to lookup.
      *
-     * @param key is the key to add to the path to find a text file containing the factory name
-     * @return the factory class
+     * @param  key is the key to add to the path to find a text file containing the factory name
+     * @return     the factory class
      */
     Optional<Class<?>> findClass(String key);
 
     /**
      * Finds the optional factory class using the key to lookup.
      *
-     * @param key is the key to add to the path to find a text file containing the factory name
-     * @return the factory class if found, or <tt>null</tt> if no class existed
+     * @param  key is the key to add to the path to find a text file containing the factory name
+     * @return     the factory class if found, or <tt>null</tt> if no class existed
      */
     Optional<Class<?>> findOptionalClass(String key);
 

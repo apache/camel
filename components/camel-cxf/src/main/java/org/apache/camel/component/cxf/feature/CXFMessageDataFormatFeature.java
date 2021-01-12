@@ -46,8 +46,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * MessageDataFormatFeature sets up the CXF endpoint interceptor for handling the
- * Message in Message data format.  
+ * MessageDataFormatFeature sets up the CXF endpoint interceptor for handling the Message in Message data format.
  * </p>
  */
 public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
@@ -55,12 +54,12 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
 
     private static final Collection<Class<?>> REMOVING_IN_INTERCEPTORS;
     private static final Collection<Class<?>> REMOVING_OUT_INTERCEPTORS;
-   
+
     static {
         REMOVING_IN_INTERCEPTORS = new ArrayList<>();
         REMOVING_IN_INTERCEPTORS.add(HolderInInterceptor.class);
         REMOVING_IN_INTERCEPTORS.add(WrapperClassInInterceptor.class);
-        
+
         REMOVING_OUT_INTERCEPTORS = new ArrayList<>();
         REMOVING_OUT_INTERCEPTORS.add(HolderOutInterceptor.class);
         REMOVING_OUT_INTERCEPTORS.add(WrapperClassOutInterceptor.class);
@@ -76,22 +75,23 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
     public void initialize(Server server, Bus bus) {
         setupEndpoint(server.getEndpoint());
     }
-    
+
     protected void setupEndpoint(Endpoint ep) {
         resetPartTypes(ep.getBinding());
 
         Class<?> fmt = Source.class;
         if (ep.getBinding() instanceof SoapBinding) {
-            ep.getInInterceptors().add(new SAAJInInterceptor());          
+            ep.getInInterceptors().add(new SAAJInInterceptor());
             SAAJOutInterceptor out = new SAAJOutInterceptor();
             ep.getOutInterceptors().add(out);
             ep.getOutInterceptors().add(new CxfMessageSoapHeaderOutInterceptor());
             ep.getOutInterceptors().add(new MessageModeOutInterceptor(out, ep.getBinding().getBindingInfo().getName()));
             fmt = SOAPMessage.class;
         } else {
-            ep.getOutInterceptors().add(new MessageModeOutInterceptor(Source.class, ep.getBinding().getBindingInfo().getName()));
+            ep.getOutInterceptors()
+                    .add(new MessageModeOutInterceptor(Source.class, ep.getBinding().getBindingInfo().getName()));
         }
-        ep.getInInterceptors().add(new MessageModeInInterceptor(fmt, ep.getBinding().getBindingInfo().getName()));            
+        ep.getInInterceptors().add(new MessageModeInInterceptor(fmt, ep.getBinding().getBindingInfo().getName()));
         ep.put(AbstractInDatabindingInterceptor.NO_VALIDATE_PARTS, Boolean.TRUE);
         // need to remove the wrapper class and holder interceptor
         removeInterceptors(ep.getInInterceptors(), REMOVING_IN_INTERCEPTORS);
@@ -102,7 +102,7 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
     protected Logger getLogger() {
         return LOG;
     }
-   
+
     private void resetPartTypes(Binding bop2) {
         // The HypbridSourceDatabinding, based on JAXB, will possibly set
         // JAXB types into the parts.  Since we need the Source objects,
@@ -128,7 +128,7 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
         resetPartTypeClass(bop.getInput());
         resetPartTypeClass(bop.getOutput());
     }
-    
+
     protected void resetPartTypeClass(BindingMessageInfo bmi) {
         if (bmi != null) {
             int size = bmi.getMessageParts().size();
@@ -137,6 +137,7 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
             }
         }
     }
+
     protected void resetPartTypeClass(MessageInfo msgInfo) {
         if (msgInfo != null) {
             int size = msgInfo.getMessageParts().size();

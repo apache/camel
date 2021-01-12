@@ -4,8 +4,10 @@ package org.apache.camel.component.solr;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": target.setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -54,26 +54,38 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowCompression", java.lang.Boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("collection", java.lang.String.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("defaultMaxConnectionsPerHost", java.lang.Integer.class);
-        answer.put("followRedirects", java.lang.Boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxRetries", java.lang.Integer.class);
-        answer.put("maxTotalConnections", java.lang.Integer.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("requestHandler", java.lang.String.class);
-        answer.put("soTimeout", java.lang.Integer.class);
-        answer.put("streamingQueueSize", int.class);
-        answer.put("streamingThreadCount", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("zkHost", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcompression":
+        case "allowCompression": return java.lang.Boolean.class;
+        case "collection": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "defaultmaxconnectionsperhost":
+        case "defaultMaxConnectionsPerHost": return java.lang.Integer.class;
+        case "followredirects":
+        case "followRedirects": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretries":
+        case "maxRetries": return java.lang.Integer.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return java.lang.Integer.class;
+        case "password": return java.lang.String.class;
+        case "requesthandler":
+        case "requestHandler": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return java.lang.Integer.class;
+        case "streamingqueuesize":
+        case "streamingQueueSize": return int.class;
+        case "streamingthreadcount":
+        case "streamingThreadCount": return int.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "zkhost":
+        case "zkHost": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -82,8 +94,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": return target.getAllowCompression();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "collection": return target.getCollection();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();

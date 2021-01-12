@@ -27,7 +27,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages from Redis.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", category = {Category.SPRING, Category.NOSQL})
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
+             category = { Category.SPRING, Category.NOSQL })
 public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -45,7 +46,8 @@ public class RedisEndpoint extends DefaultEndpoint {
         if (defaultCommand == null) {
             defaultCommand = Command.SET;
         }
-        return new RedisProducer(this,
+        return new RedisProducer(
+                this,
                 RedisConstants.COMMAND,
                 defaultCommand.name(),
                 redisProcessorsCreator);
@@ -61,8 +63,9 @@ public class RedisEndpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        redisProcessorsCreator = new AllRedisProcessorsCreator(new RedisClient(configuration.getRedisTemplate()),
-                ((RedisComponent)getComponent()).getExchangeConverter());
+        redisProcessorsCreator = new AllRedisProcessorsCreator(
+                new RedisClient(configuration.getRedisTemplate()),
+                ((RedisComponent) getComponent()).getExchangeConverter());
     }
 
     @Override

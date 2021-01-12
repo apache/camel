@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.sns;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import software.amazon.awssdk.core.Protocol;
@@ -30,6 +31,7 @@ public class Sns2Configuration implements Cloneable {
     // Common properties
     private String topicName;
     @UriParam
+    @Metadata(autowired = true)
     private SnsClient amazonSNSClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -63,16 +65,20 @@ public class Sns2Configuration implements Cloneable {
     private String region;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
+    @UriParam(defaultValue = "false")
+    private boolean useDefaultCredentialsProvider;
+    @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
+    private MessageGroupIdStrategy messageGroupIdStrategy;
+    @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
+              enums = "useExchangeId,useContentBasedDeduplication")
+    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
 
     public String getSubject() {
         return subject;
     }
 
     /**
-     * The subject which is used if the message header 'CamelAwsSnsSubject' is
-     * not present.
+     * The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
      */
     public void setSubject(String subject) {
         this.subject = subject;
@@ -138,7 +144,8 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * The policy for this queue
+     * The policy for this queue. Is loaded by default from classpath, but you can prefix with "classpath:", "file:", or
+     * "http:" to load the resource from different systems.
      */
     public void setPolicy(String policy) {
         this.policy = policy;
@@ -154,7 +161,7 @@ public class Sns2Configuration implements Cloneable {
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -193,10 +200,8 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which SNS client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which SNS client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -229,8 +234,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a
-     * custom CMK.
+     * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK.
      */
     public void setKmsMasterKeyId(String kmsMasterKeyId) {
         this.kmsMasterKeyId = kmsMasterKeyId;
@@ -257,7 +261,7 @@ public class Sns2Configuration implements Cloneable {
     public void setAutoCreateTopic(boolean autoCreateTopic) {
         this.autoCreateTopic = autoCreateTopic;
     }
-    
+
     public boolean isTrustAllCertificates() {
         return trustAllCertificates;
     }
@@ -268,18 +272,65 @@ public class Sns2Configuration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
-    
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
+
+    public boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Set whether the SNS client should expect to load credentials on an AWS infra instance or to expect static
+     * credentials to be passed in.
      */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    /**
+     * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options:
+     * *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of property
+     * "CamelAwsMessageGroupId" will be used.
+     */
+    public void setMessageGroupIdStrategy(String strategy) {
+        if ("useConstant".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new ConstantMessageGroupIdStrategy();
+        } else if ("useExchangeId".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new ExchangeIdMessageGroupIdStrategy();
+        } else if ("usePropertyValue".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new PropertyValueMessageGroupIdStrategy();
+        } else {
+            throw new IllegalArgumentException("Unrecognised MessageGroupIdStrategy: " + strategy);
+        }
+    }
+
+    public void setMessageGroupIdStrategy(MessageGroupIdStrategy messageGroupIdStrategy) {
+        this.messageGroupIdStrategy = messageGroupIdStrategy;
+    }
+
+    public MessageGroupIdStrategy getMessageGroupIdStrategy() {
+        return messageGroupIdStrategy;
+    }
+
+    public MessageDeduplicationIdStrategy getMessageDeduplicationIdStrategy() {
+        return messageDeduplicationIdStrategy;
+    }
+
+    /**
+     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following
+     * options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no
+     * messageDeduplicationId will be set on the message.
+     */
+    public void setMessageDeduplicationIdStrategy(String strategy) {
+        if ("useExchangeId".equalsIgnoreCase(strategy)) {
+            messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+        } else if ("useContentBasedDeduplication".equalsIgnoreCase(strategy)) {
+            messageDeduplicationIdStrategy = new NullMessageDeduplicationIdStrategy();
+        } else {
+            throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
+        }
+    }
+
+    public void setMessageDeduplicationIdStrategy(MessageDeduplicationIdStrategy messageDeduplicationIdStrategy) {
+        this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
     }
 
     // *************************************************
@@ -288,9 +339,18 @@ public class Sns2Configuration implements Cloneable {
 
     public Sns2Configuration copy() {
         try {
-            return (Sns2Configuration)super.clone();
+            return (Sns2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Whether or not the queue is a FIFO topic
+     */
+    boolean isFifoTopic() {
+        // AWS docs suggest this is valid derivation.
+        // FIFO topic names must end with .fifo, and standard topic cannot
+        return topicName.endsWith(".fifo");
     }
 }

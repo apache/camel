@@ -37,6 +37,8 @@ public interface Olingo4ComponentBuilderFactory {
      * Category: cloud
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-olingo4
+     * 
+     * @return the dsl builder
      */
     static Olingo4ComponentBuilder olingo4() {
         return new Olingo4ComponentBuilderImpl();
@@ -52,10 +54,12 @@ public interface Olingo4ComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.olingo4.Olingo4Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.olingo4.Olingo4Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder configuration(
                 org.apache.camel.component.olingo4.Olingo4Configuration configuration) {
@@ -66,10 +70,13 @@ public interface Olingo4ComponentBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -79,10 +86,13 @@ public interface Olingo4ComponentBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder contentType(java.lang.String contentType) {
             doSetProperty("contentType", contentType);
@@ -92,10 +102,13 @@ public interface Olingo4ComponentBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
@@ -106,10 +119,13 @@ public interface Olingo4ComponentBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.String></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder httpHeaders(
                 java.util.Map<java.lang.String, java.lang.String> httpHeaders) {
@@ -119,9 +135,13 @@ public interface Olingo4ComponentBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: <code>org.apache.http.HttpHost</code> type.
+         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder proxy(org.apache.http.HttpHost proxy) {
             doSetProperty("proxy", proxy);
@@ -131,9 +151,12 @@ public interface Olingo4ComponentBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceUri the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder serviceUri(java.lang.String serviceUri) {
             doSetProperty("serviceUri", serviceUri);
@@ -143,10 +166,13 @@ public interface Olingo4ComponentBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -161,10 +187,13 @@ public interface Olingo4ComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -176,10 +205,13 @@ public interface Olingo4ComponentBuilderFactory {
          * will map every element to distinct messages, unless splitResult is
          * set to false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param splitResult the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder splitResult(boolean splitResult) {
             doSetProperty("splitResult", splitResult);
@@ -196,10 +228,13 @@ public interface Olingo4ComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -207,17 +242,24 @@ public interface Olingo4ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Olingo4ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Olingo4ComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -227,10 +269,12 @@ public interface Olingo4ComponentBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder httpAsyncClientBuilder(
                 org.apache.http.impl.nio.client.HttpAsyncClientBuilder httpAsyncClientBuilder) {
@@ -244,9 +288,12 @@ public interface Olingo4ComponentBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder httpClientBuilder(
                 org.apache.http.impl.client.HttpClientBuilder httpClientBuilder) {
@@ -257,9 +304,12 @@ public interface Olingo4ComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -269,10 +319,13 @@ public interface Olingo4ComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4ComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -314,7 +367,7 @@ public interface Olingo4ComponentBuilderFactory {
             case "bridgeErrorHandler": ((Olingo4Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "splitResult": getOrCreateConfiguration((Olingo4Component) component).setSplitResult((boolean) value); return true;
             case "lazyStartProducer": ((Olingo4Component) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((Olingo4Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Olingo4Component) component).setAutowiredEnabled((boolean) value); return true;
             case "httpAsyncClientBuilder": getOrCreateConfiguration((Olingo4Component) component).setHttpAsyncClientBuilder((org.apache.http.impl.nio.client.HttpAsyncClientBuilder) value); return true;
             case "httpClientBuilder": getOrCreateConfiguration((Olingo4Component) component).setHttpClientBuilder((org.apache.http.impl.client.HttpClientBuilder) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((Olingo4Component) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

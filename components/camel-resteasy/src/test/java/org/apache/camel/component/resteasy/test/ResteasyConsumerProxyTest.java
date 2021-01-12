@@ -40,28 +40,26 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @WebTest
 public class ResteasyConsumerProxyTest {
-    
+
     @Resource
     URI baseUri;
-    
+
     @Deployment
     public static Archive<?> createTestArchive() {
 
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(ProxyServiceInterface.class, ProxyBean.class, Customer.class)
-        .addPackage("org.apache.camel.component.resteasy")
-        .addPackage("org.apache.camel.component.resteasy.servlet")
-        .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-        .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile())
-        .addAsWebInfResource(new File("src/test/resources/contexts/consumerProxy.xml"), "applicationContext.xml")
-        .addAsWebInfResource("web.xml");
-        
+                .addPackage("org.apache.camel.component.resteasy")
+                .addPackage("org.apache.camel.component.resteasy.servlet")
+                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
+                        .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile())
+                .addAsWebInfResource(new File("src/test/resources/contexts/consumerProxy.xml"), "applicationContext.xml")
+                .addAsWebInfResource("web.xml");
+
         return war;
     }
-
 
     @Test
     public void testProxyOnlyFromCamel() throws Exception {
@@ -90,7 +88,8 @@ public class ResteasyConsumerProxyTest {
 
         Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(baseUri.toString() + "proxy/createCustomer");
-        Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(customer, MediaType.APPLICATION_JSON_TYPE));
+        Response response
+                = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(customer, MediaType.APPLICATION_JSON_TYPE));
 
         assertEquals(200, response.getStatus());
         assertEquals("Customer added : {\"name\":\"Camel\",\"surname\":\"Rider\",\"id\":1}", response.readEntity(String.class));

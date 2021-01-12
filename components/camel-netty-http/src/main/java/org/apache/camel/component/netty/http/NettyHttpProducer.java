@@ -86,7 +86,7 @@ public class NettyHttpProducer extends NettyProducer {
             Map<String, List<String>> cookieHeaders = cookieHandler.loadCookies(exchange, u);
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
-                if (entry.getValue().size() > 0) {
+                if (!entry.getValue().isEmpty()) {
                     request.headers().add(key, entry.getValue());
                 }
             }
@@ -142,7 +142,8 @@ public class NettyHttpProducer extends NettyProducer {
                             boolean ok = NettyHttpHelper.isStatusCodeOk(code, configuration.getOkStatusCodeRange());
                             if (!ok && getConfiguration().isThrowExceptionOnFailure()) {
                                 // operation failed so populate exception to throw
-                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
+                                Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl,
+                                        response, code, getConfiguration().isTransferException());
                                 exchange.setException(cause);
                             }
                         }

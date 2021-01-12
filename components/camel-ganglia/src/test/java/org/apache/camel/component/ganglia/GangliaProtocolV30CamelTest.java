@@ -55,10 +55,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@code GangliaProtocolV30CamelTest} is not shipped with an embedded gmond
- * agent. The gmond agent is mocked with the help of camel-netty codecs and a
- * mock endpoint. As underlying UDP packets are not guaranteed to be delivered,
- * loose assertions are performed.
+ * {@code GangliaProtocolV30CamelTest} is not shipped with an embedded gmond agent. The gmond agent is mocked with the
+ * help of camel-netty codecs and a mock endpoint. As underlying UDP packets are not guaranteed to be delivered, loose
+ * assertions are performed.
  */
 public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
 
@@ -142,7 +141,8 @@ public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
     @Sharable
     public static class ProtocolV30Decoder extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext ctx, DatagramPacket packet, List<Object> out) throws OncRpcException, IOException {
+        protected void decode(ChannelHandlerContext ctx, DatagramPacket packet, List<Object> out)
+                throws OncRpcException, IOException {
             byte[] bytes = new byte[packet.content().readableBytes()];
             packet.content().readBytes(bytes);
 

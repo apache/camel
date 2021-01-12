@@ -28,18 +28,20 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Expose REST endpoints and access external REST servers.
  */
-@UriEndpoint(firstVersion = "3.4.0", scheme = "resteasy",  extendsScheme = "http",
-        title = "Resteasy", syntax = "resteasy:httpUri", category = {Category.REST})
+@UriEndpoint(firstVersion = "3.4.0", scheme = "resteasy", extendsScheme = "http",
+             title = "Resteasy", syntax = "resteasy:httpUri", category = { Category.REST })
 @Metadata(excludeProperties = "clientConnectionManager,connectionsPerRoute,connectionTimeToLive,"
-        + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
-        + "connectTimeout,socketTimeout,cookieStore")
+                              + "httpBinding,httpClientConfigurer,httpConfiguration,httpContext,httpRegistry,maxTotalConnections,connectionRequestTimeout,"
+                              + "connectTimeout,socketTimeout,cookieStore,x509HostnameVerifier,sslContextParameters,"
+                              + "clientBuilder,httpClient,httpClientOptions,"
+                              + "proxyHost,proxyMethod,proxyPort,authDomain,authenticationPreemptive,authHost,authMethod,authMethodPriority,authPassword,authUsername,basicAuth,"
+                              + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,proxyAuthNtHost")
 public class ResteasyEndpoint extends HttpEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResteasyEndpoint.class);
@@ -105,7 +107,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the proxy method defined in an interface
-    */
+     */
     public void setProxyMethod(String proxyMethod) {
         this.proxyMethod = proxyMethod;
     }
@@ -115,9 +117,9 @@ public class ResteasyEndpoint extends HttpEndpoint {
     }
 
     /**
-     * Sets the flag to use the endpoint where you can either populate camel exchange
-     * from servlet response or use request itself which may be thought as if it is a proxy.
-    */
+     * Sets the flag to use the endpoint where you can either populate camel exchange from servlet response or use
+     * request itself which may be thought as if it is a proxy.
+     */
     public void setSetHttpResponseDuringProcessing(Boolean setHttpResponseDuringProcessing) {
         this.setHttpResponseDuringProcessing = setHttpResponseDuringProcessing;
     }
@@ -128,7 +130,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the flag to use skip servlet processing and let camel take over processing
-    */
+     */
     public void setSkipServletProcessing(Boolean skipServletProcessing) {
         this.skipServletProcessing = skipServletProcessing;
     }
@@ -139,7 +141,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the resteasy proxyClientClass
-    */
+     */
     public void setProxyClientClass(String proxyClientClass) {
         this.proxyClientClass = proxyClientClass;
     }
@@ -150,7 +152,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the servlet name
-    */
+     */
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
@@ -161,7 +163,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the resteasy method to process the request
-    */
+     */
     public void setResteasyMethod(String resteasyMethod) {
         this.resteasyMethod = resteasyMethod;
     }
@@ -172,7 +174,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the protocol
-    */
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -183,7 +185,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the host
-    */
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -194,7 +196,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the port
-    */
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -205,7 +207,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the uriPattern
-    */
+     */
     public void setUriPattern(String uriPattern) {
         this.uriPattern = uriPattern;
     }
@@ -216,7 +218,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the flag to basicAuth on endpoint
-    */
+     */
     public void setBasicAuth(Boolean basicAuth) {
         this.basicAuth = basicAuth;
     }
@@ -227,7 +229,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the username
-    */
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -238,7 +240,7 @@ public class ResteasyEndpoint extends HttpEndpoint {
 
     /**
      * Sets the password
-    */
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -249,9 +251,9 @@ public class ResteasyEndpoint extends HttpEndpoint {
     protected String buildUri() {
         String uri;
         if (port == 0) {
-            uri = protocol + "://" + host  + uriPattern;
+            uri = protocol + "://" + host + uriPattern;
         } else {
-            uri = protocol + "://" + host  + ":" + port + uriPattern;
+            uri = protocol + "://" + host + ":" + port + uriPattern;
         }
 
         LOG.debug("Using uri: {}", uri);

@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 public class NatsProducerTest extends NatsTestSupport {
-    
+
     @Test
     public void sendTest() throws Exception {
         template.sendBody("direct:send", "pippo");

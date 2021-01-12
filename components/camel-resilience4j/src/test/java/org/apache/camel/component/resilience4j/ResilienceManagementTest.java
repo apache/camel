@@ -38,9 +38,18 @@ public class ResilienceManagementTest extends CamelTestSupport {
 
     @Test
     public void testResilience() throws Exception {
+        test("start", "myResilience");
+    }
+
+    @Test
+    public void testResilienceWithTimeOut() throws Exception {
+        test("start.with.timeout.enabled", "myResilienceWithTimeout");
+    }
+
+    public void test(String routId, String circuitBreakerName) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:" + routId, "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -52,26 +61,27 @@ public class ResilienceManagementTest extends CamelTestSupport {
         String name = context.getManagementName();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myResilience\"");
+        ObjectName on = ObjectName
+                .getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"" + circuitBreakerName + "\"");
 
         // should be on start
-        String routeId = (String)mbeanServer.getAttribute(on, "RouteId");
-        assertEquals("start", routeId);
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals(routId, routeId);
 
-        Integer num = (Integer)mbeanServer.getAttribute(on, "CircuitBreakerMinimumNumberOfCalls");
+        Integer num = (Integer) mbeanServer.getAttribute(on, "CircuitBreakerMinimumNumberOfCalls");
         assertEquals("100", num.toString());
 
-        Integer totalRequests = (Integer)mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
+        Integer totalRequests = (Integer) mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
         assertEquals(1, totalRequests.intValue());
 
-        Integer errorCount = (Integer)mbeanServer.getAttribute(on, "NumberOfFailedCalls");
+        Integer errorCount = (Integer) mbeanServer.getAttribute(on, "NumberOfFailedCalls");
         assertEquals(0, errorCount.intValue());
 
-        String state = (String)mbeanServer.getAttribute(on, "CircuitBreakerState");
+        String state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
         assertEquals("CLOSED", state);
 
         mbeanServer.invoke(on, "transitionToOpenState", null, null);
-        state = (String)mbeanServer.getAttribute(on, "CircuitBreakerState");
+        state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
         assertEquals("OPEN", state);
     }
 
@@ -80,8 +90,15 @@ public class ResilienceManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback().transform().constant("Fallback message").end()
-                    .to("mock:result");
+                from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback()
+                        .transform().constant("Fallback message").end()
+                        .to("mock:result");
+
+                from("direct:start.with.timeout.enabled").routeId("start.with.timeout.enabled").circuitBreaker().id("myResilienceWithTimeout")
+                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .to("direct:foo").onFallback()
+                        .transform().constant("Fallback message").end()
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

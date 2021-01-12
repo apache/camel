@@ -21,6 +21,12 @@ package org.apache.camel.component.ignite.compute;
  */
 public enum IgniteComputeExecutionType {
 
-    CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN
+    CALL,
+    BROADCAST,
+    APPLY,
+    EXECUTE,
+    RUN,
+    AFFINITY_CALL,
+    AFFINITY_RUN
 
 }

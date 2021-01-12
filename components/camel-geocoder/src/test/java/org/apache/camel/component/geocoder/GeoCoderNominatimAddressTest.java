@@ -28,7 +28,7 @@ public class GeoCoderNominatimAddressTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(GeoCoderConstants.COUNTRY_SHORT, "ES");
-        mock.expectedHeaderReceived(GeoCoderConstants.CITY, "Sevilla");
+        mock.expectedHeaderReceived(GeoCoderConstants.REGION_NAME, "Andalucía");
 
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Test");
@@ -40,10 +40,12 @@ public class GeoCoderNominatimAddressTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("geocoder:address:calle marie curie, sevilla, sevilla?type=NOMINATIM&serverUrl=RAW(https://nominatim.openstreetmap.org)").to("log:result")
-                    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
-                         + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
-                    .to("mock:result");
+                from("direct:start").to(
+                        "geocoder:address:calle marie curie, sevilla, sevilla?type=NOMINATIM&serverUrl=RAW(https://nominatim.openstreetmap.org)")
+                        .to("log:result")
+                        .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
+                             + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
+                        .to("mock:result");
             }
         };
     }

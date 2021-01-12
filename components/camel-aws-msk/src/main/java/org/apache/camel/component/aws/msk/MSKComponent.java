@@ -32,16 +32,16 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-msk")
 public class MSKComponent extends DefaultComponent {
 
-    @Metadata    
+    @Metadata
     private MSKConfiguration configuration = new MSKConfiguration();
-    
+
     public MSKComponent() {
         this(null);
     }
-    
+
     public MSKComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new MSKComponentVerifierExtension());
     }
 
@@ -53,12 +53,13 @@ public class MSKComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getMskClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getMskClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon msk client or accessKey and secretKey must be specified");
         }
         return endpoint;
     }
-    
+
     public MSKConfiguration getConfiguration() {
         return configuration;
     }

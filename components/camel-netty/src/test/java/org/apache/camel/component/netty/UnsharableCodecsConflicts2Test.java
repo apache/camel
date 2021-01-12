@@ -38,7 +38,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeReconnectTest.class);
 
-    private static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 16384 bytes
+    private static final byte[] LENGTH_HEADER = { 0x00, 0x00, 0x40, 0x00 }; // 16384 bytes
 
     private Processor processor = new P();
     private int port;
@@ -50,8 +50,8 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
     public void unsharableCodecsConflictsTest() throws Exception {
         byte[] data1 = new byte[8192];
         byte[] data2 = new byte[16383];
-        Arrays.fill(data1, (byte)0x38);
-        Arrays.fill(data2, (byte)0x39);
+        Arrays.fill(data1, (byte) 0x38);
+        Arrays.fill(data2, (byte) 0x39);
         byte[] body1 = (new String(LENGTH_HEADER) + new String(data1)).getBytes();
         byte[] body2 = (new String(LENGTH_HEADER) + new String(data2)).getBytes();
 

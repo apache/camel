@@ -32,14 +32,13 @@ public final class CatalogHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
     public static void loadLines(InputStream in, List<String> lines) throws IOException {
         try (final InputStreamReader isr = new InputStreamReader(in);
-            final BufferedReader reader = new LineNumberReader(isr)) {
+             final BufferedReader reader = new LineNumberReader(isr)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
@@ -50,8 +49,7 @@ public final class CatalogHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
@@ -64,15 +62,14 @@ public final class CatalogHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
         StringBuilder builder = new StringBuilder();
         try (final InputStreamReader isr = new InputStreamReader(in);
-            final BufferedReader reader = new LineNumberReader(isr)) {
+             final BufferedReader reader = new LineNumberReader(isr)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
@@ -85,9 +82,9 @@ public final class CatalogHelper {
     /**
      * Matches the name with the pattern.
      *
-     * @param name  the name
-     * @param pattern the pattern
-     * @return <tt>true</tt> if matched, or <tt>false</tt> if not
+     * @param  name    the name
+     * @param  pattern the pattern
+     * @return         <tt>true</tt> if matched, or <tt>false</tt> if not
      */
     public static boolean matchWildcard(String name, String pattern) {
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
@@ -100,9 +97,9 @@ public final class CatalogHelper {
     /**
      * Returns the string after the given token
      *
-     * @param text  the text
-     * @param after the token
-     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     * @param  text  the text
+     * @param  after the token
+     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
         if (!text.contains(after)) {
@@ -114,9 +111,9 @@ public final class CatalogHelper {
     /**
      * Returns the string before the given token
      *
-     * @param text  the text
-     * @param before the token
-     * @return the text before the token, or <tt>null</tt> if text does not contain the token
+     * @param  text   the text
+     * @param  before the token
+     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
      */
     public static String before(String text, String before) {
         if (!text.contains(before)) {
@@ -128,10 +125,10 @@ public final class CatalogHelper {
     /**
      * Returns the string between the given tokens
      *
-     * @param text  the text
-     * @param after the before token
-     * @param before the after token
-     * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @param  text   the text
+     * @param  after  the before token
+     * @param  before the after token
+     * @return        the text between the tokens, or <tt>null</tt> if text does not contain the tokens
      */
     public static String between(String text, String after, String before) {
         text = after(text, after);
@@ -144,8 +141,8 @@ public final class CatalogHelper {
     /**
      * Tests whether the value is <tt>null</tt> or an empty string.
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @return true if empty
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if empty
      */
     public static boolean isEmpty(Object value) {
         return !isNotEmpty(value);
@@ -154,8 +151,8 @@ public final class CatalogHelper {
     /**
      * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
      *
-     * @param value  the value, if its a String it will be tested for text length as well
-     * @return true if <b>not</b> empty
+     * @param  value the value, if its a String it will be tested for text length as well
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
@@ -171,8 +168,8 @@ public final class CatalogHelper {
     /**
      * Removes all leading and ending quotes (single and double) from the string
      *
-     * @param s  the string
-     * @return the string without leading and ending quotes (single and double)
+     * @param  s the string
+     * @return   the string without leading and ending quotes (single and double)
      */
     public static String removeLeadingAndEndingQuotes(String s) {
         if (isEmpty(s)) {

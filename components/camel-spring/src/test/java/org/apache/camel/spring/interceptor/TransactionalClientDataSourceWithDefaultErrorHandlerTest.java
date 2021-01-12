@@ -19,8 +19,8 @@ package org.apache.camel.spring.interceptor;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Using the default error handler = DeadLetterChannel to unit test that this works out of the box
- * also, that Camel doesn't break.
+ * Using the default error handler = DeadLetterChannel to unit test that this works out of the box also, that Camel
+ * doesn't break.
  */
 public class TransactionalClientDataSourceWithDefaultErrorHandlerTest extends TransactionalClientDataSourceTest {
 
@@ -30,5 +30,5 @@ public class TransactionalClientDataSourceWithDefaultErrorHandlerTest extends Tr
         super.setUp();
         useTransactionErrorHandler = false;
     }
-    
+
 }

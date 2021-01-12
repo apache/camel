@@ -137,12 +137,12 @@ public class DefaultJavaMailSender implements JavaMailSender {
     }
 
     /**
-     * Returns the password authentication from the authenticator or from the
-     * parameters user and password.
+     * Returns the password authentication from the authenticator or from the parameters user and password.
      */
     public PasswordAuthentication getPasswordAuthentication() {
         // call authenticator so that the authenticator can dynamically determine the password or token
-        return authenticator == null ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
+        return authenticator == null
+                ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
     }
 
     @Override
@@ -167,7 +167,7 @@ public class DefaultJavaMailSender implements JavaMailSender {
             try {
                 transport.close();
             } catch (MessagingException e) {
-                LOG.warn("Error closing transport to host " + host + ". This exception will be ignored.", e);
+                LOG.warn("Error closing transport to host {}. This exception will be ignored.", host, e);
             }
         }
     }

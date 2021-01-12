@@ -35,7 +35,7 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
         order.setCustomerName("Acme");
         order.setPartName("Camel");
 
-        String json = (String)template.requestBody("direct:test", order);
+        String json = (String) template.requestBody("direct:test", order);
         assertEquals("{\"id\":0,\"partName\":\"Camel\",\"amount\":1,\"customerName\":\"Acme\"}", json);
     }
 
@@ -43,14 +43,15 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
     public void shouldConvertJAXBPojoToString() {
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
-        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES, JaxbAnnotationModule.class.getName());
+        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES,
+                JaxbAnnotationModule.class.getName());
 
         Order order = new Order();
         order.setAmount(1);
         order.setCustomerName("Acme");
         order.setPartName("Camel");
 
-        String json = (String)template.requestBody("direct:test", order);
+        String json = (String) template.requestBody("direct:test", order);
         assertEquals("{\"id\":0,\"partName\":\"Camel\",\"amount\":1,\"customer_name\":\"Acme\"}", json);
     }
 

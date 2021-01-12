@@ -17,24 +17,23 @@
 package org.apache.camel;
 
 /**
- * An exception thrown for either authentication or authorization errors occurring
- * in a Camel exchange.  Intended to be used when a user is denied an action and
- * Camel should not process the message as a result.
+ * An exception thrown for either authentication or authorization errors occurring in a Camel exchange. Intended to be
+ * used when a user is denied an action and Camel should not process the message as a result.
  */
 public class CamelAuthorizationException extends CamelExchangeException {
 
     private final String policyId;
-    
+
     public CamelAuthorizationException(String message, Exchange exchange) {
         super(message, exchange);
-        policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);        
+        policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
     }
-    
+
     public CamelAuthorizationException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
         policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
     }
-    
+
     public String getPolicyId() {
         return policyId;
     }

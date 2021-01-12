@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirPatch} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirPatch} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirPatchIT extends AbstractFhirTestSupport {
 
@@ -118,15 +118,15 @@ public class FhirPatchIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for patchById
                 from("direct://PATCH_BY_ID")
-                    .to("fhir://" + PATH_PREFIX + "/patchById");
+                        .to("fhir://" + PATH_PREFIX + "/patchById");
 
                 // test route for patchBySId
                 from("direct://PATCH_BY_SID")
-                    .to("fhir://" + PATH_PREFIX + "/patchById");
+                        .to("fhir://" + PATH_PREFIX + "/patchById");
 
                 // test route for patchByUrl
                 from("direct://PATCH_BY_URL")
-                    .to("fhir://" + PATH_PREFIX + "/patchByUrl");
+                        .to("fhir://" + PATH_PREFIX + "/patchByUrl");
 
             }
         };

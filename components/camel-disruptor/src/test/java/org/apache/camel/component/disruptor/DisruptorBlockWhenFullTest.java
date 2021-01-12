@@ -36,7 +36,7 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
 
     private static final String DEFAULT_URI = "disruptor:foo?size=" + QUEUE_SIZE;
     private static final String EXCEPTION_WHEN_FULL_URI = "disruptor:foo?blockWhenFull=false&size="
-            + QUEUE_SIZE;
+                                                          + QUEUE_SIZE;
 
     @Override
     protected RouteBuilder createRouteBuilder() {

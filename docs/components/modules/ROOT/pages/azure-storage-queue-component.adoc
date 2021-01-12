@@ -8,6 +8,7 @@
 :since: 3.3
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-queue.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 
@@ -52,10 +53,10 @@ The queue will be created if it does not already exist.
 You can append query options to the URI in the following format, ?options=value&option2=value&...
 
 For example in order to get a message content from the queue `messageQueue`
-in the `camelazure` storage account and, use the following snippet:
+in the `storageAccount` storage account and, use the following snippet:
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-queue:/camelazure/messageQueue?accountName=yourAccountName&accessKey=yourAccessKey").
+from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
@@ -76,8 +77,8 @@ The Azure Storage Queue Service component supports 16 options, which are listed 
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *createQueue* (producer) | When is set to true, the queue will be automatically created when sending messages to the queue. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *operation* (producer) | Queue service operation hint to the producer. There are 9 enums and the value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *maxMessages* (queue) | Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages. | 1 | Integer
 | *messageId* (queue) | The ID of the message to be deleted or updated. |  | String
 | *popReceipt* (queue) | Unique identifier that must match for the message to be deleted or updated. |  | String
@@ -93,7 +94,7 @@ The Azure Storage Queue Service component supports 16 options, which are listed 
 The Azure Storage Queue Service endpoint is configured using URI syntax:
 
 ----
-azure-storage-queue:queueName
+azure-storage-queue:accountName/queueName
 ----
 
 with the following path and query parameters:
@@ -109,7 +110,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (18 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -119,11 +120,10 @@ with the following path and query parameters:
 | *serviceClient* (common) | Service client to a storage account to interact with the queue service. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. This client contains all the operations for interacting with a queue account in Azure Storage. Operations allowed by the client are creating, listing, and deleting queues, retrieving and updating properties of the account, and retrieving statistics of the account. |  | QueueServiceClient
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *createQueue* (producer) | When is set to true, the queue will be automatically created when sending messages to the queue. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | Queue service operation hint to the producer. The value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *operation* (producer) | Queue service operation hint to the producer. There are 9 enums and the value can be one of: listQueues, createQueue, deleteQueue, clearQueue, sendMessage, deleteMessage, receiveMessages, peekMessages, updateMessage |  | QueueOperationDefinition
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *maxMessages* (queue) | Maximum number of messages to get, if there are less messages exist in the queue than requested all the messages will be returned. If left empty only 1 message will be retrieved, the allowed range is 1 to 32 messages. | 1 | Integer
 | *messageId* (queue) | The ID of the message to be deleted or updated. |  | String

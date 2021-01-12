@@ -1,0 +1,34 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.7 to 3.8
+
+=== OnCompletion EIP
+
+The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
+
+
+=== camel-activemq and camel-jms
+
+The JMS and ActiveMQ component now supports optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.
+
+=== camel-sjms and camel-sjms2
+
+These two components has been overhauled and re-written with the goals of being more feature complete with the Spring JMS component.
+They also no longer uses their own connection pooling, but let you use the existing 3rd party pooling for `ConnectionFactory` which is common practice.
+The components are now also reactive and non-blocking, and also supports optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.
+
+Many of the previous features and configuration options have been removed/renamed.
+To migrate you need to read their documentation and see what options they now offer.
+
+=== Camel-AWS2-SNS
+
+The policy option now expects a file, since the policy are going to be complex. It can be from classpath:, http: or file: etc.
+
+=== Camel-AWS2-SQS
+
+The policy option now expects a file, since the policy are going to be complex. It can be from classpath:, http: or file: etc.
+

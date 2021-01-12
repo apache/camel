@@ -37,10 +37,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
 
 /**
- * Acquires exclusive read lock to the given file. Will wait until the lock is
- * granted. After granting the read lock it is released, we just want to make
- * sure that when we start consuming the file its not currently in progress of
- * being written by third party.
+ * Acquires exclusive read lock to the given file. Will wait until the lock is granted. After granting the read lock it
+ * is released, we just want to make sure that when we start consuming the file its not currently in progress of being
+ * written by third party.
  */
 public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(FileLockExclusiveReadLockStrategy.class);
@@ -54,7 +53,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -82,7 +82,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 if (timeout > 0) {
                     long delta = watch.taken();
                     if (delta > timeout) {
-                        CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
+                        CamelLogger.log(LOG, readLockLoggingLevel,
+                                "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
                         // we could not get the lock within the timeout period,
                         // so return false
                         return false;
@@ -90,7 +91,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 }
 
                 if (!target.exists()) {
-                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                     return false;
                 }
 
@@ -151,13 +153,16 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call super
         super.doReleaseExclusiveReadLock(operations, file, exchange);
 
         FileLock lock = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
-        RandomAccessFile rac = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
-        Channel channel = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
+        RandomAccessFile rac
+                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
+        Channel channel
+                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
 
         String target = file.getFileName();
         if (lock != null) {

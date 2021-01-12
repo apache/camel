@@ -21,15 +21,19 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import ai.djl.MalformedModelException;
 import ai.djl.Model;
 import ai.djl.basicmodelzoo.basic.Mlp;
+import ai.djl.modality.Classifications;
+import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.transform.ToTensor;
 import ai.djl.modality.cv.translator.ImageClassificationTranslator;
-import ai.djl.translate.Pipeline;
-import ai.djl.translate.TranslateException;
+import ai.djl.translate.Translator;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -71,7 +75,8 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
                         .process(exchange -> {
                             String filename = exchange.getIn().getHeader("CamelFileName", String.class);
                             Map<String, Float> result = exchange.getIn().getBody(Map.class);
-                            String max = Collections.max(result.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
+                            String max = Collections.max(result.entrySet(), Comparator.comparingDouble(Map.Entry::getValue))
+                                    .getKey();
                             exchange.getIn().setBody(filename.startsWith(max));
                         })
                         .log("${header.CamelFileName} = ${body}")
@@ -80,17 +85,15 @@ public class ImageClassificationLocalTest extends CamelTestSupport {
         };
     }
 
-    private void loadLocalModel() throws IOException, MalformedModelException, TranslateException {
+    private void loadLocalModel() throws IOException, MalformedModelException {
         // create deep learning model
-        Model model = Model.newInstance();
-        model.setBlock(new Mlp(28 * 28, 10, new int[]{128, 64}));
+        Model model = Model.newInstance(MODEL_NAME);
+        model.setBlock(new Mlp(28 * 28, 10, new int[] { 128, 64 }));
         model.load(Paths.get(MODEL_DIR), MODEL_NAME);
         // create translator for pre-processing and postprocessing
-        ImageClassificationTranslator.Builder builder = ImageClassificationTranslator.builder();
-        builder.setSynsetArtifactName("synset.txt");
-        builder.setPipeline(new Pipeline(new ToTensor()));
-        builder.optApplySoftmax(true);
-        ImageClassificationTranslator translator = new ImageClassificationTranslator(builder);
+        List<String> classes = IntStream.range(0, 10).mapToObj(String::valueOf).collect(Collectors.toList());
+        Translator<Image, Classifications> translator
+                = ImageClassificationTranslator.builder().addTransform(new ToTensor()).optSynset(classes).build();
 
         // Bind model beans
         context.getRegistry().bind("MyModel", model);

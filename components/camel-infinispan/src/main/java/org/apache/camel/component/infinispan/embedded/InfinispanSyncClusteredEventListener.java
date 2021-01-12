@@ -46,4 +46,3 @@ public class InfinispanSyncClusteredEventListener extends InfinispanEventListene
         }
     }
 }
-

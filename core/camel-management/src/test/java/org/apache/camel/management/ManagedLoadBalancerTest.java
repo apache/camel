@@ -54,7 +54,7 @@ public class ManagedLoadBalancerTest extends ManagementTestSupport {
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myBalancer\"");
         mbeanServer.isRegistered(name);
-        
+
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(3, total.intValue());
     }
@@ -65,7 +65,7 @@ public class ManagedLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .loadBalance().id("myBalancer").roundRobin()
+                        .loadBalance().id("myBalancer").roundRobin()
                         .to("mock:a").to("mock:b");
             }
         };

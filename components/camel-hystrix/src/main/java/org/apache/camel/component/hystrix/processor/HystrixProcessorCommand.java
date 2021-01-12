@@ -74,7 +74,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
         Throwable exception = getExecutionException();
 
         if (exception != null) {
-            LOG.debug("Error occurred processing. Will now run fallback. Exception class: {} message: {}.", exception.getClass().getName(), exception.getMessage());
+            LOG.debug("Error occurred processing. Will now run fallback. Exception class: {} message: {}.",
+                    exception.getClass().getName(), exception.getMessage());
         } else {
             LOG.debug("Error occurred processing. Will now run fallback.");
         }
@@ -154,7 +155,8 @@ public class HystrixProcessorCommand extends HystrixCommand {
             // execution exception must take precedence over exchange exception
             // because hystrix may have caused this command to fail due timeout or something else
             if (hystrixExecutionException != null) {
-                exchange.setException(new CamelExchangeException("Hystrix execution exception occurred while processing Exchange", exchange, hystrixExecutionException));
+                exchange.setException(new CamelExchangeException(
+                        "Hystrix execution exception occurred while processing Exchange", exchange, hystrixExecutionException));
             }
 
             // special for HystrixBadRequestException which should not trigger fallback

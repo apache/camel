@@ -151,14 +151,14 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:put")
-                    .to("jcache://test-cache");
+                        .to("jcache://test-cache");
                 from("direct:put-with-default-action")
-                    .to("jcache://test-cache?action=PUT");
+                        .to("jcache://test-cache?action=PUT");
                 from("direct:put-if-absent")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:put-if-absent");
                 from("direct:put-all")
-                    .to("jcache://test-cache");
+                        .to("jcache://test-cache");
             }
         };
     }

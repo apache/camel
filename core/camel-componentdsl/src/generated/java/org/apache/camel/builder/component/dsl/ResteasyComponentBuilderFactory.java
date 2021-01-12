@@ -37,6 +37,8 @@ public interface ResteasyComponentBuilderFactory {
      * Category: rest
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-resteasy
+     * 
+     * @return the dsl builder
      */
     static ResteasyComponentBuilder resteasy() {
         return new ResteasyComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface ResteasyComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -71,9 +76,12 @@ public interface ResteasyComponentBuilderFactory {
          * Proxy classes for consumer endpoints. Multiple classes can be
          * separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyConsumersClasses the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder proxyConsumersClasses(
                 java.lang.String proxyConsumersClasses) {
@@ -91,10 +99,13 @@ public interface ResteasyComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -108,10 +119,13 @@ public interface ResteasyComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -119,31 +133,24 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
-         */
-        default ResteasyComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom HttpBinding to control the mapping between Camel
-         * message and HttpClient.
          * 
-         * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * 
-         * Group: advanced
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ResteasyComponentBuilder httpBinding(
-                org.apache.camel.http.common.HttpBinding httpBinding) {
-            doSetProperty("httpBinding", httpBinding);
+        default ResteasyComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -151,56 +158,17 @@ public interface ResteasyComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters. Important: Only one
-         * instance of org.apache.camel.support.jsse.SSLContextParameters is
-         * supported per HttpComponent. If you need to use 2 or more different
-         * instances, you need to define a new HttpComponent per instance you
-         * need.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Enable usage of global SSL context parameters.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         */
-        default ResteasyComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or NoopHostnameVerifier.
-         * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
-         * 
-         * Group: security
-         */
-        default ResteasyComponentBuilder x509HostnameVerifier(
-                javax.net.ssl.HostnameVerifier x509HostnameVerifier) {
-            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
     }
@@ -224,12 +192,8 @@ public interface ResteasyComponentBuilderFactory {
             case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "basicPropertyBinding": ((ResteasyComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "httpBinding": ((ResteasyComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "autowiredEnabled": ((ResteasyComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "headerFilterStrategy": ((ResteasyComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "sslContextParameters": ((ResteasyComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "useGlobalSslContextParameters": ((ResteasyComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "x509HostnameVerifier": ((ResteasyComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;
             default: return false;
             }
         }

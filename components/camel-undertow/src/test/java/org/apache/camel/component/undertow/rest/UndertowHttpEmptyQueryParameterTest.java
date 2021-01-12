@@ -45,8 +45,8 @@ public class UndertowHttpEmptyQueryParameterTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().simple("Header: ${header.id}");
+                        .to("mock:input")
+                        .transform().simple("Header: ${header.id}");
             }
         };
     }

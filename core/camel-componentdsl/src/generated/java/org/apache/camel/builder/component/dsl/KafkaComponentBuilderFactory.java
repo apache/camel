@@ -37,6 +37,8 @@ public interface KafkaComponentBuilderFactory {
      * Category: messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-kafka
+     * 
+     * @return the dsl builder
      */
     static KafkaComponentBuilder kafka() {
         return new KafkaComponentBuilderImpl();
@@ -52,12 +54,15 @@ public interface KafkaComponentBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param additionalProperties the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder additionalProperties(
                 java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
@@ -70,9 +75,12 @@ public interface KafkaComponentBuilderFactory {
          * VIP pointing to a subset of brokers. This option is known as
          * bootstrap.servers in the Kafka documentation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param brokers the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder brokers(java.lang.String brokers) {
             doSetProperty("brokers", brokers);
@@ -83,9 +91,12 @@ public interface KafkaComponentBuilderFactory {
          * trace calls. It should logically identify the application making the
          * request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -96,10 +107,12 @@ public interface KafkaComponentBuilderFactory {
          * the endpoints will reuse.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.kafka.KafkaConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder configuration(
                 org.apache.camel.component.kafka.KafkaConfiguration configuration) {
@@ -111,9 +124,13 @@ public interface KafkaComponentBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -127,10 +144,13 @@ public interface KafkaComponentBuilderFactory {
          * connection failure, up to this maximum. After calculating the backoff
          * increase, 20% random jitter is added to avoid connection storms.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param reconnectBackoffMaxMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder reconnectBackoffMaxMs(
                 java.lang.Integer reconnectBackoffMaxMs) {
@@ -141,10 +161,13 @@ public interface KafkaComponentBuilderFactory {
          * Timeout in milli seconds to wait gracefully for the consumer or
          * producer to shutdown and terminate its worker threads.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder shutdownTimeout(int shutdownTimeout) {
             doSetProperty("shutdownTimeout", shutdownTimeout);
@@ -156,10 +179,13 @@ public interface KafkaComponentBuilderFactory {
          * the Exchange message header, which allows end users to access this
          * API and perform manual offset commits via the Kafka consumer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param allowManualCommit the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder allowManualCommit(
                 boolean allowManualCommit) {
@@ -172,10 +198,13 @@ public interface KafkaComponentBuilderFactory {
          * when the process fails as the position from which the new consumer
          * will begin.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoCommitEnable the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder autoCommitEnable(
                 java.lang.Boolean autoCommitEnable) {
@@ -186,10 +215,13 @@ public interface KafkaComponentBuilderFactory {
          * The frequency in ms that the consumer offsets are committed to
          * zookeeper.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param autoCommitIntervalMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder autoCommitIntervalMs(
                 java.lang.Integer autoCommitIntervalMs) {
@@ -202,10 +234,13 @@ public interface KafkaComponentBuilderFactory {
          * requires the option autoCommitEnable is turned on. The possible
          * values are: sync, async, or none. And sync is the default value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: sync
          * Group: consumer
+         * 
+         * @param autoCommitOnStop the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder autoCommitOnStop(
                 java.lang.String autoCommitOnStop) {
@@ -218,10 +253,13 @@ public interface KafkaComponentBuilderFactory {
          * the earliest offset latest : automatically reset the offset to the
          * latest offset fail: throw exception to the consumer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: latest
          * Group: consumer
+         * 
+         * @param autoOffsetReset the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder autoOffsetReset(
                 java.lang.String autoOffsetReset) {
@@ -239,10 +277,13 @@ public interface KafkaComponentBuilderFactory {
          * Therefore its recommended to deal with that for example by using
          * Camel's error handler.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param breakOnFirstError the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder breakOnFirstError(
                 boolean breakOnFirstError) {
@@ -258,10 +299,13 @@ public interface KafkaComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -274,10 +318,13 @@ public interface KafkaComponentBuilderFactory {
          * check adds some overhead, so it may be disabled in cases seeking
          * extreme performance.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param checkCrcs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder checkCrcs(java.lang.Boolean checkCrcs) {
             doSetProperty("checkCrcs", checkCrcs);
@@ -289,10 +336,13 @@ public interface KafkaComponentBuilderFactory {
          * before the timeout elapses the client will resend the request if
          * necessary or fail the request if retries are exhausted.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: consumer
+         * 
+         * @param consumerRequestTimeoutMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder consumerRequestTimeoutMs(
                 java.lang.Integer consumerRequestTimeoutMs) {
@@ -302,10 +352,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The number of consumers that connect to kafka server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param consumersCount the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder consumersCount(int consumersCount) {
             doSetProperty("consumersCount", consumersCount);
@@ -314,10 +367,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * Number of concurrent consumers on the consumer.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param consumerStreams the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder consumerStreams(int consumerStreams) {
             doSetProperty("consumerStreams", consumerStreams);
@@ -333,10 +389,13 @@ public interface KafkaComponentBuilderFactory {
          * config). Note that the consumer performs multiple fetches in
          * parallel.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 52428800
          * Group: consumer
+         * 
+         * @param fetchMaxBytes the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder fetchMaxBytes(
                 java.lang.Integer fetchMaxBytes) {
@@ -348,10 +407,13 @@ public interface KafkaComponentBuilderFactory {
          * request. If insufficient data is available the request will wait for
          * that much data to accumulate before answering the request.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param fetchMinBytes the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder fetchMinBytes(
                 java.lang.Integer fetchMinBytes) {
@@ -363,10 +425,13 @@ public interface KafkaComponentBuilderFactory {
          * fetch request if there isn't sufficient data to immediately satisfy
          * fetch.min.bytes.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: consumer
+         * 
+         * @param fetchWaitMaxMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder fetchWaitMaxMs(
                 java.lang.Integer fetchWaitMaxMs) {
@@ -379,12 +444,32 @@ public interface KafkaComponentBuilderFactory {
          * processes indicate that they are all part of the same consumer group.
          * This option is required for consumers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupId the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder groupId(java.lang.String groupId) {
             doSetProperty("groupId", groupId);
+            return this;
+        }
+        /**
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param headerDeserializer the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder headerDeserializer(
+                org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer headerDeserializer) {
+            doSetProperty("headerDeserializer", headerDeserializer);
             return this;
         }
         /**
@@ -396,10 +481,13 @@ public interface KafkaComponentBuilderFactory {
          * set no higher than 1/3 of that value. It can be adjusted even lower
          * to control the expected time for normal rebalances.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: consumer
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder heartbeatIntervalMs(
                 java.lang.Integer heartbeatIntervalMs) {
@@ -407,27 +495,16 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
-         * values.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
-         * 
-         * Group: consumer
-         */
-        default KafkaComponentBuilder kafkaHeaderDeserializer(
-                org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer kafkaHeaderDeserializer) {
-            doSetProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
-            return this;
-        }
-        /**
          * Deserializer class for key that implements the Deserializer
          * interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
+         * 
+         * @param keyDeserializer the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder keyDeserializer(
                 java.lang.String keyDeserializer) {
@@ -443,10 +520,13 @@ public interface KafkaComponentBuilderFactory {
          * happens, the consumer can get stuck trying to fetch a large message
          * on a certain partition.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: consumer
+         * 
+         * @param maxPartitionFetchBytes the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder maxPartitionFetchBytes(
                 java.lang.Integer maxPartitionFetchBytes) {
@@ -461,9 +541,12 @@ public interface KafkaComponentBuilderFactory {
          * considered failed and the group will rebalance in order to reassign
          * the partitions to another member.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxPollIntervalMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder maxPollIntervalMs(
                 java.lang.Long maxPollIntervalMs) {
@@ -473,10 +556,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The maximum number of records returned in a single call to poll().
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: consumer
+         * 
+         * @param maxPollRecords the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder maxPollRecords(
                 java.lang.Integer maxPollRecords) {
@@ -489,10 +575,12 @@ public interface KafkaComponentBuilderFactory {
          * autocommit.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.StateRepository<java.lang.String,
-         * java.lang.String></code> type.
+         * &lt;code&gt;org.apache.camel.spi.StateRepository&amp;lt;java.lang.String, java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetRepository the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder offsetRepository(
                 org.apache.camel.spi.StateRepository<java.lang.String, java.lang.String> offsetRepository) {
@@ -504,10 +592,13 @@ public interface KafkaComponentBuilderFactory {
          * will use to distribute partition ownership amongst consumer instances
          * when group management is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.clients.consumer.RangeAssignor
          * Group: consumer
+         * 
+         * @param partitionAssignor the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder partitionAssignor(
                 java.lang.String partitionAssignor) {
@@ -517,10 +608,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The timeout used when polling the KafkaConsumer.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param pollTimeoutMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder pollTimeoutMs(java.lang.Long pollTimeoutMs) {
             doSetProperty("pollTimeoutMs", pollTimeoutMs);
@@ -531,9 +625,12 @@ public interface KafkaComponentBuilderFactory {
          * beginning : read from beginning end : read from end This is replacing
          * the earlier property seekToBeginning.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param seekTo the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder seekTo(java.lang.String seekTo) {
             doSetProperty("seekTo", seekTo);
@@ -543,10 +640,13 @@ public interface KafkaComponentBuilderFactory {
          * The timeout used to detect failures when using Kafka's group
          * management facilities.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param sessionTimeoutMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sessionTimeoutMs(
                 java.lang.Integer sessionTimeoutMs) {
@@ -559,10 +659,13 @@ public interface KafkaComponentBuilderFactory {
          * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is
          * only available in the Confluent Platform (not standard Apache Kafka).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param specificAvroReader the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder specificAvroReader(
                 boolean specificAvroReader) {
@@ -573,10 +676,13 @@ public interface KafkaComponentBuilderFactory {
          * Whether the topic is a pattern (regular expression). This can be used
          * to subscribe to dynamic number of topics matching the pattern.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param topicIsPattern the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder topicIsPattern(boolean topicIsPattern) {
             doSetProperty("topicIsPattern", topicIsPattern);
@@ -586,10 +692,13 @@ public interface KafkaComponentBuilderFactory {
          * Deserializer class for value that implements the Deserializer
          * interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
+         * 
+         * @param valueDeserializer the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder valueDeserializer(
                 java.lang.String valueDeserializer) {
@@ -604,9 +713,12 @@ public interface KafkaComponentBuilderFactory {
          * box.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.kafka.KafkaManualCommitFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.kafka.KafkaManualCommitFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param kafkaManualCommitFactory the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder kafkaManualCommitFactory(
                 org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
@@ -624,10 +736,13 @@ public interface KafkaComponentBuilderFactory {
          * memory will be used for compression (if compression is enabled) as
          * well as for maintaining in-flight requests.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 33554432
          * Group: producer
+         * 
+         * @param bufferMemorySize the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder bufferMemorySize(
                 java.lang.Integer bufferMemorySize) {
@@ -639,10 +754,13 @@ public interface KafkaComponentBuilderFactory {
          * data generated by this producer. Valid values are none, gzip and
          * snappy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: none
          * Group: producer
+         * 
+         * @param compressionCodec the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder compressionCodec(
                 java.lang.String compressionCodec) {
@@ -653,10 +771,13 @@ public interface KafkaComponentBuilderFactory {
          * Close idle connections after the number of milliseconds specified by
          * this config.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 540000
          * Group: producer
+         * 
+         * @param connectionMaxIdleMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder connectionMaxIdleMs(
                 java.lang.Integer connectionMaxIdleMs) {
@@ -671,10 +792,13 @@ public interface KafkaComponentBuilderFactory {
          * to be set to 1 and retries cannot be zero and additionally acks must
          * be set to 'all'.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param enableIdempotence the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder enableIdempotence(
                 boolean enableIdempotence) {
@@ -686,13 +810,16 @@ public interface KafkaComponentBuilderFactory {
          * values.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
+         * &lt;code&gt;org.apache.camel.component.kafka.serde.KafkaHeaderSerializer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param headerSerializer the value to set
+         * @return the dsl builder
          */
-        default KafkaComponentBuilder kafkaHeaderSerializer(
-                org.apache.camel.component.kafka.serde.KafkaHeaderSerializer kafkaHeaderSerializer) {
-            doSetProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
+        default KafkaComponentBuilder headerSerializer(
+                org.apache.camel.component.kafka.serde.KafkaHeaderSerializer headerSerializer) {
+            doSetProperty("headerSerializer", headerSerializer);
             return this;
         }
         /**
@@ -700,9 +827,12 @@ public interface KafkaComponentBuilderFactory {
          * been configured then it take precedence over header
          * KafkaConstants#KEY.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder key(java.lang.String key) {
             doSetProperty("key", key);
@@ -712,14 +842,17 @@ public interface KafkaComponentBuilderFactory {
          * The serializer class for keys (defaults to the same as for messages
          * if nothing is given).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
+         * 
+         * @param keySerializer the value to set
+         * @return the dsl builder
          */
-        default KafkaComponentBuilder keySerializerClass(
-                java.lang.String keySerializerClass) {
-            doSetProperty("keySerializerClass", keySerializerClass);
+        default KafkaComponentBuilder keySerializer(
+                java.lang.String keySerializer) {
+            doSetProperty("keySerializer", keySerializer);
             return this;
         }
         /**
@@ -733,10 +866,13 @@ public interface KafkaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -763,10 +899,13 @@ public interface KafkaComponentBuilderFactory {
          * effect of reducing the number of requests sent but would add up to
          * 5ms of latency to records sent in the absense of load.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param lingerMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder lingerMs(java.lang.Integer lingerMs) {
             doSetProperty("lingerMs", lingerMs);
@@ -781,10 +920,13 @@ public interface KafkaComponentBuilderFactory {
          * send(). In case of partitionsFor(), this configuration imposes a
          * maximum time threshold on waiting for metadata.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: producer
+         * 
+         * @param maxBlockMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder maxBlockMs(java.lang.Integer maxBlockMs) {
             doSetProperty("maxBlockMs", maxBlockMs);
@@ -796,10 +938,13 @@ public interface KafkaComponentBuilderFactory {
          * to be greater than 1 and there are failed sends, there is a risk of
          * message re-ordering due to retries (i.e., if retries are enabled).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: producer
+         * 
+         * @param maxInFlightRequest the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder maxInFlightRequest(
                 java.lang.Integer maxInFlightRequest) {
@@ -813,10 +958,13 @@ public interface KafkaComponentBuilderFactory {
          * number of record batches the producer will send in a single request
          * to avoid sending huge requests.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: producer
+         * 
+         * @param maxRequestSize the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder maxRequestSize(
                 java.lang.Integer maxRequestSize) {
@@ -828,10 +976,13 @@ public interface KafkaComponentBuilderFactory {
          * metadata even if we haven't seen any partition leadership changes to
          * proactively discover any new brokers or partitions.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: producer
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder metadataMaxAgeMs(
                 java.lang.Integer metadataMaxAgeMs) {
@@ -844,9 +995,12 @@ public interface KafkaComponentBuilderFactory {
          * notified of new metric creation. The JmxReporter is always included
          * to register JMX statistics.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param metricReporters the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder metricReporters(
                 java.lang.String metricReporters) {
@@ -856,10 +1010,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The number of samples maintained to compute metrics.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param metricsSampleWindowMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder metricsSampleWindowMs(
                 java.lang.Integer metricsSampleWindowMs) {
@@ -869,10 +1026,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The number of samples maintained to compute metrics.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: producer
+         * 
+         * @param noOfMetricsSample the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder noOfMetricsSample(
                 java.lang.Integer noOfMetricsSample) {
@@ -883,11 +1043,14 @@ public interface KafkaComponentBuilderFactory {
          * The partitioner class for partitioning messages amongst sub-topics.
          * The default partitioner is based on the hash of the key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * org.apache.kafka.clients.producer.internals.DefaultPartitioner
          * Group: producer
+         * 
+         * @param partitioner the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder partitioner(java.lang.String partitioner) {
             doSetProperty("partitioner", partitioner);
@@ -898,9 +1061,12 @@ public interface KafkaComponentBuilderFactory {
          * partition was specified). If this option has been configured then it
          * take precedence over header KafkaConstants#PARTITION_KEY.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param partitionKey the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder partitionKey(
                 java.lang.Integer partitionKey) {
@@ -920,10 +1086,13 @@ public interface KafkaComponentBuilderFactory {
          * bit more wastefully as we will always allocate a buffer of the
          * specified batch size in anticipation of additional records.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 16384
          * Group: producer
+         * 
+         * @param producerBatchSize the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder producerBatchSize(
                 java.lang.Integer producerBatchSize) {
@@ -935,10 +1104,13 @@ public interface KafkaComponentBuilderFactory {
          * producer when using async mode before either the producer must be
          * blocked or data must be dropped.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param queueBufferingMaxMessages the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder queueBufferingMaxMessages(
                 java.lang.Integer queueBufferingMaxMessages) {
@@ -949,10 +1121,13 @@ public interface KafkaComponentBuilderFactory {
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
          * data.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: producer
+         * 
+         * @param receiveBufferBytes the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder receiveBufferBytes(
                 java.lang.Integer receiveBufferBytes) {
@@ -965,10 +1140,13 @@ public interface KafkaComponentBuilderFactory {
          * This backoff applies to all requests sent by the consumer to the
          * broker.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 50
          * Group: producer
+         * 
+         * @param reconnectBackoffMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder reconnectBackoffMs(
                 java.lang.Integer reconnectBackoffMs) {
@@ -981,10 +1159,13 @@ public interface KafkaComponentBuilderFactory {
          * RecordMetadata metadata's. The list is stored on a header with the
          * key KafkaConstants#KAFKA_RECORDMETA.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param recordMetadata the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder recordMetadata(boolean recordMetadata) {
             doSetProperty("recordMetadata", recordMetadata);
@@ -1010,10 +1191,13 @@ public interface KafkaComponentBuilderFactory {
          * will not be lost as long as at least one in-sync replica remains
          * alive. This is the strongest available guarantee.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param requestRequiredAcks the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder requestRequiredAcks(
                 java.lang.String requestRequiredAcks) {
@@ -1025,10 +1209,13 @@ public interface KafkaComponentBuilderFactory {
          * request.required.acks requirement before sending back an error to the
          * client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param requestTimeoutMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder requestTimeoutMs(
                 java.lang.Integer requestTimeoutMs) {
@@ -1044,10 +1231,13 @@ public interface KafkaComponentBuilderFactory {
          * partition, and the first fails and is retried but the second
          * succeeds, then the second record may appear first.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder retries(java.lang.Integer retries) {
             doSetProperty("retries", retries);
@@ -1059,10 +1249,13 @@ public interface KafkaComponentBuilderFactory {
          * takes a bit of time, this property specifies the amount of time that
          * the producer waits before refreshing the metadata.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: producer
+         * 
+         * @param retryBackoffMs the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder retryBackoffMs(
                 java.lang.Integer retryBackoffMs) {
@@ -1072,10 +1265,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * Socket write buffer size.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: producer
+         * 
+         * @param sendBufferBytes the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sendBufferBytes(
                 java.lang.Integer sendBufferBytes) {
@@ -1085,14 +1281,17 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The serializer class for messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
+         * 
+         * @param valueSerializer the value to set
+         * @return the dsl builder
          */
-        default KafkaComponentBuilder serializerClass(
-                java.lang.String serializerClass) {
-            doSetProperty("serializerClass", serializerClass);
+        default KafkaComponentBuilder valueSerializer(
+                java.lang.String valueSerializer) {
+            doSetProperty("valueSerializer", valueSerializer);
             return this;
         }
         /**
@@ -1102,10 +1301,13 @@ public interface KafkaComponentBuilderFactory {
          * this option then you must handle the lifecycle of the thread pool to
          * shut the pool down when no longer needed.
          * 
-         * The option is a: <code>java.util.concurrent.ExecutorService</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param workerPool the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder workerPool(
                 java.util.concurrent.ExecutorService workerPool) {
@@ -1117,10 +1319,13 @@ public interface KafkaComponentBuilderFactory {
          * Exchange after kafka server has acknowledge the message that was sent
          * to it from KafkaProducer using asynchronous non-blocking processing.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer
+         * 
+         * @param workerPoolCoreSize the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder workerPoolCoreSize(
                 java.lang.Integer workerPoolCoreSize) {
@@ -1132,10 +1337,13 @@ public interface KafkaComponentBuilderFactory {
          * Exchange after kafka server has acknowledge the message that was sent
          * to it from KafkaProducer using asynchronous non-blocking processing.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param workerPoolMaxSize the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder workerPoolMaxSize(
                 java.lang.Integer workerPoolMaxSize) {
@@ -1143,17 +1351,23 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default KafkaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default KafkaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -1163,9 +1377,12 @@ public interface KafkaComponentBuilderFactory {
          * option is only available in the Confluent Platform (not standard
          * Apache Kafka).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: confluent
+         * 
+         * @param schemaRegistryURL the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder schemaRegistryURL(
                 java.lang.String schemaRegistryURL) {
@@ -1181,9 +1398,12 @@ public interface KafkaComponentBuilderFactory {
          * you use Producer interceptor on a consumer it will throw a class cast
          * exception in runtime.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: monitoring
+         * 
+         * @param interceptorClasses the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder interceptorClasses(
                 java.lang.String interceptorClasses) {
@@ -1193,10 +1413,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * Login thread sleep time between refresh attempts.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: security
+         * 
+         * @param kerberosBeforeReloginMinTime the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder kerberosBeforeReloginMinTime(
                 java.lang.Integer kerberosBeforeReloginMinTime) {
@@ -1206,10 +1429,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * Kerberos kinit command path. Default is /usr/bin/kinit.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /usr/bin/kinit
          * Group: security
+         * 
+         * @param kerberosInitCmd the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder kerberosInitCmd(
                 java.lang.String kerberosInitCmd) {
@@ -1226,10 +1452,13 @@ public interface KafkaComponentBuilderFactory {
          * security authorization and acls documentation.. Multiple values can
          * be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: DEFAULT
          * Group: security
+         * 
+         * @param kerberosPrincipalToLocalRules the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder kerberosPrincipalToLocalRules(
                 java.lang.String kerberosPrincipalToLocalRules) {
@@ -1239,10 +1468,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * Percentage of random jitter added to the renewal time.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Default: 0.05
          * Group: security
+         * 
+         * @param kerberosRenewJitter the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder kerberosRenewJitter(
                 java.lang.Double kerberosRenewJitter) {
@@ -1254,10 +1486,13 @@ public interface KafkaComponentBuilderFactory {
          * from last refresh to ticket's expiry has been reached, at which time
          * it will try to renew the ticket.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Default: 0.8
          * Group: security
+         * 
+         * @param kerberosRenewWindowFactor the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder kerberosRenewWindowFactor(
                 java.lang.Double kerberosRenewWindowFactor) {
@@ -1269,9 +1504,12 @@ public interface KafkaComponentBuilderFactory {
          * org.apache.kafka.common.security.plain.PlainLoginModule required
          * username=USERNAME password=PASSWORD;.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslJaasConfig the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder saslJaasConfig(
                 java.lang.String saslJaasConfig) {
@@ -1282,9 +1520,12 @@ public interface KafkaComponentBuilderFactory {
          * The Kerberos principal name that Kafka runs as. This can be defined
          * either in Kafka's JAAS config or in Kafka's config.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslKerberosServiceName the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder saslKerberosServiceName(
                 java.lang.String saslKerberosServiceName) {
@@ -1296,10 +1537,13 @@ public interface KafkaComponentBuilderFactory {
          * For the valid values see
          * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: GSSAPI
          * Group: security
+         * 
+         * @param saslMechanism the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder saslMechanism(
                 java.lang.String saslMechanism) {
@@ -1310,10 +1554,13 @@ public interface KafkaComponentBuilderFactory {
          * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT
          * and SSL are supported.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param securityProtocol the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder securityProtocol(
                 java.lang.String securityProtocol) {
@@ -1327,9 +1574,12 @@ public interface KafkaComponentBuilderFactory {
          * SSL network protocol.By default all the available cipher suites are
          * supported.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslCipherSuites the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslCipherSuites(
                 java.lang.String sslCipherSuites) {
@@ -1344,9 +1594,12 @@ public interface KafkaComponentBuilderFactory {
          * option.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -1357,10 +1610,12 @@ public interface KafkaComponentBuilderFactory {
          * The list of protocols enabled for SSL connections. TLSv1.2, TLSv1.1
          * and TLSv1 are enabled by default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslEnabledProtocols the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslEnabledProtocols(
                 java.lang.String sslEnabledProtocols) {
@@ -1371,10 +1626,13 @@ public interface KafkaComponentBuilderFactory {
          * The endpoint identification algorithm to validate server hostname
          * using server certificate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: security
+         * 
+         * @param sslEndpointAlgorithm the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslEndpointAlgorithm(
                 java.lang.String sslEndpointAlgorithm) {
@@ -1386,10 +1644,13 @@ public interface KafkaComponentBuilderFactory {
          * Default value is the key manager factory algorithm configured for the
          * Java Virtual Machine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SunX509
          * Group: security
+         * 
+         * @param sslKeymanagerAlgorithm the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslKeymanagerAlgorithm(
                 java.lang.String sslKeymanagerAlgorithm) {
@@ -1400,9 +1661,12 @@ public interface KafkaComponentBuilderFactory {
          * The password of the private key in the key store file. This is
          * optional for client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
@@ -1413,9 +1677,12 @@ public interface KafkaComponentBuilderFactory {
          * The location of the key store file. This is optional for client and
          * can be used for two-way authentication for client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslKeystoreLocation(
                 java.lang.String sslKeystoreLocation) {
@@ -1426,9 +1693,12 @@ public interface KafkaComponentBuilderFactory {
          * The store password for the key store file.This is optional for client
          * and only needed if ssl.keystore.location is configured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslKeystorePassword(
                 java.lang.String sslKeystorePassword) {
@@ -1439,10 +1709,13 @@ public interface KafkaComponentBuilderFactory {
          * The file format of the key store file. This is optional for client.
          * Default value is JKS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: JKS
          * Group: security
+         * 
+         * @param sslKeystoreType the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslKeystoreType(
                 java.lang.String sslKeystoreType) {
@@ -1456,10 +1729,12 @@ public interface KafkaComponentBuilderFactory {
          * older JVMs, but their usage is discouraged due to known security
          * vulnerabilities.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslProtocol(java.lang.String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -1469,9 +1744,12 @@ public interface KafkaComponentBuilderFactory {
          * The name of the security provider used for SSL connections. Default
          * value is the default security provider of the JVM.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslProvider the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslProvider(java.lang.String sslProvider) {
             doSetProperty("sslProvider", sslProvider);
@@ -1482,10 +1760,13 @@ public interface KafkaComponentBuilderFactory {
          * Default value is the trust manager factory algorithm configured for
          * the Java Virtual Machine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: PKIX
          * Group: security
+         * 
+         * @param sslTrustmanagerAlgorithm the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslTrustmanagerAlgorithm(
                 java.lang.String sslTrustmanagerAlgorithm) {
@@ -1495,9 +1776,12 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The location of the trust store file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslTruststoreLocation(
                 java.lang.String sslTruststoreLocation) {
@@ -1507,9 +1791,12 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The password for the trust store file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslTruststorePassword(
                 java.lang.String sslTruststorePassword) {
@@ -1519,10 +1806,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * The file format of the trust store file. Default value is JKS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: JKS
          * Group: security
+         * 
+         * @param sslTruststoreType the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder sslTruststoreType(
                 java.lang.String sslTruststoreType) {
@@ -1532,10 +1822,13 @@ public interface KafkaComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default KafkaComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -1588,8 +1881,8 @@ public interface KafkaComponentBuilderFactory {
             case "fetchMinBytes": getOrCreateConfiguration((KafkaComponent) component).setFetchMinBytes((java.lang.Integer) value); return true;
             case "fetchWaitMaxMs": getOrCreateConfiguration((KafkaComponent) component).setFetchWaitMaxMs((java.lang.Integer) value); return true;
             case "groupId": getOrCreateConfiguration((KafkaComponent) component).setGroupId((java.lang.String) value); return true;
+            case "headerDeserializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
-            case "kafkaHeaderDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKafkaHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;
             case "maxPartitionFetchBytes": getOrCreateConfiguration((KafkaComponent) component).setMaxPartitionFetchBytes((java.lang.Integer) value); return true;
             case "maxPollIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setMaxPollIntervalMs((java.lang.Long) value); return true;
@@ -1607,9 +1900,9 @@ public interface KafkaComponentBuilderFactory {
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
             case "enableIdempotence": getOrCreateConfiguration((KafkaComponent) component).setEnableIdempotence((boolean) value); return true;
-            case "kafkaHeaderSerializer": getOrCreateConfiguration((KafkaComponent) component).setKafkaHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
+            case "headerSerializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderSerializer((org.apache.camel.component.kafka.serde.KafkaHeaderSerializer) value); return true;
             case "key": getOrCreateConfiguration((KafkaComponent) component).setKey((java.lang.String) value); return true;
-            case "keySerializerClass": getOrCreateConfiguration((KafkaComponent) component).setKeySerializerClass((java.lang.String) value); return true;
+            case "keySerializer": getOrCreateConfiguration((KafkaComponent) component).setKeySerializer((java.lang.String) value); return true;
             case "lazyStartProducer": ((KafkaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "lingerMs": getOrCreateConfiguration((KafkaComponent) component).setLingerMs((java.lang.Integer) value); return true;
             case "maxBlockMs": getOrCreateConfiguration((KafkaComponent) component).setMaxBlockMs((java.lang.Integer) value); return true;
@@ -1631,11 +1924,11 @@ public interface KafkaComponentBuilderFactory {
             case "retries": getOrCreateConfiguration((KafkaComponent) component).setRetries((java.lang.Integer) value); return true;
             case "retryBackoffMs": getOrCreateConfiguration((KafkaComponent) component).setRetryBackoffMs((java.lang.Integer) value); return true;
             case "sendBufferBytes": getOrCreateConfiguration((KafkaComponent) component).setSendBufferBytes((java.lang.Integer) value); return true;
-            case "serializerClass": getOrCreateConfiguration((KafkaComponent) component).setSerializerClass((java.lang.String) value); return true;
+            case "valueSerializer": getOrCreateConfiguration((KafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
             case "workerPoolMaxSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolMaxSize((java.lang.Integer) value); return true;
-            case "basicPropertyBinding": ((KafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((KafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;

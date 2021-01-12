@@ -4,8 +4,10 @@ package org.apache.camel.component.pulsar;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -25,8 +27,6 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": target.getPulsarConfiguration().setAckTimeoutMillis(property(camelContext, long.class, value)); return true;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": target.getPulsarConfiguration().setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batcherbuilder":
         case "batcherBuilder": target.getPulsarConfiguration().setBatcherBuilder(property(camelContext, org.apache.pulsar.client.api.BatcherBuilder.class, value)); return true;
         case "batchingenabled":
@@ -73,6 +73,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "numberOfConsumers": target.getPulsarConfiguration().setNumberOfConsumers(property(camelContext, int.class, value)); return true;
         case "producername":
         case "producerName": target.getPulsarConfiguration().setProducerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "readcompacted":
+        case "readCompacted": target.getPulsarConfiguration().setReadCompacted(property(camelContext, boolean.class, value)); return true;
         case "sendtimeoutms":
         case "sendTimeoutMs": target.getPulsarConfiguration().setSendTimeoutMs(property(camelContext, int.class, value)); return true;
         case "subscriptioninitialposition":
@@ -91,43 +93,77 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ackGroupTimeMillis", long.class);
-        answer.put("ackTimeoutMillis", long.class);
-        answer.put("allowManualAcknowledgement", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("batcherBuilder", org.apache.pulsar.client.api.BatcherBuilder.class);
-        answer.put("batchingEnabled", boolean.class);
-        answer.put("batchingMaxMessages", int.class);
-        answer.put("batchingMaxPublishDelayMicros", long.class);
-        answer.put("blockIfQueueFull", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("compressionType", org.apache.pulsar.client.api.CompressionType.class);
-        answer.put("consumerName", java.lang.String.class);
-        answer.put("consumerNamePrefix", java.lang.String.class);
-        answer.put("consumerQueueSize", int.class);
-        answer.put("deadLetterTopic", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("initialSequenceId", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxPendingMessages", int.class);
-        answer.put("maxPendingMessagesAcrossPartitions", int.class);
-        answer.put("maxRedeliverCount", java.lang.Integer.class);
-        answer.put("messageRouter", org.apache.pulsar.client.api.MessageRouter.class);
-        answer.put("messageRoutingMode", org.apache.pulsar.client.api.MessageRoutingMode.class);
-        answer.put("negativeAckRedeliveryDelayMicros", long.class);
-        answer.put("numberOfConsumers", int.class);
-        answer.put("producerName", java.lang.String.class);
-        answer.put("sendTimeoutMs", int.class);
-        answer.put("subscriptionInitialPosition", org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class);
-        answer.put("subscriptionName", java.lang.String.class);
-        answer.put("subscriptionTopicsMode", org.apache.pulsar.client.api.RegexSubscriptionMode.class);
-        answer.put("subscriptionType", org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("topicsPattern", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackgrouptimemillis":
+        case "ackGroupTimeMillis": return long.class;
+        case "acktimeoutmillis":
+        case "ackTimeoutMillis": return long.class;
+        case "allowmanualacknowledgement":
+        case "allowManualAcknowledgement": return boolean.class;
+        case "batcherbuilder":
+        case "batcherBuilder": return org.apache.pulsar.client.api.BatcherBuilder.class;
+        case "batchingenabled":
+        case "batchingEnabled": return boolean.class;
+        case "batchingmaxmessages":
+        case "batchingMaxMessages": return int.class;
+        case "batchingmaxpublishdelaymicros":
+        case "batchingMaxPublishDelayMicros": return long.class;
+        case "blockifqueuefull":
+        case "blockIfQueueFull": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "compressiontype":
+        case "compressionType": return org.apache.pulsar.client.api.CompressionType.class;
+        case "consumername":
+        case "consumerName": return java.lang.String.class;
+        case "consumernameprefix":
+        case "consumerNamePrefix": return java.lang.String.class;
+        case "consumerqueuesize":
+        case "consumerQueueSize": return int.class;
+        case "deadlettertopic":
+        case "deadLetterTopic": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "initialsequenceid":
+        case "initialSequenceId": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxpendingmessages":
+        case "maxPendingMessages": return int.class;
+        case "maxpendingmessagesacrosspartitions":
+        case "maxPendingMessagesAcrossPartitions": return int.class;
+        case "maxredelivercount":
+        case "maxRedeliverCount": return java.lang.Integer.class;
+        case "messagerouter":
+        case "messageRouter": return org.apache.pulsar.client.api.MessageRouter.class;
+        case "messageroutingmode":
+        case "messageRoutingMode": return org.apache.pulsar.client.api.MessageRoutingMode.class;
+        case "negativeackredeliverydelaymicros":
+        case "negativeAckRedeliveryDelayMicros": return long.class;
+        case "numberofconsumers":
+        case "numberOfConsumers": return int.class;
+        case "producername":
+        case "producerName": return java.lang.String.class;
+        case "readcompacted":
+        case "readCompacted": return boolean.class;
+        case "sendtimeoutms":
+        case "sendTimeoutMs": return int.class;
+        case "subscriptioninitialposition":
+        case "subscriptionInitialPosition": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.class;
+        case "subscriptionname":
+        case "subscriptionName": return java.lang.String.class;
+        case "subscriptiontopicsmode":
+        case "subscriptionTopicsMode": return org.apache.pulsar.client.api.RegexSubscriptionMode.class;
+        case "subscriptiontype":
+        case "subscriptionType": return org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class;
+        case "synchronous": return boolean.class;
+        case "topicspattern":
+        case "topicsPattern": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -140,8 +176,6 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "ackTimeoutMillis": return target.getPulsarConfiguration().getAckTimeoutMillis();
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return target.getPulsarConfiguration().isAllowManualAcknowledgement();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batcherbuilder":
         case "batcherBuilder": return target.getPulsarConfiguration().getBatcherBuilder();
         case "batchingenabled":
@@ -188,6 +222,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "numberOfConsumers": return target.getPulsarConfiguration().getNumberOfConsumers();
         case "producername":
         case "producerName": return target.getPulsarConfiguration().getProducerName();
+        case "readcompacted":
+        case "readCompacted": return target.getPulsarConfiguration().isReadCompacted();
         case "sendtimeoutms":
         case "sendTimeoutMs": return target.getPulsarConfiguration().getSendTimeoutMs();
         case "subscriptioninitialposition":

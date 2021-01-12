@@ -73,7 +73,6 @@ public class IrcEndpointTest {
         verify(connection).doJoin("#chan2", "chan2key");
     }
 
-
     @Test
     public void doHandleIrcErrorNickInUse() throws Exception {
         when(connection.getNick()).thenReturn("nick");

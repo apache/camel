@@ -4,8 +4,10 @@ package org.apache.camel.component.grpc;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationtype":
         case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, org.apache.camel.component.grpc.GrpcAuthType.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autodiscoverclientinterceptors":
+        case "autoDiscoverClientInterceptors": target.getConfiguration().setAutoDiscoverClientInterceptors(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumerstrategy":
@@ -62,6 +64,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
         case "producerstrategy":
         case "producerStrategy": target.getConfiguration().setProducerStrategy(property(camelContext, org.apache.camel.component.grpc.GrpcProducerStrategy.class, value)); return true;
+        case "routecontrolledstreamobserver":
+        case "routeControlledStreamObserver": target.getConfiguration().setRouteControlledStreamObserver(property(camelContext, boolean.class, value)); return true;
         case "serviceaccountresource":
         case "serviceAccountResource": target.getConfiguration().setServiceAccountResource(property(camelContext, java.lang.String.class, value)); return true;
         case "streamrepliesto":
@@ -76,36 +80,64 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authenticationType", org.apache.camel.component.grpc.GrpcAuthType.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerStrategy", org.apache.camel.component.grpc.GrpcConsumerStrategy.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("flowControlWindow", int.class);
-        answer.put("forwardOnCompleted", boolean.class);
-        answer.put("forwardOnError", boolean.class);
-        answer.put("jwtAlgorithm", org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class);
-        answer.put("jwtIssuer", java.lang.String.class);
-        answer.put("jwtSecret", java.lang.String.class);
-        answer.put("jwtSubject", java.lang.String.class);
-        answer.put("keyCertChainResource", java.lang.String.class);
-        answer.put("keyPassword", java.lang.String.class);
-        answer.put("keyResource", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxConcurrentCallsPerConnection", int.class);
-        answer.put("maxMessageSize", int.class);
-        answer.put("method", java.lang.String.class);
-        answer.put("negotiationType", io.grpc.netty.NegotiationType.class);
-        answer.put("producerStrategy", org.apache.camel.component.grpc.GrpcProducerStrategy.class);
-        answer.put("serviceAccountResource", java.lang.String.class);
-        answer.put("streamRepliesTo", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustCertCollectionResource", java.lang.String.class);
-        answer.put("userAgent", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authenticationtype":
+        case "authenticationType": return org.apache.camel.component.grpc.GrpcAuthType.class;
+        case "autodiscoverclientinterceptors":
+        case "autoDiscoverClientInterceptors": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumerstrategy":
+        case "consumerStrategy": return org.apache.camel.component.grpc.GrpcConsumerStrategy.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flowcontrolwindow":
+        case "flowControlWindow": return int.class;
+        case "forwardoncompleted":
+        case "forwardOnCompleted": return boolean.class;
+        case "forwardonerror":
+        case "forwardOnError": return boolean.class;
+        case "jwtalgorithm":
+        case "jwtAlgorithm": return org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class;
+        case "jwtissuer":
+        case "jwtIssuer": return java.lang.String.class;
+        case "jwtsecret":
+        case "jwtSecret": return java.lang.String.class;
+        case "jwtsubject":
+        case "jwtSubject": return java.lang.String.class;
+        case "keycertchainresource":
+        case "keyCertChainResource": return java.lang.String.class;
+        case "keypassword":
+        case "keyPassword": return java.lang.String.class;
+        case "keyresource":
+        case "keyResource": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxconcurrentcallsperconnection":
+        case "maxConcurrentCallsPerConnection": return int.class;
+        case "maxmessagesize":
+        case "maxMessageSize": return int.class;
+        case "method": return java.lang.String.class;
+        case "negotiationtype":
+        case "negotiationType": return io.grpc.netty.NegotiationType.class;
+        case "producerstrategy":
+        case "producerStrategy": return org.apache.camel.component.grpc.GrpcProducerStrategy.class;
+        case "routecontrolledstreamobserver":
+        case "routeControlledStreamObserver": return boolean.class;
+        case "serviceaccountresource":
+        case "serviceAccountResource": return java.lang.String.class;
+        case "streamrepliesto":
+        case "streamRepliesTo": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustcertcollectionresource":
+        case "trustCertCollectionResource": return java.lang.String.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -114,8 +146,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationtype":
         case "authenticationType": return target.getConfiguration().getAuthenticationType();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autodiscoverclientinterceptors":
+        case "autoDiscoverClientInterceptors": return target.getConfiguration().isAutoDiscoverClientInterceptors();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumerstrategy":
@@ -155,6 +187,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "negotiationType": return target.getConfiguration().getNegotiationType();
         case "producerstrategy":
         case "producerStrategy": return target.getConfiguration().getProducerStrategy();
+        case "routecontrolledstreamobserver":
+        case "routeControlledStreamObserver": return target.getConfiguration().isRouteControlledStreamObserver();
         case "serviceaccountresource":
         case "serviceAccountResource": return target.getConfiguration().getServiceAccountResource();
         case "streamrepliesto":

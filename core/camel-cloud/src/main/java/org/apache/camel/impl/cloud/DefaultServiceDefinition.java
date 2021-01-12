@@ -66,7 +66,8 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this(null, name, host, port, meta, health);
     }
 
-    public DefaultServiceDefinition(String id, String name, String host, int port, Map<String, String> meta, ServiceHealth health) {
+    public DefaultServiceDefinition(String id, String name, String host, int port, Map<String, String> meta,
+                                    ServiceHealth health) {
         this.id = id;
         this.name = name;
         this.host = host;
@@ -121,9 +122,9 @@ public class DefaultServiceDefinition implements ServiceDefinition {
 
         DefaultServiceDefinition that = (DefaultServiceDefinition) o;
         return getPort() == that.getPort()
-            && Objects.equals(getId(), that.getId())
-            && Objects.equals(getName(), that.getName())
-            && Objects.equals(getHost(), that.getHost());
+                && Objects.equals(getId(), that.getId())
+                && Objects.equals(getName(), that.getName())
+                && Objects.equals(getHost(), that.getHost());
     }
 
     @Override
@@ -137,31 +138,30 @@ public class DefaultServiceDefinition implements ServiceDefinition {
 
     public static Stream<? extends ServiceDefinition> parse(String serverString) {
         return Stream.of(serverString.split(","))
-            .map(part -> {
-                String serviceId = null;
-                String serviceName = StringHelper.before(part, "@");
+                .map(part -> {
+                    String serviceId = null;
+                    String serviceName = StringHelper.before(part, "@");
 
-                if (serviceName != null) {
-                    serviceId = StringHelper.before(serviceName, "/");
-                    serviceName = StringHelper.after(serviceName, "/");
+                    if (serviceName != null) {
+                        serviceId = StringHelper.before(serviceName, "/");
+                        serviceName = StringHelper.after(serviceName, "/");
 
-                    if (serviceName == null) {
-                        serviceName = StringHelper.before(part, "@");
+                        if (serviceName == null) {
+                            serviceName = StringHelper.before(part, "@");
+                        }
+
+                        part = StringHelper.after(part, "@");
                     }
 
-                    part = StringHelper.after(part, "@");
-                }
+                    String serviceHost = StringHelper.before(part, ":");
+                    String servicePort = StringHelper.after(part, ":");
 
-                String serviceHost = StringHelper.before(part, ":");
-                String servicePort = StringHelper.after(part, ":");
+                    if (ObjectHelper.isNotEmpty(serviceHost) && ObjectHelper.isNotEmpty(servicePort)) {
+                        return new DefaultServiceDefinition(serviceId, serviceName, serviceHost, Integer.valueOf(servicePort));
+                    }
 
-                if (ObjectHelper.isNotEmpty(serviceHost) && ObjectHelper.isNotEmpty(servicePort)) {
-                    return new DefaultServiceDefinition(serviceId, serviceName, serviceHost, Integer.valueOf(servicePort));
-                }
-
-                return null;
-            }
-        ).filter(Objects::nonNull);
+                    return null;
+                }).filter(Objects::nonNull);
     }
 
     public static Builder builder() {

@@ -32,7 +32,8 @@ import org.eclipse.microprofile.metrics.MetricType;
 /**
  * Expose metrics from Camel routes.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricName", producerOnly = true, category = {Category.MONITORING})
+@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics",
+             syntax = "microprofile-metrics:metricType:metricName", producerOnly = true, category = { Category.MONITORING })
 public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry metricRegistry;
@@ -66,7 +67,8 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     @UriParam(description = "Metric unit. See org.eclipse.microprofile.metrics.MetricUnits")
     private String metricUnit;
 
-    public MicroProfileMetricsEndpoint(String uri, Component component, MetricRegistry metricRegistry, MetricType metricType, String metricsName) {
+    public MicroProfileMetricsEndpoint(String uri, Component component, MetricRegistry metricRegistry, MetricType metricType,
+                                       String metricsName) {
         super(uri, component);
         this.metricRegistry = metricRegistry;
         this.metricType = metricType;

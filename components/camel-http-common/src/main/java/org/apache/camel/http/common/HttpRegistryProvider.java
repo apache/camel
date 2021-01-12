@@ -17,9 +17,8 @@
 package org.apache.camel.http.common;
 
 /**
- * Usually class extending CamelServlet or simila e.g. HttpServet
- * should implement this interface to be able to benefit from
- * DefaultHttpRegistry
+ * Usually class extending CamelServlet or simila e.g. HttpServet should implement this interface to be able to benefit
+ * from DefaultHttpRegistry
  */
 public interface HttpRegistryProvider {
 

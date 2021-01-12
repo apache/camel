@@ -65,14 +65,14 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
 
         context.createProducerTemplate().send(endpoint, exchange);
     }
-    
+
     private void verifyTheRecivedEmail(String expectString) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.assertIsSatisfied();
 
         Exchange out = mock.assertExchangeReceived(0);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
-        ((MailMessage)out.getIn()).getMessage().writeTo(baos);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage) out.getIn()).getMessage().getSize());
+        ((MailMessage) out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
         assertTrue(dumpedMessage.indexOf(expectString) > 0, "There should have the " + expectString);
         log.trace("multipart alternative: \n{}", dumpedMessage);
@@ -86,13 +86,13 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         assertEquals(1, attachments.size());
         assertEquals(2, out.getIn().getBody(MimeMultipart.class).getCount(), "multipart body should have 2 parts");
     }
-    
+
     @Test
     public void testMultipartEmailWithInlineAttachments() throws Exception {
         sendMultipartEmail(true);
         verifyTheRecivedEmail("Content-Disposition: inline; filename=0001");
-    }    
-    
+    }
+
     @Test
     public void testMultipartEmailWithRegularAttachments() throws Exception {
         sendMultipartEmail(false);

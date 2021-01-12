@@ -4,8 +4,10 @@ package org.apache.camel.component.weka;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         WekaEndpoint target = (WekaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apply": target.getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "build": target.getConfiguration().setBuild(property(camelContext, java.lang.String.class, value)); return true;
         case "dsname": target.getConfiguration().setDsname(property(camelContext, java.lang.String.class, value)); return true;
         case "folds": target.getConfiguration().setFolds(property(camelContext, int.class, value)); return true;
@@ -40,21 +40,24 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apply", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("build", java.lang.String.class);
-        answer.put("dsname", java.lang.String.class);
-        answer.put("folds", int.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loadFrom", java.lang.String.class);
-        answer.put("path", java.lang.String.class);
-        answer.put("saveTo", java.lang.String.class);
-        answer.put("seed", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("xval", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apply": return java.lang.String.class;
+        case "build": return java.lang.String.class;
+        case "dsname": return java.lang.String.class;
+        case "folds": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loadfrom":
+        case "loadFrom": return java.lang.String.class;
+        case "path": return java.lang.String.class;
+        case "saveto":
+        case "saveTo": return java.lang.String.class;
+        case "seed": return int.class;
+        case "synchronous": return boolean.class;
+        case "xval": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -62,8 +65,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         WekaEndpoint target = (WekaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apply": return target.getConfiguration().getApply();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "build": return target.getConfiguration().getBuild();
         case "dsname": return target.getConfiguration().getDsname();
         case "folds": return target.getConfiguration().getFolds();

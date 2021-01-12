@@ -24,8 +24,6 @@ public enum DriveAboutApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.About.Get.class,
         "get");
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveAboutApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

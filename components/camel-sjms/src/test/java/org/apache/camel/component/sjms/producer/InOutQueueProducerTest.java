@@ -26,7 +26,9 @@ import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -36,12 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerTest extends JmsTestSupport {
-    
+
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
-    
+
     public InOutQueueProducerTest() {
     }
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -59,7 +61,22 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         assertTrue(responseObject instanceof String);
         assertEquals(responseText, responseObject);
         mc.close();
+    }
 
+    @Test
+    public void testInOutQueueProducerHeader() throws Exception {
+        MessageConsumer mc = createQueueConsumer("foo");
+        assertNotNull(mc);
+        final String requestText = "Hello World!";
+        final String responseText = "How are you";
+        mc.setMessageListener(new MyMessageListener(requestText, responseText));
+
+        Object responseObject
+                = template.requestBodyAndHeader("direct:start", requestText, SjmsConstants.JMS_DESTINATION_NAME, "foo");
+        assertNotNull(responseObject);
+        assertTrue(responseObject instanceof String);
+        assertEquals(responseText, responseObject);
+        mc.close();
     }
 
     @Test
@@ -94,10 +111,10 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
-                    .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
-                               + TEST_DESTINATION_NAME + ".response")
-                    .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
+                        .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
+                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
+                                                   + TEST_DESTINATION_NAME + ".response")
+                        .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }
         };
     }
@@ -114,7 +131,7 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         @Override
         public void onMessage(Message message) {
             try {
-                TextMessage request = (TextMessage)message;
+                TextMessage request = (TextMessage) message;
                 assertNotNull(request);
                 String text = request.getText();
                 assertEquals(requestText, text);

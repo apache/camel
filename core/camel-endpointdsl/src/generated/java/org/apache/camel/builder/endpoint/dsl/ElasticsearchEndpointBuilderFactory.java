@@ -42,10 +42,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The time in ms to wait before connection will timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -55,10 +58,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The time in ms to wait before connection will timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -68,10 +74,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Disconnect after it finish calling the producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -80,10 +89,14 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Disconnect after it finish calling the producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -93,10 +106,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Enable automatically discover nodes from a running Elasticsearch
          * cluster.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param enableSniffer the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder enableSniffer(boolean enableSniffer) {
             doSetProperty("enableSniffer", enableSniffer);
@@ -106,10 +122,14 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Enable automatically discover nodes from a running Elasticsearch
          * cluster.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param enableSniffer the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder enableSniffer(String enableSniffer) {
             doSetProperty("enableSniffer", enableSniffer);
@@ -118,10 +138,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Enable SSL.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
             doSetProperty("enableSSL", enableSSL);
@@ -130,10 +153,14 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Enable SSL.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
             doSetProperty("enableSSL", enableSSL);
@@ -142,9 +169,12 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Starting index of the response.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder from(Integer from) {
             doSetProperty("from", from);
@@ -153,10 +183,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Starting index of the response.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder from(String from) {
             doSetProperty("from", from);
@@ -166,10 +199,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Comma separated list with ip:port formatted remote transport
          * addresses to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param hostAddresses the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder hostAddresses(String hostAddresses) {
             doSetProperty("hostAddresses", hostAddresses);
@@ -178,9 +214,12 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The name of the index to act against.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param indexName the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder indexName(String indexName) {
             doSetProperty("indexName", indexName);
@@ -197,10 +236,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -218,10 +260,14 @@ public interface ElasticsearchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -231,10 +277,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The time in ms before retry.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param maxRetryTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
@@ -243,10 +292,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The time in ms before retry.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param maxRetryTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(
                 String maxRetryTimeout) {
@@ -257,9 +309,12 @@ public interface ElasticsearchEndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.elasticsearch.ElasticsearchOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder operation(
                 ElasticsearchOperation operation) {
@@ -270,9 +325,12 @@ public interface ElasticsearchEndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.elasticsearch.ElasticsearchOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -281,10 +339,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Time in ms during which elasticsearch will keep search context alive.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: producer
+         * 
+         * @param scrollKeepAliveMs the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 int scrollKeepAliveMs) {
@@ -294,10 +355,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Time in ms during which elasticsearch will keep search context alive.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: producer
+         * 
+         * @param scrollKeepAliveMs the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
@@ -307,9 +371,12 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Size of the response.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder size(Integer size) {
             doSetProperty("size", size);
@@ -318,10 +385,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Size of the response.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder size(String size) {
             doSetProperty("size", size);
@@ -331,10 +401,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: producer
+         * 
+         * @param sniffAfterFailureDelay the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
                 int sniffAfterFailureDelay) {
@@ -345,10 +418,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: producer
+         * 
+         * @param sniffAfterFailureDelay the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
                 String sniffAfterFailureDelay) {
@@ -360,10 +436,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * milliseconds. Will be honoured when sniffOnFailure is disabled or
          * when there are no failures between consecutive sniff executions.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: producer
+         * 
+         * @param snifferInterval the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder snifferInterval(int snifferInterval) {
             doSetProperty("snifferInterval", snifferInterval);
@@ -374,10 +453,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * milliseconds. Will be honoured when sniffOnFailure is disabled or
          * when there are no failures between consecutive sniff executions.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: producer
+         * 
+         * @param snifferInterval the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder snifferInterval(
                 String snifferInterval) {
@@ -387,10 +469,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The timeout in ms to wait before the socket will timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -399,10 +484,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * The timeout in ms to wait before the socket will timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder socketTimeout(String socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -411,10 +499,13 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Enable scroll usage.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useScroll the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
             doSetProperty("useScroll", useScroll);
@@ -423,10 +514,14 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Enable scroll usage.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useScroll the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder useScroll(String useScroll) {
             doSetProperty("useScroll", useScroll);
@@ -436,10 +531,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Index creation waits for the write consistency number of shards to be
          * available.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param waitForActiveShards the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 int waitForActiveShards) {
@@ -450,10 +548,13 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Index creation waits for the write consistency number of shards to be
          * available.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param waitForActiveShards the value to set
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 String waitForActiveShards) {
@@ -472,41 +573,16 @@ public interface ElasticsearchEndpointBuilderFactory {
             return (ElasticsearchEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -517,10 +593,14 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 String synchronous) {
@@ -563,6 +643,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Name of the cluster
          * 
          * @param path clusterName
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
             return ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
@@ -583,6 +664,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path clusterName
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder elasticsearchRest(
                 String componentName,

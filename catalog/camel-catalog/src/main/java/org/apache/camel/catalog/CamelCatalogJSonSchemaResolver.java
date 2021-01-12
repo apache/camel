@@ -23,7 +23,8 @@ import java.util.Map;
 import org.apache.camel.catalog.impl.CatalogHelper;
 
 /**
- * {@link JSonSchemaResolver} used by {@link CamelCatalog} that is able to load all the resources that the complete camel-catalog JAR provides.
+ * {@link JSonSchemaResolver} used by {@link CamelCatalog} that is able to load all the resources that the complete
+ * camel-catalog JAR provides.
  */
 public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
@@ -40,7 +41,8 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     public CamelCatalogJSonSchemaResolver(CamelCatalog camelCatalog,
                                           Map<String, String> extraComponents, Map<String, String> extraComponentsJSonSchema,
-                                          Map<String, String> extraDataFormats, Map<String, String> extraDataFormatsJSonSchema) {
+                                          Map<String, String> extraDataFormats,
+                                          Map<String, String> extraDataFormatsJSonSchema) {
         this.camelCatalog = camelCatalog;
         this.extraComponents = extraComponents;
         this.extraComponentsJSonSchema = extraComponentsJSonSchema;

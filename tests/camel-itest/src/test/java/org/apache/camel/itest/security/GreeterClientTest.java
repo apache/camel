@@ -29,6 +29,8 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.hello_world_soap_http.Greeter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,28 +40,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @CamelSpringTest
-@ContextConfiguration(locations = {"camel-context.xml"})
+@ContextConfiguration(locations = { "camel-context.xml" })
 public class GreeterClientTest {
     private static final java.net.URL WSDL_LOC;
     static {
-        java.net.URL tmp = null;
-        try {
-            tmp = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        WSDL_LOC = tmp;
+        WSDL_LOC = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
     }
-    private static final QName SERVICE_QNAME =
-        new QName("http://apache.org/hello_world_soap_http", "SOAPService");
-    
-    private static final QName PORT_QNAME =
-        new QName("http://apache.org/hello_world_soap_http", "SoapOverHttp"
-        );
-    
+    private static final QName SERVICE_QNAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
+
+    private static final QName PORT_QNAME = new QName("http://apache.org/hello_world_soap_http", "SoapOverHttp");
+
     @Autowired
     protected CamelContext camelContext;
-    
+
     protected String sendMessageWithUsernameToken(String username, String password, String message) throws Exception {
         final javax.xml.ws.Service svc = javax.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
@@ -70,19 +63,32 @@ public class GreeterClientTest {
         props.put("user", username);
         // Set the password type to be plain text, 
         // so we can keep using the password to authenticate with spring security
-        props.put("passwordType", "PasswordText");       
+        props.put("passwordType", "PasswordText");
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);
 
         client.getOutInterceptors().add(wss4jOut);
-        ((BindingProvider)greeter).getRequestContext().put("password", password);
+        ((BindingProvider) greeter).getRequestContext().put("password", password);
+
         return greeter.greetMe(message);
+    }
+
+    @BeforeEach
+    public void setUp() {
+        if (!camelContext.isStarted()) {
+            camelContext.start();
+        }
+    }
+
+    @AfterEach
+    public void tearDown() {
+        camelContext.stop();
     }
 
     @Test
     void testServiceWithValidateUser() throws Exception {
-        
+
         String response = sendMessageWithUsernameToken("jim", "jimspassword", "CXF");
-        
+
         assertEquals(" Hello CXF", response);
 
         try {
@@ -92,8 +98,8 @@ public class GreeterClientTest {
             String msg = ex.getMessage();
             assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
             assertTrue(msg.startsWith("The security token could not be authenticated or authorized")
-                       || msg.startsWith("A security error was encountered when verifying the messag"),
-                       "Get a wrong exception message: " + msg);
+                    || msg.startsWith("A security error was encountered when verifying the messag"),
+                    "Get a wrong exception message: " + msg);
         }
     }
 
@@ -105,8 +111,12 @@ public class GreeterClientTest {
             fail("should fail");
         } catch (Exception ex) {
             assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
-            assertTrue(ex.getMessage().startsWith("Cannot access the processor which has been protected."), "Get a wrong exception message");
-            assertTrue(ex.getMessage().endsWith("Caused by: [org.springframework.security.access.AccessDeniedException - Access is denied]"), "Get a wrong exception message");
+            assertTrue(ex.getMessage().startsWith("Cannot access the processor which has been protected."),
+                    "Get a wrong exception message");
+            assertTrue(
+                    ex.getMessage().endsWith(
+                            "Caused by: [org.springframework.security.access.AccessDeniedException - Access is denied]"),
+                    "Get a wrong exception message");
         }
     }
 

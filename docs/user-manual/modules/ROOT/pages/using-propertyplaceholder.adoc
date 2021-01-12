@@ -40,7 +40,7 @@ property component
 == Format
 
 The value of a Camel property can be obtained by specifying its key name
-within a property placeholder, using the following format: `{\{key\}}`
+within a property placeholder, using the following format: `{\{key}}`
 
 For example:
 ....
@@ -80,7 +80,7 @@ The list of prefixes is:
 |Prefix |Description
 |`ref:` |Lookup in the xref:registry.adoc[Registry.]
 
-|`file:` |Load the from file system.
+|`file:` |Load from the file system.
 
 |`classpath:` |Load from the classpath (this is also the default if no
 prefix is provided).

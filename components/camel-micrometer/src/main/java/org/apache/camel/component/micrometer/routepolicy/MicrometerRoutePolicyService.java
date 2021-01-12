@@ -26,5 +26,6 @@ import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
  * Service holding the {@link MeterRegistry} which registers all metrics.
  */
 @ManagedResource(description = "MicrometerRoutePolicy")
-public final class MicrometerRoutePolicyService extends AbstractMicrometerService implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
+public final class MicrometerRoutePolicyService extends AbstractMicrometerService
+        implements CamelContextAware, StaticService, MicrometerRoutePolicyMBean {
 }

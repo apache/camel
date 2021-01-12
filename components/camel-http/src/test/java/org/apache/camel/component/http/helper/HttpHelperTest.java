@@ -188,7 +188,6 @@ public class HttpHelperTest {
         assertEquals("http://www.google.com/context/search?test=true", url);
     }
 
-
     @Test
     public void testIsStatusCodeOkSimpleRange() throws Exception {
         assertFalse(HttpHelper.isStatusCodeOk(199, "200-299"));
@@ -227,7 +226,8 @@ public class HttpHelperTest {
         return exchange;
     }
 
-    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath) throws URISyntaxException {
+    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath)
+            throws URISyntaxException {
         CamelContext context = new DefaultCamelContext();
         DefaultExchange exchange = new DefaultExchange(context);
         Message inMsg = exchange.getIn();

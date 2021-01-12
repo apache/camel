@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import java.net.URI;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +30,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -35,20 +38,15 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.SqsClientBuilder;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
@@ -56,13 +54,15 @@ import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
+import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
-import software.amazon.awssdk.utils.AttributeMap;
+import software.amazon.awssdk.services.sqs.model.SqsException;
 
 /**
  * Sending and receive messages to/from AWS SQS service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service (SQS)", syntax = "aws2-sqs:queueNameOrArn", category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service (SQS)",
+             syntax = "aws2-sqs:queueNameOrArn", category = { Category.CLOUD, Category.MESSAGING })
 public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);
@@ -118,6 +118,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         return sqsConsumer;
     }
 
+    private boolean isDefaultAwsHost() {
+        return configuration.getAmazonAWSHost().equals("amazonaws.com");
+    }
+
     /*
      * If using a different AWS host, do not assume specific parts of the AWS
      * host and, instead, just return whatever is provided as the host.
@@ -126,17 +130,29 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         String host = configuration.getAmazonAWSHost();
         host = FileUtil.stripTrailingSeparator(host);
 
-        if (host.equals("amazonaws.com")) {
+        if (isDefaultAwsHost()) {
             return "sqs." + Region.of(configuration.getRegion()).id() + "." + host;
         }
 
         return host;
     }
 
+    /*
+     * Gets the base endpoint for AWS (ie.: http(s)://host:port.
+     *
+     * Do not confuse with other Camel endpoint methods: this one is named after AWS'
+     * own endpoint terminology and can also be used for the endpoint override in the
+     * client builder.
+     */
+    private String getAwsEndpointUri() {
+        return configuration.getProtocol() + "://" + getFullyQualifiedAWSHost();
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        client = getConfiguration().getAmazonSQSClient() != null ? getConfiguration().getAmazonSQSClient() : getClient();
+        client = configuration.getAmazonSQSClient() != null
+                ? configuration.getAmazonSQSClient() : Sqs2ClientFactory.getSqsClient(configuration).getSQSClient();
 
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
@@ -151,9 +167,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             // This allows accessing queues where you don't have permission to
             // list queues or query queues
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-                String protocol = configuration.getProtocol();
-
-                queueUrl = protocol + "://" + getFullyQualifiedAWSHost() + "/" + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+                queueUrl = getAwsEndpointUri() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
+                           + configuration.getQueueName();
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
                 GetQueueUrlRequest.Builder getQueueUrlRequest = GetQueueUrlRequest.builder();
                 getQueueUrlRequest.queueName(configuration.getQueueName());
@@ -181,31 +196,62 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         }
     }
 
-    protected void createQueue(SqsClient client) {
-        LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
+    private boolean queueExists(SqsClient client) {
+        LOG.trace("Checking if queue '{}' exists", configuration.getQueueName());
+
+        GetQueueUrlRequest getQueueUrlRequest = GetQueueUrlRequest.builder()
+                .queueName(configuration.getQueueName())
+                .build();
+        try {
+            queueUrl = client.getQueueUrl(getQueueUrlRequest).queueUrl();
+            LOG.trace("Queue '{}' exists and its URL is '{}'", configuration.getQueueName(),
+                    queueUrl);
+
+            return true;
+
+        } catch (QueueDoesNotExistException e) {
+            LOG.trace("Queue '{}' does not exist", configuration.getQueueName());
+
+            return false;
+        }
+    }
+
+    protected void createQueue(SqsClient client) throws IOException {
+        if (queueExists(client)) {
+            return;
+        }
+
+        LOG.trace("Creating the a queue named '{}'", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest.Builder request = CreateQueueRequest.builder().queueName(configuration.getQueueName());
         Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
         if (getConfiguration().isFifoQueue()) {
             attributes.put(QueueAttributeName.FIFO_QUEUE, String.valueOf(true));
-            boolean useContentBasedDeduplication = getConfiguration().getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy;
+            boolean useContentBasedDeduplication
+                    = getConfiguration().getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy;
             attributes.put(QueueAttributeName.CONTENT_BASED_DEDUPLICATION, String.valueOf(useContentBasedDeduplication));
         }
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT, String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
+                    String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
         if (getConfiguration().getMaximumMessageSize() != null) {
             attributes.put(QueueAttributeName.MAXIMUM_MESSAGE_SIZE, String.valueOf(getConfiguration().getMaximumMessageSize()));
         }
         if (getConfiguration().getMessageRetentionPeriod() != null) {
-            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD, String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD,
+                    String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
         if (getConfiguration().getPolicy() != null) {
-            attributes.put(QueueAttributeName.POLICY, String.valueOf(getConfiguration().getPolicy()));
+            InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
+                    getConfiguration().getPolicy());
+            String policy = IOUtils.toString(s, Charset.defaultCharset());
+            attributes.put(QueueAttributeName.POLICY, policy);
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
-            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS, String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
+                    String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
         if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
             attributes.put(QueueAttributeName.DELAY_SECONDS, String.valueOf(getConfiguration().getDelaySeconds()));
@@ -218,35 +264,51 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 attributes.put(QueueAttributeName.KMS_MASTER_KEY_ID, getConfiguration().getKmsMasterKeyId());
             }
             if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
-                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS, String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS,
+                        String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
         }
-        LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
+        LOG.trace("Trying to create queue [{}] with request [{}]...", configuration.getQueueName(), request);
         request.attributes(attributes);
 
-        CreateQueueResponse queueResult = client.createQueue(request.build());
-        queueUrl = queueResult.queueUrl();
+        try {
+            CreateQueueResponse queueResult = client.createQueue(request.build());
+            queueUrl = queueResult.queueUrl();
+        } catch (SqsException e) {
+            if (queueExists(client)) {
+                LOG.warn("The queue may have been created since last check and could not be created");
+                LOG.debug("AWS SDK error preventing queue creation: {}", e.getMessage(), e);
+            } else {
+                throw e;
+            }
+        }
 
         LOG.trace("Queue created and available at: {}", queueUrl);
     }
 
-    private void updateQueueAttributes(SqsClient client) {
+    private void updateQueueAttributes(SqsClient client) throws IOException {
         SetQueueAttributesRequest.Builder request = SetQueueAttributesRequest.builder().queueUrl(queueUrl);
         Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT, String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
+            attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
+                    String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
         if (getConfiguration().getMaximumMessageSize() != null) {
             attributes.put(QueueAttributeName.MAXIMUM_MESSAGE_SIZE, String.valueOf(getConfiguration().getMaximumMessageSize()));
         }
         if (getConfiguration().getMessageRetentionPeriod() != null) {
-            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD, String.valueOf(getConfiguration().getMessageRetentionPeriod()));
+            attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD,
+                    String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
         if (getConfiguration().getPolicy() != null) {
-            attributes.put(QueueAttributeName.POLICY, String.valueOf(getConfiguration().getPolicy()));
+            InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
+                    getConfiguration().getPolicy());
+            String policy = IOUtils.toString(s, Charset.defaultCharset());
+            attributes.put(QueueAttributeName.POLICY, policy);
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
-            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS, String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
+            attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
+                    String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
         if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
             attributes.put(QueueAttributeName.DELAY_SECONDS, String.valueOf(getConfiguration().getDelaySeconds()));
@@ -259,7 +321,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 attributes.put(QueueAttributeName.KMS_MASTER_KEY_ID, getConfiguration().getKmsMasterKeyId());
             }
             if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
-                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS, String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+                attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS,
+                        String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
         }
         if (!attributes.isEmpty()) {
@@ -319,63 +382,11 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     public SqsClient getClient() {
-        if (client == null) {
-            client = createClient();
-        }
         return client;
     }
 
     public void setClient(SqsClient client) {
         this.client = client;
-    }
-
-    /**
-     * Provide the possibility to override this method for an mock
-     * implementation
-     *
-     * @return AmazonSQSClient
-     */
-    SqsClient createClient() {
-        SqsClient client = null;
-        SqsClientBuilder clientBuilder = SqsClient.builder();
-        ProxyConfiguration.Builder proxyConfig = null;
-        ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
-            proxyConfig.endpoint(proxyEndpoint);
-            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
-        }
-
-        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
-        }
-        if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
-                    .build());
-            clientBuilder.httpClient(ahc);
-        }
-        client = clientBuilder.build();
-        return client;
     }
 
     protected String getQueueUrl() {
@@ -389,8 +400,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as
-     * unlimited.
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;

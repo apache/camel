@@ -84,12 +84,12 @@ public class FopComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("xslt:xslt/template.xsl")
-                    .setHeader("foo", constant("bar"))
-                    .to("fop:pdf")
-                    .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
-                    .to("file:target/data")
-                    .to("mock:result");
+                        .to("xslt:xslt/template.xsl")
+                        .setHeader("foo", constant("bar"))
+                        .to("fop:pdf")
+                        .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
+                        .to("file:target/data")
+                        .to("mock:result");
             }
         };
     }

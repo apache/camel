@@ -40,8 +40,6 @@ public enum IncomingPhoneNumberLocalApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private IncomingPhoneNumberLocalApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

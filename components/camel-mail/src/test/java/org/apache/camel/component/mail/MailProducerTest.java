@@ -47,7 +47,7 @@ public class MailProducerTest extends CamelTestSupport {
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(1, box.size());
     }
-    
+
     @Test
     public void testProducerBodyIsMimeMessage() throws Exception {
         Mailbox.clearAll();
@@ -60,8 +60,8 @@ public class MailProducerTest extends CamelTestSupport {
         mimeMessage.setFrom(from);
         mimeMessage.addRecipient(RecipientType.TO, to);
         mimeMessage.setSubject("This is the subject.");
-        mimeMessage.setText("This is the message");        
-        
+        mimeMessage.setText("This is the message");
+
         template.sendBodyAndHeader("direct:start", mimeMessage, "To", "someone@localhost");
         assertMockEndpointsSatisfied();
         // need to check the message header
@@ -70,7 +70,7 @@ public class MailProducerTest extends CamelTestSupport {
 
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(0, box.size());
-        
+
         // Check if the mimeMessagea has override body and headers
         Mailbox box2 = Mailbox.get("recipient2@localhost");
         assertEquals(1, box2.size());

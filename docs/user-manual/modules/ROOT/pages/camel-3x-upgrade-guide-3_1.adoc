@@ -370,12 +370,12 @@ You then need to migrate the logging to also be static:
 ==== Exchange
 
 The `Exchange` API has been modified slightly as part of an optimization effort.
-The returned value of `getCreated` is changed from `java.util.Date` to `long` which is the time millis.
+The return value of `getCreated` was changed from `java.util.Date` to `long` which is the time millis.
 The `Exchange.CREATED_TIMESTAMP` is no longer stored as exchange property, but you should use the `getCreated` method on `Exchange`.
-The returned value of `isExternalRedelivered` is changed from `Boolean` to `boolean`.
+The return value of `isExternalRedelivered` was changed from `Boolean` to `boolean`.
 
 Some of the advanced and API for component developers on `Exchange` has been moved to an extended interface `ExtendedExchange`.
-The following methods has been moved:
+The following methods have been moved:
 
 - setFromEndpoint
 - setFromRouteId
@@ -399,7 +399,7 @@ A few Camel components do provide their own message IDs such as the JMS componen
 
 ==== UnitOfWork
 
-For advanced Camel users whom implement custom `UnitOfWork` should implement the new `isBeforeAfterProcess()' method and return true of false,
+Advanced Camel users whom implement a custom `UnitOfWork` should implement the new `isBeforeAfterProcess()' method and return true or false,
 whether Camel should invoke the before and after processor methods.
 
 The method `getId` has been removed.
@@ -505,7 +505,7 @@ Some unused methods have been removed from `CamelContext` which were not part of
 
 ==== Internal API changes
 
-Remove the method `getProcessors` from `Pipeline` as you should use the `next` method instead to access a read-only view of the processors.
+Removed the method `getProcessors` from `Pipeline` as you should use the `next` method instead to access a read-only view of the processors.
 
 ==== @Experimental
 

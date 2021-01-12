@@ -4,8 +4,10 @@ package org.apache.camel.component.ldap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
         LdapEndpoint target = (LdapEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "base": target.setBase(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pagesize":
@@ -35,16 +35,19 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("base", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("pageSize", java.lang.Integer.class);
-        answer.put("returnedAttributes", java.lang.String.class);
-        answer.put("scope", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "base": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "returnedattributes":
+        case "returnedAttributes": return java.lang.String.class;
+        case "scope": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -52,8 +55,6 @@ public class LdapEndpointConfigurer extends PropertyConfigurerSupport implements
         LdapEndpoint target = (LdapEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "base": return target.getBase();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pagesize":

@@ -47,7 +47,7 @@ public class XMLSplitRowsTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
+    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
 
     @Test
     public void testHeaderAndTrailer() throws Exception {
@@ -61,7 +61,7 @@ public class XMLSplitRowsTest {
         Element header = list.get(0).getIn().getBody(Document.class).getDocumentElement();
         NodeList headerNodes = header.getElementsByTagName("Column");
         for (int i = 0; i < headerNodes.getLength(); i++) {
-            Element column = (Element)headerNodes.item(i);
+            Element column = (Element) headerNodes.item(i);
             if (column.getAttribute("name").equals("INDICATOR")) {
                 assertEquals("HBT", column.getTextContent());
             } else if (column.getAttribute("name").equals("DATE")) {
@@ -78,7 +78,7 @@ public class XMLSplitRowsTest {
             NodeList columnNodes = record.getElementsByTagName("Column");
             boolean firstNameFound = false;
             for (int i = 0; i < columnNodes.getLength(); i++) {
-                Element column = (Element)columnNodes.item(i);
+                Element column = (Element) columnNodes.item(i);
                 if (column.getAttribute("name").equals("FIRSTNAME")) {
                     assertEquals(expectedFirstName[counter], column.getTextContent());
                     firstNameFound = true;
@@ -93,7 +93,7 @@ public class XMLSplitRowsTest {
         Element trailer = list.get(5).getIn().getBody(Document.class).getDocumentElement();
         NodeList trailerNodes = trailer.getElementsByTagName("Column");
         for (int i = 0; i < trailerNodes.getLength(); i++) {
-            Element column = (Element)trailerNodes.item(i);
+            Element column = (Element) trailerNodes.item(i);
             if (column.getAttribute("name").equals("INDICATOR")) {
                 assertEquals("FBT", column.getTextContent());
             } else if (column.getAttribute("name").equals("STATUS")) {

@@ -39,6 +39,8 @@ public interface RestOpenapiComponentBuilderFactory {
      * Category: openapi,rest,api
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-rest-openapi
+     * 
+     * @return the dsl builder
      */
     static RestOpenapiComponentBuilder restOpenapi() {
         return new RestOpenapiComponentBuilderImpl();
@@ -54,9 +56,12 @@ public interface RestOpenapiComponentBuilderFactory {
          * API basePath, for example /v2. Default is unset, if set overrides the
          * value present in OpenApi specification.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder basePath(java.lang.String basePath) {
             doSetProperty("basePath", basePath);
@@ -69,9 +74,12 @@ public interface RestOpenapiComponentBuilderFactory {
          * is searched for single component that implements RestProducerFactory
          * SPI. Can be overridden in endpoint configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder componentName(
                 java.lang.String componentName) {
@@ -85,9 +93,12 @@ public interface RestOpenapiComponentBuilderFactory {
          * value of Accept HTTP header. If set overrides any value found in the
          * OpenApi specification. Can be overridden in endpoint configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder consumes(java.lang.String consumes) {
             doSetProperty("consumes", consumes);
@@ -103,9 +114,12 @@ public interface RestOpenapiComponentBuilderFactory {
          * specification, RestConfiguration. Can be overridden in endpoint
          * configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -122,10 +136,13 @@ public interface RestOpenapiComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -139,9 +156,12 @@ public interface RestOpenapiComponentBuilderFactory {
          * the OpenApi specification. Can be overridden in endpoint
          * configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder produces(java.lang.String produces) {
             doSetProperty("produces", produces);
@@ -157,10 +177,13 @@ public interface RestOpenapiComponentBuilderFactory {
          * syntax (i.e. https://api.example.com:8080). Can be overridden in
          * endpoint configuration.
          * 
-         * The option is a: <code>java.net.URI</code> type.
+         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
          * 
          * Default: openapi.json
          * Group: producer
+         * 
+         * @param specificationUri the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder specificationUri(
                 java.net.URI specificationUri) {
@@ -168,17 +191,24 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default RestOpenapiComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default RestOpenapiComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -186,9 +216,12 @@ public interface RestOpenapiComponentBuilderFactory {
          * to the TLS parameters set in the Camel context.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -198,10 +231,13 @@ public interface RestOpenapiComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default RestOpenapiComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -232,7 +268,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
             case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.net.URI) value); return true;
-            case "basicPropertyBinding": ((RestOpenApiComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((RestOpenApiComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sslContextParameters": ((RestOpenApiComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((RestOpenApiComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

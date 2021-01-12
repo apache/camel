@@ -43,45 +43,27 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder action(String action) {
             doSetProperty("action", action);
             return this;
         }
         /**
-         * To configure an already instantiated cache to be used.
-         * 
-         * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.LoadingCache</code> type.
-         * 
-         * Group: producer
-         */
-        default CaffeineLoadCacheEndpointBuilder cache(Object cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
-         * To configure an already instantiated cache to be used.
-         * 
-         * The option will be converted to a
-         * <code>com.github.benmanes.caffeine.cache.LoadingCache</code> type.
-         * 
-         * Group: producer
-         */
-        default CaffeineLoadCacheEndpointBuilder cache(String cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.CacheLoader&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cacheLoader the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder cacheLoader(Object cacheLoader) {
             doSetProperty("cacheLoader", cacheLoader);
@@ -91,9 +73,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option will be converted to a
-         * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.CacheLoader&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cacheLoader the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder cacheLoader(String cacheLoader) {
             doSetProperty("cacheLoader", cacheLoader);
@@ -103,10 +88,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -117,10 +105,14 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -131,10 +123,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the eviction Type for this cache.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.caffeine.EvictionType&lt;/code&gt; type.
          * 
          * Default: SIZE_BASED
          * Group: producer
+         * 
+         * @param evictionType the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder evictionType(
                 EvictionType evictionType) {
@@ -145,10 +140,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the eviction Type for this cache.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.caffeine.EvictionType&lt;/code&gt; type.
          * 
          * Default: SIZE_BASED
          * Group: producer
+         * 
+         * @param evictionType the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder evictionType(
                 String evictionType) {
@@ -159,10 +157,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the expire After Access Time in case of time based Eviction (in
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: producer
+         * 
+         * @param expireAfterAccessTime the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder expireAfterAccessTime(
                 int expireAfterAccessTime) {
@@ -173,10 +174,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the expire After Access Time in case of time based Eviction (in
          * seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: producer
+         * 
+         * @param expireAfterAccessTime the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder expireAfterAccessTime(
                 String expireAfterAccessTime) {
@@ -187,10 +191,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the expire After Access Write in case of time based Eviction (in
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: producer
+         * 
+         * @param expireAfterWriteTime the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder expireAfterWriteTime(
                 int expireAfterWriteTime) {
@@ -201,10 +208,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set the expire After Access Write in case of time based Eviction (in
          * seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: producer
+         * 
+         * @param expireAfterWriteTime the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder expireAfterWriteTime(
                 String expireAfterWriteTime) {
@@ -214,10 +224,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * Set the initial Capacity for the cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param initialCapacity the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder initialCapacity(
                 int initialCapacity) {
@@ -227,10 +240,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * Set the initial Capacity for the cache.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param initialCapacity the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder initialCapacity(
                 String initialCapacity) {
@@ -241,9 +257,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder key(Object key) {
             doSetProperty("key", key);
@@ -253,9 +272,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder key(String key) {
             doSetProperty("key", key);
@@ -272,10 +295,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -293,10 +319,14 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -306,10 +336,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * Set the maximum size for the cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param maximumSize the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder maximumSize(int maximumSize) {
             doSetProperty("maximumSize", maximumSize);
@@ -318,10 +351,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * Set the maximum size for the cache.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param maximumSize the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder maximumSize(String maximumSize) {
             doSetProperty("maximumSize", maximumSize);
@@ -331,9 +367,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific removal Listener for the cache.
          * 
          * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.RemovalListener&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param removalListener the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder removalListener(
                 Object removalListener) {
@@ -344,9 +383,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific removal Listener for the cache.
          * 
          * The option will be converted to a
-         * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.RemovalListener&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param removalListener the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder removalListener(
                 String removalListener) {
@@ -357,10 +399,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific Stats Counter for the cache stats.
          * 
          * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
-         * type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.stats.StatsCounter&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param statsCounter the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder statsCounter(
                 Object statsCounter) {
@@ -371,10 +415,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Set a specific Stats Counter for the cache stats.
          * 
          * The option will be converted to a
-         * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
-         * type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.stats.StatsCounter&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param statsCounter the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder statsCounter(
                 String statsCounter) {
@@ -384,10 +430,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * To enable stats on the cache.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param statsEnabled the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder statsEnabled(
                 boolean statsEnabled) {
@@ -397,10 +446,14 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * To enable stats on the cache.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param statsEnabled the value to set
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder statsEnabled(
                 String statsEnabled) {
@@ -419,39 +472,14 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
             return (CaffeineLoadCacheEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCaffeineLoadCacheEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCaffeineLoadCacheEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyType the value to set
+         * @return the dsl builder
          */
         default AdvancedCaffeineLoadCacheEndpointBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
@@ -461,10 +489,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCaffeineLoadCacheEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -475,10 +506,14 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCaffeineLoadCacheEndpointBuilder synchronous(
                 String synchronous) {
@@ -488,9 +523,12 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param valueType the value to set
+         * @return the dsl builder
          */
         default AdvancedCaffeineLoadCacheEndpointBuilder valueType(
                 String valueType) {
@@ -524,6 +562,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * the cache name
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder caffeineLoadcache(String path) {
             return CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder("caffeine-loadcache", path);
@@ -545,6 +584,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
                 String componentName,

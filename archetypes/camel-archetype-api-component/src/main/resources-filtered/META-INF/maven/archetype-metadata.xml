@@ -39,6 +39,12 @@
     <requiredProperty key="build-helper-maven-plugin-version">
       <defaultValue>${build-helper-maven-plugin-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="maven-surefire-plugin-version">
+      <defaultValue>${maven-surefire-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="junit-jupiter-version">
+      <defaultValue>${junit-jupiter-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>

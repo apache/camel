@@ -39,7 +39,7 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
             }
 
         });
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         // make sure we have the content-length header
         String len = out.getHeader(Exchange.CONTENT_LENGTH, String.class);
         assertEquals("20", len, "We should have the content-length header here.");
@@ -53,16 +53,17 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
 
-                from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false").to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
+                from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false")
+                        .to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
 
                 from("jetty:http://localhost:{{port2}}/other").process(new Processor() {
 
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "image/jpeg");
+                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "image/jpeg");
                         CachedOutputStream stream = new CachedOutputStream(exchange);
                         stream.write("This is hello world.".getBytes());
-                        exchange.getOut().setBody(stream.getInputStream());
+                        exchange.getMessage().setBody(stream.getInputStream());
                         IOHelper.close(stream);
                     }
                 });

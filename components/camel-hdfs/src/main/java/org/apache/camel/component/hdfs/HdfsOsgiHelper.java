@@ -26,8 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>Class which may be used in OSGi/Blueprint environment to perform some static initialization</p>
- * <p>This could be useful to fix the usage of {@link ServiceLoader} by Hadoop 2 in OSGi environment.</p>
+ * <p>
+ * Class which may be used in OSGi/Blueprint environment to perform some static initialization
+ * </p>
+ * <p>
+ * This could be useful to fix the usage of {@link ServiceLoader} by Hadoop 2 in OSGi environment.
+ * </p>
  */
 public class HdfsOsgiHelper {
 

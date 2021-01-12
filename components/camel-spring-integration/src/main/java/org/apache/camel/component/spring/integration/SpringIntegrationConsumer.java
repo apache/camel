@@ -32,12 +32,10 @@ import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.core.DestinationResolver;
 
 /**
- * A consumer of exchanges for the Spring Integration
- * Please specify the inputChannel in the endpoint url for this consumer.
- * If the message pattern is inOut, the outputChannel property
- * should be set for the outgoing message.
+ * A consumer of exchanges for the Spring Integration Please specify the inputChannel in the endpoint url for this
+ * consumer. If the message pattern is inOut, the outputChannel property should be set for the outgoing message.
  */
-public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
+public class SpringIntegrationConsumer extends DefaultConsumer implements MessageHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringIntegrationConsumer.class);
 
@@ -101,7 +99,8 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
     public void handleMessage(org.springframework.messaging.Message<?> siInMessage) {
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it
-        Exchange exchange = getEndpoint().createExchange(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
+        Exchange exchange
+                = getEndpoint().createExchange(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
         exchange.setIn(new SpringIntegrationMessage(exchange, siInMessage));
 
         // process the exchange
@@ -120,7 +119,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
             Object returnAddress = siInMessage.getHeaders().getReplyChannel();
             if (returnAddress != null) {
                 if (returnAddress instanceof String) {
-                    reply = context.getApplicationContext().getBean((String)returnAddress, MessageChannel.class);
+                    reply = context.getApplicationContext().getBean((String) returnAddress, MessageChannel.class);
                 } else if (returnAddress instanceof MessageChannel) {
                     reply = (MessageChannel) returnAddress;
                 }
@@ -138,13 +137,13 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
             }
 
             // put the message back the outputChannel if we need
-            org.springframework.messaging.Message<?> siOutMessage =
-                SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
+            org.springframework.messaging.Message<?> siOutMessage
+                    = SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
 
             // send the message to spring integration
             LOG.debug("Sending {} to ReplyChannel: {}", siOutMessage, reply);
             reply.send(siOutMessage);
-        }        
-    }   
+        }
+    }
 
 }

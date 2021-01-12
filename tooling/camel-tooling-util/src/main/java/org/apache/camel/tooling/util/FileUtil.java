@@ -22,19 +22,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public final class FileUtil {
+
+    private static final ConcurrentMap<String, Object> LOCKS = new ConcurrentHashMap<>();
 
     private FileUtil() {
     }
 
     /**
-     * Update a file with the given string content if neeed.
-     * The file won't be modified if the content is already the same.
+     * Update a file with the given string content if neeed. The file won't be modified if the content is already the
+     * same.
      *
-     * @param path the path of the file to update
-     * @param newdata the new string data, <code>null</code> to delete the file
-     * @return <code>true</code> if the file was modified, <code>false</code> otherwise
+     * @param  path        the path of the file to update
+     * @param  newdata     the new string data, <code>null</code> to delete the file
+     * @return             <code>true</code> if the file was modified, <code>false</code> otherwise
      * @throws IOException if an exception occurs
      */
     public static boolean updateFile(Path path, String newdata) throws IOException {
@@ -42,13 +46,13 @@ public final class FileUtil {
     }
 
     /**
-     * Update a file with the given string content if neeed.
-     * The file won't be modified if the content is already the same.
+     * Update a file with the given string content if neeed. The file won't be modified if the content is already the
+     * same.
      *
-     * @param path the path of the file to update
-     * @param newdata the new string data, <code>null</code> to delete the file
-     * @param encoding the encoding to use
-     * @return <code>true</code> if the file was modified, <code>false</code> otherwise
+     * @param  path        the path of the file to update
+     * @param  newdata     the new string data, <code>null</code> to delete the file
+     * @param  encoding    the encoding to use
+     * @return             <code>true</code> if the file was modified, <code>false</code> otherwise
      * @throws IOException if an exception occurs
      */
     public static boolean updateFile(Path path, String newdata, Charset encoding) throws IOException {
@@ -56,15 +60,22 @@ public final class FileUtil {
     }
 
     /**
-     * Update a file with the given binary content if neeed.
-     * The file won't be modified if the content is already the same.
+     * Update a file with the given binary content if neeed. The file won't be modified if the content is already the
+     * same.
      *
-     * @param path the path of the file to update
-     * @param newdata the new binary data, <code>null</code> to delete the file
-     * @return <code>true</code> if the file was modified, <code>false</code> otherwise
+     * @param  path        the path of the file to update
+     * @param  newdata     the new binary data, <code>null</code> to delete the file
+     * @return             <code>true</code> if the file was modified, <code>false</code> otherwise
      * @throws IOException if an exception occurs
      */
     public static boolean updateFile(Path path, byte[] newdata) throws IOException {
+        Object lock = LOCKS.computeIfAbsent(path.toString(), k -> new Object());
+        synchronized (lock) {
+            return doUpdateFile(path, newdata);
+        }
+    }
+
+    private static boolean doUpdateFile(Path path, byte[] newdata) throws IOException {
         if (newdata == null) {
             if (!Files.exists(path)) {
                 return false;
@@ -89,8 +100,8 @@ public final class FileUtil {
     /**
      * Read the content of the input file and update the target accordingly
      *
-     * @param from the source file
-     * @param to the target file
+     * @param  from        the source file
+     * @param  to          the target file
      * @throws IOException if an exception occurs
      */
     public static void updateFile(Path from, Path to) throws IOException {

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,6 +32,7 @@ import twitter4j.Status;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -52,7 +54,6 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
         // send tweet to the twitter endpoint
         producerTemplate.sendBodyAndHeader("direct:tweets", tweet, "customHeader", 12312);
 
-
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodyReceived().body(Status.class);
         // Message headers should be preserved
@@ -65,7 +66,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
         Status receivedTweet = tweets.get(0).getIn().getBody(Status.class);
         assertNotNull(receivedTweet);
         // The identifier for the published tweet should be there
-        assertNotNull(receivedTweet.getId());
+        assertNotEquals(0, receivedTweet.getId());
     }
 
     @Override
@@ -74,7 +75,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .inOut("twitter-timeline://user?" + getUriTokens())
+                        .to(ExchangePattern.InOut, "twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         //.transform().simple("The tweet '${body.text}' was published with the id '${body.id}'")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")

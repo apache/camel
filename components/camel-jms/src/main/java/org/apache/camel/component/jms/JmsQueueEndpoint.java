@@ -41,15 +41,15 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         setDestinationType("queue");
         setDestination(destination);
     }
-    
+
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-            JmsConfiguration configuration) {
+                            JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
         setDestinationType("queue");
     }
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-            JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+                            JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
         setDestinationType("queue");
         if (queueBrowseStrategy == null) {
@@ -81,8 +81,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     }
 
     /**
-     * If a number is set > 0 then this limits the number of messages that are
-     * returned when browsing the queue
+     * If a number is set > 0 then this limits the number of messages that are returned when browsing the queue
      */
     @ManagedAttribute
     public void setMaximumBrowseSize(int maximumBrowseSize) {

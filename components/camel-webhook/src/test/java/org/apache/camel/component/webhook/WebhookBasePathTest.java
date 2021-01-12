@@ -44,20 +44,21 @@ public class WebhookBasePathTest extends WebhookTestBase {
     @Test
     public void testAutoPath() {
         String result = template.requestBody("netty-http:http://localhost:" + port + "/base"
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"), "", String.class);
+                                             + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"),
+                "", String.class);
         assertEquals("auto: webhook", result);
     }
 
     @Test
     public void testRootPathError() {
         assertThrows(CamelExecutionException.class,
-            () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
+                () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
     }
 
     @Test
     public void testRootBasePathError() {
         assertThrows(CamelExecutionException.class,
-            () -> template.requestBody("netty-http:http://localhost:" + port + "/base/", "", String.class));
+                () -> template.requestBody("netty-http:http://localhost:" + port + "/base/", "", String.class));
     }
 
     @Override

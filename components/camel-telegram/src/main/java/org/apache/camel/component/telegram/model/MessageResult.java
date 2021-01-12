@@ -55,7 +55,7 @@ public class MessageResult implements Serializable {
     }
 
     @JsonSetter("result")
-    public void setResult(JsonNode result) throws JsonProcessingException  {
+    public void setResult(JsonNode result) throws JsonProcessingException {
         if (result != null) {
             if (result.isBoolean()) {
                 this.result = result.asBoolean();

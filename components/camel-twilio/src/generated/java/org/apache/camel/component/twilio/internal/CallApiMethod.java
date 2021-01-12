@@ -24,30 +24,45 @@ public enum CallApiMethod implements ApiMethod {
         com.twilio.rest.api.v2010.account.CallCreator.class,
         "creator",
         arg("to", com.twilio.type.Endpoint.class),
-        arg("from", com.twilio.type.PhoneNumber.class),
+        arg("from", com.twilio.type.Endpoint.class),
         arg("applicationSid", String.class)),
 
     CREATOR_1(
         com.twilio.rest.api.v2010.account.CallCreator.class,
         "creator",
         arg("to", com.twilio.type.Endpoint.class),
-        arg("from", com.twilio.type.PhoneNumber.class),
-        arg("url", java.net.URI.class)),
+        arg("from", com.twilio.type.Endpoint.class),
+        arg("twiml", com.twilio.type.Twiml.class)),
 
     CREATOR_2(
         com.twilio.rest.api.v2010.account.CallCreator.class,
         "creator",
-        arg("pathAccountSid", String.class),
         arg("to", com.twilio.type.Endpoint.class),
-        arg("from", com.twilio.type.PhoneNumber.class),
-        arg("applicationSid", String.class)),
+        arg("from", com.twilio.type.Endpoint.class),
+        arg("url", java.net.URI.class)),
 
     CREATOR_3(
         com.twilio.rest.api.v2010.account.CallCreator.class,
         "creator",
         arg("pathAccountSid", String.class),
         arg("to", com.twilio.type.Endpoint.class),
-        arg("from", com.twilio.type.PhoneNumber.class),
+        arg("from", com.twilio.type.Endpoint.class),
+        arg("applicationSid", String.class)),
+
+    CREATOR_4(
+        com.twilio.rest.api.v2010.account.CallCreator.class,
+        "creator",
+        arg("pathAccountSid", String.class),
+        arg("to", com.twilio.type.Endpoint.class),
+        arg("from", com.twilio.type.Endpoint.class),
+        arg("twiml", com.twilio.type.Twiml.class)),
+
+    CREATOR_5(
+        com.twilio.rest.api.v2010.account.CallCreator.class,
+        "creator",
+        arg("pathAccountSid", String.class),
+        arg("to", com.twilio.type.Endpoint.class),
+        arg("from", com.twilio.type.Endpoint.class),
         arg("url", java.net.URI.class)),
 
     DELETER(
@@ -91,8 +106,6 @@ public enum CallApiMethod implements ApiMethod {
         "updater",
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
-
-    
 
     private final ApiMethod apiMethod;
 

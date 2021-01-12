@@ -35,9 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A default implementation of the {@link org.apache.camel.PollingConsumer} which uses the normal
- * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
- * the caller to pull messages on demand.
+ * A default implementation of the {@link org.apache.camel.PollingConsumer} which uses the normal asynchronous consumer
+ * mechanism along with a {@link BlockingQueue} to allow the caller to pull messages on demand.
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor, IsSingleton {
 
@@ -62,14 +61,16 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         } else {
             this.queue = new ArrayBlockingQueue<>(queueSize);
         }
-        this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
+        this.interruptedExceptionHandler
+                = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
         super(endpoint);
         this.queue = queue;
         this.queueCapacity = queue.remainingCapacity();
-        this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
+        this.interruptedExceptionHandler
+                = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     @Override
@@ -202,7 +203,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 timeout = strategy.beforePoll(timeout);
             } catch (Exception e) {
-                LOG.debug("Error occurred before polling " + consumer + ". This exception will be ignored.", e);
+                LOG.debug("Error occurred before polling {}. This exception will be ignored.", consumer, e);
             }
         }
         return timeout;
@@ -214,7 +215,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 strategy.afterPoll();
             } catch (Exception e) {
-                LOG.debug("Error occurred after polling " + consumer + ". This exception will be ignored.", e);
+                LOG.debug("Error occurred after polling {}. This exception will be ignored.", consumer, e);
             }
         }
     }

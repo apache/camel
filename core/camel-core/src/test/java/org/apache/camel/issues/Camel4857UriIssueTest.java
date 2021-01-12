@@ -37,10 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class Camel4857UriIssueTest extends ContextTestSupport {
 
     /**
-     * An URI of Camel Beanstalk component consists of a hostname, port and a
-     * list of tube names. Tube names are separated by "+" character (which is
-     * more or less usually used on the Web to make lists), but every tube name
-     * may contain URI special characters like ? or +
+     * An URI of Camel Beanstalk component consists of a hostname, port and a list of tube names. Tube names are
+     * separated by "+" character (which is more or less usually used on the Web to make lists), but every tube name may
+     * contain URI special characters like ? or +
      */
     class MyEndpoint extends DefaultEndpoint {
         String uri;
@@ -74,7 +73,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
     class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+                throws Exception {
             return new MyEndpoint(uri, remaining);
         }
 
@@ -107,7 +107,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         // gets
         // normalized, so that an endpoint sees "tube1+tube+"
         MyEndpoint endpoint = context.getEndpoint("my:host:11303/tube1+tube%2B", MyEndpoint.class);
-        assertEquals("host:11303/tube1+tube%2B", endpoint.remaining, "Path contains several tube names, every tube name may have + or ? characters");
+        assertEquals("host:11303/tube1+tube%2B", endpoint.remaining,
+                "Path contains several tube names, every tube name may have + or ? characters");
     }
 
 }

@@ -96,27 +96,29 @@ public class InstrumentedThreadPoolFactoryTest {
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(InstrumentedExecutorService.class)));
 
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"submitted"}));
-        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[]{"running"}));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"completed"}));
-        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[]{"duration"}));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "submitted" }));
+        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] { "running" }));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "completed" }));
+        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[] { "duration" }));
     }
 
     @Test
     public void testNewScheduledThreadPool() throws Exception {
-        final ScheduledExecutorService scheduledExecutorService = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
+        final ScheduledExecutorService scheduledExecutorService
+                = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
 
         assertThat(scheduledExecutorService, is(notNullValue()));
         assertThat(scheduledExecutorService, is(instanceOf(InstrumentedScheduledExecutorService.class)));
 
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"submitted"}));
-        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[]{"running"}));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"completed"}));
-        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[]{"duration"}));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.once"}));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.repetitively"}));
-        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.overrun"}));
-        inOrder.verify(registry, times(1)).histogram(MetricRegistry.name(METRICS_NAME, new String[]{"scheduled.percent-of-period"}));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "submitted" }));
+        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] { "running" }));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "completed" }));
+        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[] { "duration" }));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.once" }));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.repetitively" }));
+        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.overrun" }));
+        inOrder.verify(registry, times(1))
+                .histogram(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.percent-of-period" }));
     }
 
 }

@@ -245,7 +245,7 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
 
         assertNotNull(exchange);
     }
-    
+
     @DisabledOnOs(AIX)
     @Test
     void validateShouldFailWithRedefinedDefaultGroup() {

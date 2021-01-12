@@ -59,7 +59,9 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        map.close();
+        if (map != null) {
+            map.close();
+        }
 
         super.tearDown();
     }
@@ -131,9 +133,9 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-map:%s", MAP_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
                 fromF("atomix-map:%s?key=%s", MAP_NAME, KEY_NAME)
-                    .to("mock:result-key");
+                        .to("mock:result-key");
             }
         };
     }

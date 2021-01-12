@@ -21,7 +21,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 
 public class HttpAsyncTestSupport extends CamelTestSupport {
-    
+
     protected static int port;
 
     @BeforeAll

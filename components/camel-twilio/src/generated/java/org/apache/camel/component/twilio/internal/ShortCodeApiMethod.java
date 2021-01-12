@@ -51,8 +51,6 @@ public enum ShortCodeApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private ShortCodeApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

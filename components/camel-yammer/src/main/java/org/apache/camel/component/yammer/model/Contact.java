@@ -66,7 +66,8 @@ public class Contact {
 
     @Override
     public String toString() {
-        return "Contact [emailAddresses=" + emailAddresses + ", hasFakeEmail=" + hasFakeEmail + ", im=" + im + ", phoneNumbers=" + phoneNumbers + "]";
+        return "Contact [emailAddresses=" + emailAddresses + ", hasFakeEmail=" + hasFakeEmail + ", im=" + im + ", phoneNumbers="
+               + phoneNumbers + "]";
     }
 
 }

@@ -29,12 +29,12 @@ public enum MerchantAccountGatewayApiMethod implements ApiMethod {
         "create",
         arg("request", com.braintreegateway.MerchantAccountRequest.class)),
 
-    CREATEFORCURRENCY(
+    CREATE_FOR_CURRENCY(
         com.braintreegateway.Result.class,
         "createForCurrency",
         arg("currencyRequest", com.braintreegateway.MerchantAccountCreateForCurrencyRequest.class)),
 
-    FETCHMERCHANTACCOUNTS(
+    FETCH_MERCHANT_ACCOUNTS(
         com.braintreegateway.PaginatedResult.class,
         "fetchMerchantAccounts",
         arg("page", int.class)),
@@ -49,8 +49,6 @@ public enum MerchantAccountGatewayApiMethod implements ApiMethod {
         "update",
         arg("id", String.class),
         arg("request", com.braintreegateway.MerchantAccountRequest.class));
-
-    
 
     private final ApiMethod apiMethod;
 

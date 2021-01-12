@@ -54,21 +54,27 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
     @Test
     public void testExistingFileExists() throws Exception {
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
-                                   "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
-                                   "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
-                                   "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+                "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+                "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+                "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists("target/data/file/hello.txt");
-        assertEquals("Bye Existing World 2", context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
+        assertEquals("Bye Existing World 2",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
 
         assertFileExists("target/data/file/renamed-hello2.txt");
-        assertEquals("Bye Existing World 1", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello2.txt")));
+        assertEquals("Bye Existing World 1",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello2.txt")));
 
         assertFileExists("target/data/file/renamed-hello1.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello1.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello1.txt")));
     }
 
     private static class MyStrategy implements FileMoveExistingStrategy {
@@ -77,7 +83,8 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+        public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+                throws GenericFileOperationFailedException {
 
             // need to evaluate using a dummy and simulate the file first, to
             // have access to all the file attributes
@@ -100,7 +107,8 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
             // which confuses java.io.File)
             to = FileUtil.normalizePath(to);
             if (ObjectHelper.isEmpty(to)) {
-                throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+                throw new GenericFileOperationFailedException(
+                        "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
             }
 
             // ensure any paths is created before we rename as the renamed file
@@ -123,7 +131,9 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                     }
                 } else {
-                    throw new GenericFileOperationFailedException("Cannot moved existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot moved existing file from: " + fileName + " to: " + to + " as there already exists a file: "
+                                                                  + to);
                 }
             }
 

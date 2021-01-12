@@ -22,13 +22,14 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Represent the kinds of options for wait for tasks to complete.
  * <p/>
- * The tasks is usually async tasks executed by the JDK concurrency library.
- * With these options the caller can choose whether to wait for the task to complete
- * or not before the caller thread continues.
+ * The tasks is usually async tasks executed by the JDK concurrency library. With these options the caller can choose
+ * whether to wait for the task to complete or not before the caller thread continues.
  */
 @XmlType
 @XmlEnum
 public enum WaitForTaskToComplete {
 
-    Never, IfReplyExpected, Always
+    Never,
+    IfReplyExpected,
+    Always
 }

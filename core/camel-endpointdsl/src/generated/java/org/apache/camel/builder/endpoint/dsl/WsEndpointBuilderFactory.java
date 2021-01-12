@@ -50,10 +50,13 @@ public interface WsEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -65,10 +68,14 @@ public interface WsEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -78,10 +85,13 @@ public interface WsEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -91,10 +101,13 @@ public interface WsEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -105,9 +118,13 @@ public interface WsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -119,9 +136,13 @@ public interface WsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -133,10 +154,13 @@ public interface WsEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -148,10 +172,14 @@ public interface WsEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -169,10 +197,13 @@ public interface WsEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder transferException(
                 boolean transferException) {
@@ -190,10 +221,14 @@ public interface WsEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder transferException(
                 String transferException) {
@@ -209,10 +244,13 @@ public interface WsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -228,10 +266,14 @@ public interface WsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -242,10 +284,13 @@ public interface WsEndpointBuilderFactory {
          * Whether to send an message if the web-socket listener received an
          * error.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendMessageOnError the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
                 boolean sendMessageOnError) {
@@ -256,10 +301,14 @@ public interface WsEndpointBuilderFactory {
          * Whether to send an message if the web-socket listener received an
          * error.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendMessageOnError the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
                 String sendMessageOnError) {
@@ -275,9 +324,12 @@ public interface WsEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -293,9 +345,12 @@ public interface WsEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -320,10 +375,13 @@ public interface WsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -337,9 +395,12 @@ public interface WsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -349,9 +410,13 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -362,9 +427,12 @@ public interface WsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -372,41 +440,17 @@ public interface WsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -417,9 +461,13 @@ public interface WsEndpointBuilderFactory {
          * between AHC and Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -430,9 +478,13 @@ public interface WsEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
                 Object clientConfig) {
@@ -444,9 +496,13 @@ public interface WsEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option will be converted to a
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
                 String clientConfig) {
@@ -457,13 +513,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 String key,
@@ -475,13 +535,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(Map values) {
             doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
@@ -491,10 +554,13 @@ public interface WsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -505,10 +571,14 @@ public interface WsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -518,13 +588,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 String key,
@@ -536,13 +610,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 Map values) {
@@ -567,10 +644,13 @@ public interface WsEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -582,10 +662,14 @@ public interface WsEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -595,10 +679,13 @@ public interface WsEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -608,10 +695,13 @@ public interface WsEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -622,9 +712,13 @@ public interface WsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -636,9 +730,13 @@ public interface WsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -650,10 +748,13 @@ public interface WsEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -665,10 +766,14 @@ public interface WsEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -686,10 +791,13 @@ public interface WsEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder transferException(
                 boolean transferException) {
@@ -707,10 +815,14 @@ public interface WsEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder transferException(
                 String transferException) {
@@ -721,10 +833,13 @@ public interface WsEndpointBuilderFactory {
          * Define if the Connection Close header has to be added to HTTP
          * Request. This parameter is false by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param connectionClose the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder connectionClose(
                 boolean connectionClose) {
@@ -735,10 +850,14 @@ public interface WsEndpointBuilderFactory {
          * Define if the Connection Close header has to be added to HTTP
          * Request. This parameter is false by default.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param connectionClose the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder connectionClose(String connectionClose) {
             doSetProperty("connectionClose", connectionClose);
@@ -748,9 +867,12 @@ public interface WsEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -760,9 +882,12 @@ public interface WsEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder cookieHandler(String cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -779,10 +904,13 @@ public interface WsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -800,10 +928,14 @@ public interface WsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -813,10 +945,13 @@ public interface WsEndpointBuilderFactory {
         /**
          * To enable streaming to send data as multiple text fragments.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useStreaming the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder useStreaming(boolean useStreaming) {
             doSetProperty("useStreaming", useStreaming);
@@ -825,10 +960,14 @@ public interface WsEndpointBuilderFactory {
         /**
          * To enable streaming to send data as multiple text fragments.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useStreaming the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder useStreaming(String useStreaming) {
             doSetProperty("useStreaming", useStreaming);
@@ -843,9 +982,12 @@ public interface WsEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -861,9 +1003,12 @@ public interface WsEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -883,41 +1028,17 @@ public interface WsEndpointBuilderFactory {
             return (WsEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -928,9 +1049,13 @@ public interface WsEndpointBuilderFactory {
          * between AHC and Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -941,9 +1066,13 @@ public interface WsEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
                 Object clientConfig) {
@@ -955,9 +1084,13 @@ public interface WsEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option will be converted to a
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
                 String clientConfig) {
@@ -968,13 +1101,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 String key,
@@ -986,13 +1123,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(Map values) {
             doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
@@ -1002,10 +1142,13 @@ public interface WsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1016,10 +1159,14 @@ public interface WsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1029,13 +1176,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 String key,
@@ -1047,13 +1198,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 Map values) {
@@ -1078,10 +1232,13 @@ public interface WsEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -1093,10 +1250,14 @@ public interface WsEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -1106,10 +1267,13 @@ public interface WsEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -1119,10 +1283,13 @@ public interface WsEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -1133,9 +1300,13 @@ public interface WsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1147,9 +1318,13 @@ public interface WsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1161,10 +1336,13 @@ public interface WsEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -1176,10 +1354,14 @@ public interface WsEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -1197,10 +1379,13 @@ public interface WsEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder transferException(boolean transferException) {
             doSetProperty("transferException", transferException);
@@ -1217,10 +1402,14 @@ public interface WsEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder transferException(String transferException) {
             doSetProperty("transferException", transferException);
@@ -1235,9 +1424,12 @@ public interface WsEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1253,9 +1445,12 @@ public interface WsEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1276,41 +1471,17 @@ public interface WsEndpointBuilderFactory {
             return (WsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -1321,9 +1492,13 @@ public interface WsEndpointBuilderFactory {
          * between AHC and Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -1334,9 +1509,13 @@ public interface WsEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder clientConfig(Object clientConfig) {
             doSetProperty("clientConfig", clientConfig);
@@ -1347,9 +1526,13 @@ public interface WsEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option will be converted to a
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder clientConfig(String clientConfig) {
             doSetProperty("clientConfig", clientConfig);
@@ -1359,13 +1542,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
                 String key,
@@ -1377,13 +1564,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(Map values) {
             doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
@@ -1393,10 +1583,13 @@ public interface WsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1406,10 +1599,14 @@ public interface WsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1419,13 +1616,17 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 String key,
@@ -1437,13 +1638,16 @@ public interface WsEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(Map values) {
             doSetMultiValueProperties("clientConfigRealmOptions", "clientConfig.realm.", values);
@@ -1467,6 +1671,7 @@ public interface WsEndpointBuilderFactory {
          * The URI to use such as http://hostname:port/path
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default WsEndpointBuilder ahcWs(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-ws", path);
@@ -1488,6 +1693,7 @@ public interface WsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default WsEndpointBuilder ahcWs(String componentName, String path) {
             return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1507,6 +1713,7 @@ public interface WsEndpointBuilderFactory {
          * The URI to use such as http://hostname:port/path
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default WsEndpointBuilder ahcWss(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-wss", path);

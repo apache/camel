@@ -20,7 +20,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum CalendarEventsApiMethod implements ApiMethod {
 
-    CALENDARIMPORT(
+    CALENDAR_IMPORT(
         com.google.api.services.calendar.Calendar.Events.CalendarImport.class,
         "calendarImport",
         arg("calendarId", String.class),
@@ -69,7 +69,7 @@ public enum CalendarEventsApiMethod implements ApiMethod {
         arg("eventId", String.class),
         arg("content", com.google.api.services.calendar.model.Event.class)),
 
-    QUICKADD(
+    QUICK_ADD(
         com.google.api.services.calendar.Calendar.Events.QuickAdd.class,
         "quickAdd",
         arg("calendarId", String.class),
@@ -87,8 +87,6 @@ public enum CalendarEventsApiMethod implements ApiMethod {
         "watch",
         arg("calendarId", String.class),
         arg("contentChannel", com.google.api.services.calendar.model.Channel.class));
-
-    
 
     private final ApiMethod apiMethod;
 

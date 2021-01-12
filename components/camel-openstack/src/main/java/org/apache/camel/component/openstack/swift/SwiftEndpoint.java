@@ -30,7 +30,8 @@ import org.openstack4j.core.transport.Config;
 /**
  * Access OpenStack Swift object/blob store.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host",
+             category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "objects,containers")
@@ -167,12 +168,11 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;
     }
-
 
     @Override
     public String getApiVersion() {
@@ -186,5 +186,3 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
         this.apiVersion = apiVersion;
     }
 }
-
-

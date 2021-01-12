@@ -4,8 +4,10 @@ package org.apache.camel.component.microprofile.metrics;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "counterincrement":
         case "counterIncrement": target.setCounterIncrement(property(camelContext, java.lang.Long.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -46,23 +46,30 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("counterIncrement", java.lang.Long.class);
-        answer.put("description", java.lang.String.class);
-        answer.put("displayName", java.lang.String.class);
-        answer.put("gaugeDecrement", java.lang.Boolean.class);
-        answer.put("gaugeIncrement", java.lang.Boolean.class);
-        answer.put("gaugeValue", java.lang.Number.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mark", java.lang.Long.class);
-        answer.put("metricUnit", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tags", java.lang.String.class);
-        answer.put("value", java.lang.Long.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "counterincrement":
+        case "counterIncrement": return java.lang.Long.class;
+        case "description": return java.lang.String.class;
+        case "displayname":
+        case "displayName": return java.lang.String.class;
+        case "gaugedecrement":
+        case "gaugeDecrement": return java.lang.Boolean.class;
+        case "gaugeincrement":
+        case "gaugeIncrement": return java.lang.Boolean.class;
+        case "gaugevalue":
+        case "gaugeValue": return java.lang.Number.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mark": return java.lang.Long.class;
+        case "metricunit":
+        case "metricUnit": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tags": return java.lang.String.class;
+        case "value": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -70,8 +77,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "counterincrement":
         case "counterIncrement": return target.getCounterIncrement();
         case "description": return target.getDescription();

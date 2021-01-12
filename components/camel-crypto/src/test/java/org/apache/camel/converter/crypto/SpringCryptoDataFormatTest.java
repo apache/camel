@@ -63,7 +63,7 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
     }
 
     public static byte[] getIV() {
-        return new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+        return new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
     }
 
     public static GCMParameterSpec getGCMParameterSpec() {

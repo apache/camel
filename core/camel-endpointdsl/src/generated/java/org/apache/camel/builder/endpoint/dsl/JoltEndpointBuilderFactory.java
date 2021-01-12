@@ -44,10 +44,13 @@ public interface JoltEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -61,10 +64,14 @@ public interface JoltEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder allowContextMapAll(String allowContextMapAll) {
             doSetProperty("allowContextMapAll", allowContextMapAll);
@@ -77,10 +84,13 @@ public interface JoltEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -94,10 +104,14 @@ public interface JoltEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -107,10 +121,13 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -119,10 +136,14 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -132,11 +153,13 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the input is hydrated JSON or a JSON String.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
          * 
          * Default: Hydrated
          * Group: producer
+         * 
+         * @param inputType the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
             doSetProperty("inputType", inputType);
@@ -146,11 +169,13 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the input is hydrated JSON or a JSON String.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
          * 
          * Default: Hydrated
          * Group: producer
+         * 
+         * @param inputType the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder inputType(String inputType) {
             doSetProperty("inputType", inputType);
@@ -167,10 +192,13 @@ public interface JoltEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -187,10 +215,14 @@ public interface JoltEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -200,11 +232,13 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the output should be hydrated JSON or a JSON String.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
          * 
          * Default: Hydrated
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
             doSetProperty("outputType", outputType);
@@ -214,11 +248,13 @@ public interface JoltEndpointBuilderFactory {
          * Specifies if the output should be hydrated JSON or a JSON String.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jolt.JoltInputOutputType&lt;/code&gt; type.
          * 
          * Default: Hydrated
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
@@ -229,10 +265,13 @@ public interface JoltEndpointBuilderFactory {
          * specified Chainr will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jolt.JoltTransformType&lt;/code&gt; type.
          * 
          * Default: Chainr
          * Group: producer
+         * 
+         * @param transformDsl the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
             doSetProperty("transformDsl", transformDsl);
@@ -243,10 +282,13 @@ public interface JoltEndpointBuilderFactory {
          * specified Chainr will be used.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jolt.JoltTransformType&lt;/code&gt; type.
          * 
          * Default: Chainr
          * Group: producer
+         * 
+         * @param transformDsl the value to set
+         * @return the dsl builder
          */
         default JoltEndpointBuilder transformDsl(String transformDsl) {
             doSetProperty("transformDsl", transformDsl);
@@ -264,41 +306,16 @@ public interface JoltEndpointBuilderFactory {
             return (JoltEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJoltEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJoltEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJoltEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -308,10 +325,14 @@ public interface JoltEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJoltEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -360,6 +381,7 @@ public interface JoltEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JoltEndpointBuilder jolt(String path) {
             return JoltEndpointBuilderFactory.endpointBuilder("jolt", path);
@@ -385,6 +407,7 @@ public interface JoltEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JoltEndpointBuilder jolt(String componentName, String path) {
             return JoltEndpointBuilderFactory.endpointBuilder(componentName, path);

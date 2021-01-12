@@ -28,8 +28,6 @@ public enum GoogleCalendarApiName implements ApiName {
     SETTINGS("settings");
 
 
-    private static final GoogleCalendarApiName[] VALUES = values();
-    
     private final String name;
 
     private GoogleCalendarApiName(String name) {
@@ -41,12 +39,4 @@ public enum GoogleCalendarApiName implements ApiName {
         return name;
     }
 
-    public static GoogleCalendarApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

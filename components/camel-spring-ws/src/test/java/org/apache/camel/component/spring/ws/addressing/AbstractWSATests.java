@@ -52,7 +52,7 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
 
     private final String xmlBody = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
     private String requestInputAction;
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -116,8 +116,8 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     }
 
     /**
-     * Construct a default action for the response message from the input
-     * message using the default response action suffix.
+     * Construct a default action for the response message from the input message using the default response action
+     * suffix.
      */
     protected URI getDefaultResponseAction() throws URISyntaxException {
         return new URI(requestInputAction + "Response");
@@ -129,7 +129,7 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     protected final MessageAddressingProperties newChannelParams() {
         assertNotNull(newReply);
         assertNotNull(newReply.getMessageContext());
-        SoapMessage request = (SoapMessage)newReply.getMessageContext().getRequest();
+        SoapMessage request = (SoapMessage) newReply.getMessageContext().getRequest();
         assertNotNull(request);
 
         MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties(request);
@@ -148,7 +148,7 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
         assertNotNull(response);
         assertNotNull(response.getMessageContext());
 
-        SoapMessage soapResponse = (SoapMessage)response.getMessageContext().getResponse();
+        SoapMessage soapResponse = (SoapMessage) response.getMessageContext().getResponse();
         assertNotNull(soapResponse);
 
         MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties(soapResponse);
@@ -157,15 +157,14 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
     }
 
     /**
-     * Provides such an ActionCallback that sets the WS-Addressing param replyTo
-     * or doesn't set WS-Addressing param replyTo. In other words it cause
-     * response to be return using new or same channel as the request.
+     * Provides such an ActionCallback that sets the WS-Addressing param replyTo or doesn't set WS-Addressing param
+     * replyTo. In other words it cause response to be return using new or same channel as the request.
      */
     abstract ActionCallback channelIn(String action) throws URISyntaxException;
 
     /**
-     * Provide corresponding results based on channel input. These two abstract
-     * methods (channelIn and channelOut)are bind together tighly.
+     * Provide corresponding results based on channel input. These two abstract methods (channelIn and channelOut)are
+     * bind together tighly.
      */
     abstract MessageAddressingProperties channelOut();
 

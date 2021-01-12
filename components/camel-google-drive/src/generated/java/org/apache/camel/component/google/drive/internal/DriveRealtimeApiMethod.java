@@ -36,8 +36,6 @@ public enum DriveRealtimeApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveRealtimeApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

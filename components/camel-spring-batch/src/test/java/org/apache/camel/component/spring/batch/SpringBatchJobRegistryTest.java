@@ -65,7 +65,7 @@ public class SpringBatchJobRegistryTest extends AbstractJUnit4SpringContextTests
     @Autowired
     ConsumerTemplate consumer;
 
-    String[] inputMessages = new String[]{"foo", "bar", "baz", null};
+    String[] inputMessages = new String[] { "foo", "bar", "baz", null };
 
     @BeforeEach
     public void setUp() throws Exception {

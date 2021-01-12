@@ -138,10 +138,8 @@ public class TranslateConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which Translate client needs to work. When using this
-     * parameter, the configuration will expect the capitalized name of the
-     * region (for example AP_EAST_1) You'll need to use the name
-     * Regions.EU_WEST_1.name()
+     * The region in which Translate client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -179,15 +177,14 @@ public class TranslateConfiguration implements Cloneable {
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = targetLanguage;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
      */
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
@@ -199,7 +196,7 @@ public class TranslateConfiguration implements Cloneable {
 
     public TranslateConfiguration copy() {
         try {
-            return (TranslateConfiguration)super.clone();
+            return (TranslateConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

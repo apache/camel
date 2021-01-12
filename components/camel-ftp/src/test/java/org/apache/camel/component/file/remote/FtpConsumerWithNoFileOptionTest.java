@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&delay=5000";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        RemoteFile<?> file = (RemoteFile<?>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        RemoteFile<?> file = (RemoteFile<?>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         assertNotNull(file);
         assertEquals("hello.txt", file.getAbsoluteFilePath());
         assertEquals("hello.txt", file.getRelativeFilePath());

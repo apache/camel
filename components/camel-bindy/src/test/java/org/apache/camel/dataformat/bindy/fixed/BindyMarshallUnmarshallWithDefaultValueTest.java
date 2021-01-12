@@ -46,11 +46,12 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
         assertEquals("Doe", order.getLastName());
         assertEquals("Hello     ", order.getComment());
     }
-    
+
     @Test
     public void testUnMarshallMessageWithEol() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultUnmarshalEol");
-        template.sendBody("direct:unmarshaleol", "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     QWERTY");
+        template.sendBody("direct:unmarshaleol",
+                "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     QWERTY");
 
         // check the model
         OrderEol order = mock.getReceivedExchanges().get(0).getIn().getBody(OrderEol.class);
@@ -70,7 +71,7 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
         template.sendBody("direct:marshal", createOrder());
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testMarshallMessageWithEol() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultMarshalEol");
@@ -87,20 +88,20 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
             @Override
             public void configure() {
                 from("direct:marshal")
-                    .marshal().bindy(BindyType.Fixed, Order.class)
-                    .to("mock:resultMarshal");
-                
+                        .marshal().bindy(BindyType.Fixed, Order.class)
+                        .to("mock:resultMarshal");
+
                 from("direct:marshaleol")
-                    .marshal().bindy(BindyType.Fixed, OrderEol.class)
-                    .to("mock:resultMarshalEol");
-                
+                        .marshal().bindy(BindyType.Fixed, OrderEol.class)
+                        .to("mock:resultMarshalEol");
+
                 from("direct:unmarshaleol")
-                    .unmarshal().bindy(BindyType.Fixed, OrderEol.class)
-                    .to("mock:resultUnmarshalEol");
+                        .unmarshal().bindy(BindyType.Fixed, OrderEol.class)
+                        .to("mock:resultUnmarshalEol");
 
                 from("direct:unmarshal")
-                    .unmarshal().bindy(BindyType.Fixed, Order.class)
-                    .to("mock:resultUnmarshal");
+                        .unmarshal().bindy(BindyType.Fixed, Order.class)
+                        .to("mock:resultUnmarshal");
             }
         };
 
@@ -123,7 +124,7 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
 
         return order;
     }
-    
+
     private OrderEol createOrderEol() {
         OrderEol order = new OrderEol();
         order.setOrderNr(10);
@@ -141,9 +142,9 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
 
         return order;
     }
-    
+
     @FixedLengthRecord(length = 75)
-    public static class Order  {
+    public static class Order {
 
         @DataField(pos = 1, length = 2)
         private int orderNr;
@@ -279,14 +280,16 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }
-    
+
     @FixedLengthRecord(length = 75, eol = "QWERTY")
-    public static class OrderEol  {
+    public static class OrderEol {
 
         @DataField(pos = 1, length = 2)
         private int orderNr;
@@ -422,8 +425,10 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

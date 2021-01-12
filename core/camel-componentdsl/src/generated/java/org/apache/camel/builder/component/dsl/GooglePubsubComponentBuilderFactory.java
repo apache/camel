@@ -37,6 +37,8 @@ public interface GooglePubsubComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
+     * 
+     * @return the dsl builder
      */
     static GooglePubsubComponentBuilder googlePubsub() {
         return new GooglePubsubComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface GooglePubsubComponentBuilderFactory {
         /**
          * Endpoint to use with local Pub/Sub emulator.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param endpoint the value to set
+         * @return the dsl builder
          */
         default GooglePubsubComponentBuilder endpoint(java.lang.String endpoint) {
             doSetProperty("endpoint", endpoint);
@@ -68,10 +73,13 @@ public interface GooglePubsubComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GooglePubsubComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -89,10 +97,13 @@ public interface GooglePubsubComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GooglePubsubComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -103,9 +114,12 @@ public interface GooglePubsubComponentBuilderFactory {
          * Maximum number of producers to cache. This could be increased if you
          * have producers for lots of different topics.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param publisherCacheSize the value to set
+         * @return the dsl builder
          */
         default GooglePubsubComponentBuilder publisherCacheSize(
                 int publisherCacheSize) {
@@ -115,9 +129,12 @@ public interface GooglePubsubComponentBuilderFactory {
         /**
          * How many milliseconds should each producer stay alive in the cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param publisherCacheTimeout the value to set
+         * @return the dsl builder
          */
         default GooglePubsubComponentBuilder publisherCacheTimeout(
                 int publisherCacheTimeout) {
@@ -125,25 +142,35 @@ public interface GooglePubsubComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GooglePubsubComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GooglePubsubComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * How many milliseconds should a producer be allowed to terminate.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param publisherTerminationTimeout the value to set
+         * @return the dsl builder
          */
         default GooglePubsubComponentBuilder publisherTerminationTimeout(
                 int publisherTerminationTimeout) {
@@ -172,7 +199,7 @@ public interface GooglePubsubComponentBuilderFactory {
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "publisherCacheSize": ((GooglePubsubComponent) component).setPublisherCacheSize((int) value); return true;
             case "publisherCacheTimeout": ((GooglePubsubComponent) component).setPublisherCacheTimeout((int) value); return true;
-            case "basicPropertyBinding": ((GooglePubsubComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GooglePubsubComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "publisherTerminationTimeout": ((GooglePubsubComponent) component).setPublisherTerminationTimeout((int) value); return true;
             default: return false;
             }

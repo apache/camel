@@ -8,6 +8,7 @@
 :since: 2.8
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-sns.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 
@@ -59,13 +60,13 @@ The AWS Simple Notification System (SNS) component supports 20 options, which ar
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -94,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,13 +112,12 @@ with the following path and query parameters:
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -231,7 +231,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::camel-spring-boot::page$aws-sns-starter.adoc[]

@@ -24,8 +24,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
+
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.FileUpload;
@@ -34,9 +37,10 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.Method;
-import org.apache.camel.component.platform.http.spi.UploadAttacher;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
@@ -57,21 +61,21 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
     private final List<Handler<RoutingContext>> handlers;
-    private final UploadAttacher uploadAttacher;
     private final String fileNameExtWhitelist;
+    private Set<Method> methods;
+    private String path;
 
     private Route route;
 
     public VertxPlatformHttpConsumer(
-            PlatformHttpEndpoint endpoint,
-            Processor processor,
-            List<Handler<RoutingContext>> handlers,
-            UploadAttacher uploadAttacher) {
+                                     PlatformHttpEndpoint endpoint,
+                                     Processor processor,
+                                     List<Handler<RoutingContext>> handlers) {
         super(endpoint, processor);
 
         this.handlers = handlers;
-        this.uploadAttacher = uploadAttacher;
-        this.fileNameExtWhitelist = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.fileNameExtWhitelist
+                = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
     }
 
     @Override
@@ -80,49 +84,36 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
+        path = configureEndpointPath(getEndpoint());
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
         final VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
-        final PlatformHttpEndpoint endpoint = getEndpoint();
-        final String path = configureEndpointPath(endpoint);
         final Route newRoute = router.route(path);
 
-        final Set<Method> methods = Method.parseList(endpoint.getHttpMethodRestrict());
         if (!methods.equals(Method.getAll())) {
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
         }
 
-        if (endpoint.getConsumes() != null) {
-            newRoute.consumes(endpoint.getConsumes());
+        if (getEndpoint().getConsumes() != null) {
+            newRoute.consumes(getEndpoint().getConsumes());
         }
-        if (endpoint.getProduces() != null) {
-            newRoute.produces(endpoint.getProduces());
+        if (getEndpoint().getProduces() != null) {
+            newRoute.produces(getEndpoint().getProduces());
         }
 
         newRoute.handler(router.bodyHandler());
-        for (Handler<RoutingContext> handler: handlers) {
+        for (Handler<RoutingContext> handler : handlers) {
             newRoute.handler(handler);
         }
 
-        newRoute.handler(
-            ctx -> {
-                Exchange exchg = null;
-                try {
-                    final Exchange exchange = exchg = toExchange(ctx);
-                    createUoW(exchange);
-                    getAsyncProcessor().process(
-                        exchange,
-                        doneSync -> writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy()));
-                } catch (Exception e) {
-                    ctx.fail(e);
-                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg, e);
-                } finally {
-                    if (exchg != null) {
-                        doneUoW(exchg);
-                    }
-                }
-            });
+        newRoute.handler(this::handleRequest);
 
         this.route = newRoute;
     }
@@ -161,6 +152,69 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
+    private void handleRequest(RoutingContext ctx) {
+        final Vertx vertx = ctx.vertx();
+        final Exchange exchange = toExchange(ctx);
+
+        //
+        // We do not know if any of the processing logic of the route is synchronous or not so we
+        // need to process the request on a thread on the Vert.x worker pool.
+        //
+        // As example, assuming the platform-http component is configured as the transport provider
+        // for the rest dsl, then the following code may result in a blocking operation that could
+        // block Vert.x event-loop for too long if the target service takes long to respond, as
+        // example in case the service is a knative service scaled to zero that could take some time
+        // to be come available:
+        //
+        //     rest("/results")
+        //         .get("/{id}")
+        //         .route()
+        //             .removeHeaders("*", "CamelHttpPath")
+        //             .to("rest:get:?bridgeEndpoint=true");
+        //
+        vertx.executeBlocking(
+                promise -> {
+                    try {
+                        createUoW(exchange);
+                    } catch (Exception e) {
+                        promise.fail(e);
+                        return;
+                    }
+
+                    getAsyncProcessor().process(exchange, c -> {
+                        if (!exchange.isFailed()) {
+                            promise.complete();
+                        } else {
+                            promise.fail(exchange.getException());
+                        }
+                    });
+                },
+                false,
+                result -> {
+                    Throwable failure = null;
+                    try {
+                        if (result.succeeded()) {
+                            try {
+                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
+                            } catch (Exception e) {
+                                failure = e;
+                            }
+                        } else {
+                            failure = result.cause();
+                        }
+
+                        if (failure != null) {
+                            getExceptionHandler().handleException(
+                                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                                    failure);
+                            ctx.fail(failure);
+                        }
+                    } finally {
+                        doneUoW(exchange);
+                    }
+                });
+    }
+
     private Exchange toExchange(RoutingContext ctx) {
         final Exchange exchange = getEndpoint().createExchange();
         final Message in = toCamelMessage(ctx, exchange);
@@ -187,7 +241,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             final Map<String, Object> body = new HashMap<>();
             for (String key : formData.names()) {
                 for (String value : formData.getAll(key)) {
-                    if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
                         appendHeader(result.getHeaders(), key, value);
                         appendHeader(body, key, value);
                     }
@@ -236,11 +291,12 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             }
             if (accepted) {
                 final File localFile = new File(upload.uploadedFileName());
-                uploadAttacher.attachUpload(localFile, fileName, message);
+                final AttachmentMessage attachmentMessage = message.getExchange().getMessage(AttachmentMessage.class);
+                attachmentMessage.addAttachment(fileName, new DataHandler(new CamelFileDataSource(localFile, fileName)));
             } else {
                 LOGGER.debug(
-                    "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                    fileName, fileNameExtWhitelist);
+                        "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
+                        fileName, fileNameExtWhitelist);
             }
         }
     }

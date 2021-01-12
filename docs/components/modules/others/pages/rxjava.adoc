@@ -1,4 +1,4 @@
-[[rxjava-component]]
+[[rxjava-other]]
 = RxJava Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-rxjava/src/main/docs/rxjava.adoc
@@ -7,6 +7,7 @@
 :description: RxJava based back-end for Camel's reactive streams component
 :since: 2.22
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/rxjava.adoc[opts=optional]
 
 *Since Camel {since}*
 

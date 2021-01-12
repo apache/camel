@@ -45,6 +45,8 @@ public class VertxWebsocketConfiguration {
     private HttpClientOptions clientOptions;
     @UriParam(label = "producer")
     private boolean sendToAll;
+    @UriParam(label = "producer")
+    private String clientSubProtocols;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
@@ -53,7 +55,8 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The host that the consumer should bind to or the host of the remote websocket destination that the producer should connect to
+     * The host that the consumer should bind to or the host of the remote websocket destination that the producer
+     * should connect to
      */
     public void setHost(String host) {
         this.host = host;
@@ -64,7 +67,8 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The port that the consumer should bind to or port of the remote websocket destination that the producer should connect to
+     * The port that the consumer should bind to or port of the remote websocket destination that the producer should
+     * connect to
      */
     public void setPort(int port) {
         this.port = port;
@@ -93,7 +97,8 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The path that the consumer should bind to or path of the remote websocket destination that the producer should connect to
+     * The path that the consumer should bind to or path of the remote websocket destination that the producer should
+     * connect to
      */
     public void setPath(String path) {
         this.path = path;
@@ -146,5 +151,16 @@ public class VertxWebsocketConfiguration {
      */
     public void setRouter(Router router) {
         this.router = router;
+    }
+
+    /**
+     * Comma separated list of WebSocket subprotocols that the client should use for the Sec-WebSocket-Protocol header
+     */
+    public void setClientSubProtocols(String clientSubProtocols) {
+        this.clientSubProtocols = clientSubProtocols;
+    }
+
+    public String getClientSubProtocols() {
+        return clientSubProtocols;
     }
 }

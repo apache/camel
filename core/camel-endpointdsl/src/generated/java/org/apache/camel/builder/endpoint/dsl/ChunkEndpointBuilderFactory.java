@@ -44,10 +44,13 @@ public interface ChunkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -61,10 +64,14 @@ public interface ChunkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -78,10 +85,13 @@ public interface ChunkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -95,10 +105,14 @@ public interface ChunkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -108,10 +122,13 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -120,10 +137,14 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -132,9 +153,12 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Define the encoding of the body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -143,9 +167,12 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Define the file extension of the template.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param extension the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder extension(String extension) {
             doSetProperty("extension", extension);
@@ -162,10 +189,13 @@ public interface ChunkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -182,10 +212,14 @@ public interface ChunkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -194,9 +228,12 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Define the themes folder to scan.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param themeFolder the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder themeFolder(String themeFolder) {
             doSetProperty("themeFolder", themeFolder);
@@ -205,9 +242,12 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Define the theme layer to elaborate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param themeLayer the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder themeLayer(String themeLayer) {
             doSetProperty("themeLayer", themeLayer);
@@ -216,9 +256,12 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Define the themes subfolder to scan.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param themeSubfolder the value to set
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {
             doSetProperty("themeSubfolder", themeSubfolder);
@@ -236,41 +279,16 @@ public interface ChunkEndpointBuilderFactory {
             return (ChunkEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedChunkEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedChunkEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedChunkEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -280,10 +298,14 @@ public interface ChunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedChunkEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -311,6 +333,7 @@ public interface ChunkEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder chunk(String path) {
             return ChunkEndpointBuilderFactory.endpointBuilder("chunk", path);
@@ -336,6 +359,7 @@ public interface ChunkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder chunk(String componentName, String path) {
             return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);

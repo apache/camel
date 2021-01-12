@@ -29,7 +29,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 @org.apache.camel.spi.annotations.Language("header")
 public class HeaderLanguage implements Language, IsSingleton {
 
-    public static Expression header(String headerName) {        
+    public static Expression header(String headerName) {
         return ExpressionBuilder.headerExpression(headerName);
     }
 

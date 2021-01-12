@@ -76,7 +76,8 @@ public final class FhirHelper {
         return genericClient;
     }
 
-    private static void configureClientFactory(FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
+    private static void configureClientFactory(
+            FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
         Integer connectionTimeout = endpointConfiguration.getConnectionTimeout();
         Integer socketTimeout = endpointConfiguration.getSocketTimeout();
 
@@ -90,7 +91,8 @@ public final class FhirHelper {
         configureProxy(endpointConfiguration, restfulClientFactory, camelContext);
     }
 
-    private static void configureProxy(FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
+    private static void configureProxy(
+            FhirConfiguration endpointConfiguration, IRestfulClientFactory restfulClientFactory, CamelContext camelContext) {
         ServerValidationModeEnum validationMode = endpointConfiguration.getValidationMode();
         String proxyHost = endpointConfiguration.getProxyHost();
         Integer proxyPort = endpointConfiguration.getProxyPort();

@@ -130,7 +130,6 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         MockSpan span = spans.get(index);
         SpanTestData td = testdata[index];
 
-
         String component = (String) span.tags().get(Tags.COMPONENT.getKey());
         assertNotNull(component);
 

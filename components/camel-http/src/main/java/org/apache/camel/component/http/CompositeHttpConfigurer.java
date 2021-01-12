@@ -42,7 +42,8 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
         }
     }
 
-    public static CompositeHttpConfigurer combineConfigurers(HttpClientConfigurer oldConfigurer, HttpClientConfigurer newConfigurer) {
+    public static CompositeHttpConfigurer combineConfigurers(
+            HttpClientConfigurer oldConfigurer, HttpClientConfigurer newConfigurer) {
         if (oldConfigurer instanceof CompositeHttpConfigurer) {
             ((CompositeHttpConfigurer) oldConfigurer).addConfigurer(newConfigurer);
             return (CompositeHttpConfigurer) oldConfigurer;

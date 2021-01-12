@@ -36,11 +36,13 @@ public class DatagramPacketByteArrayDecoder extends MessageToMessageDecoder<Addr
     private DelegateByteArrayDecoder delegateDecoder = new DelegateByteArrayDecoder();
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out)
+            throws Exception {
         if (msg.content() instanceof ByteBuf) {
             delegateDecoder.decode(ctx, (ByteBuf) msg.content(), out);
             byte[] content = (byte[]) out.remove(out.size() - 1);
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<>(content, msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
+                    = new DefaultAddressedEnvelope<>(content, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not an io.netty.buffer.ByteBuf instance.");

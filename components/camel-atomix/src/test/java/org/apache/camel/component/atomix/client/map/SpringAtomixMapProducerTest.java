@@ -34,7 +34,8 @@ public class SpringAtomixMapProducerTest extends AtomixClientSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/atomix/client/map/SpringAtomixMapProducerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/atomix/client/map/SpringAtomixMapProducerTest.xml");
     }
 
     @Test
@@ -44,11 +45,11 @@ public class SpringAtomixMapProducerTest extends AtomixClientSpringTestSupport {
         final DistributedMap<Object, Object> map = getClient().getMap("test-map").join();
 
         Message result = DefaultFluentProducerTemplate.on(context)
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val)
-            .to("direct:start")
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val)
+                .to("direct:start")
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());

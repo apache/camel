@@ -1,7 +1,7 @@
 [[toD-eip]]
 = To D EIP
 :docTitle: To D
-:description: Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:/order/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.
+:description: Sends the message to a single dynamic endpoint. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.
 :since: 
 :supportLevel: Stable
 
@@ -64,7 +64,7 @@ And in XML:
 ----
 <route>
   <from uri="direct:start"/>
-  <toD uri="mock:${header.foo"/>
+  <toD uri="mock:${header.foo}"/>
 </route>
 ----
 
@@ -72,7 +72,7 @@ In the example above we compute an endpoint that has prefix "mock:" and
 then the header foo is appended. So for example if the header foo has
 value order, then the endpoint is computed as "mock:order".
 
-You can also use other languages than xref:components:languages:simple-language.adoc[Simple] such
+You can also use another language than xref:components:languages:simple-language.adoc[Simple] such
 as xref:components:languages:xpath-language.adoc[XPath] - this requires to prefix with language: as
 shown below (simple language is the default language). If you do not
 specify language: then the endpoint is a component name. And in some
@@ -94,32 +94,6 @@ This is done by specifying the name of the language followed by a colon.
 from("direct:start")
   .toD("language:xpath:/order/@uri");
 ----
-
-You can also concat multiple xref:components::language-component.adoc[Language](s) together
-using the plus sign `+` such as shown below:
-
-[source,xml]
-----
-<route>
-  <from uri="direct:start"/>
-  <toD uri="jms:${header.base}+language:xpath:/order/@id"/>
-</route>
-----
-
-In the example above the uri is a combination
-of xref:components:languages:simple-language.adoc[Simple] language and xref:components:languages:simple-language.adoc[XPath] where
-the first part is simple (simple is default language). And then the plus
-sign separate to another language, where we specify the language name
-followed by a colon
-
-[source,java]
-----
-from("direct:start")
-  .toD("jms:${header.base}+language:xpath:/order/@id");
-----
-
-You can concat as many languages as you want, just separate them with
-the plus sign
 
 == Avoid creating endless dynamic endpoints which takes up resources
 
@@ -167,7 +141,7 @@ as documented next.
 == Using optimised components
 
 But a better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
-This is with the following components, which have been optimised for `toD`:
+This is with among the following components, which have been optimised for `toD`:
 
 - camel-http
 - camel-jetty

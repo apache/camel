@@ -18,7 +18,10 @@ package org.apache.camel.util;
 
 /**
  * A little helper class for converting a collection of values to a (usually comma separated) string.
+ *
+ * @deprecated use JDK {@link String#join(CharSequence, CharSequence...)} or {@link java.util.StringJoiner}.
  */
+@Deprecated
 public class CollectionStringBuffer {
     private final StringBuilder buffer = new StringBuilder();
     private String separator;

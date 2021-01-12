@@ -34,27 +34,25 @@ public enum FhirMetaApiMethod implements ApiMethod {
         arg("id", org.hl7.fhir.instance.model.api.IIdType.class),
         arg("extraParameters", java.util.Map.class)),
 
-    GETFROMRESOURCE(
+    GET_FROM_RESOURCE(
         org.hl7.fhir.instance.model.api.IBaseMetaType.class,
         "getFromResource",
         arg("metaType", Class.class),
         arg("id", org.hl7.fhir.instance.model.api.IIdType.class),
         arg("extraParameters", java.util.Map.class)),
 
-    GETFROMSERVER(
+    GET_FROM_SERVER(
         org.hl7.fhir.instance.model.api.IBaseMetaType.class,
         "getFromServer",
         arg("metaType", Class.class),
         arg("extraParameters", java.util.Map.class)),
 
-    GETFROMTYPE(
+    GET_FROM_TYPE(
         org.hl7.fhir.instance.model.api.IBaseMetaType.class,
         "getFromType",
         arg("metaType", Class.class),
-        arg("theResourceName", String.class),
+        arg("resourceType", String.class),
         arg("extraParameters", java.util.Map.class));
-
-    
 
     private final ApiMethod apiMethod;
 

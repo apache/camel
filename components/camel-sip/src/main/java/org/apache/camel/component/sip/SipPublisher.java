@@ -32,7 +32,7 @@ public class SipPublisher extends DefaultProducer {
     private SipConfiguration configuration;
     private long sequenceNumber = 1;
     private SipPublishListener sipPublishListener;
-    private SipProvider provider; 
+    private SipProvider provider;
     private SipStack sipStack;
 
     public SipPublisher(SipEndpoint sipEndpoint, SipConfiguration configuration) {
@@ -45,20 +45,21 @@ public class SipPublisher extends DefaultProducer {
         super.doStart();
         Properties properties = configuration.createInitialProperties();
         setSipStack(configuration.getSipFactory().createSipStack(properties));
-        
+
         configuration.parseURI();
         if (sipPublishListener == null) {
             sipPublishListener = new SipPublishListener(this);
         }
-        
+
         configuration.setListeningPoint(
-                sipStack.createListeningPoint(configuration.getFromHost(), Integer.valueOf(configuration.getFromPort()).intValue(), configuration.getTransport()));
-        
+                sipStack.createListeningPoint(configuration.getFromHost(),
+                        Integer.valueOf(configuration.getFromPort()).intValue(), configuration.getTransport()));
+
         boolean found = false;
         if (provider != null) {
             for (ListeningPoint listeningPoint : provider.getListeningPoints()) {
-                if (listeningPoint.getIPAddress().equalsIgnoreCase(configuration.getListeningPoint().getIPAddress()) 
-                    && (listeningPoint.getPort() == configuration.getListeningPoint().getPort())) {
+                if (listeningPoint.getIPAddress().equalsIgnoreCase(configuration.getListeningPoint().getIPAddress())
+                        && (listeningPoint.getPort() == configuration.getListeningPoint().getPort())) {
                     found = true;
                 }
             }
@@ -78,7 +79,7 @@ public class SipPublisher extends DefaultProducer {
         getSipStack().deleteSipProvider(provider);
         getSipStack().stop();
     }
-    
+
     @Override
     public void process(Exchange exchange) throws Exception {
         String requestMethod = exchange.getIn().getHeader("REQUEST_METHOD", String.class);
@@ -86,7 +87,7 @@ public class SipPublisher extends DefaultProducer {
             throw new CamelExchangeException("Missing mandatory Header: REQUEST_HEADER", exchange);
         }
         Object body = exchange.getIn().getBody();
-        
+
         Request request = configuration.createSipRequest(sequenceNumber, requestMethod, body);
         provider.sendRequest(request);
     }

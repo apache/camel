@@ -24,19 +24,20 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 /**
- * An execution listener that simulates the timing output built in to {@link org.apache.camel.test.junit4.CamelTestSupport}.
+ * An execution listener that simulates the timing output built in to
+ * {@link org.apache.camel.test.junit4.CamelTestSupport}.
  */
 public class StopWatchTestExecutionListener extends AbstractTestExecutionListener {
-    
+
     protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();
-    
+
     /**
      * Exists primarily for testing purposes, but allows for access to the underlying stop watch instance for a test.
      */
     public static StopWatch getStopWatch() {
         return threadStopWatch.get();
     }
-    
+
     @Override
     public void beforeTestMethod(TestContext testContext) throws Exception {
         StopWatch stopWatch = new StopWatch();
@@ -51,8 +52,8 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
             Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
             log.info("********************************************************************************");
-            log.info("Testing done: " + testContext.getTestMethod().getName() + "(" + testContext.getTestClass().getName() + ")");
-            log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+            log.info("Testing done: {} ({})", testContext.getTestMethod().getName(), testContext.getTestClass().getName());
+            log.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
             log.info("********************************************************************************");
 
             threadStopWatch.remove();

@@ -33,6 +33,7 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
 
     /**
      * Test for the valid schema location
+     * 
      * @throws Exception
      */
     @Test
@@ -41,14 +42,14 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .doTry()
+                        .doTry()
                         .to("validator:org/apache/camel/component/validator/relativeparent/child/child.xsd")
                         .to("mock:valid")
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .to("mock:invalid")
-                    .doFinally()
+                        .doFinally()
                         .to("mock:finally")
-                    .end();
+                        .end();
             }
         });
         validEndpoint.expectedMessageCount(1);
@@ -59,7 +60,7 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
-    
+
     /**
      * Test for the invalid schema import location.
      * 
@@ -71,17 +72,17 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start").doTry()
-                    .to("validator:org/apache/camel/component/validator/dotslash/child.xsd").to("mock:valid")
-                    .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally")
-                    .end();
+                        .to("validator:org/apache/camel/component/validator/dotslash/child.xsd").to("mock:valid")
+                        .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally")
+                        .end();
             }
         });
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
         template
-            .sendBody("direct:start",
-                      "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
+                .sendBody("direct:start",
+                        "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -97,23 +98,24 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start").doTry()
-                    .to("validator:org/apache/camel/component/validator/doubleslash/child.xsd")
-                    .to("mock:valid").doCatch(ValidationException.class).to("mock:invalid").doFinally()
-                    .to("mock:finally").end();
+                        .to("validator:org/apache/camel/component/validator/doubleslash/child.xsd")
+                        .to("mock:valid").doCatch(ValidationException.class).to("mock:invalid").doFinally()
+                        .to("mock:finally").end();
             }
         });
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
         template
-            .sendBody("direct:start",
-                      "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
+                .sendBody("direct:start",
+                        "<childuser xmlns='http://foo.com/bar'><user><id>1</id><username>Test User</username></user></childuser>");
 
         assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
-    
+
     /**
      * Test for the valid schema location relative to a path other than the validating schema
+     * 
      * @throws Exception
      */
     @Test
@@ -122,14 +124,14 @@ public class ValidatorSchemaImportTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .doTry()
+                        .doTry()
                         .to("validator:org/apache/camel/component/validator/childparentuncle/child/child.xsd")
                         .to("mock:valid")
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .to("mock:invalid")
-                    .doFinally()
+                        .doFinally()
                         .to("mock:finally")
-                    .end();
+                        .end();
             }
         });
         validEndpoint.expectedMessageCount(1);

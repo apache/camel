@@ -27,12 +27,12 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&delay=2000&noop=true&fileExist=Fail";
+        return "ftp://admin@localhost:{{ftp.server.port}}/exist?password=admin&delay=2000&noop=true&fileExist=Fail";
     }
 
     @Override
@@ -48,15 +48,15 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", "Hello World");
+        mock.expectedFileExists(service.getFtpRootDir() + "/exist/hello.txt", "Hello World");
 
-        try {
-            template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(cause.getMessage(), "File already exist: exist/hello.txt. Cannot write new file.");
-        }
+        String uri = getFtpUrl();
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
 
         assertMockEndpointsSatisfied();
     }

@@ -17,16 +17,12 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Upload, download and manage files, folders, groups, collaborations, etc. on
@@ -50,9 +46,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box application client ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -61,9 +60,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The enterprise ID to use for an App Enterprise.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param enterpriseId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder enterpriseId(String enterpriseId) {
             doSetProperty("enterpriseId", enterpriseId);
@@ -72,9 +74,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -83,78 +88,15 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The user ID to use for an App User.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder userId(String userId) {
             doSetProperty("userId", userId);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BoxEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BoxEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * If the polling consumer did not poll any files, you can enable this
-         * option to send an empty message (no body) instead.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BoxEndpointConsumerBuilder sendEmptyMessageWhenIdle(
-                boolean sendEmptyMessageWhenIdle) {
-            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
-            return this;
-        }
-        /**
-         * If the polling consumer did not poll any files, you can enable this
-         * option to send an empty message (no body) instead.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BoxEndpointConsumerBuilder sendEmptyMessageWhenIdle(
-                String sendEmptyMessageWhenIdle) {
-            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -162,10 +104,13 @@ public interface BoxEndpointBuilderFactory {
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: APP_USER_AUTHENTICATION
          * Group: authentication
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
@@ -173,380 +118,14 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of subsequent error polls (failed due some error) that
-         * should happen before the backoffMultipler should kick-in.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder backoffErrorThreshold(
-                int backoffErrorThreshold) {
-            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
-            return this;
-        }
-        /**
-         * The number of subsequent error polls (failed due some error) that
-         * should happen before the backoffMultipler should kick-in.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder backoffErrorThreshold(
-                String backoffErrorThreshold) {
-            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
-            return this;
-        }
-        /**
-         * The number of subsequent idle polls that should happen before the
-         * backoffMultipler should kick-in.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder backoffIdleThreshold(
-                int backoffIdleThreshold) {
-            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
-            return this;
-        }
-        /**
-         * The number of subsequent idle polls that should happen before the
-         * backoffMultipler should kick-in.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder backoffIdleThreshold(
-                String backoffIdleThreshold) {
-            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
-            return this;
-        }
-        /**
-         * To let the scheduled polling consumer backoff if there has been a
-         * number of subsequent idles/errors in a row. The multiplier is then
-         * the number of polls that will be skipped before the next actual
-         * attempt is happening again. When this option is in use then
-         * backoffIdleThreshold and/or backoffErrorThreshold must also be
-         * configured.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder backoffMultiplier(
-                int backoffMultiplier) {
-            doSetProperty("backoffMultiplier", backoffMultiplier);
-            return this;
-        }
-        /**
-         * To let the scheduled polling consumer backoff if there has been a
-         * number of subsequent idles/errors in a row. The multiplier is then
-         * the number of polls that will be skipped before the next actual
-         * attempt is happening again. When this option is in use then
-         * backoffIdleThreshold and/or backoffErrorThreshold must also be
-         * configured.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder backoffMultiplier(
-                String backoffMultiplier) {
-            doSetProperty("backoffMultiplier", backoffMultiplier);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder delay(long delay) {
-            doSetProperty("delay", delay);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder delay(String delay) {
-            doSetProperty("delay", delay);
-            return this;
-        }
-        /**
-         * If greedy is enabled, then the ScheduledPollConsumer will run
-         * immediately again, if the previous run polled 1 or more messages.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder greedy(boolean greedy) {
-            doSetProperty("greedy", greedy);
-            return this;
-        }
-        /**
-         * If greedy is enabled, then the ScheduledPollConsumer will run
-         * immediately again, if the previous run polled 1 or more messages.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder greedy(String greedy) {
-            doSetProperty("greedy", greedy);
-            return this;
-        }
-        /**
-         * Milliseconds before the first poll starts.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder initialDelay(long initialDelay) {
-            doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before the first poll starts.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder initialDelay(String initialDelay) {
-            doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * Specifies a maximum limit of number of fires. So if you set it to 1,
-         * the scheduler will only fire once. If you set it to 5, it will only
-         * fire five times. A value of zero or negative means fire forever.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder repeatCount(long repeatCount) {
-            doSetProperty("repeatCount", repeatCount);
-            return this;
-        }
-        /**
-         * Specifies a maximum limit of number of fires. So if you set it to 1,
-         * the scheduler will only fire once. If you set it to 5, it will only
-         * fire five times. A value of zero or negative means fire forever.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder repeatCount(String repeatCount) {
-            doSetProperty("repeatCount", repeatCount);
-            return this;
-        }
-        /**
-         * The consumer logs a start/complete log line when it polls. This
-         * option allows you to configure the logging level for that.
-         * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: TRACE
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
-            doSetProperty("runLoggingLevel", runLoggingLevel);
-            return this;
-        }
-        /**
-         * The consumer logs a start/complete log line when it polls. This
-         * option allows you to configure the logging level for that.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: TRACE
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder runLoggingLevel(
-                String runLoggingLevel) {
-            doSetProperty("runLoggingLevel", runLoggingLevel);
-            return this;
-        }
-        /**
-         * Allows for configuring a custom/shared thread pool to use for the
-         * consumer. By default each consumer has its own single threaded thread
-         * pool.
-         * 
-         * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder scheduledExecutorService(
-                ScheduledExecutorService scheduledExecutorService) {
-            doSetProperty("scheduledExecutorService", scheduledExecutorService);
-            return this;
-        }
-        /**
-         * Allows for configuring a custom/shared thread pool to use for the
-         * consumer. By default each consumer has its own single threaded thread
-         * pool.
-         * 
-         * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder scheduledExecutorService(
-                String scheduledExecutorService) {
-            doSetProperty("scheduledExecutorService", scheduledExecutorService);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: none
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder scheduler(String scheduler) {
-            doSetProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder schedulerProperties(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
-            return this;
-        }
-        /**
-         * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder schedulerProperties(Map values) {
-            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
-            return this;
-        }
-        /**
-         * Whether the scheduler should be auto started.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder startScheduler(boolean startScheduler) {
-            doSetProperty("startScheduler", startScheduler);
-            return this;
-        }
-        /**
-         * Whether the scheduler should be auto started.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder startScheduler(String startScheduler) {
-            doSetProperty("startScheduler", startScheduler);
-            return this;
-        }
-        /**
-         * Time unit for initialDelay and delay options.
-         * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
-         * 
-         * Default: MILLISECONDS
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            doSetProperty("timeUnit", timeUnit);
-            return this;
-        }
-        /**
-         * Time unit for initialDelay and delay options.
-         * 
-         * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
-         * 
-         * Default: MILLISECONDS
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder timeUnit(String timeUnit) {
-            doSetProperty("timeUnit", timeUnit);
-            return this;
-        }
-        /**
-         * Controls if fixed delay or fixed rate is used. See
-         * ScheduledExecutorService in JDK for details.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * Controls if fixed delay or fixed rate is used. See
-         * ScheduledExecutorService in JDK for details.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
          * Box application client secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -555,9 +134,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The private key for generating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyFile the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
             doSetProperty("privateKeyFile", privateKeyFile);
@@ -566,9 +148,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The password for the private key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyPassword the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder privateKeyPassword(
                 String privateKeyPassword) {
@@ -578,9 +163,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The ID for public key for validating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publicKeyId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
             doSetProperty("publicKeyId", publicKeyId);
@@ -590,9 +178,12 @@ public interface BoxEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -603,9 +194,12 @@ public interface BoxEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -615,9 +209,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box user name, MUST be provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -627,9 +224,12 @@ public interface BoxEndpointBuilderFactory {
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userPassword the value to set
+         * @return the dsl builder
          */
         default BoxEndpointConsumerBuilder userPassword(String userPassword) {
             doSetProperty("userPassword", userPassword);
@@ -652,10 +252,13 @@ public interface BoxEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -669,9 +272,12 @@ public interface BoxEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -681,9 +287,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -694,9 +304,12 @@ public interface BoxEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -704,72 +317,15 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBoxEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBoxEndpointConsumerBuilder pollStrategy(
-                String pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Custom HTTP params for settings like proxy host.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
@@ -780,10 +336,13 @@ public interface BoxEndpointBuilderFactory {
          * Custom HTTP params for settings like proxy host.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(String httpParams) {
             doSetProperty("httpParams", httpParams);
@@ -793,10 +352,13 @@ public interface BoxEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -807,10 +369,14 @@ public interface BoxEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -820,9 +386,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
-         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 Object accessTokenCache) {
@@ -833,9 +403,12 @@ public interface BoxEndpointBuilderFactory {
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
          * The option will be converted to a
-         * <code>com.box.sdk.IAccessTokenCache</code> type.
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 String accessTokenCache) {
@@ -846,10 +419,14 @@ public interface BoxEndpointBuilderFactory {
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
-         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
@@ -861,10 +438,13 @@ public interface BoxEndpointBuilderFactory {
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
          * The option will be converted to a
-         * <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
@@ -874,10 +454,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 int maxCacheEntries) {
@@ -887,10 +470,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 String maxCacheEntries) {
@@ -911,9 +497,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box application client ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -922,9 +511,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The enterprise ID to use for an App Enterprise.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param enterpriseId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder enterpriseId(String enterpriseId) {
             doSetProperty("enterpriseId", enterpriseId);
@@ -933,9 +525,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -944,9 +539,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The user ID to use for an App User.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -963,10 +561,13 @@ public interface BoxEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -984,10 +585,14 @@ public interface BoxEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -999,10 +604,13 @@ public interface BoxEndpointBuilderFactory {
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: APP_USER_AUTHENTICATION
          * Group: authentication
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder authenticationType(
                 String authenticationType) {
@@ -1012,9 +620,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box application client secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -1023,9 +634,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The private key for generating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyFile the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
             doSetProperty("privateKeyFile", privateKeyFile);
@@ -1034,9 +648,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The password for the private key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyPassword the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder privateKeyPassword(
                 String privateKeyPassword) {
@@ -1046,9 +663,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The ID for public key for validating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publicKeyId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
             doSetProperty("publicKeyId", publicKeyId);
@@ -1058,9 +678,12 @@ public interface BoxEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1071,9 +694,12 @@ public interface BoxEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1083,9 +709,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box user name, MUST be provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1095,9 +724,12 @@ public interface BoxEndpointBuilderFactory {
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userPassword the value to set
+         * @return the dsl builder
          */
         default BoxEndpointProducerBuilder userPassword(String userPassword) {
             doSetProperty("userPassword", userPassword);
@@ -1115,40 +747,15 @@ public interface BoxEndpointBuilderFactory {
             return (BoxEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Custom HTTP params for settings like proxy host.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
@@ -1159,10 +766,13 @@ public interface BoxEndpointBuilderFactory {
          * Custom HTTP params for settings like proxy host.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(String httpParams) {
             doSetProperty("httpParams", httpParams);
@@ -1172,10 +782,13 @@ public interface BoxEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1186,10 +799,14 @@ public interface BoxEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1199,9 +816,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
-         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 Object accessTokenCache) {
@@ -1212,9 +833,12 @@ public interface BoxEndpointBuilderFactory {
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
          * The option will be converted to a
-         * <code>com.box.sdk.IAccessTokenCache</code> type.
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 String accessTokenCache) {
@@ -1225,10 +849,14 @@ public interface BoxEndpointBuilderFactory {
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
-         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
@@ -1240,10 +868,13 @@ public interface BoxEndpointBuilderFactory {
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
          * The option will be converted to a
-         * <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
@@ -1253,10 +884,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 int maxCacheEntries) {
@@ -1266,10 +900,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 String maxCacheEntries) {
@@ -1291,9 +928,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box application client ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -1302,9 +942,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The enterprise ID to use for an App Enterprise.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param enterpriseId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder enterpriseId(String enterpriseId) {
             doSetProperty("enterpriseId", enterpriseId);
@@ -1313,9 +956,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1324,9 +970,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The user ID to use for an App User.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -1337,10 +986,13 @@ public interface BoxEndpointBuilderFactory {
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: APP_USER_AUTHENTICATION
          * Group: authentication
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder authenticationType(String authenticationType) {
             doSetProperty("authenticationType", authenticationType);
@@ -1349,9 +1001,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box application client secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -1360,9 +1015,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The private key for generating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyFile the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
             doSetProperty("privateKeyFile", privateKeyFile);
@@ -1371,9 +1029,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The password for the private key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyPassword the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder privateKeyPassword(String privateKeyPassword) {
             doSetProperty("privateKeyPassword", privateKeyPassword);
@@ -1382,9 +1043,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The ID for public key for validating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publicKeyId the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder publicKeyId(String publicKeyId) {
             doSetProperty("publicKeyId", publicKeyId);
@@ -1394,9 +1058,12 @@ public interface BoxEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1407,9 +1074,12 @@ public interface BoxEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1419,9 +1089,12 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box user name, MUST be provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1431,9 +1104,12 @@ public interface BoxEndpointBuilderFactory {
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userPassword the value to set
+         * @return the dsl builder
          */
         default BoxEndpointBuilder userPassword(String userPassword) {
             doSetProperty("userPassword", userPassword);
@@ -1452,40 +1128,15 @@ public interface BoxEndpointBuilderFactory {
             return (BoxEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBoxEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBoxEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Custom HTTP params for settings like proxy host.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
@@ -1496,10 +1147,13 @@ public interface BoxEndpointBuilderFactory {
          * Custom HTTP params for settings like proxy host.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
             doSetProperty("httpParams", httpParams);
@@ -1509,10 +1163,13 @@ public interface BoxEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1522,10 +1179,14 @@ public interface BoxEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1534,9 +1195,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
-         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 Object accessTokenCache) {
@@ -1547,9 +1212,12 @@ public interface BoxEndpointBuilderFactory {
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
          * The option will be converted to a
-         * <code>com.box.sdk.IAccessTokenCache</code> type.
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 String accessTokenCache) {
@@ -1560,10 +1228,14 @@ public interface BoxEndpointBuilderFactory {
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
-         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
@@ -1575,10 +1247,13 @@ public interface BoxEndpointBuilderFactory {
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
          * The option will be converted to a
-         * <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
@@ -1588,10 +1263,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(int maxCacheEntries) {
             doSetProperty("maxCacheEntries", maxCacheEntries);
@@ -1600,10 +1278,13 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(
                 String maxCacheEntries) {
@@ -1635,13 +1316,15 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-         * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+         * There are 10 enums and the value can be one of: COLLABORATIONS,
+         * COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS,
+         * USERS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BoxEndpointBuilder box(String path) {
             return BoxEndpointBuilderFactory.endpointBuilder("box", path);
@@ -1659,8 +1342,9 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-         * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+         * There are 10 enums and the value can be one of: COLLABORATIONS,
+         * COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS,
+         * USERS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1668,6 +1352,7 @@ public interface BoxEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BoxEndpointBuilder box(String componentName, String path) {
             return BoxEndpointBuilderFactory.endpointBuilder(componentName, path);

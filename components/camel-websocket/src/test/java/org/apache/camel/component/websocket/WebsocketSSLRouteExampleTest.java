@@ -74,8 +74,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
 
-        DefaultAsyncHttpClientConfig.Builder builder =
-                new DefaultAsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
@@ -142,7 +141,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                log.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
 
                             @Override
@@ -165,7 +164,8 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                             public void onPongFrame(byte[] payload) {
 
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
@@ -198,8 +198,8 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
                         .log(">>> Message received from WebSocket Client : ${body}")
                         .to("mock:client")
                         .loop(10)
-                            .setBody().constant(">> Welcome on board!")
-                            .to("websocket://test");
+                        .setBody().constant(">> Welcome on board!")
+                        .to("websocket://test");
             }
         };
     }

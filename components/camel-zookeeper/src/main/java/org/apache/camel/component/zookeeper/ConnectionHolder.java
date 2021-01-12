@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <code>ConnectionHolder</code> watches for Connection based events from
- * {@link ZooKeeper} and can be used to block until a connection has been
- * established.
+ * <code>ConnectionHolder</code> watches for Connection based events from {@link ZooKeeper} and can be used to block
+ * until a connection has been established.
  */
 public class ConnectionHolder implements Watcher {
     private static final Logger LOG = LoggerFactory.getLogger(ConnectionHolder.class);
@@ -49,7 +48,8 @@ public class ConnectionHolder implements Watcher {
             return zookeeper;
         }
         if (configuration.getConnectString() == null) {
-            throw new RuntimeCamelException("Cannot create ZooKeeper connection as connection string is null. Have servers been configured?");
+            throw new RuntimeCamelException(
+                    "Cannot create ZooKeeper connection as connection string is null. Have servers been configured?");
         }
         try {
             zookeeper = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), this);
@@ -93,7 +93,8 @@ public class ConnectionHolder implements Watcher {
                 LOG.debug("Shutting down connection to Zookeeper cluster {}", configuration.getConnectString());
             }
         } catch (InterruptedException e) {
-            LOG.warn("Error closing zookeeper connection " + configuration.getConnectString() + ". This exception will be ignored.", e);
+            LOG.warn("Error closing zookeeper connection {}. This exception will be ignored.",
+                    configuration.getConnectString(), e);
         }
     }
 }

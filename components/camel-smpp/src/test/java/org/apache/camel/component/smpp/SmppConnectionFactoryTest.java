@@ -46,13 +46,13 @@ public class SmppConnectionFactoryTest {
             }
         }
     }
-    
+
     @Test
     @Disabled("Must be manually tested")
     public void createConnectionWithProxyHost() throws IOException {
         SmppConfiguration configuration = new SmppConfiguration();
         configuration.setHttpProxyHost("localhost");
-        configuration.setHttpProxyPort(new Integer(3128));
+        configuration.setHttpProxyPort(Integer.valueOf(3128));
         SmppConnectionFactory factory = SmppConnectionFactory.getInstance(configuration);
         Connection connection = factory.createConnection("localhost", 2775);
 
@@ -65,13 +65,13 @@ public class SmppConnectionFactoryTest {
             }
         }
     }
-    
+
     @Test
     @Disabled("Must be manually tested")
     public void createConnectionWithProxyUsername() throws IOException {
         SmppConfiguration configuration = new SmppConfiguration();
         configuration.setHttpProxyHost("localhost");
-        configuration.setHttpProxyPort(new Integer(3128));
+        configuration.setHttpProxyPort(Integer.valueOf(3128));
         configuration.setHttpProxyUsername("user");
         configuration.setHttpProxyPassword("secret");
         SmppConnectionFactory factory = SmppConnectionFactory.getInstance(configuration);
@@ -85,5 +85,5 @@ public class SmppConnectionFactoryTest {
                 connection.close();
             }
         }
-    }     
+    }
 }

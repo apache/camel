@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Test CXF-CamelConduit when the destination is not a pipeline
  */
 public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -41,24 +41,23 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
                 from("direct:start1").setBody(constant(ANSWER));
 
                 from("direct:start2").setBody(constant(ANSWER)).log("Force pipeline creation");
-                
-                from("direct:start3").choice().when(header(Exchange.CONTENT_TYPE).isEqualTo("text/xml; charset=UTF-8")).process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        exchange.getOut().setBody(ANSWER);
-                    }
-                });
+
+                from("direct:start3").choice().when(header(Exchange.CONTENT_TYPE).isEqualTo("text/xml; charset=UTF-8"))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                exchange.getOut().setBody(ANSWER);
+                            }
+                        });
                 // otherwise you will get the request message back
-                    
-                
+
             }
         };
     }
 
-   
     @Test
     public void testStart1() {
         assertEquals("Something", getSampleWS("direct:start1").getSomething());
-        
+
     }
 
     /**
@@ -68,20 +67,19 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
     public void testStart2() {
         assertEquals("Something", getSampleWSWithCXFAPI("direct:start2").getSomething());
     }
-    
+
     // test the content type
     @Test
     public void testStart3() {
         assertEquals("Something", getSampleWS("direct:start3").getSomething());
     }
-    
+
     @Test
     public void testAsyncInvocation() throws InterruptedException, ExecutionException {
-        
+
         Future<?> result = getSampleWSAsyncWithCXFAPI("direct:start2").getSomethingAsync();
         // as the CXF will build the getSomethingResponse by using asm, so we cannot get the response directly.
         assertNotNull(result.get());
-        
-       
+
     }
 }

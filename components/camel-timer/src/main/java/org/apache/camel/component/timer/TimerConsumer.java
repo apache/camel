@@ -77,13 +77,16 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         } else {
                             // no need to fire anymore as we exceeded repeat
                             // count
-                            LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
+                            LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.",
+                                    endpoint.getTimerName(), endpoint.getRepeatCount());
                             cancel();
                         }
                     } catch (Throwable e) {
                         // catch all to avoid the JVM closing the thread and not
                         // firing again
-                        LOG.warn("Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.", e);
+                        LOG.warn(
+                                "Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.",
+                                e);
                     }
                 }
             };
@@ -104,7 +107,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             }
         } else {
             // if the delay is negative then we use an ExecutorService and fire messages as soon as possible
-            executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
+            executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    endpoint.getEndpointUri());
 
             executorService.execute(new Runnable() {
                 public void run() {
@@ -129,7 +133,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
 
         // remove timer
         endpoint.removeTimer(this);
-        
+
         // if executorService is instantiated then we shutdown it
         if (executorService != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executorService);
@@ -144,7 +148,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         if (task != null && !configured) {
             Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
-        } 
+        }
     }
 
     /**

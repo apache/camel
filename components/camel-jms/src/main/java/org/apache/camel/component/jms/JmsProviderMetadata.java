@@ -22,16 +22,16 @@ import javax.jms.TemporaryTopic;
 import org.springframework.jms.core.JmsOperations;
 
 /**
- * A class which represents some metadata about the underlying JMS provider
- * so that we can properly bridge JMS providers such as for dealing with temporary destinations.
+ * A class which represents some metadata about the underlying JMS provider so that we can properly bridge JMS providers
+ * such as for dealing with temporary destinations.
  */
 public class JmsProviderMetadata {
     private Class<? extends TemporaryQueue> temporaryQueueType;
     private Class<? extends TemporaryTopic> temporaryTopicType;
 
     /**
-     * Lazily loads the temporary queue type if one has not been explicitly configured
-     * via calling the {@link #setTemporaryQueueType(Class)}
+     * Lazily loads the temporary queue type if one has not been explicitly configured via calling the
+     * {@link #setTemporaryQueueType(Class)}
      */
     public Class<? extends TemporaryQueue> getTemporaryQueueType(JmsOperations template) {
         Class<? extends TemporaryQueue> answer = getTemporaryQueueType();
@@ -43,8 +43,8 @@ public class JmsProviderMetadata {
     }
 
     /**
-     * Lazily loads the temporary topic type if one has not been explicitly configured
-     * via calling the {@link #setTemporaryTopicType(Class)}
+     * Lazily loads the temporary topic type if one has not been explicitly configured via calling the
+     * {@link #setTemporaryTopicType(Class)}
      */
     public Class<? extends TemporaryTopic> getTemporaryTopicType(JmsOperations template) {
         Class<? extends TemporaryTopic> answer = getTemporaryTopicType();

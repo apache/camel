@@ -23,10 +23,10 @@ import javax.sql.DataSource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,18 +92,18 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:result")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String id = exchange.getIn().getHeader("messageId", String.class);
-                            if (id.equals("2")) {
-                                throw new IllegalArgumentException("Damn I cannot handle id 2");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damn I cannot handle id 2");
+                                }
                             }
-                        }
-                    });
+                        });
             }
         };
         RouteDefinition routeDefinition = context.getRouteDefinition("JdbcMessageIdRepositoryTest");
-        RouteReifier.adviceWith(routeDefinition, context, interceptor);
+        AdviceWith.adviceWith(routeDefinition, context, interceptor);
 
         // we send in 2 messages with id 2 that fails
         errorEndpoint.expectedMessageCount(2);

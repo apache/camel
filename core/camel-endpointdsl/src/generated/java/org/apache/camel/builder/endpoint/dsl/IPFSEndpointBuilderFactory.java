@@ -48,10 +48,13 @@ public interface IPFSEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -68,10 +71,14 @@ public interface IPFSEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -80,9 +87,12 @@ public interface IPFSEndpointBuilderFactory {
         /**
          * The ipfs output directory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outdir the value to set
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder outdir(String outdir) {
             doSetProperty("outdir", outdir);
@@ -100,41 +110,16 @@ public interface IPFSEndpointBuilderFactory {
             return (IPFSEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIPFSEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIPFSEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -144,10 +129,14 @@ public interface IPFSEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -168,9 +157,10 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * Path parameter: ipfsCmd (required)
          * The ipfs command
-         * The value can be one of: add, cat, get, version
+         * There are 4 enums and the value can be one of: add, cat, get, version
          * 
          * @param path ipfsCmd
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder ipfs(String path) {
             return IPFSEndpointBuilderFactory.endpointBuilder("ipfs", path);
@@ -187,11 +177,12 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * Path parameter: ipfsCmd (required)
          * The ipfs command
-         * The value can be one of: add, cat, get, version
+         * There are 4 enums and the value can be one of: add, cat, get, version
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path ipfsCmd
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder ipfs(String componentName, String path) {
             return IPFSEndpointBuilderFactory.endpointBuilder(componentName, path);

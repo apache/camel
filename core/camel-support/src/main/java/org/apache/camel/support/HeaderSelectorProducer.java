@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 /**
- * A selector-based producer which uses a header value to determine which processor
- * should be invoked.
+ * A selector-based producer which uses a header value to determine which processor should be invoked.
  */
 public class HeaderSelectorProducer extends BaseSelectorProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderSelectorProducer.class);
@@ -72,11 +71,11 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         this(endpoint, () -> header, () -> null, target, caseSensitive);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint,  Supplier<String> headerSupplier, Object target) {
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target) {
         this(endpoint, headerSupplier, () -> null, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint,  Supplier<String> headerSupplier, Object target, boolean caseSensitive) {
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target, boolean caseSensitive) {
         this(endpoint, headerSupplier, () -> null, target, caseSensitive);
     }
 
@@ -92,15 +91,18 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         this(endpoint, () -> header, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier,
+                                  boolean caseSensitive) {
         this(endpoint, () -> header, defaultHeaderValueSupplier, null, caseSensitive);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier) {
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
+                                  Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
+                                  Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null, caseSensitive);
     }
 
@@ -108,21 +110,24 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         this(endpoint, () -> header, () -> defaultHeaderValue, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target, boolean caseSensitive) {
+    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target,
+                                  boolean caseSensitive) {
         this(endpoint, () -> header, () -> defaultHeaderValue, target, caseSensitive);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, Object target) {
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
+                                  Supplier<String> defaultHeaderValueSupplier, Object target) {
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, target, true);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, Object target, boolean caseSensitive) {
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
+                                  Supplier<String> defaultHeaderValueSupplier, Object target, boolean caseSensitive) {
         super(endpoint);
 
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");
         this.defaultHeaderValueSupplier = ObjectHelper.notNull(defaultHeaderValueSupplier, "defaultHeaderValueSupplier");
         this.target = target != null ? target : this;
-        this.handlers = caseSensitive ?  new HashMap<>() : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.handlers = caseSensitive ? new HashMap<>() : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     @Override
@@ -161,8 +166,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
     @Override
     protected void onMissingProcessor(Exchange exchange) throws Exception {
         throw new IllegalStateException(
-            "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get())
-        );
+                "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get()));
     }
 
     protected final void bind(String key, Processor processor) {
@@ -178,7 +182,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
             final Class<?> type = method.getParameterTypes()[0];
 
             LOGGER.debug("bind key={}, class={}, method={}, type={}",
-                handler.value(), this.getClass(), method.getName(), type);
+                    handler.value(), this.getClass(), method.getName(), type);
 
             if (Message.class.isAssignableFrom(type)) {
                 bind(handler.value(), e -> invokeMethodSafe(method, target, e.getIn()));

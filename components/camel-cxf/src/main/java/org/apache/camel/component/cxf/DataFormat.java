@@ -17,23 +17,20 @@
 package org.apache.camel.component.cxf;
 
 /**
- * The data format the user expects to see at the Camel CXF components.  It can be
- * configured as a property (DataFormat) in the Camel CXF endpoint.
+ * The data format the user expects to see at the Camel CXF components. It can be configured as a property (DataFormat)
+ * in the Camel CXF endpoint.
  */
 public enum DataFormat {
 
     /**
-     * PAYLOAD is the message payload of the message after message configured in
-     * the CXF endpoint is applied.  Streaming and non-streaming are both
-     * supported.
+     * PAYLOAD is the message payload of the message after message configured in the CXF endpoint is applied. Streaming
+     * and non-streaming are both supported.
      */
     PAYLOAD,
 
-
     /**
      * <p>
-     * RAW is the raw message that is received from the transport layer.
-     * Streaming and non-streaming are both supported.
+     * RAW is the raw message that is received from the transport layer. Streaming and non-streaming are both supported.
      * <p>
      * <p>
      * Only the interceptors of these phases are <b>preserved</b>:
@@ -47,10 +44,11 @@ public enum DataFormat {
      * 
      */
     RAW,
-    
+
     /**
-     * MESSAGE is the raw message that is received from the transport layer.
-     * Streaming and non-streaming are both supported.
+     * MESSAGE is the raw message that is received from the transport layer. Streaming and non-streaming are both
+     * supported.
+     * 
      * @deprecated - equivalent to RAW mode for Camel 2.x
      */
     @Deprecated
@@ -61,22 +59,19 @@ public enum DataFormat {
     },
 
     /**
-     * CXF_MESSAGE is the message that is received from the transport layer
-     * and then processed through the full set of CXF interceptors.  This 
-     * provides the same functionality as the CXF MESSAGE mode providers.
+     * CXF_MESSAGE is the message that is received from the transport layer and then processed through the full set of
+     * CXF interceptors. This provides the same functionality as the CXF MESSAGE mode providers.
      */
-    CXF_MESSAGE,    
-    
+    CXF_MESSAGE,
+
     /**
-     * POJOs (Plain old Java objects) are the Java parameters to the method
-     * it is invoking on the target server.  The "serviceClass" property
-     * must be included in the endpoint.  Streaming is not available for this
-     * data format.
+     * POJOs (Plain old Java objects) are the Java parameters to the method it is invoking on the target server. The
+     * "serviceClass" property must be included in the endpoint. Streaming is not available for this data format.
      */
     POJO;
-    
+
     public DataFormat dealias() {
         return this;
     }
-    
+
 }

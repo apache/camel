@@ -85,12 +85,10 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     private HttpProcessor getHttpProcessor() {
         return new ImmutableHttpProcessor(
                 Collections.singletonList(
-                        new RequestBasicAuth()
-                ),
+                        new RequestBasicAuth()),
                 Arrays.asList(
                         new ResponseContent(),
-                        new ResponseBasicUnauthorized())
-        );
+                        new ResponseBasicUnauthorized()));
     }
 
     // *************************************************
@@ -100,12 +98,12 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     @SuppressWarnings("unused")
     protected String getLocalServerUri(String contextPath) {
         return "http://"
-                + localServer.getInetAddress().getHostName()
-                + ":"
-                + localServer.getLocalPort()
-                + (contextPath != null
-                ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
-                : "");
+               + localServer.getInetAddress().getHostName()
+               + ":"
+               + localServer.getLocalPort()
+               + (contextPath != null
+                       ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
+                       : "");
     }
 
     // *************************************************
@@ -131,7 +129,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
@@ -149,7 +148,8 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
     }

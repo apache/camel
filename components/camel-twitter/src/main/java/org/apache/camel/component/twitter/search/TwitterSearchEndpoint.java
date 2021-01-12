@@ -31,14 +31,15 @@ import org.apache.camel.spi.UriPath;
  * Access Twitter Search.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-search", title = "Twitter Search", syntax = "twitter-search:keywords",
-    category = {Category.CLOUD, Category.API, Category.SEARCH, Category.SOCIAL})
+             category = { Category.CLOUD, Category.API, Category.SEARCH, Category.SOCIAL })
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The search query, use the keywords AND, OR, - and () to narrow the search results.")
     @Metadata(required = true)
     private String keywords;
 
-    public TwitterSearchEndpoint(String uri, String remaining, TwitterSearchComponent component, TwitterConfiguration properties) {
+    public TwitterSearchEndpoint(String uri, String remaining, TwitterSearchComponent component,
+                                 TwitterConfiguration properties) {
         super(uri, component, properties);
         this.keywords = remaining;
     }

@@ -4,8 +4,10 @@ package org.apache.camel.component.twitter.timeline;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,8 @@ public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSuppor
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "accesstokensecret":
         case "accessTokenSecret": target.setAccessTokenSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumerkey":
@@ -46,20 +48,32 @@ public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSuppor
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("accessTokenSecret", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("consumerSecret", java.lang.String.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", int.class);
-        answer.put("httpProxyUser", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "accesstokensecret":
+        case "accessTokenSecret": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "consumersecret":
+        case "consumerSecret": return java.lang.String.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return int.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -70,8 +84,8 @@ public class TwitterTimelineComponentConfigurer extends PropertyConfigurerSuppor
         case "accessToken": return target.getAccessToken();
         case "accesstokensecret":
         case "accessTokenSecret": return target.getAccessTokenSecret();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumerkey":

@@ -47,9 +47,12 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private transient Producer apiProducer;
 
     @Override
-    public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
-                               String consumes, String produces, String inType, String outType, String routeId, String description) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId, description);
+    public void addRestService(
+            Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
+            String consumes, String produces, String inType, String outType, String routeId, String description) {
+        RestServiceEntry entry = new RestServiceEntry(
+                consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId,
+                description);
         registry.put(consumer, entry);
     }
 
@@ -92,11 +95,12 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 if (componentName != null) {
                     RestConfiguration config = camelContext.getRestConfiguration();
 
-                    String apiComponent = config.getApiComponent() != null ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
+                    String apiComponent = config.getApiComponent() != null
+                            ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
                     String path = config.getApiContextPath() != null ? config.getApiContextPath() : "api-doc";
                     String uri = String.format(
-                        "rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#",
-                        path, camelContext.getName(), componentName, apiComponent);
+                            "rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#",
+                            path, camelContext.getName(), componentName, apiComponent);
 
                     restApiEndpoint = camelContext.getEndpoint(uri);
                 }
@@ -167,8 +171,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final String routeId;
         private final String description;
 
-        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
-                                 String consumes, String produces, String inType, String outType, String routeId, String description) {
+        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
+                                 String method,
+                                 String consumes, String produces, String inType, String outType, String routeId,
+                                 String description) {
             this.consumer = consumer;
             this.url = url;
             this.baseUrl = baseUrl;
@@ -259,8 +265,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     }
 
     /**
-     * A {@link org.apache.camel.spi.LifecycleStrategy} that keeps track when a {@link Consumer} is removed
-     * and automatic un-register it from this REST registry.
+     * A {@link org.apache.camel.spi.LifecycleStrategy} that keeps track when a {@link Consumer} is removed and
+     * automatic un-register it from this REST registry.
      */
     private final class RemoveRestServiceLifecycleStrategy extends LifecycleStrategySupport {
 

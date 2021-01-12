@@ -50,10 +50,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder size(int size) {
             doSetProperty("size", size);
@@ -67,10 +70,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder size(String size) {
             doSetProperty("size", size);
@@ -85,10 +91,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -104,10 +113,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -117,10 +130,13 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -130,10 +146,13 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -147,10 +166,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param multipleConsumers the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
@@ -164,10 +186,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param multipleConsumers the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
@@ -180,10 +206,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Sleeping, BusySpin and Yielding.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorWaitStrategy&lt;/code&gt; type.
          * 
          * Default: Blocking
          * Group: consumer
+         * 
+         * @param waitStrategy the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
                 DisruptorWaitStrategy waitStrategy) {
@@ -196,10 +225,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Sleeping, BusySpin and Yielding.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorWaitStrategy&lt;/code&gt; type.
          * 
          * Default: Blocking
          * Group: consumer
+         * 
+         * @param waitStrategy the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
                 String waitStrategy) {
@@ -223,10 +255,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -240,9 +275,12 @@ public interface DisruptorVmEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -252,9 +290,13 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -265,9 +307,12 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -275,41 +320,16 @@ public interface DisruptorVmEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -320,10 +340,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -349,10 +373,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder size(int size) {
             doSetProperty("size", size);
@@ -366,10 +393,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder size(String size) {
             doSetProperty("size", size);
@@ -382,10 +412,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * accepted. By disabling this option, an exception will be thrown
          * stating that the queue is full.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder blockWhenFull(
                 boolean blockWhenFull) {
@@ -399,10 +432,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * accepted. By disabling this option, an exception will be thrown
          * stating that the queue is full.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder blockWhenFull(
                 String blockWhenFull) {
@@ -420,10 +457,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -441,10 +481,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -458,10 +502,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * thread or otherwise synchronized) is active.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
+         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorProducerType&lt;/code&gt; type.
          * 
          * Default: Multi
          * Group: producer
+         * 
+         * @param producerType the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder producerType(
                 DisruptorProducerType producerType) {
@@ -475,10 +522,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * thread or otherwise synchronized) is active.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
+         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorProducerType&lt;/code&gt; type.
          * 
          * Default: Multi
          * Group: producer
+         * 
+         * @param producerType the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder producerType(
                 String producerType) {
@@ -490,10 +540,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * asynchronous task to complete. You can disable timeout by using 0 or
          * a negative value.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -504,10 +557,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * asynchronous task to complete. You can disable timeout by using 0 or
          * a negative value.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -520,11 +576,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * self-explanatory. The last value, IfReplyExpected, will only wait if
          * the message is Request Reply based.
          * 
-         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
          * 
          * Default: IfReplyExpected
          * Group: producer
+         * 
+         * @param waitForTaskToComplete the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
@@ -539,10 +598,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * the message is Request Reply based.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.WaitForTaskToComplete</code> type.
+         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
          * 
          * Default: IfReplyExpected
          * Group: producer
+         * 
+         * @param waitForTaskToComplete the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
@@ -561,41 +623,16 @@ public interface DisruptorVmEndpointBuilderFactory {
             return (DisruptorVmEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -606,10 +643,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -636,10 +677,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointBuilder size(int size) {
             doSetProperty("size", size);
@@ -653,10 +697,13 @@ public interface DisruptorVmEndpointBuilderFactory {
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default DisruptorVmEndpointBuilder size(String size) {
             doSetProperty("size", size);
@@ -675,41 +722,16 @@ public interface DisruptorVmEndpointBuilderFactory {
             return (DisruptorVmEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -720,10 +742,14 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDisruptorVmEndpointBuilder synchronous(
                 String synchronous) {
@@ -769,6 +795,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Name of queue
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DisruptorVmEndpointBuilder disruptorVm(String path) {
             return DisruptorVmEndpointBuilderFactory.endpointBuilder("disruptor-vm", path);
@@ -789,6 +816,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DisruptorVmEndpointBuilder disruptorVm(
                 String componentName,

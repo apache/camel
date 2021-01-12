@@ -46,10 +46,13 @@ public interface JsonValidatorEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -63,10 +66,14 @@ public interface JsonValidatorEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -76,10 +83,13 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -88,10 +98,14 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -100,10 +114,13 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 boolean failOnNullBody) {
@@ -113,10 +130,14 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 String failOnNullBody) {
@@ -126,10 +147,13 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullHeader the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
@@ -139,10 +163,14 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullHeader the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
@@ -152,9 +180,12 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * To validate against a header instead of the message body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param headerName the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder headerName(String headerName) {
             doSetProperty("headerName", headerName);
@@ -171,10 +202,13 @@ public interface JsonValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -192,10 +226,14 @@ public interface JsonValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -214,41 +252,16 @@ public interface JsonValidatorEndpointBuilderFactory {
             return (JsonValidatorEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom ValidatorErrorHandler. The default error handler
          * captures the errors and throws an exception.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
@@ -260,9 +273,12 @@ public interface JsonValidatorEndpointBuilderFactory {
          * captures the errors and throws an exception.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
@@ -275,9 +291,12 @@ public interface JsonValidatorEndpointBuilderFactory {
          * with draft v4 support.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonSchemaLoader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaLoader the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 Object schemaLoader) {
@@ -290,9 +309,12 @@ public interface JsonValidatorEndpointBuilderFactory {
          * with draft v4 support.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonvalidator.JsonSchemaLoader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaLoader the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 String schemaLoader) {
@@ -303,10 +325,13 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -317,10 +342,14 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 String synchronous) {
@@ -349,6 +378,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder jsonValidator(String path) {
             return JsonValidatorEndpointBuilderFactory.endpointBuilder("json-validator", path);
@@ -374,6 +404,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder jsonValidator(
                 String componentName,

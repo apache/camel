@@ -20,7 +20,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
 
-    BATCHUPDATE(
+    BATCH_UPDATE(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.BatchUpdate.class,
         "batchUpdate",
         arg("spreadsheetId", String.class),
@@ -31,7 +31,7 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
         "create",
         arg("content", com.google.api.services.sheets.v4.model.Spreadsheet.class)),
 
-    DEVELOPERMETADATA(
+    DEVELOPER_METADATA(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.DeveloperMetadata.class,
         "developerMetadata"),
 
@@ -40,7 +40,7 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
         "get",
         arg("spreadsheetId", String.class)),
 
-    GETBYDATAFILTER(
+    GET_BY_DATA_FILTER(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.GetByDataFilter.class,
         "getByDataFilter",
         arg("spreadsheetId", String.class),
@@ -53,8 +53,6 @@ public enum SheetsSpreadsheetsApiMethod implements ApiMethod {
     VALUES(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.class,
         "values");
-
-    
 
     private final ApiMethod apiMethod;
 

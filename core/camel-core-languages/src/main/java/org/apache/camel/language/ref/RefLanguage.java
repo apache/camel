@@ -16,13 +16,13 @@
  */
 package org.apache.camel.language.ref;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -30,12 +30,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * A language for referred expressions or predicates.
  */
 @org.apache.camel.spi.annotations.Language("ref")
-public class RefLanguage implements Language, IsSingleton {
-
-    public static Expression ref(Object value) {
-        String ref = value.toString();
-        return ExpressionBuilder.refExpression(ref);
-    }
+public class RefLanguage extends LanguageSupport {
 
     @Override
     public Predicate createPredicate(String expression) {
@@ -44,8 +39,16 @@ public class RefLanguage implements Language, IsSingleton {
 
     @Override
     public Expression createExpression(final String expression) {
-        final Expression exp = RefLanguage.ref(expression);
-        return new ExpressionAdapter() {
+        Expression answer = new ExpressionAdapter() {
+
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = ExpressionBuilder.refExpression(expression);
+                exp.init(context);
+            }
+
             public Object evaluate(Exchange exchange) {
                 Expression target = null;
 
@@ -61,7 +64,8 @@ public class RefLanguage implements Language, IsSingleton {
                 if (target != null) {
                     return target.evaluate(exchange, Object.class);
                 } else {
-                    throw new IllegalArgumentException("Cannot find expression or predicate in registry with ref: " + expression);
+                    throw new IllegalArgumentException(
+                            "Cannot find expression or predicate in registry with ref: " + expression);
                 }
             }
 
@@ -69,10 +73,9 @@ public class RefLanguage implements Language, IsSingleton {
                 return exp.toString();
             }
         };
+
+        answer.init(getCamelContext());
+        return answer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 }

@@ -59,7 +59,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         Thread.sleep(50);
 
@@ -87,7 +87,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         context.getRouteController().startRoute("bar");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         Thread.sleep(50);
 
@@ -118,7 +118,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         context.getRouteController().startRoute("bar");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         Thread.sleep(50);
 
@@ -134,9 +134,11 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=foo.done&initialDelay=0&delay=10").routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/done?doneFileName=foo.done&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
 
-                from("file:target/data/done2?doneFileName=${file:name}.done&initialDelay=0&delay=10").routeId("bar").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/done2?doneFileName=${file:name}.done&initialDelay=0&delay=10").routeId("bar")
+                        .noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -34,8 +34,8 @@ import org.apache.camel.model.rest.RestsDefinition;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Source code and {@link RestsDefinition} generator that generates Camel REST
- * DSL implementations from OpenAPI specifications.
+ * Source code and {@link RestsDefinition} generator that generates Camel REST DSL implementations from OpenAPI
+ * specifications.
  */
 public abstract class RestDslGenerator<G> {
 

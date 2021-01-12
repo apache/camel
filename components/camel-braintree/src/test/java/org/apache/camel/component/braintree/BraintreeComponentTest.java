@@ -35,7 +35,7 @@ public class BraintreeComponentTest {
         configuration.setHttpLogLevel(Level.WARNING.getName());
 
         BraintreeComponent component = new BraintreeComponent();
-        component.createEndpoint("braintree:clientToken", "generate", BraintreeApiName.CLIENTTOKEN, configuration);
+        component.createEndpoint("braintree:clientToken", "generate", BraintreeApiName.CLIENT_TOKEN, configuration);
 
         BraintreeGateway braintreeGateway = component.getGateway(configuration);
         Logger logger = braintreeGateway.getConfiguration().getLogger();
@@ -51,7 +51,7 @@ public class BraintreeComponentTest {
         BraintreeComponent component = new BraintreeComponent();
         component.setConfiguration(configuration);
         component.getConfiguration().setLogHandlerEnabled(false);
-        component.createEndpoint("", "", BraintreeApiName.CLIENTTOKEN, configuration);
+        component.createEndpoint("", "", BraintreeApiName.CLIENT_TOKEN, configuration);
 
         BraintreeGateway braintreeGateway = component.getGateway(configuration);
         Logger logger = braintreeGateway.getConfiguration().getLogger();

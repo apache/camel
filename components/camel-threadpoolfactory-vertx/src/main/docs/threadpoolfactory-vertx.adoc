@@ -1,10 +1,11 @@
-[[threadpoolfactory-vertx-component]]
+[[threadpoolfactory-vertx-other]]
 = ThreadPoolFactory Vert.x Component
 :docTitle: ThreadPoolFactory Vert.x
 :artifactId: camel-threadpoolfactory-vertx
 :description: ThreadPoolFactory for camel-core using Vert.x
 :since: 3.5
 :supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/threadpoolfactory-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 

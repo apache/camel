@@ -29,7 +29,8 @@ import org.apache.camel.support.ScheduledPollConsumer;
  * Abstract base class for API Component Consumers.
  */
 public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
-    extends ScheduledPollConsumer implements PropertyNamesInterceptor, PropertiesInterceptor, ResultInterceptor {
+        extends ScheduledPollConsumer
+        implements PropertyNamesInterceptor, PropertiesInterceptor, ResultInterceptor {
 
     // API Endpoint
     protected final AbstractApiEndpoint<E, T> endpoint;
@@ -84,11 +85,11 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     }
 
     /**
-     * Invoke the API method.
-     * This method can be overridden, for example to synchronize API calls for thread-unsafe proxies.
-     * Derived class MUST call super.doInvokeMethod() to invoke the API method.
-     * @param args method arguments from endpoint parameters.
-     * @return method invocation result.
+     * Invoke the API method. This method can be overridden, for example to synchronize API calls for thread-unsafe
+     * proxies. Derived class MUST call super.doInvokeMethod() to invoke the API method.
+     * 
+     * @param  args method arguments from endpoint parameters.
+     * @return      method invocation result.
      */
     protected Object doInvokeMethod(Map<String, Object> args) {
         return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, args), method, args);

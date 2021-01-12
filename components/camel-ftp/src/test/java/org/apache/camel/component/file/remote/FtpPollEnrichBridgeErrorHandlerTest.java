@@ -20,12 +20,16 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.remote.services.FtpEmbeddedService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
+    @RegisterExtension
+    static FtpEmbeddedService service = new FtpEmbeddedService();
 
     // we want to poll enrich from FTP and therefore want to fail fast if
     // something is wrong
@@ -34,7 +38,7 @@ public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
     // and turn of auto create as that will pre-login to check if the directory
     // exists
     // and in case of connection error then throw that as an exception
-    private String uri = "ftp://admin@localhost:" + getPort() + "/unknown/?password=admin"
+    private String uri = "ftp://admin@localhost:" + service.getPort() + "/unknown/?password=admin"
                          + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
 
     @Test
@@ -61,14 +65,14 @@ public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("seda:start")
-                    // the FTP server is not running and therefore we should get
-                    // an exception
-                    // and use 60s timeout
-                    // and turn on aggregation on exception as we have turned on
-                    // bridge error handler,
-                    // so we want to run out custom aggregation strategy for
-                    // exceptions as well
-                    .pollEnrich(uri, 60000, new MyAggregationStrategy(), true).to("mock:result");
+                        // the FTP server is not running and therefore we should get
+                        // an exception
+                        // and use 60s timeout
+                        // and turn on aggregation on exception as we have turned on
+                        // bridge error handler,
+                        // so we want to run out custom aggregation strategy for
+                        // exceptions as well
+                        .pollEnrich(uri, 60000, new MyAggregationStrategy(), true).to("mock:result");
             }
         };
     }

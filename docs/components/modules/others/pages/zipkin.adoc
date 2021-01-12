@@ -1,4 +1,4 @@
-[[zipkin-component]]
+[[zipkin-other]]
 = Zipkin Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-zipkin/src/main/docs/zipkin.adoc
@@ -7,6 +7,7 @@
 :description: Distributed message tracing using Zipkin
 :since: 2.18
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/zipkin.adoc[opts=optional]
 
 *Since Camel {since}*
 

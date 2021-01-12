@@ -20,1462 +20,1784 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum ZendeskApiMethod implements ApiMethod {
 
-    ADDTAGTOORGANISATIONS(
+    ADD_TAG_TO_ORGANISATIONS(
         java.util.List.class,
         "addTagToOrganisations",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    ADDTAGTOTICKET(
+    ADD_TAG_TO_TICKET(
         java.util.List.class,
         "addTagToTicket",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    ADDTAGTOTOPICS(
+    ADD_TAG_TO_TOPICS(
         java.util.List.class,
         "addTagToTopics",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    ASSOCIATEATTACHMENTSTOARTICLE(
+    ASSOCIATE_ATTACHMENTS_TO_ARTICLE(
         void.class,
         "associateAttachmentsToArticle",
         arg("idArticle", String.class),
         arg("attachments", java.util.List.class)),
 
-    CHANGEUSERPASSWORD(
+    CHANGE_USER_PASSWORD(
         void.class,
         "changeUserPassword",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("oldPassword", String.class),
         arg("newPassword", String.class)),
 
-    CREATEARTICLE(
+    CREATE_ARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
         "createArticle",
         arg("article", org.zendesk.client.v2.model.hc.Article.class)),
 
-    CREATEARTICLETRANSLATION(
+    CREATE_ARTICLE_1(
+        org.zendesk.client.v2.model.hc.Article.class,
+        "createArticle",
+        arg("article", org.zendesk.client.v2.model.hc.Article.class),
+        arg("notifySubscribers", boolean.class)),
+
+    CREATE_ARTICLE_TRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "createArticleTranslation",
         arg("articleId", Long.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
-    CREATEAUTOMATION(
+    CREATE_AUTOMATION(
         org.zendesk.client.v2.model.Automation.class,
         "createAutomation",
         arg("automation", org.zendesk.client.v2.model.Automation.class)),
 
-    CREATECATEGORY(
+    CREATE_CATEGORY(
         org.zendesk.client.v2.model.hc.Category.class,
         "createCategory",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
 
-    CREATECATEGORYTRANSLATION(
+    CREATE_CATEGORY_TRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "createCategoryTranslation",
         arg("categoryId", Long.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
-    CREATECOMMENT(
+    CREATE_COMMENT(
         org.zendesk.client.v2.model.Ticket.class,
         "createComment",
         arg("ticketId", long.class),
         arg("comment", org.zendesk.client.v2.model.Comment.class)),
 
-    CREATEFORUM(
+    CREATE_DYNAMIC_CONTENT_ITEM(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
+        "createDynamicContentItem",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    CREATE_DYNAMIC_CONTENT_ITEM_VARIANT(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class,
+        "createDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
+
+    CREATE_FORUM(
         org.zendesk.client.v2.model.Forum.class,
         "createForum",
         arg("forum", org.zendesk.client.v2.model.Forum.class)),
 
-    CREATEGROUP(
+    CREATE_GROUP(
         org.zendesk.client.v2.model.Group.class,
         "createGroup",
         arg("group", org.zendesk.client.v2.model.Group.class)),
 
-    CREATEGROUPMEMBERSHIP(
+    CREATE_GROUP_MEMBERSHIP(
         org.zendesk.client.v2.model.GroupMembership.class,
         "createGroupMembership",
         arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
 
-    CREATEGROUPMEMBERSHIP_1(
+    CREATE_GROUP_MEMBERSHIP_1(
         org.zendesk.client.v2.model.GroupMembership.class,
         "createGroupMembership",
         arg("user_id", long.class),
         arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
 
-    CREATEMACRO(
+    CREATE_MACRO(
         org.zendesk.client.v2.model.Macro.class,
         "createMacro",
         arg("macro", org.zendesk.client.v2.model.Macro.class)),
 
-    CREATEORUPDATEUSER(
+    CREATE_OR_UPDATE_USER(
         org.zendesk.client.v2.model.User.class,
         "createOrUpdateUser",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    CREATEORGANIZATION(
+    CREATE_OR_UPDATE_USERS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrUpdateUsers",
+        arg("users", new org.zendesk.client.v2.model.User[0].getClass())),
+
+    CREATE_OR_UPDATE_USERS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrUpdateUsers",
+        arg("usersList", java.util.List.class)),
+
+    CREATE_OR_UPDATE_USERS_ASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "createOrUpdateUsersAsync",
+        arg("usersList", java.util.List.class)),
+
+    CREATE_ORGANIZATION(
         org.zendesk.client.v2.model.Organization.class,
         "createOrganization",
         arg("organization", org.zendesk.client.v2.model.Organization.class)),
 
-    CREATEORGANIZATIONMEMBERSHIP(
+    CREATE_ORGANIZATION_MEMBERSHIP(
         org.zendesk.client.v2.model.OrganizationMembership.class,
         "createOrganizationMembership",
         arg("organizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class)),
 
-    CREATEORGANIZATIONMEMBERSHIP_1(
+    CREATE_ORGANIZATION_MEMBERSHIP_1(
         org.zendesk.client.v2.model.OrganizationMembership.class,
         "createOrganizationMembership",
         arg("user_id", long.class),
         arg("organizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class)),
 
-    CREATEORGANIZATIONS(
+    CREATE_ORGANIZATION_MEMBERSHIPS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrganizationMemberships",
+        arg("organizationMembershipList", java.util.List.class)),
+
+    CREATE_ORGANIZATION_MEMBERSHIPS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrganizationMemberships",
+        arg("organizationMemberships", new org.zendesk.client.v2.model.OrganizationMembership[0].getClass())),
+
+    CREATE_ORGANIZATION_MEMBERSHIPS_ASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "createOrganizationMembershipsAsync",
+        arg("organizationMembershipList", java.util.List.class)),
+
+    CREATE_ORGANIZATIONS(
         org.zendesk.client.v2.model.JobStatus.class,
         "createOrganizations",
         arg("organizationList", java.util.List.class)),
 
-    CREATEORGANIZATIONS_1(
+    CREATE_ORGANIZATIONS_1(
         org.zendesk.client.v2.model.JobStatus.class,
         "createOrganizations",
         arg("organizations", new org.zendesk.client.v2.model.Organization[0].getClass())),
 
-    CREATEORGANIZATIONSASYNC(
+    CREATE_ORGANIZATIONS_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "createOrganizationsAsync",
         arg("organizationList", java.util.List.class)),
 
-    CREATEREQUEST(
+    CREATE_PERMISSION_GROUP(
+        org.zendesk.client.v2.model.hc.PermissionGroup.class,
+        "createPermissionGroup",
+        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
+
+    CREATE_REQUEST(
         org.zendesk.client.v2.model.Request.class,
         "createRequest",
         arg("request", org.zendesk.client.v2.model.Request.class)),
 
-    CREATESATISFACTIONRATING(
+    CREATE_SATISFACTION_RATING(
         org.zendesk.client.v2.model.SatisfactionRating.class,
         "createSatisfactionRating",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("satisfactionRating", org.zendesk.client.v2.model.SatisfactionRating.class)),
 
-    CREATESATISFACTIONRATING_1(
+    CREATE_SATISFACTION_RATING_1(
         org.zendesk.client.v2.model.SatisfactionRating.class,
         "createSatisfactionRating",
         arg("ticketId", long.class),
         arg("satisfactionRating", org.zendesk.client.v2.model.SatisfactionRating.class)),
 
-    CREATESECTION(
+    CREATE_SECTION(
         org.zendesk.client.v2.model.hc.Section.class,
         "createSection",
         arg("section", org.zendesk.client.v2.model.hc.Section.class)),
 
-    CREATESECTIONTRANSLATION(
+    CREATE_SECTION_TRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "createSectionTranslation",
         arg("sectionId", Long.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
-    CREATETARGET(
+    CREATE_TARGET(
         org.zendesk.client.v2.model.targets.Target.class,
         "createTarget",
         arg("target", org.zendesk.client.v2.model.targets.Target.class)),
 
-    CREATETICKET(
+    CREATE_TICKET(
         org.zendesk.client.v2.model.Ticket.class,
         "createTicket",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    CREATETICKETASYNC(
+    CREATE_TICKET_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "createTicketAsync",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    CREATETICKETFIELD(
+    CREATE_TICKET_FIELD(
         org.zendesk.client.v2.model.Field.class,
         "createTicketField",
         arg("field", org.zendesk.client.v2.model.Field.class)),
 
-    CREATETICKETFORM(
+    CREATE_TICKET_FORM(
         org.zendesk.client.v2.model.TicketForm.class,
         "createTicketForm",
         arg("ticketForm", org.zendesk.client.v2.model.TicketForm.class)),
 
-    CREATETICKETFROMTWEET(
+    CREATE_TICKET_FROM_TWEET(
         org.zendesk.client.v2.model.Ticket.class,
         "createTicketFromTweet",
         arg("tweetId", long.class),
         arg("monitorId", long.class)),
 
-    CREATETICKETS(
+    CREATE_TICKETS(
         org.zendesk.client.v2.model.JobStatus.class,
         "createTickets",
         arg("ticketList", java.util.List.class)),
 
-    CREATETICKETS_1(
+    CREATE_TICKETS_1(
         org.zendesk.client.v2.model.JobStatus.class,
         "createTickets",
         arg("tickets", new org.zendesk.client.v2.model.Ticket[0].getClass())),
 
-    CREATETICKETSASYNC(
+    CREATE_TICKETS_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "createTicketsAsync",
         arg("ticketList", java.util.List.class)),
 
-    CREATETOPIC(
+    CREATE_TOPIC(
         org.zendesk.client.v2.model.Topic.class,
         "createTopic",
         arg("topic", org.zendesk.client.v2.model.Topic.class)),
 
-    CREATETRIGGER(
+    CREATE_TRIGGER(
         org.zendesk.client.v2.model.Trigger.class,
         "createTrigger",
         arg("trigger", org.zendesk.client.v2.model.Trigger.class)),
 
-    CREATEUPLOAD(
+    CREATE_UPLOAD(
         org.zendesk.client.v2.model.Attachment.Upload.class,
         "createUpload",
         arg("fileName", String.class),
-        arg("content", new byte[0].getClass())),
+        arg("content", byte[].class)),
 
-    CREATEUPLOAD_1(
+    CREATE_UPLOAD_1(
         org.zendesk.client.v2.model.Attachment.Upload.class,
         "createUpload",
         arg("fileName", String.class),
         arg("contentType", String.class),
-        arg("content", new byte[0].getClass())),
+        arg("content", byte[].class)),
 
-    CREATEUPLOAD_2(
+    CREATE_UPLOAD_2(
         org.zendesk.client.v2.model.Attachment.Upload.class,
         "createUpload",
         arg("token", String.class),
         arg("fileName", String.class),
         arg("contentType", String.class),
-        arg("content", new byte[0].getClass())),
+        arg("content", byte[].class)),
 
-    CREATEUPLOADARTICLE(
+    CREATE_UPLOAD_ARTICLE(
         org.zendesk.client.v2.model.hc.ArticleAttachments.class,
         "createUploadArticle",
         arg("articleId0", long.class),
         arg("file", java.io.File.class)),
 
-    CREATEUPLOADARTICLE_1(
+    CREATE_UPLOAD_ARTICLE_1(
         org.zendesk.client.v2.model.hc.ArticleAttachments.class,
         "createUploadArticle",
         arg("articleId0", long.class),
         arg("file", java.io.File.class),
         arg("inline", boolean.class)),
 
-    CREATEUSER(
+    CREATE_USER(
         org.zendesk.client.v2.model.User.class,
         "createUser",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    CREATEUSERIDENTITY(
+    CREATE_USER_IDENTITY(
         org.zendesk.client.v2.model.Identity.class,
         "createUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    CREATEUSERIDENTITY_1(
+    CREATE_USER_IDENTITY_1(
         org.zendesk.client.v2.model.Identity.class,
         "createUserIdentity",
         arg("userId", long.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    CREATEUSERS(
+    CREATE_USER_SEGMENT(
+        org.zendesk.client.v2.model.hc.UserSegment.class,
+        "createUserSegment",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    CREATE_USERS(
         org.zendesk.client.v2.model.JobStatus.class,
         "createUsers",
         arg("userList", java.util.List.class)),
 
-    CREATEUSERS_1(
+    CREATE_USERS_1(
         org.zendesk.client.v2.model.JobStatus.class,
         "createUsers",
         arg("users", new org.zendesk.client.v2.model.User[0].getClass())),
 
-    CREATEUSERSASYNC(
+    CREATE_USERS_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "createUsersAsync",
         arg("userList", java.util.List.class)),
 
-    DELETEARTICLE(
+    DELETE_ARTICLE(
         void.class,
         "deleteArticle",
         arg("article", org.zendesk.client.v2.model.hc.Article.class)),
 
-    DELETEARTICLEATTACHMENT(
+    DELETE_ARTICLE_ATTACHMENT(
         void.class,
         "deleteArticleAttachment",
         arg("articleAttachments", org.zendesk.client.v2.model.hc.ArticleAttachments.class)),
 
-    DELETEARTICLEATTACHMENT_1(
+    DELETE_ARTICLE_ATTACHMENT_1(
         void.class,
         "deleteArticleAttachment",
         arg("id", long.class)),
 
-    DELETEATTACHMENT(
+    DELETE_ATTACHMENT(
         void.class,
         "deleteAttachment",
         arg("attachment", org.zendesk.client.v2.model.Attachment.class)),
 
-    DELETEATTACHMENT_1(
+    DELETE_ATTACHMENT_1(
         void.class,
         "deleteAttachment",
         arg("id", long.class)),
 
-    DELETEAUTOMATION(
+    DELETE_AUTOMATION(
         void.class,
         "deleteAutomation",
         arg("automationId0", long.class)),
 
-    DELETECATEGORY(
+    DELETE_CATEGORY(
         void.class,
         "deleteCategory",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
 
-    DELETEFORUM(
+    DELETE_DYNAMIC_CONTENT_ITEM(
+        void.class,
+        "deleteDynamicContentItem",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    DELETE_DYNAMIC_CONTENT_ITEM_VARIANT(
+        void.class,
+        "deleteDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
+
+    DELETE_FORUM(
         void.class,
         "deleteForum",
         arg("forum", org.zendesk.client.v2.model.Forum.class)),
 
-    DELETEGROUP(
+    DELETE_GROUP(
         void.class,
         "deleteGroup",
         arg("group", org.zendesk.client.v2.model.Group.class)),
 
-    DELETEGROUP_1(
+    DELETE_GROUP_1(
         void.class,
         "deleteGroup",
         arg("id", long.class)),
 
-    DELETEGROUPMEMBERSHIP(
+    DELETE_GROUP_MEMBERSHIP(
         void.class,
         "deleteGroupMembership",
         arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
 
-    DELETEGROUPMEMBERSHIP_1(
+    DELETE_GROUP_MEMBERSHIP_1(
         void.class,
         "deleteGroupMembership",
         arg("id", long.class)),
 
-    DELETEGROUPMEMBERSHIP_2(
+    DELETE_GROUP_MEMBERSHIP_2(
         void.class,
         "deleteGroupMembership",
         arg("user_id", long.class),
         arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
 
-    DELETEGROUPMEMBERSHIP_3(
+    DELETE_GROUP_MEMBERSHIP_3(
         void.class,
         "deleteGroupMembership",
         arg("user_id", long.class),
         arg("group_membership_id", long.class)),
 
-    DELETEORGANIZATION(
+    DELETE_ORGANIZATION(
         void.class,
         "deleteOrganization",
         arg("id", long.class)),
 
-    DELETEORGANIZATION_1(
+    DELETE_ORGANIZATION_1(
         void.class,
         "deleteOrganization",
         arg("organization", org.zendesk.client.v2.model.Organization.class)),
 
-    DELETEORGANIZATIONMEMBERSHIP(
+    DELETE_ORGANIZATION_MEMBERSHIP(
         void.class,
         "deleteOrganizationMembership",
         arg("id", long.class)),
 
-    DELETEORGANIZATIONMEMBERSHIP_1(
+    DELETE_ORGANIZATION_MEMBERSHIP_1(
         void.class,
         "deleteOrganizationMembership",
         arg("user_id", long.class),
         arg("organizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class)),
 
-    DELETEORGANIZATIONMEMBERSHIP_2(
+    DELETE_ORGANIZATION_MEMBERSHIP_2(
         void.class,
         "deleteOrganizationMembership",
         arg("user_id", long.class),
         arg("organization_membership_id", long.class)),
 
-    DELETESECTION(
+    DELETE_ORGANIZATION_MEMBERSHIPS(
+        void.class,
+        "deleteOrganizationMemberships",
+        arg("id", long.class),
+        arg("ids", long[].class)),
+
+    DELETE_PERMISSION_GROUP(
+        void.class,
+        "deletePermissionGroup",
+        arg("id", long.class)),
+
+    DELETE_PERMISSION_GROUP_1(
+        void.class,
+        "deletePermissionGroup",
+        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
+
+    DELETE_SECTION(
         void.class,
         "deleteSection",
         arg("section", org.zendesk.client.v2.model.hc.Section.class)),
 
-    DELETESUSPENDEDTICKET(
+    DELETE_SUSPENDED_TICKET(
         void.class,
         "deleteSuspendedTicket",
         arg("id", long.class)),
 
-    DELETESUSPENDEDTICKET_1(
+    DELETE_SUSPENDED_TICKET_1(
         void.class,
         "deleteSuspendedTicket",
         arg("suspendedTicket", org.zendesk.client.v2.model.SuspendedTicket.class)),
 
-    DELETETARGET(
+    DELETE_TARGET(
         void.class,
         "deleteTarget",
         arg("targetId", long.class)),
 
-    DELETETICKET(
+    DELETE_TICKET(
         void.class,
         "deleteTicket",
         arg("id", long.class)),
 
-    DELETETICKET_1(
+    DELETE_TICKET_1(
         void.class,
         "deleteTicket",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    DELETETICKETFIELD(
+    DELETE_TICKET_FIELD(
         void.class,
         "deleteTicketField",
         arg("field", org.zendesk.client.v2.model.Field.class)),
 
-    DELETETICKETFIELD_1(
+    DELETE_TICKET_FIELD_1(
         void.class,
         "deleteTicketField",
         arg("id", long.class)),
 
-    DELETETICKETS(
+    DELETE_TICKETS(
         void.class,
         "deleteTickets",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
-    DELETETOPIC(
+    DELETE_TOPIC(
         void.class,
         "deleteTopic",
         arg("topic", org.zendesk.client.v2.model.Topic.class)),
 
-    DELETETRIGGER(
+    DELETE_TRANSLATION(
+        void.class,
+        "deleteTranslation",
+        arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
+
+    DELETE_TRANSLATION_1(
+        void.class,
+        "deleteTranslation",
+        arg("translationId", Long.class)),
+
+    DELETE_TRIGGER(
         void.class,
         "deleteTrigger",
         arg("triggerId", long.class)),
 
-    DELETEUPLOAD(
+    DELETE_UPLOAD(
         void.class,
         "deleteUpload",
         arg("token", String.class)),
 
-    DELETEUPLOAD_1(
+    DELETE_UPLOAD_1(
         void.class,
         "deleteUpload",
         arg("upload", org.zendesk.client.v2.model.Attachment.Upload.class)),
 
-    DELETEUSER(
+    DELETE_USER(
         void.class,
         "deleteUser",
         arg("id", long.class)),
 
-    DELETEUSER_1(
+    DELETE_USER_1(
         void.class,
         "deleteUser",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    DELETEUSERIDENTITY(
+    DELETE_USER_IDENTITY(
         void.class,
         "deleteUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    DELETEUSERIDENTITY_1(
+    DELETE_USER_IDENTITY_1(
         void.class,
         "deleteUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identityId", long.class)),
 
-    DELETEUSERIDENTITY_2(
+    DELETE_USER_IDENTITY_2(
         void.class,
         "deleteUserIdentity",
         arg("userId", long.class),
         arg("identityId", long.class)),
 
-    GETARTICLE(
+    DELETE_USER_SEGMENT(
+        void.class,
+        "deleteUserSegment",
+        arg("id", long.class)),
+
+    DELETE_USER_SEGMENT_1(
+        void.class,
+        "deleteUserSegment",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    GET_ARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
         "getArticle",
         arg("id", long.class)),
 
-    GETARTICLEFROMSEARCH(
+    GET_ARTICLE_FROM_SEARCH(
         Iterable.class,
         "getArticleFromSearch",
         arg("searchTerm", String.class)),
 
-    GETARTICLEFROMSEARCH_1(
+    GET_ARTICLE_FROM_SEARCH_1(
         Iterable.class,
         "getArticleFromSearch",
         arg("searchTerm", String.class),
         arg("sectionId", Long.class)),
 
-    GETARTICLESUBSCRIPTIONS(
+    GET_ARTICLE_SUBSCRIPTIONS(
         Iterable.class,
         "getArticleSubscriptions",
         arg("articleId", Long.class)),
 
-    GETARTICLESUBSCRIPTIONS_1(
+    GET_ARTICLE_SUBSCRIPTIONS_1(
         Iterable.class,
         "getArticleSubscriptions",
         arg("articleId", Long.class),
         arg("locale", String.class)),
 
-    GETARTICLETRANSLATIONS(
+    GET_ARTICLE_TRANSLATIONS(
         Iterable.class,
         "getArticleTranslations",
         arg("articleId", Long.class)),
 
-    GETARTICLES(
+    GET_ARTICLES(
         Iterable.class,
         "getArticles"),
 
-    GETARTICLES_1(
+    GET_ARTICLES_1(
         Iterable.class,
         "getArticles",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
 
-    GETARTICLESFROMPAGE(
+    GET_ARTICLES_2(
+        Iterable.class,
+        "getArticles",
+        arg("locale", String.class)),
+
+    GET_ARTICLES_3(
+        Iterable.class,
+        "getArticles",
+        arg("section", org.zendesk.client.v2.model.hc.Section.class)),
+
+    GET_ARTICLES_FROM_ALL_LABELS(
+        Iterable.class,
+        "getArticlesFromAllLabels",
+        arg("labels", java.util.List.class)),
+
+    GET_ARTICLES_FROM_ANY_LABELS(
+        Iterable.class,
+        "getArticlesFromAnyLabels",
+        arg("labels", java.util.List.class)),
+
+    GET_ARTICLES_FROM_PAGE(
         java.util.List.class,
         "getArticlesFromPage",
         arg("page", int.class)),
 
-    GETARTICLESINCREMENTALLY(
+    GET_ARTICLES_INCREMENTALLY(
         Iterable.class,
         "getArticlesIncrementally",
         arg("startTime", java.util.Date.class)),
 
-    GETASSIGNABLEGROUPMEMBERSHIPS(
+    GET_ASSIGNABLE_GROUP_MEMBERSHIPS(
         Iterable.class,
         "getAssignableGroupMemberships"),
 
-    GETASSIGNABLEGROUPMEMBERSHIPS_1(
+    GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1(
         java.util.List.class,
         "getAssignableGroupMemberships",
         arg("group_id", long.class)),
 
-    GETASSIGNABLEGROUPS(
+    GET_ASSIGNABLE_GROUPS(
         Iterable.class,
         "getAssignableGroups"),
 
-    GETATTACHMENT(
+    GET_ATTACHMENT(
         org.zendesk.client.v2.model.Attachment.class,
         "getAttachment",
         arg("attachment", org.zendesk.client.v2.model.Attachment.class)),
 
-    GETATTACHMENT_1(
+    GET_ATTACHMENT_1(
         org.zendesk.client.v2.model.Attachment.class,
         "getAttachment",
         arg("id", long.class)),
 
-    GETATTACHMENTSFROMARTICLE(
+    GET_ATTACHMENTS_FROM_ARTICLE(
         java.util.List.class,
         "getAttachmentsFromArticle",
         arg("articleId", Long.class)),
 
-    GETAUTHENTICATEDUSER(
+    GET_AUTHENTICATED_USER(
         org.zendesk.client.v2.model.User.class,
         "getAuthenticatedUser"),
 
-    GETAUTOCOMPLETEORGANIZATIONS(
+    GET_AUTO_COMPLETE_ORGANIZATIONS(
         Iterable.class,
         "getAutoCompleteOrganizations",
         arg("name", String.class)),
 
-    GETAUTOMATION(
+    GET_AUTOMATION(
         org.zendesk.client.v2.model.Automation.class,
         "getAutomation",
         arg("id", long.class)),
 
-    GETAUTOMATIONS(
+    GET_AUTOMATIONS(
         Iterable.class,
         "getAutomations"),
 
-    GETBRANDS(
+    GET_BRANDS(
         java.util.List.class,
         "getBrands"),
 
-    GETCCREQUESTS(
+    GET_CC_REQUESTS(
         Iterable.class,
         "getCCRequests"),
 
-    GETCATEGORIES(
+    GET_CATEGORIES(
         Iterable.class,
         "getCategories"),
 
-    GETCATEGORY(
+    GET_CATEGORY(
         org.zendesk.client.v2.model.hc.Category.class,
         "getCategory",
         arg("id", long.class)),
 
-    GETCATEGORYTRANSLATIONS(
+    GET_CATEGORY_TRANSLATIONS(
         Iterable.class,
         "getCategoryTranslations",
         arg("categoryId", Long.class)),
 
-    GETCURRENTUSER(
+    GET_COMPLIANCE_DELETION_STATUSES(
+        Iterable.class,
+        "getComplianceDeletionStatuses",
+        arg("userId", long.class)),
+
+    GET_CURRENT_USER(
         org.zendesk.client.v2.model.User.class,
         "getCurrentUser"),
 
-    GETCUSTOMAGENTROLES(
+    GET_CUSTOM_AGENT_ROLES(
         Iterable.class,
         "getCustomAgentRoles"),
 
-    GETFORUM(
+    GET_DELETED_TICKETS(
+        Iterable.class,
+        "getDeletedTickets"),
+
+    GET_DELETED_TICKETS_1(
+        Iterable.class,
+        "getDeletedTickets",
+        arg("sortBy", String.class),
+        arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
+
+    GET_DYNAMIC_CONTENT_ITEM(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
+        "getDynamicContentItem",
+        arg("id", long.class)),
+
+    GET_DYNAMIC_CONTENT_ITEM_VARIANT(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class,
+        "getDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("id", long.class)),
+
+    GET_DYNAMIC_CONTENT_ITEM_VARIANTS(
+        Iterable.class,
+        "getDynamicContentItemVariants",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    GET_DYNAMIC_CONTENT_ITEMS(
+        Iterable.class,
+        "getDynamicContentItems"),
+
+    GET_FORUM(
         org.zendesk.client.v2.model.Forum.class,
         "getForum",
         arg("id", long.class)),
 
-    GETFORUMS(
+    GET_FORUMS(
         Iterable.class,
         "getForums"),
 
-    GETFORUMS_1(
+    GET_FORUMS_1(
         java.util.List.class,
         "getForums",
         arg("category_id", long.class)),
 
-    GETGROUP(
+    GET_GROUP(
         org.zendesk.client.v2.model.Group.class,
         "getGroup",
         arg("id", long.class)),
 
-    GETGROUPMEMBERSHIP(
+    GET_GROUP_MEMBERSHIP(
         org.zendesk.client.v2.model.GroupMembership.class,
         "getGroupMembership",
         arg("id", long.class)),
 
-    GETGROUPMEMBERSHIP_1(
+    GET_GROUP_MEMBERSHIP_1(
         org.zendesk.client.v2.model.GroupMembership.class,
         "getGroupMembership",
         arg("user_id", long.class),
         arg("group_membership_id", long.class)),
 
-    GETGROUPMEMBERSHIPBYUSER(
+    GET_GROUP_MEMBERSHIP_BY_USER(
         java.util.List.class,
         "getGroupMembershipByUser",
         arg("user_id", long.class)),
 
-    GETGROUPMEMBERSHIPS(
+    GET_GROUP_MEMBERSHIPS(
         Iterable.class,
         "getGroupMemberships"),
 
-    GETGROUPMEMBERSHIPS_1(
+    GET_GROUP_MEMBERSHIPS_1(
         java.util.List.class,
         "getGroupMemberships",
         arg("group_id", long.class)),
 
-    GETGROUPORGANIZATION(
+    GET_GROUP_ORGANIZATION(
         org.zendesk.client.v2.model.OrganizationMembership.class,
         "getGroupOrganization",
         arg("user_id", long.class),
         arg("organization_membership_id", long.class)),
 
-    GETGROUPUSERS(
+    GET_GROUP_USERS(
         Iterable.class,
         "getGroupUsers",
         arg("id", long.class)),
 
-    GETGROUPS(
+    GET_GROUPS(
         Iterable.class,
         "getGroups"),
 
-    GETHOLIDAYSFORSCHEDULE(
+    GET_HELP_CENTER_LOCALES(
+        java.util.List.class,
+        "getHelpCenterLocales"),
+
+    GET_HOLIDAYS_FOR_SCHEDULE(
         Iterable.class,
         "getHolidaysForSchedule",
         arg("schedule", org.zendesk.client.v2.model.schedules.Schedule.class)),
 
-    GETHOLIDAYSFORSCHEDULE_1(
+    GET_HOLIDAYS_FOR_SCHEDULE_1(
         Iterable.class,
         "getHolidaysForSchedule",
         arg("scheduleId", Long.class)),
 
-    GETINCREMENTALTICKETSRESULT(
+    GET_INCREMENTAL_TICKETS_RESULT(
         java.util.Map.class,
         "getIncrementalTicketsResult",
         arg("unixEpochTime", long.class)),
 
-    GETJOBSTATUS(
+    GET_JOB_STATUS(
         org.zendesk.client.v2.model.JobStatus.class,
         "getJobStatus",
         arg("status", org.zendesk.client.v2.model.JobStatus.class)),
 
-    GETJOBSTATUSASYNC(
+    GET_JOB_STATUS_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "getJobStatusAsync",
         arg("status", org.zendesk.client.v2.model.JobStatus.class)),
 
-    GETJOBSTATUSES(
+    GET_JOB_STATUSES(
         java.util.List.class,
         "getJobStatuses",
         arg("statuses", java.util.List.class)),
 
-    GETJOBSTATUSESASYNC(
+    GET_JOB_STATUSES_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "getJobStatusesAsync",
         arg("statuses", java.util.List.class)),
 
-    GETMACRO(
+    GET_MACRO(
         org.zendesk.client.v2.model.Macro.class,
         "getMacro",
         arg("macroId", long.class)),
 
-    GETMACROS(
+    GET_MACROS(
         Iterable.class,
         "getMacros"),
 
-    GETOPENREQUESTS(
+    GET_OPEN_REQUESTS(
         Iterable.class,
         "getOpenRequests"),
 
-    GETORGANIZATION(
+    GET_ORGANIZATION(
         org.zendesk.client.v2.model.Organization.class,
         "getOrganization",
         arg("id", long.class)),
 
-    GETORGANIZATIONFIELDS(
+    GET_ORGANIZATION_FIELDS(
         Iterable.class,
         "getOrganizationFields"),
 
-    GETORGANIZATIONMEMBERSHIP(
+    GET_ORGANIZATION_MEMBERSHIP(
         org.zendesk.client.v2.model.OrganizationMembership.class,
         "getOrganizationMembership",
         arg("id", long.class)),
 
-    GETORGANIZATIONMEMBERSHIPBYUSER(
+    GET_ORGANIZATION_MEMBERSHIP_BY_USER(
         java.util.List.class,
         "getOrganizationMembershipByUser",
         arg("user_id", long.class)),
 
-    GETORGANIZATIONMEMBERSHIPFORUSER(
+    GET_ORGANIZATION_MEMBERSHIP_FOR_USER(
         org.zendesk.client.v2.model.OrganizationMembership.class,
         "getOrganizationMembershipForUser",
         arg("user_id", long.class),
         arg("id", long.class)),
 
-    GETORGANIZATIONMEMBERSHIPS(
+    GET_ORGANIZATION_MEMBERSHIPS(
         Iterable.class,
         "getOrganizationMemberships"),
 
-    GETORGANIZATIONMEMBERSHIPSFORORG(
+    GET_ORGANIZATION_MEMBERSHIPS_FOR_ORG(
         Iterable.class,
         "getOrganizationMembershipsForOrg",
         arg("organization_id", long.class)),
 
-    GETORGANIZATIONMEMBERSHIPSFORUSER(
+    GET_ORGANIZATION_MEMBERSHIPS_FOR_USER(
         Iterable.class,
         "getOrganizationMembershipsForUser",
         arg("user_id", long.class)),
 
-    GETORGANIZATIONTICKETS(
+    GET_ORGANIZATION_TICKETS(
         Iterable.class,
         "getOrganizationTickets",
         arg("organizationId", long.class)),
 
-    GETORGANIZATIONUSERS(
+    GET_ORGANIZATION_USERS(
         Iterable.class,
         "getOrganizationUsers",
         arg("id", long.class)),
 
-    GETORGANIZATIONS(
+    GET_ORGANIZATIONS(
         Iterable.class,
         "getOrganizations"),
 
-    GETORGANIZATIONSINCREMENTALLY(
+    GET_ORGANIZATIONS_INCREMENTALLY(
         Iterable.class,
         "getOrganizationsIncrementally",
         arg("startTime", java.util.Date.class)),
 
-    GETRECENTTICKETS(
+    GET_PERMISSION_GROUP(
+        org.zendesk.client.v2.model.hc.PermissionGroup.class,
+        "getPermissionGroup",
+        arg("id", long.class)),
+
+    GET_PERMISSION_GROUPS(
+        Iterable.class,
+        "getPermissionGroups"),
+
+    GET_RECENT_TICKETS(
         Iterable.class,
         "getRecentTickets"),
 
-    GETREQUEST(
+    GET_REQUEST(
         org.zendesk.client.v2.model.Request.class,
         "getRequest",
         arg("id", long.class)),
 
-    GETREQUESTCOMMENT(
+    GET_REQUEST_COMMENT(
         org.zendesk.client.v2.model.Comment.class,
         "getRequestComment",
         arg("request", org.zendesk.client.v2.model.Request.class),
         arg("comment", org.zendesk.client.v2.model.Comment.class)),
 
-    GETREQUESTCOMMENT_1(
+    GET_REQUEST_COMMENT_1(
         org.zendesk.client.v2.model.Comment.class,
         "getRequestComment",
         arg("request", org.zendesk.client.v2.model.Request.class),
         arg("commentId", long.class)),
 
-    GETREQUESTCOMMENT_2(
+    GET_REQUEST_COMMENT_2(
         org.zendesk.client.v2.model.Comment.class,
         "getRequestComment",
         arg("requestId", long.class),
         arg("commentId", long.class)),
 
-    GETREQUESTCOMMENTS(
+    GET_REQUEST_COMMENTS(
         Iterable.class,
         "getRequestComments",
         arg("id", long.class)),
 
-    GETREQUESTCOMMENTS_1(
+    GET_REQUEST_COMMENTS_1(
         Iterable.class,
         "getRequestComments",
         arg("request", org.zendesk.client.v2.model.Request.class)),
 
-    GETREQUESTS(
+    GET_REQUESTS(
         Iterable.class,
         "getRequests"),
 
-    GETSATISFACTIONRATING(
+    GET_SATISFACTION_RATING(
         org.zendesk.client.v2.model.SatisfactionRating.class,
         "getSatisfactionRating",
         arg("id", long.class)),
 
-    GETSATISFACTIONRATINGS(
+    GET_SATISFACTION_RATINGS(
         Iterable.class,
         "getSatisfactionRatings"),
 
-    GETSCHEDULE(
+    GET_SCHEDULE(
         org.zendesk.client.v2.model.schedules.Schedule.class,
         "getSchedule",
         arg("schedule", org.zendesk.client.v2.model.schedules.Schedule.class)),
 
-    GETSCHEDULE_1(
+    GET_SCHEDULE_1(
         org.zendesk.client.v2.model.schedules.Schedule.class,
         "getSchedule",
         arg("scheduleId", Long.class)),
 
-    GETSCHEDULES(
+    GET_SCHEDULES(
         Iterable.class,
         "getSchedules"),
 
-    GETSEARCHRESULTS(
+    GET_SEARCH_RESULTS(
         Iterable.class,
         "getSearchResults",
         arg("query", String.class)),
 
-    GETSEARCHRESULTS_1(
+    GET_SEARCH_RESULTS_1(
         Iterable.class,
         "getSearchResults",
         arg("type", Class.class),
         arg("query", String.class)),
 
-    GETSEARCHRESULTS_2(
+    GET_SEARCH_RESULTS_2(
         Iterable.class,
         "getSearchResults",
         arg("type", Class.class),
         arg("query", String.class),
-        arg("params", String.class)),
+        arg("parameters", String.class)),
 
-    GETSECTION(
+    GET_SEARCH_RESULTS_3(
+        Iterable.class,
+        "getSearchResults",
+        arg("type", Class.class),
+        arg("query", String.class),
+        arg("params", java.util.Map.class)),
+
+    GET_SEARCH_RESULTS_4(
+        Iterable.class,
+        "getSearchResults",
+        arg("type", Class.class),
+        arg("query", String.class),
+        arg("sortBy", String.class),
+        arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
+
+    GET_SECTION(
         org.zendesk.client.v2.model.hc.Section.class,
         "getSection",
         arg("id", long.class)),
 
-    GETSECTIONSUBSCRIPTIONS(
+    GET_SECTION_SUBSCRIPTIONS(
         Iterable.class,
         "getSectionSubscriptions",
         arg("sectionId", Long.class)),
 
-    GETSECTIONSUBSCRIPTIONS_1(
+    GET_SECTION_SUBSCRIPTIONS_1(
         Iterable.class,
         "getSectionSubscriptions",
         arg("sectionId", Long.class),
         arg("locale", String.class)),
 
-    GETSECTIONTRANSLATIONS(
+    GET_SECTION_TRANSLATIONS(
         Iterable.class,
         "getSectionTranslations",
         arg("sectionId", Long.class)),
 
-    GETSECTIONS(
+    GET_SECTIONS(
         Iterable.class,
         "getSections"),
 
-    GETSECTIONS_1(
+    GET_SECTIONS_1(
         Iterable.class,
         "getSections",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
 
-    GETSOLVEDREQUESTS(
+    GET_SECTIONS_2(
+        Iterable.class,
+        "getSections",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    GET_SOLVED_REQUESTS(
         Iterable.class,
         "getSolvedRequests"),
 
-    GETSUSPENDEDTICKETS(
+    GET_SUSPENDED_TICKETS(
         Iterable.class,
         "getSuspendedTickets"),
 
-    GETTARGET(
+    GET_TARGET(
         org.zendesk.client.v2.model.targets.Target.class,
         "getTarget",
         arg("id", long.class)),
 
-    GETTARGETS(
+    GET_TARGETS(
         Iterable.class,
         "getTargets"),
 
-    GETTICKET(
+    GET_TICKET(
         org.zendesk.client.v2.model.Ticket.class,
         "getTicket",
         arg("id", long.class)),
 
-    GETTICKETAUDIT(
+    GET_TICKET_AUDIT(
         org.zendesk.client.v2.model.Audit.class,
         "getTicketAudit",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("audit", org.zendesk.client.v2.model.Audit.class)),
 
-    GETTICKETAUDIT_1(
+    GET_TICKET_AUDIT_1(
         org.zendesk.client.v2.model.Audit.class,
         "getTicketAudit",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("id", long.class)),
 
-    GETTICKETAUDIT_2(
+    GET_TICKET_AUDIT_2(
         org.zendesk.client.v2.model.Audit.class,
         "getTicketAudit",
         arg("ticketId", long.class),
         arg("auditId", long.class)),
 
-    GETTICKETAUDITS(
+    GET_TICKET_AUDITS(
         Iterable.class,
         "getTicketAudits",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    GETTICKETAUDITS_1(
+    GET_TICKET_AUDITS_1(
         Iterable.class,
         "getTicketAudits",
         arg("ticketId0", Long.class)),
 
-    GETTICKETCOLLABORATORS(
+    GET_TICKET_COLLABORATORS(
         java.util.List.class,
         "getTicketCollaborators",
         arg("id", long.class)),
 
-    GETTICKETCOMMENTS(
+    GET_TICKET_COMMENTS(
         Iterable.class,
         "getTicketComments",
         arg("id", long.class)),
 
-    GETTICKETFIELD(
+    GET_TICKET_COMMENTS_1(
+        Iterable.class,
+        "getTicketComments",
+        arg("id", long.class),
+        arg("order", org.zendesk.client.v2.model.SortOrder.class)),
+
+    GET_TICKET_FIELD(
         org.zendesk.client.v2.model.Field.class,
         "getTicketField",
         arg("id", long.class)),
 
-    GETTICKETFIELDS(
+    GET_TICKET_FIELDS(
         java.util.List.class,
         "getTicketFields"),
 
-    GETTICKETFORM(
+    GET_TICKET_FORM(
         org.zendesk.client.v2.model.TicketForm.class,
         "getTicketForm",
         arg("id", long.class)),
 
-    GETTICKETFORMS(
+    GET_TICKET_FORMS(
         java.util.List.class,
         "getTicketForms"),
 
-    GETTICKETINCIDENTS(
+    GET_TICKET_INCIDENTS(
         java.util.List.class,
         "getTicketIncidents",
         arg("id", long.class)),
 
-    GETTICKETMETRIC(
+    GET_TICKET_METRIC(
         org.zendesk.client.v2.model.Metric.class,
         "getTicketMetric",
         arg("id", long.class)),
 
-    GETTICKETMETRICBYTICKET(
+    GET_TICKET_METRIC_BY_TICKET(
         org.zendesk.client.v2.model.Metric.class,
         "getTicketMetricByTicket",
         arg("id", long.class)),
 
-    GETTICKETMETRICS(
+    GET_TICKET_METRICS(
         Iterable.class,
         "getTicketMetrics"),
 
-    GETTICKETS(
+    GET_TICKETS(
         Iterable.class,
         "getTickets"),
 
-    GETTICKETS_1(
+    GET_TICKETS_1(
         java.util.List.class,
         "getTickets",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
-    GETTICKETSBYEXTERNALID(
+    GET_TICKETS_BY_EXTERNAL_ID(
         Iterable.class,
         "getTicketsByExternalId",
         arg("externalId", String.class)),
 
-    GETTICKETSBYEXTERNALID_1(
+    GET_TICKETS_BY_EXTERNAL_ID_1(
         Iterable.class,
         "getTicketsByExternalId",
         arg("externalId", String.class),
         arg("includeArchived", boolean.class)),
 
-    GETTICKETSFROMSEARCH(
+    GET_TICKETS_FROM_SEARCH(
         Iterable.class,
         "getTicketsFromSearch",
         arg("searchTerm", String.class)),
 
-    GETTICKETSINCREMENTALLY(
+    GET_TICKETS_INCREMENTALLY(
         Iterable.class,
         "getTicketsIncrementally",
         arg("startTime", java.util.Date.class)),
 
-    GETTICKETSINCREMENTALLY_1(
+    GET_TICKETS_INCREMENTALLY_1(
         Iterable.class,
         "getTicketsIncrementally",
         arg("startTime", java.util.Date.class),
         arg("endTime", java.util.Date.class)),
 
-    GETTOPIC(
+    GET_TOPIC(
         org.zendesk.client.v2.model.Topic.class,
         "getTopic",
         arg("id", long.class)),
 
-    GETTOPICS(
+    GET_TOPICS(
         Iterable.class,
         "getTopics"),
 
-    GETTOPICS_1(
+    GET_TOPICS_1(
         java.util.List.class,
         "getTopics",
         arg("forum_id", long.class)),
 
-    GETTOPICS_2(
+    GET_TOPICS_2(
+        Iterable.class,
+        "getTopics",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    GET_TOPICS_3(
         java.util.List.class,
         "getTopics",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
-    GETTOPICSBYUSER(
+    GET_TOPICS_BY_USER(
         java.util.List.class,
         "getTopicsByUser",
         arg("user_id", long.class)),
 
-    GETTRIGGER(
+    GET_TRIGGER(
         org.zendesk.client.v2.model.Trigger.class,
         "getTrigger",
         arg("id", long.class)),
 
-    GETTRIGGERS(
+    GET_TRIGGERS(
         Iterable.class,
         "getTriggers"),
 
-    GETTWITTERMONITORS(
+    GET_TWITTER_MONITORS(
         Iterable.class,
         "getTwitterMonitors"),
 
-    GETUSER(
+    GET_USER(
         org.zendesk.client.v2.model.User.class,
         "getUser",
         arg("id", long.class)),
 
-    GETUSERCCDTICKETS(
+    GET_USER_CCD_TICKETS(
         Iterable.class,
         "getUserCCDTickets",
         arg("userId", long.class)),
 
-    GETUSERFIELDS(
+    GET_USER_FIELDS(
         Iterable.class,
         "getUserFields"),
 
-    GETUSERIDENTITIES(
+    GET_USER_IDENTITIES(
         java.util.List.class,
         "getUserIdentities",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    GETUSERIDENTITIES_1(
+    GET_USER_IDENTITIES_1(
         java.util.List.class,
         "getUserIdentities",
         arg("userId", long.class)),
 
-    GETUSERIDENTITY(
+    GET_USER_IDENTITY(
         org.zendesk.client.v2.model.Identity.class,
         "getUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    GETUSERIDENTITY_1(
+    GET_USER_IDENTITY_1(
         org.zendesk.client.v2.model.Identity.class,
         "getUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identityId", long.class)),
 
-    GETUSERIDENTITY_2(
+    GET_USER_IDENTITY_2(
         org.zendesk.client.v2.model.Identity.class,
         "getUserIdentity",
         arg("userId", long.class),
         arg("identityId", long.class)),
 
-    GETUSERREQUESTEDTICKETS(
+    GET_USER_RELATED_INFO(
+        org.zendesk.client.v2.model.UserRelatedInfo.class,
+        "getUserRelatedInfo",
+        arg("userId", long.class)),
+
+    GET_USER_REQUESTED_TICKETS(
         Iterable.class,
         "getUserRequestedTickets",
         arg("userId", long.class)),
 
-    GETUSERREQUESTS(
+    GET_USER_REQUESTS(
         Iterable.class,
         "getUserRequests",
         arg("id", long.class)),
 
-    GETUSERREQUESTS_1(
+    GET_USER_REQUESTS_1(
         Iterable.class,
         "getUserRequests",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    GETUSERSUBSCRIPTIONS(
+    GET_USER_SEGMENT(
+        org.zendesk.client.v2.model.hc.UserSegment.class,
+        "getUserSegment",
+        arg("id", long.class)),
+
+    GET_USER_SEGMENTS(
+        Iterable.class,
+        "getUserSegments"),
+
+    GET_USER_SEGMENTS_1(
+        Iterable.class,
+        "getUserSegments",
+        arg("id", long.class)),
+
+    GET_USER_SEGMENTS_APPLICABLE(
+        Iterable.class,
+        "getUserSegmentsApplicable"),
+
+    GET_USER_SUBSCRIPTIONS(
         Iterable.class,
         "getUserSubscriptions",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    GETUSERSUBSCRIPTIONS_1(
+    GET_USER_SUBSCRIPTIONS_1(
         Iterable.class,
         "getUserSubscriptions",
         arg("userId0", Long.class)),
 
-    GETUSERS(
+    GET_USERS(
         Iterable.class,
         "getUsers"),
 
-    GETUSERSBYROLE(
+    GET_USERS_BY_ROLE(
         Iterable.class,
         "getUsersByRole",
         arg("role", String.class),
         arg("roles", new String[0].getClass())),
 
-    GETUSERSINCREMENTALLY(
+    GET_USERS_INCREMENTALLY(
         Iterable.class,
         "getUsersIncrementally",
         arg("startTime", java.util.Date.class)),
 
-    IMPORTTICKET(
+    IMPORT_TICKET(
         org.zendesk.client.v2.model.Ticket.class,
         "importTicket",
         arg("ticketImport", org.zendesk.client.v2.model.TicketImport.class)),
 
-    IMPORTTOPIC(
+    IMPORT_TOPIC(
         org.zendesk.client.v2.model.Topic.class,
         "importTopic",
         arg("topic", org.zendesk.client.v2.model.Topic.class)),
 
-    LOOKUPORGANIZATIONSBYEXTERNALID(
+    LOOKUP_ORGANIZATIONS_BY_EXTERNAL_ID(
         Iterable.class,
         "lookupOrganizationsByExternalId",
         arg("externalId", String.class)),
 
-    LOOKUPUSERBYEMAIL(
+    LOOKUP_USER_BY_EMAIL(
         Iterable.class,
         "lookupUserByEmail",
         arg("email", String.class)),
 
-    LOOKUPUSERBYEXTERNALID(
+    LOOKUP_USER_BY_EXTERNAL_ID(
         Iterable.class,
         "lookupUserByExternalId",
         arg("externalId", String.class)),
 
-    MACROSSHOWCHANGESTOTICKET(
+    MACROS_SHOW_CHANGES_TO_TICKET(
         org.zendesk.client.v2.model.Ticket.class,
         "macrosShowChangesToTicket",
         arg("macroId", long.class)),
 
-    MACROSSHOWTICKETAFTERCHANGES(
+    MACROS_SHOW_TICKET_AFTER_CHANGES(
         org.zendesk.client.v2.model.Ticket.class,
         "macrosShowTicketAfterChanges",
         arg("ticketId", long.class),
         arg("macroId", long.class)),
 
-    MAKEPRIVATETICKETAUDIT(
+    MAKE_PRIVATE_TICKET_AUDIT(
         void.class,
         "makePrivateTicketAudit",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("audit", org.zendesk.client.v2.model.Audit.class)),
 
-    MAKEPRIVATETICKETAUDIT_1(
+    MAKE_PRIVATE_TICKET_AUDIT_1(
         void.class,
         "makePrivateTicketAudit",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("id", long.class)),
 
-    MAKEPRIVATETICKETAUDIT_2(
+    MAKE_PRIVATE_TICKET_AUDIT_2(
         void.class,
         "makePrivateTicketAudit",
         arg("ticketId", long.class),
         arg("auditId", long.class)),
 
-    MARKTICKETASSPAM(
+    MARK_TICKET_AS_SPAM(
         void.class,
         "markTicketAsSpam",
         arg("id", long.class)),
 
-    MARKTICKETASSPAM_1(
+    MARK_TICKET_AS_SPAM_1(
         void.class,
         "markTicketAsSpam",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    NOTIFYAPP(
+    MERGE_USERS(
+        org.zendesk.client.v2.model.User.class,
+        "mergeUsers",
+        arg("userIdThatWillRemain", long.class),
+        arg("userIdThatWillBeMerged", long.class)),
+
+    NOTIFY_APP(
         void.class,
         "notifyApp",
         arg("json", String.class)),
 
-    QUEUECREATETICKETASYNC(
+    PERMANENTLY_DELETE_TICKET(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "permanentlyDeleteTicket",
+        arg("id", long.class)),
+
+    PERMANENTLY_DELETE_TICKET_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "permanentlyDeleteTicket",
+        arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
+
+    PERMANENTLY_DELETE_TICKETS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "permanentlyDeleteTickets",
+        arg("id", long.class),
+        arg("ids", long[].class)),
+
+    PERMANENTLY_DELETE_USER(
+        org.zendesk.client.v2.model.User.class,
+        "permanentlyDeleteUser",
+        arg("id", long.class)),
+
+    PERMANENTLY_DELETE_USER_1(
+        org.zendesk.client.v2.model.User.class,
+        "permanentlyDeleteUser",
+        arg("user", org.zendesk.client.v2.model.User.class)),
+
+    QUEUE_CREATE_TICKET_ASYNC(
         org.asynchttpclient.ListenableFuture.class,
         "queueCreateTicketAsync",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    REMOVETAGFROMORGANISATIONS(
+    REMOVE_TAG_FROM_ORGANISATIONS(
         java.util.List.class,
         "removeTagFromOrganisations",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    REMOVETAGFROMTICKET(
+    REMOVE_TAG_FROM_TICKET(
         java.util.List.class,
         "removeTagFromTicket",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    REMOVETAGFROMTOPICS(
+    REMOVE_TAG_FROM_TOPICS(
         java.util.List.class,
         "removeTagFromTopics",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    REQUESTVERIFYUSERIDENTITY(
+    REQUEST_VERIFY_USER_IDENTITY(
         org.zendesk.client.v2.model.Identity.class,
         "requestVerifyUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    REQUESTVERIFYUSERIDENTITY_1(
+    REQUEST_VERIFY_USER_IDENTITY_1(
         org.zendesk.client.v2.model.Identity.class,
         "requestVerifyUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identityId", long.class)),
 
-    REQUESTVERIFYUSERIDENTITY_2(
+    REQUEST_VERIFY_USER_IDENTITY_2(
         org.zendesk.client.v2.model.Identity.class,
         "requestVerifyUserIdentity",
         arg("userId", long.class),
         arg("identityId", long.class)),
 
-    RESETUSERPASSWORD(
+    RESET_USER_PASSWORD(
         void.class,
         "resetUserPassword",
         arg("id", long.class),
         arg("password", String.class)),
 
-    RESETUSERPASSWORD_1(
+    RESET_USER_PASSWORD_1(
         void.class,
         "resetUserPassword",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("password", String.class)),
 
-    SETGROUPMEMBERSHIPASDEFAULT(
+    SET_GROUP_MEMBERSHIP_AS_DEFAULT(
         java.util.List.class,
         "setGroupMembershipAsDefault",
         arg("user_id", long.class),
         arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
 
-    SETORGANIZATIONMEMBERSHIPASDEFAULT(
+    SET_ORGANIZATION_MEMBERSHIP_AS_DEFAULT(
         java.util.List.class,
         "setOrganizationMembershipAsDefault",
         arg("user_id", long.class),
         arg("organizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class)),
 
-    SETTAGONORGANISATIONS(
+    SET_TAG_ON_ORGANISATIONS(
         java.util.List.class,
         "setTagOnOrganisations",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    SETTAGONTICKET(
+    SET_TAG_ON_TICKET(
         java.util.List.class,
         "setTagOnTicket",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    SETTAGONTOPICS(
+    SET_TAG_ON_TOPICS(
         java.util.List.class,
         "setTagOnTopics",
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    SETUSERPRIMARYIDENTITY(
+    SET_USER_PRIMARY_IDENTITY(
         java.util.List.class,
         "setUserPrimaryIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    SETUSERPRIMARYIDENTITY_1(
+    SET_USER_PRIMARY_IDENTITY_1(
         java.util.List.class,
         "setUserPrimaryIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identityId", long.class)),
 
-    SETUSERPRIMARYIDENTITY_2(
+    SET_USER_PRIMARY_IDENTITY_2(
         java.util.List.class,
         "setUserPrimaryIdentity",
         arg("userId", long.class),
         arg("identityId", long.class)),
 
-    SUSPENDUSER(
+    SUSPEND_USER(
         org.zendesk.client.v2.model.User.class,
         "suspendUser",
         arg("id", long.class)),
 
-    TRUSTTICKETAUDIT(
+    TRUST_TICKET_AUDIT(
         void.class,
         "trustTicketAudit",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("audit", org.zendesk.client.v2.model.Audit.class)),
 
-    TRUSTTICKETAUDIT_1(
+    TRUST_TICKET_AUDIT_1(
         void.class,
         "trustTicketAudit",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class),
         arg("id", long.class)),
 
-    TRUSTTICKETAUDIT_2(
+    TRUST_TICKET_AUDIT_2(
         void.class,
         "trustTicketAudit",
         arg("ticketId", long.class),
         arg("auditId", long.class)),
 
-    UNSUSPENDUSER(
+    UNSUSPEND_USER(
         org.zendesk.client.v2.model.User.class,
         "unsuspendUser",
         arg("id", long.class)),
 
-    UPDATEARTICLE(
+    UPDATE_ARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
         "updateArticle",
         arg("article", org.zendesk.client.v2.model.hc.Article.class)),
 
-    UPDATEARTICLETRANSLATION(
+    UPDATE_ARTICLE_TRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "updateArticleTranslation",
         arg("articleId", Long.class),
         arg("locale", String.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
-    UPDATEAUTOMATION(
+    UPDATE_AUTOMATION(
         org.zendesk.client.v2.model.Automation.class,
         "updateAutomation",
         arg("automationId", Long.class),
         arg("automation", org.zendesk.client.v2.model.Automation.class)),
 
-    UPDATECATEGORY(
+    UPDATE_CATEGORY(
         org.zendesk.client.v2.model.hc.Category.class,
         "updateCategory",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
 
-    UPDATECATEGORYTRANSLATION(
+    UPDATE_CATEGORY_TRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "updateCategoryTranslation",
         arg("categoryId", Long.class),
         arg("locale", String.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
-    UPDATEFORUM(
+    UPDATE_DYNAMIC_CONTENT_ITEM(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
+        "updateDynamicContentItem",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    UPDATE_DYNAMIC_CONTENT_ITEM_VARIANT(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class,
+        "updateDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
+
+    UPDATE_FORUM(
         org.zendesk.client.v2.model.Forum.class,
         "updateForum",
         arg("forum", org.zendesk.client.v2.model.Forum.class)),
 
-    UPDATEGROUP(
+    UPDATE_GROUP(
         org.zendesk.client.v2.model.Group.class,
         "updateGroup",
         arg("group", org.zendesk.client.v2.model.Group.class)),
 
-    UPDATEINSTALLATION(
+    UPDATE_INSTALLATION(
         void.class,
         "updateInstallation",
         arg("installationId", int.class),
         arg("json", String.class)),
 
-    UPDATEMACRO(
+    UPDATE_MACRO(
         org.zendesk.client.v2.model.Macro.class,
         "updateMacro",
         arg("macroId0", Long.class),
         arg("macro", org.zendesk.client.v2.model.Macro.class)),
 
-    UPDATEORGANIZATION(
+    UPDATE_ORGANIZATION(
         org.zendesk.client.v2.model.Organization.class,
         "updateOrganization",
         arg("organization", org.zendesk.client.v2.model.Organization.class)),
 
-    UPDATEREQUEST(
+    UPDATE_ORGANIZATIONS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateOrganizations",
+        arg("organizationList", java.util.List.class)),
+
+    UPDATE_ORGANIZATIONS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateOrganizations",
+        arg("organizations", new org.zendesk.client.v2.model.Organization[0].getClass())),
+
+    UPDATE_ORGANIZATIONS_ASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "updateOrganizationsAsync",
+        arg("organizationList", java.util.List.class)),
+
+    UPDATE_PERMISSION_GROUP(
+        org.zendesk.client.v2.model.hc.PermissionGroup.class,
+        "updatePermissionGroup",
+        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
+
+    UPDATE_REQUEST(
         org.zendesk.client.v2.model.Request.class,
         "updateRequest",
         arg("request", org.zendesk.client.v2.model.Request.class)),
 
-    UPDATESECTION(
+    UPDATE_SECTION(
         org.zendesk.client.v2.model.hc.Section.class,
         "updateSection",
         arg("section", org.zendesk.client.v2.model.hc.Section.class)),
 
-    UPDATESECTIONTRANSLATION(
+    UPDATE_SECTION_TRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "updateSectionTranslation",
         arg("sectionId", Long.class),
         arg("locale", String.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
-    UPDATETICKET(
+    UPDATE_TICKET(
         org.zendesk.client.v2.model.Ticket.class,
         "updateTicket",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
-    UPDATETICKETFIELD(
+    UPDATE_TICKET_FIELD(
         org.zendesk.client.v2.model.Field.class,
         "updateTicketField",
         arg("field", org.zendesk.client.v2.model.Field.class)),
 
-    UPDATETOPIC(
+    UPDATE_TICKETS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateTickets",
+        arg("ticketList", java.util.List.class)),
+
+    UPDATE_TICKETS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateTickets",
+        arg("tickets", new org.zendesk.client.v2.model.Ticket[0].getClass())),
+
+    UPDATE_TICKETS_ASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "updateTicketsAsync",
+        arg("ticketList", java.util.List.class)),
+
+    UPDATE_TOPIC(
         org.zendesk.client.v2.model.Topic.class,
         "updateTopic",
         arg("topic", org.zendesk.client.v2.model.Topic.class)),
 
-    UPDATETRIGGER(
+    UPDATE_TRIGGER(
         org.zendesk.client.v2.model.Trigger.class,
         "updateTrigger",
         arg("triggerId0", Long.class),
         arg("trigger", org.zendesk.client.v2.model.Trigger.class)),
 
-    UPDATEUSER(
+    UPDATE_USER(
         org.zendesk.client.v2.model.User.class,
         "updateUser",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
-    UPDATEUSERIDENTITY(
+    UPDATE_USER_IDENTITY(
         org.zendesk.client.v2.model.Identity.class,
         "updateUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    UPDATEUSERIDENTITY_1(
+    UPDATE_USER_IDENTITY_1(
         org.zendesk.client.v2.model.Identity.class,
         "updateUserIdentity",
         arg("userId", long.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    VERIFYUSERIDENTITY(
+    UPDATE_USER_SEGMENT(
+        org.zendesk.client.v2.model.hc.UserSegment.class,
+        "updateUserSegment",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    UPDATE_USERS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateUsers",
+        arg("users", new org.zendesk.client.v2.model.User[0].getClass())),
+
+    UPDATE_USERS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateUsers",
+        arg("usersList", java.util.List.class)),
+
+    UPDATE_USERS_ASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "updateUsersAsync",
+        arg("usersList", java.util.List.class)),
+
+    VERIFY_USER_IDENTITY(
         org.zendesk.client.v2.model.Identity.class,
         "verifyUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
-    VERIFYUSERIDENTITY_1(
+    VERIFY_USER_IDENTITY_1(
         org.zendesk.client.v2.model.Identity.class,
         "verifyUserIdentity",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("identityId", long.class)),
 
-    VERIFYUSERIDENTITY_2(
+    VERIFY_USER_IDENTITY_2(
         org.zendesk.client.v2.model.Identity.class,
         "verifyUserIdentity",
         arg("userId", long.class),
         arg("identityId", long.class));
-
-    
 
     private final ApiMethod apiMethod;
 

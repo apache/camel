@@ -1,13 +1,14 @@
 [[jsonata-component]]
-= JSONATA Component
+= JSONata Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsonata/src/main/docs/jsonata-component.adoc
-:docTitle: JSONATA
+:docTitle: JSONata
 :artifactId: camel-jsonata
-:description: JSON to JSON transformation using JSONATA.
+:description: Transforms JSON payload using JSONata transformation.
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jsonata.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -51,7 +52,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JSONATA component supports 2 options, which are listed below.
+The JSONata component supports 2 options, which are listed below.
 
 
 
@@ -59,13 +60,13 @@ The JSONATA component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
 
 // endpoint options: START
-The JSONATA endpoint is configured using URI syntax:
+The JSONata endpoint is configured using URI syntax:
 
 ----
 jsonata:resourceUri
@@ -83,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (7 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,10 +92,9 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *allowContextMapAll* (producer) | Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API. | false | boolean
 | *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
-| *inputType* (producer) | Specifies if the output should be Jackson JsonNode or a JSON String. The value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
+| *inputType* (producer) | Specifies if the output should be Jackson JsonNode or a JSON String. There are 2 enums and the value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *outputType* (producer) | Specifies if the output should be Jackson JsonNode or a JSON String. The value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *outputType* (producer) | Specifies if the output should be Jackson JsonNode or a JSON String. There are 2 enums and the value can be one of: Jackson, JsonString | Jackson | JsonataInputOutputType
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END

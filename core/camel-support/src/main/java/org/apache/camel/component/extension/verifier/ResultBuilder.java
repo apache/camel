@@ -109,10 +109,9 @@ public final class ResultBuilder {
 
     public ComponentVerifierExtension.Result build() {
         return new DefaultResult(
-            scope.orElse(ComponentVerifierExtension.Scope.PARAMETERS),
-            status.orElse(ComponentVerifierExtension.Result.Status.UNSUPPORTED),
-            verificationErrors != null ? Collections.unmodifiableList(verificationErrors) : Collections.emptyList()
-        );
+                scope.orElse(ComponentVerifierExtension.Scope.PARAMETERS),
+                status.orElse(ComponentVerifierExtension.Result.Status.UNSUPPORTED),
+                verificationErrors != null ? Collections.unmodifiableList(verificationErrors) : Collections.emptyList());
     }
 
     // **********************************
@@ -123,7 +122,8 @@ public final class ResultBuilder {
         return new ResultBuilder().status(status);
     }
 
-    public static ResultBuilder withStatusAndScope(ComponentVerifierExtension.Result.Status status, ComponentVerifierExtension.Scope scope) {
+    public static ResultBuilder withStatusAndScope(
+            ComponentVerifierExtension.Result.Status status, ComponentVerifierExtension.Scope scope) {
         return new ResultBuilder().status(status).scope(scope);
     }
 
@@ -132,7 +132,8 @@ public final class ResultBuilder {
     }
 
     public static ResultBuilder unsupported() {
-        return withStatusAndScope(ComponentVerifierExtension.Result.Status.UNSUPPORTED, ComponentVerifierExtension.Scope.PARAMETERS);
+        return withStatusAndScope(ComponentVerifierExtension.Result.Status.UNSUPPORTED,
+                ComponentVerifierExtension.Scope.PARAMETERS);
     }
 
     public static ResultBuilder unsupportedScope(ComponentVerifierExtension.Scope scope) {

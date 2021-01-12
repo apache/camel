@@ -32,8 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered
- * with the mbean server.
+ * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered with the mbean server.
  */
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
 
@@ -133,7 +132,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         assertEquals(1, s.size(), "Could not find 1 route: " + s);
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -147,7 +145,8 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
     private static class CustomComponent extends DefaultComponent {
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+                throws Exception {
             return new CustomEndpoint(uri, this);
         }
     }

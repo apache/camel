@@ -46,7 +46,8 @@ public class ServletAsyncTest extends ServletCamelRouterTestSupport {
                 .setClassLoader(getClass().getClassLoader())
                 .setContextPath(CONTEXT)
                 .setDeploymentName(getClass().getName())
-                .addInitParameter("contextConfigLocation", "classpath:org/apache/camel/component/servlet/example-camelContext.xml")
+                .addInitParameter("contextConfigLocation",
+                        "classpath:org/apache/camel/component/servlet/example-camelContext.xml")
                 .addListener(Servlets.listener(ContextLoaderListener.class))
                 .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
                         .addInitParam("async", "true")

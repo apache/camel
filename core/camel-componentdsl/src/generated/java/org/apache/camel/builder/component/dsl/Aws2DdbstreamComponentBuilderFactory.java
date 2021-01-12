@@ -38,6 +38,8 @@ public interface Aws2DdbstreamComponentBuilderFactory {
      * Category: cloud,messaging,streams
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
+     * 
+     * @return the dsl builder
      */
     static Aws2DdbstreamComponentBuilder aws2Ddbstream() {
         return new Aws2DdbstreamComponentBuilderImpl();
@@ -50,27 +52,15 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             extends
                 ComponentBuilder<Ddb2StreamComponent> {
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2DdbstreamComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param amazonDynamoDbStreamsClient the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder amazonDynamoDbStreamsClient(
                 software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient amazonDynamoDbStreamsClient) {
@@ -86,10 +76,13 @@ public interface Aws2DdbstreamComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -100,9 +93,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder configuration(
                 org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration configuration) {
@@ -116,10 +112,13 @@ public interface Aws2DdbstreamComponentBuilderFactory {
          * used, then a sequenceNumberProvider MUST be supplied.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.dynamodb.model.ShardIteratorType</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder iteratorType(
                 software.amazon.awssdk.services.dynamodb.model.ShardIteratorType iteratorType) {
@@ -129,9 +128,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -141,9 +143,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder proxyHost(
                 java.lang.String proxyHost) {
@@ -153,9 +158,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder proxyPort(
                 java.lang.Integer proxyPort) {
@@ -165,11 +173,14 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: consumer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -179,9 +190,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         /**
          * The region in which DDBStreams client needs to work.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -193,9 +207,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
          * registry reference or a literal sequence number.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumberProvider the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder sequenceNumberProvider(
                 org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider sequenceNumberProvider) {
@@ -206,10 +223,13 @@ public interface Aws2DdbstreamComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -217,25 +237,35 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2DdbstreamComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2DdbstreamComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder accessKey(
                 java.lang.String accessKey) {
@@ -245,9 +275,12 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2DdbstreamComponentBuilder secretKey(
                 java.lang.String secretKey) {
@@ -278,7 +311,6 @@ public interface Aws2DdbstreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoDiscoverClient": getOrCreateConfiguration((Ddb2StreamComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "amazonDynamoDbStreamsClient": getOrCreateConfiguration((Ddb2StreamComponent) component).setAmazonDynamoDbStreamsClient((software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient) value); return true;
             case "bridgeErrorHandler": ((Ddb2StreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((Ddb2StreamComponent) component).setConfiguration((org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration) value); return true;
@@ -290,7 +322,7 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             case "region": getOrCreateConfiguration((Ddb2StreamComponent) component).setRegion((java.lang.String) value); return true;
             case "sequenceNumberProvider": getOrCreateConfiguration((Ddb2StreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2StreamComponent) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((Ddb2StreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Ddb2StreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

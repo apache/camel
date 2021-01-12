@@ -43,10 +43,13 @@ public interface MSKEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder autoDiscoverClient(boolean autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -57,10 +60,14 @@ public interface MSKEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -69,9 +76,12 @@ public interface MSKEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -88,10 +98,13 @@ public interface MSKEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -108,10 +121,14 @@ public interface MSKEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -120,10 +137,13 @@ public interface MSKEndpointBuilderFactory {
         /**
          * To use a existing configured AWS MSK as client.
          * 
-         * The option is a: <code>com.amazonaws.services.kafka.AWSKafka</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.kafka.AWSKafka&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mskClient the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder mskClient(Object mskClient) {
             doSetProperty("mskClient", mskClient);
@@ -133,9 +153,12 @@ public interface MSKEndpointBuilderFactory {
          * To use a existing configured AWS MSK as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.kafka.AWSKafka</code> type.
+         * &lt;code&gt;com.amazonaws.services.kafka.AWSKafka&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mskClient the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder mskClient(String mskClient) {
             doSetProperty("mskClient", mskClient);
@@ -145,10 +168,13 @@ public interface MSKEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.msk.MSKOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.msk.MSKOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder operation(MSKOperations operation) {
             doSetProperty("operation", operation);
@@ -158,10 +184,13 @@ public interface MSKEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws.msk.MSKOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.msk.MSKOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -170,9 +199,12 @@ public interface MSKEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the MSK client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -181,9 +213,12 @@ public interface MSKEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the MSK client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -192,10 +227,13 @@ public interface MSKEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the MSK client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -204,10 +242,14 @@ public interface MSKEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MSK client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -216,11 +258,14 @@ public interface MSKEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MSK client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -232,9 +277,12 @@ public interface MSKEndpointBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -243,9 +291,12 @@ public interface MSKEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default MSKEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -264,41 +315,16 @@ public interface MSKEndpointBuilderFactory {
             return (MSKEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMSKEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMSKEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMSKEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -308,10 +334,14 @@ public interface MSKEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMSKEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -353,6 +383,7 @@ public interface MSKEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default MSKEndpointBuilder awsMsk(String path) {
             return MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
@@ -373,6 +404,7 @@ public interface MSKEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default MSKEndpointBuilder awsMsk(String componentName, String path) {
             return MSKEndpointBuilderFactory.endpointBuilder(componentName, path);

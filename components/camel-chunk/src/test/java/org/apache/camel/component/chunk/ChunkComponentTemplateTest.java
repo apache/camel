@@ -35,7 +35,7 @@ public class ChunkComponentTemplateTest extends CamelTestSupport {
 
     @Produce("direct:startSimple")
     protected ProducerTemplate startSimpleProducerTemplate;
-    
+
     /**
      * Test using code Template header
      */

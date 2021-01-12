@@ -47,7 +47,8 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
     private QueryCursor<Entry<Object, Object>> cursor;
 
-    public IgniteCacheContinuousQueryConsumer(IgniteCacheEndpoint endpoint, Processor processor, IgniteCache<Object, Object> cache) {
+    public IgniteCacheContinuousQueryConsumer(IgniteCacheEndpoint endpoint, Processor processor,
+                                              IgniteCache<Object, Object> cache) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.cache = cache;
@@ -59,7 +60,8 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         launchContinuousQuery();
 
-        LOG.info("Started Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
+        LOG.info("Started Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(),
+                endpoint.getQuery());
 
         maybeFireExistingQueryResults();
     }
@@ -97,7 +99,8 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         continuousQuery.setLocalListener(new CacheEntryUpdatedListener<Object, Object>() {
             @Override
-            public void onUpdated(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events) throws CacheEntryListenerException {
+            public void onUpdated(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events)
+                    throws CacheEntryListenerException {
                 if (LOG.isTraceEnabled()) {
                     LOG.info("Processing Continuous Query event(s): {}.", events);
                 }
@@ -125,8 +128,9 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         super.doStop();
 
         cursor.close();
-        
-        LOG.info("Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
+
+        LOG.info("Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(),
+                endpoint.getQuery());
     }
 
     private void fireSingleExchange(CacheEntryEvent<? extends Object, ? extends Object> entry) {

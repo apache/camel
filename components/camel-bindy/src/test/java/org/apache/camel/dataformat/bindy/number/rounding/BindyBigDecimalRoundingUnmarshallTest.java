@@ -45,7 +45,6 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
 
     private String record;
 
-
     @Test
     public void testBigDecimalRoundingUp() throws Exception {
 
@@ -57,7 +56,7 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        NumberModel bd = (NumberModel)result.getExchanges().get(0).getIn().getBody();
+        NumberModel bd = (NumberModel) result.getExchanges().get(0).getIn().getBody();
         assertEquals(bigDecimal, bd.getRoundingUp().toString());
     }
 
@@ -73,8 +72,8 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
                         .locale("en");
 
                 from(URI_DIRECT_START)
-                    .unmarshal(bindy)
-                    .to(URI_MOCK_RESULT);
+                        .unmarshal(bindy)
+                        .to(URI_MOCK_RESULT);
             }
 
         };

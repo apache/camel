@@ -36,5 +36,5 @@ public class LifecycleStrategyInjectionTest extends SpringTestSupport {
     public void testInjectedStrategy() throws Exception {
         assertTrue(context.getLifecycleStrategies().stream().anyMatch(s -> s instanceof DummyLifecycleStrategy));
     }
-    
+
 }

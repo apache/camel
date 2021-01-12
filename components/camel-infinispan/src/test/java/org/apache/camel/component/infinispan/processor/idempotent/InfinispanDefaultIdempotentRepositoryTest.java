@@ -31,7 +31,8 @@ public class InfinispanDefaultIdempotentRepositoryTest {
     public void createsRepositoryUsingInternalCache() throws Exception {
         GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").build();
         DefaultCacheManager basicCacheContainer = new DefaultCacheManager(global, new ConfigurationBuilder().build());
-        InfinispanIdempotentRepository repository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, "default");
+        InfinispanIdempotentRepository repository
+                = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, "default");
 
         assertFalse(repository.contains("One"));
         assertFalse(repository.remove("One"));
@@ -43,22 +44,22 @@ public class InfinispanDefaultIdempotentRepositoryTest {
 
         assertFalse(repository.contains("One"));
         assertFalse(repository.remove("One"));
-        
+
         assertTrue(repository.add("One"));
         assertTrue(repository.add("Two"));
         assertTrue(repository.add("Three"));
         assertTrue(repository.add("Four"));
-        
+
         assertTrue(repository.contains("One"));
         assertTrue(repository.contains("Two"));
         assertTrue(repository.contains("Three"));
         assertTrue(repository.contains("Four"));
-        
+
         repository.clear();
-        
+
         assertFalse(repository.contains("One"));
         assertFalse(repository.contains("Two"));
         assertFalse(repository.contains("Three"));
-        assertFalse(repository.contains("Four"));        
+        assertFalse(repository.contains("Four"));
     }
 }

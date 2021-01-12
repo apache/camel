@@ -38,11 +38,13 @@ public class TwitterSearchComponentVerifierExtensionTest extends AbstractCompone
     @Test
     public void testEmptyConfiguration() {
         Component component = context().getComponent(getComponentScheme());
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         {
             // Parameters validation
-            ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, Collections.emptyMap());
+            ComponentVerifierExtension.Result result
+                    = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, Collections.emptyMap());
 
             assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
             assertEquals(5, result.getErrors().size());
@@ -63,13 +65,17 @@ public class TwitterSearchComponentVerifierExtensionTest extends AbstractCompone
 
         {
             // Connectivity validation
-            ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, Collections.emptyMap());
+            ComponentVerifierExtension.Result result
+                    = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, Collections.emptyMap());
 
             assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
             assertEquals(1, result.getErrors().size());
-            assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-            assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-            assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
+            assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION,
+                    result.getErrors().get(0).getCode());
+            assertNotNull(result.getErrors().get(0).getDetails()
+                    .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+            assertTrue(result.getErrors().get(0).getDetails().get(
+                    ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
         }
     }
 }

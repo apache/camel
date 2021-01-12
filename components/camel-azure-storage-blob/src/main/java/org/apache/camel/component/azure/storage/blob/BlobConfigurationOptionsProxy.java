@@ -37,8 +37,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A proxy class for {@link BlobConfigurationOptionsProxy} and {@link BlobExchangeHeaders}. Ideally this
- * is responsible to obtain the correct configurations options either from configs or exchange headers
+ * A proxy class for {@link BlobConfigurationOptionsProxy} and {@link BlobExchangeHeaders}. Ideally this is responsible
+ * to obtain the correct configurations options either from configs or exchange headers
  */
 public class BlobConfigurationOptionsProxy {
 
@@ -49,7 +49,7 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public ListBlobContainersOptions getListBlobContainersOptions(final Exchange exchange) {
-        return BlobExchangeHeaders.getListBlobContainersOptionsFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getListBlobContainersOptionsFromHeaders, () -> null, exchange);
     }
 
     public Duration getTimeout(final Exchange exchange) {
@@ -57,15 +57,23 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public ListBlobsOptions getListBlobsOptions(final Exchange exchange) {
-        return BlobExchangeHeaders.getListBlobsOptionsFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getListBlobsOptionsFromHeaders, () -> null, exchange);
     }
 
     public BlobListDetails getBlobListDetails(final Exchange exchange) {
-        return BlobExchangeHeaders.getBlobListDetailsFromHeaders(exchange);
+        return getOption(BlobExchangeHeaders::getBlobListDetailsFromHeaders, () -> null, exchange);
     }
 
     public String getPrefix(final Exchange exchange) {
+        //if regex is set, prefix will not take effect
+        if (ObjectHelper.isNotEmpty(getRegex(exchange))) {
+            return null;
+        }
         return getOption(BlobExchangeHeaders::getPrefixFromHeaders, configuration::getPrefix, exchange);
+    }
+
+    public String getRegex(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getRegexFromHeaders, configuration::getRegex, exchange);
     }
 
     public Integer getMaxResultsPerPage(final Exchange exchange) {
@@ -74,6 +82,10 @@ public class BlobConfigurationOptionsProxy {
 
     public ListBlobsOptions getListBlobOptions(final Exchange exchange) {
         ListBlobsOptions blobsOptions = getListBlobsOptions(exchange);
+
+        if (blobsOptions == null) {
+            blobsOptions = new ListBlobsOptions();
+        }
 
         if (!ObjectHelper.isEmpty(blobsOptions)) {
             return blobsOptions;
@@ -146,11 +158,13 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public Long getDownloadLinkExpiration(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders, configuration::getDownloadLinkExpiration, exchange);
+        return getOption(BlobExchangeHeaders::getDownloadLinkExpirationFromHeaders, configuration::getDownloadLinkExpiration,
+                exchange);
     }
 
     public boolean isCommitBlockListLater(final Exchange exchange) {
-        return getOption(BlobExchangeHeaders::getCommitBlockListFlagFromHeaders, configuration::isCommitBlockListLater, exchange);
+        return getOption(BlobExchangeHeaders::getCommitBlockListFlagFromHeaders, configuration::isCommitBlockListLater,
+                exchange);
     }
 
     public BlockListType getBlockListType(final Exchange exchange) {
@@ -195,7 +209,8 @@ public class BlobConfigurationOptionsProxy {
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
-        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange)) ? fallbackFn.get()
+        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))
+                ? fallbackFn.get()
                 : exchangeFn.apply(exchange);
     }
 }

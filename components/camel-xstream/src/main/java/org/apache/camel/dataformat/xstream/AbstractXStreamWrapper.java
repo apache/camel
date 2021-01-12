@@ -49,7 +49,8 @@ import org.apache.camel.support.service.ServiceSupport;
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
-public abstract class AbstractXStreamWrapper extends ServiceSupport implements CamelContextAware, DataFormat, DataFormatName, DataFormatContentTypeHeader {
+public abstract class AbstractXStreamWrapper extends ServiceSupport
+        implements CamelContextAware, DataFormat, DataFormatName, DataFormatContentTypeHeader {
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
 
     private CamelContext camelContext;
@@ -84,8 +85,8 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
      * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
      * be created and cached.
      *
-     * @param resolver class resolver to be used during a configuration of the XStream instance.
-     * @return XStream instance used by this data format.
+     * @param  resolver class resolver to be used during a configuration of the XStream instance.
+     * @return          XStream instance used by this data format.
      */
     public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
@@ -98,8 +99,8 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
      * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
      * be created and cached.
      *
-     * @param context to be used during a configuration of the XStream instance
-     * @return XStream instance used by this data format.
+     * @param  context to be used during a configuration of the XStream instance
+     * @return         XStream instance used by this data format.
      */
     public XStream getXStream(CamelContext context) {
         if (xstream == null) {
@@ -163,7 +164,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
                     Constructor<Converter> con = null;
                     try {
-                        con = converterClass.getDeclaredConstructor(new Class[]{XStream.class});
+                        con = converterClass.getDeclaredConstructor(new Class[] { XStream.class });
                     } catch (Exception e) {
                         //swallow as we null check in a moment.
                     }
@@ -172,7 +173,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
                     } else {
                         converter = converterClass.newInstance();
                         try {
-                            Method method = converterClass.getMethod("setXStream", new Class[]{XStream.class});
+                            Method method = converterClass.getMethod("setXStream", new Class[] { XStream.class });
                             if (method != null) {
                                 ObjectHelper.invokeMethod(method, converter, xstream);
                             }
@@ -219,10 +220,10 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
                 typePermission = AnyTypePermission.ANY;
             } else if (pterm.indexOf('*') < 0) {
                 // exact type
-                typePermission = new ExplicitTypePermission(new String[]{pterm});
+                typePermission = new ExplicitTypePermission(new String[] { pterm });
             } else if (pterm.length() > 0) {
                 // wildcard type
-                typePermission = new WildcardTypePermission(new String[]{pterm});
+                typePermission = new WildcardTypePermission(new String[] { pterm });
             }
             if (typePermission != null) {
                 if (aod) {
@@ -361,10 +362,12 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
     }
 
     protected abstract HierarchicalStreamWriter createHierarchicalStreamWriter(
-            Exchange exchange, Object body, OutputStream stream) throws XMLStreamException;
+            Exchange exchange, Object body, OutputStream stream)
+            throws XMLStreamException;
 
     protected abstract HierarchicalStreamReader createHierarchicalStreamReader(
-            Exchange exchange, InputStream stream) throws XMLStreamException;
+            Exchange exchange, InputStream stream)
+            throws XMLStreamException;
 
     @Override
     protected void doStart() throws Exception {

@@ -38,7 +38,8 @@ public class BlobContainerClientWrapper {
         this.client = client;
     }
 
-    public HttpHeaders createContainer(final Map<String, String> metadata, final PublicAccessType publicAccessType, final Duration timeout) {
+    public HttpHeaders createContainer(
+            final Map<String, String> metadata, final PublicAccessType publicAccessType, final Duration timeout) {
         return client.createWithResponse(metadata, publicAccessType, timeout, Context.NONE).getHeaders();
     }
 

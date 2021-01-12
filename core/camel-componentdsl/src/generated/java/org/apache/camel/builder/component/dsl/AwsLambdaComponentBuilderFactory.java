@@ -37,6 +37,8 @@ public interface AwsLambdaComponentBuilderFactory {
      * Category: cloud,computing,serverless
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-aws-lambda
+     * 
+     * @return the dsl builder
      */
     static AwsLambdaComponentBuilder awsLambda() {
         return new AwsLambdaComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface AwsLambdaComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -67,9 +72,12 @@ public interface AwsLambdaComponentBuilderFactory {
          * The AWS Lambda default configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.lambda.LambdaConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.lambda.LambdaConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder configuration(
                 org.apache.camel.component.aws.lambda.LambdaConfiguration configuration) {
@@ -87,10 +95,13 @@ public interface AwsLambdaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -102,11 +113,13 @@ public interface AwsLambdaComponentBuilderFactory {
          * createFunction, deleteFunction or invokeFunction.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.lambda.LambdaOperations&lt;/code&gt; type.
          * 
          * Default: invokeFunction
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder operation(
                 org.apache.camel.component.aws.lambda.LambdaOperations operation) {
@@ -118,21 +131,49 @@ public interface AwsLambdaComponentBuilderFactory {
          * expect the capitalized name of the region (for example AP_EAST_1)
          * You'll need to use the name Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
             return this;
         }
         /**
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
+         */
+        default AwsLambdaComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+        /**
          * To use a existing configured AwsLambdaClient as client.
          * 
-         * The option is a: <code>com.amazonaws.services.lambda.AWSLambda</code>
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.lambda.AWSLambda&lt;/code&gt;
          * type.
          * 
          * Group: advanced
+         * 
+         * @param awsLambdaClient the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder awsLambdaClient(
                 com.amazonaws.services.lambda.AWSLambda awsLambdaClient) {
@@ -140,25 +181,14 @@ public interface AwsLambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsLambdaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To define a proxy host when instantiating the Lambda client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -167,9 +197,12 @@ public interface AwsLambdaComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the Lambda client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -178,10 +211,14 @@ public interface AwsLambdaComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Lambda client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -191,9 +228,12 @@ public interface AwsLambdaComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -202,9 +242,12 @@ public interface AwsLambdaComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsLambdaComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -239,8 +282,8 @@ public interface AwsLambdaComponentBuilderFactory {
             case "lazyStartProducer": ((LambdaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((LambdaComponent) component).setOperation((org.apache.camel.component.aws.lambda.LambdaOperations) value); return true;
             case "region": getOrCreateConfiguration((LambdaComponent) component).setRegion((java.lang.String) value); return true;
+            case "autowiredEnabled": ((LambdaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((LambdaComponent) component).setAwsLambdaClient((com.amazonaws.services.lambda.AWSLambda) value); return true;
-            case "basicPropertyBinding": ((LambdaComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((LambdaComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((LambdaComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((LambdaComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;

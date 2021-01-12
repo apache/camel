@@ -4,8 +4,10 @@ package org.apache.camel.component.kubernetes.job;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class KubernetesJobEndpointConfigurer extends PropertyConfigurerSupport i
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cacertdata":
@@ -43,6 +43,16 @@ public class KubernetesJobEndpointConfigurer extends PropertyConfigurerSupport i
         case "clientKeyPassphrase": target.getConfiguration().setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "crdgroup":
+        case "crdGroup": target.getConfiguration().setCrdGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdname":
+        case "crdName": target.getConfiguration().setCrdName(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdplural":
+        case "crdPlural": target.getConfiguration().setCrdPlural(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdscope":
+        case "crdScope": target.getConfiguration().setCrdScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdversion":
+        case "crdVersion": target.getConfiguration().setCrdVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "dnsdomain":
         case "dnsDomain": target.getConfiguration().setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -79,39 +89,73 @@ public class KubernetesJobEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("caCertData", java.lang.String.class);
-        answer.put("caCertFile", java.lang.String.class);
-        answer.put("clientCertData", java.lang.String.class);
-        answer.put("clientCertFile", java.lang.String.class);
-        answer.put("clientKeyAlgo", java.lang.String.class);
-        answer.put("clientKeyData", java.lang.String.class);
-        answer.put("clientKeyFile", java.lang.String.class);
-        answer.put("clientKeyPassphrase", java.lang.String.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("dnsDomain", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
-        answer.put("labelKey", java.lang.String.class);
-        answer.put("labelValue", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("namespace", java.lang.String.class);
-        answer.put("oauthToken", java.lang.String.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("poolSize", int.class);
-        answer.put("portName", java.lang.String.class);
-        answer.put("portProtocol", java.lang.String.class);
-        answer.put("resourceName", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustCerts", java.lang.Boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cacertdata":
+        case "caCertData": return java.lang.String.class;
+        case "cacertfile":
+        case "caCertFile": return java.lang.String.class;
+        case "clientcertdata":
+        case "clientCertData": return java.lang.String.class;
+        case "clientcertfile":
+        case "clientCertFile": return java.lang.String.class;
+        case "clientkeyalgo":
+        case "clientKeyAlgo": return java.lang.String.class;
+        case "clientkeydata":
+        case "clientKeyData": return java.lang.String.class;
+        case "clientkeyfile":
+        case "clientKeyFile": return java.lang.String.class;
+        case "clientkeypassphrase":
+        case "clientKeyPassphrase": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "crdgroup":
+        case "crdGroup": return java.lang.String.class;
+        case "crdname":
+        case "crdName": return java.lang.String.class;
+        case "crdplural":
+        case "crdPlural": return java.lang.String.class;
+        case "crdscope":
+        case "crdScope": return java.lang.String.class;
+        case "crdversion":
+        case "crdVersion": return java.lang.String.class;
+        case "dnsdomain":
+        case "dnsDomain": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "kubernetesclient":
+        case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
+        case "labelkey":
+        case "labelKey": return java.lang.String.class;
+        case "labelvalue":
+        case "labelValue": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "namespace": return java.lang.String.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "portname":
+        case "portName": return java.lang.String.class;
+        case "portprotocol":
+        case "portProtocol": return java.lang.String.class;
+        case "resourcename":
+        case "resourceName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustcerts":
+        case "trustCerts": return java.lang.Boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -120,8 +164,6 @@ public class KubernetesJobEndpointConfigurer extends PropertyConfigurerSupport i
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cacertdata":
@@ -142,6 +184,16 @@ public class KubernetesJobEndpointConfigurer extends PropertyConfigurerSupport i
         case "clientKeyPassphrase": return target.getConfiguration().getClientKeyPassphrase();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
+        case "crdgroup":
+        case "crdGroup": return target.getConfiguration().getCrdGroup();
+        case "crdname":
+        case "crdName": return target.getConfiguration().getCrdName();
+        case "crdplural":
+        case "crdPlural": return target.getConfiguration().getCrdPlural();
+        case "crdscope":
+        case "crdScope": return target.getConfiguration().getCrdScope();
+        case "crdversion":
+        case "crdVersion": return target.getConfiguration().getCrdVersion();
         case "dnsdomain":
         case "dnsDomain": return target.getConfiguration().getDnsDomain();
         case "exceptionhandler":

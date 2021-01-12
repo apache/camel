@@ -49,6 +49,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.MAX_PAGE_SIZE;
@@ -58,7 +60,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CordaProducerIntegrationTest extends CordaTestSupport {
-    private static final SecureHash.SHA256 TEST_SHA_256 = SecureHash.parse("6D1687C143DF792A011A1E80670A4E4E0C25D0D87A39514409B1ABFC2043581F");
+    private static final Logger LOG = LoggerFactory.getLogger(CordaProducerIntegrationTest.class);
+    private static final SecureHash.SHA256 TEST_SHA_256
+            = SecureHash.parse("6D1687C143DF792A011A1E80670A4E4E0C25D0D87A39514409B1ABFC2043581F");
 
     @Produce("direct:start")
     protected ProducerTemplate template;
@@ -110,7 +114,8 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
 
     @Test
     public void stateMachineRecordedTransactionMappingSnapshotTest() throws Exception {
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_SNAPSHOT);
+        Exchange exchange
+                = createExchangeWithBodyAndHeader(null, OPERATION, STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_SNAPSHOT);
         template.send(exchange);
         Object body = exchange.getIn().getBody();
         assertNotNull(body);
@@ -246,9 +251,8 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
     @Test
     public void queryAttachmentsTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, QUERY_ATTACHMENTS);
-        AttachmentQueryCriteria.AttachmentsQueryCriteria queryCriteria =
-                new AttachmentQueryCriteria.AttachmentsQueryCriteria(
-                        new ColumnPredicate.EqualityComparison(EqualityComparisonOperator.EQUAL, "Daredevil"));
+        AttachmentQueryCriteria.AttachmentsQueryCriteria queryCriteria = new AttachmentQueryCriteria.AttachmentsQueryCriteria(
+                new ColumnPredicate.EqualityComparison(EqualityComparisonOperator.EQUAL, "Daredevil"));
         AttachmentSort attachmentSort = null;
 
         exchange.getIn().setHeader(ATTACHMENT_QUERY_CRITERIA, queryCriteria);
@@ -343,8 +347,9 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
     public void startFlowDynamicTest() throws Exception {
         //Expects CamelFlow is deployed on the node
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, START_FLOW_DYNAMIC);
-        String [] args = new String[] {"Hello"};
-        Class<FlowLogic<String>> aClass = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
+        String[] args = new String[] { "Hello" };
+        Class<FlowLogic<String>> aClass
+                = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
         exchange.getIn().setBody(aClass);
         exchange.getIn().setHeader(ARGUMENTS, args);
 
@@ -372,7 +377,8 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY_BY);
         QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
         PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
-        Sort.SortColumn sortByUid = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
+        Sort.SortColumn sortByUid
+                = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
         Sort sorting = new Sort(ImmutableSet.of(sortByUid));
         exchange.getIn().setHeader(QUERY_CRITERIA, criteria);
         exchange.getIn().setHeader(PAGE_SPECIFICATION, pageSpec);
@@ -417,7 +423,8 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
     public void vaultQueryByWithSortingTest() throws Exception {
         Exchange exchange = createExchangeWithBodyAndHeader(OwnableState.class, OPERATION, VAULT_QUERY_BY_WITH_SORTING);
         QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
-        Sort.SortColumn sortByUid = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
+        Sort.SortColumn sortByUid
+                = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
         Sort sorting = new Sort(ImmutableSet.of(sortByUid));
         exchange.getIn().setHeader(QUERY_CRITERIA, criteria);
         exchange.getIn().setHeader(SORT, sorting);
@@ -438,7 +445,7 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
             zos.write(in.getBytes());
             zos.closeEntry();
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            LOG.warn("I/O error while trying to compress stream: {}", ioe.getMessage(), ioe);
         }
 
         return new ByteArrayInputStream(baos.toByteArray());

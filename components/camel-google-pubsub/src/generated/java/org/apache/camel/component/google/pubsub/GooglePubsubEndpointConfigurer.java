@@ -4,8 +4,10 @@ package org.apache.camel.component.google.pubsub;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ackmode":
         case "ackMode": target.setAckMode(property(camelContext, org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -37,6 +37,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": target.setLoggerId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "serializer": target.setSerializer(property(camelContext, org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "synchronouspull":
         case "synchronousPull": target.setSynchronousPull(property(camelContext, boolean.class, value)); return true;
@@ -45,20 +46,35 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ackMode", org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", java.lang.Integer.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loggerId", java.lang.String.class);
-        answer.put("maxMessagesPerPoll", java.lang.Integer.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("synchronousPull", boolean.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"serializer"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackmode":
+        case "ackMode": return org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return java.lang.Integer.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loggerid":
+        case "loggerId": return java.lang.String.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return java.lang.Integer.class;
+        case "serializer": return org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class;
+        case "synchronous": return boolean.class;
+        case "synchronouspull":
+        case "synchronousPull": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -67,8 +83,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ackmode":
         case "ackMode": return target.getAckMode();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
@@ -83,6 +97,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return target.getLoggerId();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "serializer": return target.getSerializer();
         case "synchronous": return target.isSynchronous();
         case "synchronouspull":
         case "synchronousPull": return target.isSynchronousPull();

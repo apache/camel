@@ -46,7 +46,7 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
         template.sendBodyAndHeader("file:target/data/gzip", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         File in = new File("target/gzip/hello.txt");
         assertFalse(in.exists(), "Should have been deleted " + in);
@@ -61,12 +61,12 @@ public class GzipDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
-                    .marshal().gzipDeflater()
-                    .to("file:target/data/gzip/out?fileName=${file:name}.gz");
+                        .marshal().gzipDeflater()
+                        .to("file:target/data/gzip/out?fileName=${file:name}.gz");
 
                 from("file:target/data/gzip/out?initialDelay=0&delay=10&delete=true")
-                    .unmarshal().gzipDeflater()
-                    .to("mock:result");
+                        .unmarshal().gzipDeflater()
+                        .to("mock:result");
             }
         };
     }

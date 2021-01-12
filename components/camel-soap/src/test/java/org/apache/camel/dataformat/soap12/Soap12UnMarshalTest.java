@@ -35,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Checks that a static soap request is unmarshalled to the correct java
- * objects
+ * Checks that a static soap request is unmarshalled to the correct java objects
  */
 public class Soap12UnMarshalTest extends CamelTestSupport {
     private static final String SERVICE_PACKAGE = GetCustomersByName.class
@@ -60,7 +59,7 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
         GetCustomersByName request = (GetCustomersByName) body;
         assertEquals("Smith", request.getName());
     }
-    
+
     @Test
     public void testUnMarshalSoapFaultWithoutDetail() throws IOException, InterruptedException {
         try {

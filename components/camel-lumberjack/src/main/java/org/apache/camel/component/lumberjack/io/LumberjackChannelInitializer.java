@@ -48,15 +48,10 @@ final class LumberjackChannelInitializer extends ChannelInitializer<Channel> {
             pipeline.addLast(new SslHandler(sslEngine));
         }
 
-        LumberjackSessionHandler sessionHandler = new LumberjackSessionHandler();
+        // add ack encoder
+        pipeline.addLast(new LumberjackAckEncoder());
 
-        // Add the primary lumberjack frame decoder
-        pipeline.addLast(new LumberjackFrameDecoder(sessionHandler));
-
-        // Add the secondary lumberjack frame decoder, used when the first one is processing compressed frames
-        pipeline.addLast(new LumberjackFrameDecoder(sessionHandler));
-
-        // Add the bridge to Camel
-        pipeline.addLast(messageExecutorService, new LumberjackMessageHandler(sessionHandler, messageProcessor));
+        // Add the lumberjack frame decoder and bridge to Camel
+        pipeline.addLast(messageExecutorService, new LumberjackFrameDecoder(), new LumberjackMessageHandler(messageProcessor));
     }
 }

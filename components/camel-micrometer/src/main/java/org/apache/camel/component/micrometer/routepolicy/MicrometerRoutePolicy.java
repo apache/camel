@@ -27,6 +27,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -54,13 +55,20 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         private final MicrometerRoutePolicyNamingStrategy namingStrategy;
         private final Counter exchangesSucceeded;
         private final Counter exchangesFailed;
+        private final Counter exchangesTotal;
+        private final Counter externalRedeliveries;
+        private final Counter failuresHandled;
 
-        private MetricsStatistics(MeterRegistry meterRegistry, Route route, MicrometerRoutePolicyNamingStrategy namingStrategy) {
+        private MetricsStatistics(MeterRegistry meterRegistry, Route route,
+                                  MicrometerRoutePolicyNamingStrategy namingStrategy) {
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
             this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route));
             this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route));
+            this.exchangesTotal = createCounter(namingStrategy.getExchangesTotalName(route));
+            this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route));
+            this.failuresHandled = createCounter(namingStrategy.getFailuresHandledName(route));
         }
 
         public void onExchangeBegin(Exchange exchange) {
@@ -78,10 +86,20 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                 sample.stop(timer);
             }
 
+            exchangesTotal.increment();
+
             if (exchange.isFailed()) {
                 exchangesFailed.increment();
             } else {
                 exchangesSucceeded.increment();
+
+                if (ExchangeHelper.isFailureHandled(exchange)) {
+                    failuresHandled.increment();
+                }
+
+                if (exchange.isExternalRedelivered()) {
+                    externalRedeliveries.increment();
+                }
             }
         }
 
@@ -91,12 +109,11 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
         private Counter createCounter(String meterName) {
             return Counter.builder(meterName)
-                .tags(namingStrategy.getExchangeStatusTags(route))
-                .description(route.getDescription())
-                .register(meterRegistry);
+                    .tags(namingStrategy.getExchangeStatusTags(route))
+                    .description(route.getDescription())
+                    .register(meterRegistry);
         }
     }
-
 
     public MeterRegistry getMeterRegistry() {
         return meterRegistry;
@@ -138,7 +155,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                     route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
         }
         try {
-            MicrometerRoutePolicyService registryService = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
+            MicrometerRoutePolicyService registryService
+                    = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {
                 registryService = new MicrometerRoutePolicyService();
                 registryService.setMeterRegistry(getMeterRegistry());
@@ -157,7 +175,6 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // we have in-flight / total statistics already from camel-core
         statistics = new MetricsStatistics(getMeterRegistry(), route, getNamingStrategy());
     }
-
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {

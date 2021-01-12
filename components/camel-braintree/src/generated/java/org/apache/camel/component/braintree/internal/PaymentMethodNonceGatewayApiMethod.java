@@ -35,8 +35,6 @@ public enum PaymentMethodNonceGatewayApiMethod implements ApiMethod {
         "find",
         arg("paymentMethodNonce", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private PaymentMethodNonceGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

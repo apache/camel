@@ -4,8 +4,10 @@ package org.apache.camel.component.dataset;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.mock.MockEndpointConfigurer;
 
@@ -42,18 +44,28 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumeDelay", long.class);
-        answer.put("dataSetIndex", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("initialDelay", long.class);
-        answer.put("minRate", int.class);
-        answer.put("preloadSize", long.class);
-        answer.put("produceDelay", long.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumedelay":
+        case "consumeDelay": return long.class;
+        case "datasetindex":
+        case "dataSetIndex": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "minrate":
+        case "minRate": return int.class;
+        case "preloadsize":
+        case "preloadSize": return long.class;
+        case "producedelay":
+        case "produceDelay": return long.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

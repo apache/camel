@@ -1,0 +1,1 @@
+{"Version":"2008-10-17","Id":"/195004372649/MyNewCamelQueue/SQSDefaultPolicy","Statement":[{"Sid":"Queue1ReceiveMessage","Effect":"Allow","Principal":{"AWS":"*"},"Action":"SQS:ReceiveMessage","Resource":"/195004372649/MyNewCamelQueue"}]}

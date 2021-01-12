@@ -18,6 +18,7 @@ package org.apache.camel.language.simple.ast;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -40,6 +41,10 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         this.cacheExpression = cacheExpression;
     }
 
+    public CompositeNodes getBlock() {
+        return block;
+    }
+
     public boolean lazyEval(SimpleNode child) {
         String text = child.toString();
         // don't lazy evaluate nested type references as they are static
@@ -53,23 +58,23 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         // a function can either be a simple literal function, or contain nested functions
         if (block.getChildren().size() == 1 && block.getChildren().get(0) instanceof LiteralNode) {
-            return doCreateLiteralExpression(expression);
+            return doCreateLiteralExpression(camelContext, expression);
         } else {
-            return doCreateCompositeExpression(expression);
+            return doCreateCompositeExpression(camelContext, expression);
         }
     }
 
-    private Expression doCreateLiteralExpression(final String expression) {
+    private Expression doCreateLiteralExpression(CamelContext camelContext, String expression) {
         SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression);
         LiteralNode literal = (LiteralNode) block.getChildren().get(0);
         function.addText(literal.getText());
-        return function.createExpression(expression);
+        return function.createExpression(camelContext, expression);
     }
 
-    private Expression doCreateCompositeExpression(final String expression) {
+    private Expression doCreateCompositeExpression(CamelContext camelContext, String expression) {
         final SimpleToken token = getToken();
         return new Expression() {
             @Override
@@ -88,11 +93,11 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                         String text = ((LiteralNode) child).getText();
                         sb.append(text);
                         quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
-                    // if its quoted literal then embed that as text
+                        // if its quoted literal then embed that as text
                     } else if (!lazy || child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                         try {
                             // pass in null when we evaluate the nested expressions
-                            Expression nested = child.createExpression(null);
+                            Expression nested = child.createExpression(camelContext, null);
                             String text = nested.evaluate(exchange, String.class);
                             if (text != null) {
                                 if (quoteEmbeddedFunctions && !StringHelper.isQuoted(text)) {
@@ -105,7 +110,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                             // must rethrow parser exception as illegal syntax with details about the location
                             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
                         }
-                    // if its an inlined function then embed that function as text so it can be evaluated lazy
+                        // if its an inlined function then embed that function as text so it can be evaluated lazy
                     } else if (child instanceof SimpleFunctionStart) {
                         sb.append(child);
                     }
@@ -117,7 +122,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                 SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression);
                 function.addText(exp);
                 try {
-                    return function.createExpression(exp).evaluate(exchange, type);
+                    return function.createExpression(camelContext, exp).evaluate(exchange, type);
                 } catch (SimpleParserException e) {
                     // must rethrow parser exception as illegal syntax with details about the location
                     throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
@@ -140,6 +145,71 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        String answer;
+        // a function can either be a simple literal function, or contain nested functions
+        if (block.getChildren().size() == 1 && block.getChildren().get(0) instanceof LiteralNode) {
+            answer = doCreateLiteralCode(expression);
+        } else {
+            answer = doCreateCompositeCode(expression);
+        }
+        return answer;
+    }
+
+    private String doCreateLiteralCode(String expression) {
+        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression);
+        LiteralNode literal = (LiteralNode) block.getChildren().get(0);
+        function.addText(literal.getText());
+        return function.createCode(expression);
+    }
+
+    private String doCreateCompositeCode(String expression) {
+        StringBuilder sb = new StringBuilder();
+        boolean quoteEmbeddedFunctions = false;
+
+        // we need to concat the block so we have the expression
+        for (SimpleNode child : block.getChildren()) {
+            if (child instanceof LiteralNode) {
+                String text = ((LiteralNode) child).getText();
+                sb.append(text);
+                quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
+                // if its quoted literal then embed that as text
+            } else if (child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
+                try {
+                    // pass in null when we evaluate the nested expressions
+                    String text = child.createCode(null);
+                    if (text != null) {
+                        if (quoteEmbeddedFunctions && !StringHelper.isQuoted(text)) {
+                            sb.append("'").append(text).append("'");
+                        } else {
+                            sb.append(text);
+                        }
+                    }
+                } catch (SimpleParserException e) {
+                    // must rethrow parser exception as illegal syntax with details about the location
+                    throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
+                }
+            } else if (child instanceof SimpleFunctionStart) {
+                // inlined function
+                String inlined = child.createCode(expression);
+                sb.append(inlined);
+            }
+        }
+
+        // we have now concat the block as a String which contains inlined functions parsed
+        // so now we should reparse as a single function
+        String exp = sb.toString();
+        SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression);
+        function.addText(exp);
+        try {
+            return function.createCode(exp);
+        } catch (SimpleParserException e) {
+            // must rethrow parser exception as illegal syntax with details about the location
+            throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
         }
     }
 

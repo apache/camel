@@ -67,7 +67,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
     public CometdEndpoint getEndpoint() {
         return endpoint;
     }
-    
+
     public ConsumerService getConsumerService() {
         return service;
     }

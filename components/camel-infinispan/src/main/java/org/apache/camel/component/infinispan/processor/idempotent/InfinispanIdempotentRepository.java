@@ -51,7 +51,8 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
         this(null);
     }
 
-    public static InfinispanIdempotentRepository infinispanIdempotentRepository(BasicCacheContainer cacheContainer, String processorName) {
+    public static InfinispanIdempotentRepository infinispanIdempotentRepository(
+            BasicCacheContainer cacheContainer, String processorName) {
         return new InfinispanIdempotentRepository(cacheContainer, processorName);
     }
 
@@ -71,7 +72,7 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
             // there is already an entry so return false
             return false;
         }
-        
+
         Boolean put = getCache().put(key, true);
         return put == null;
     }
@@ -87,11 +88,11 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
     public boolean remove(String key) {
         return getCache().remove(key) != null;
     }
-    
+
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        getCache().clear();      
+        getCache().clear();
     }
 
     @ManagedAttribute(description = "The processor name")
@@ -131,16 +132,15 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
             if (InfinispanUtil.isRemote(cacheContainer)) {
                 RemoteCacheManager manager = InfinispanUtil.asRemote(cacheContainer);
                 cache = cacheName != null
-                    ? manager.getCache(cacheName, true)
-                    : manager.getCache(true);
+                        ? manager.getCache(cacheName)
+                        : manager.getCache();
             } else {
                 cache = cacheName != null
-                    ? cacheContainer.getCache(cacheName)
-                    : cacheContainer.getCache();
+                        ? cacheContainer.getCache(cacheName)
+                        : cacheContainer.getCache();
             }
         }
 
         return cache;
     }
 }
-

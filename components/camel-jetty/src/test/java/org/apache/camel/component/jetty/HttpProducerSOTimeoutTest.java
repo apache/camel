@@ -65,8 +65,8 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/myservice")
-                    // but we wait for 2 sec before reply is sent back
-                    .delay(2000).transform().constant("Bye World").to("mock:result");
+                        // but we wait for 2 sec before reply is sent back
+                        .delay(2000).transform().constant("Bye World").to("mock:result");
             }
         };
     }

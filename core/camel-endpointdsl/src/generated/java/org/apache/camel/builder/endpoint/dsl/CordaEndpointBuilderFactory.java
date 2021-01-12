@@ -50,10 +50,13 @@ public interface CordaEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -69,10 +72,14 @@ public interface CordaEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -89,11 +96,13 @@ public interface CordaEndpointBuilderFactory {
          * JVM memory footprint.
          * 
          * The option is a:
-         * <code>net.corda.core.node.services.vault.PageSpecification</code>
-         * type.
+         * &lt;code&gt;net.corda.core.node.services.vault.PageSpecification&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: consumer
+         * 
+         * @param pageSpecification the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder pageSpecification(
                 Object pageSpecification) {
@@ -110,11 +119,13 @@ public interface CordaEndpointBuilderFactory {
          * JVM memory footprint.
          * 
          * The option will be converted to a
-         * <code>net.corda.core.node.services.vault.PageSpecification</code>
-         * type.
+         * &lt;code&gt;net.corda.core.node.services.vault.PageSpecification&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: consumer
+         * 
+         * @param pageSpecification the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder pageSpecification(
                 String pageSpecification) {
@@ -124,10 +135,13 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether to process snapshots or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param processSnapshot the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder processSnapshot(
                 boolean processSnapshot) {
@@ -137,10 +151,14 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether to process snapshots or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param processSnapshot the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder processSnapshot(
                 String processSnapshot) {
@@ -152,10 +170,14 @@ public interface CordaEndpointBuilderFactory {
          * their associated directionality and null handling, to be applied upon
          * processing a query specification.
          * 
-         * The option is a: <code>net.corda.core.node.services.vault.Sort</code>
+         * The option is a:
+         * &lt;code&gt;net.corda.core.node.services.vault.Sort&lt;/code&gt;
          * type.
          * 
          * Group: consumer
+         * 
+         * @param sort the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder sort(Object sort) {
             doSetProperty("sort", sort);
@@ -167,9 +189,13 @@ public interface CordaEndpointBuilderFactory {
          * processing a query specification.
          * 
          * The option will be converted to a
-         * <code>net.corda.core.node.services.vault.Sort</code> type.
+         * &lt;code&gt;net.corda.core.node.services.vault.Sort&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param sort the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder sort(String sort) {
             doSetProperty("sort", sort);
@@ -178,9 +204,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -189,9 +218,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CordaEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -219,9 +251,12 @@ public interface CordaEndpointBuilderFactory {
          * free.
          * 
          * The option is a:
-         * <code>java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.contracts.ContractState&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param contractStateClass the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder contractStateClass(
                 Class<Object> contractStateClass) {
@@ -239,9 +274,12 @@ public interface CordaEndpointBuilderFactory {
          * free.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.contracts.ContractState&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param contractStateClass the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder contractStateClass(
                 String contractStateClass) {
@@ -254,10 +292,13 @@ public interface CordaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -271,9 +312,12 @@ public interface CordaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -283,9 +327,13 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -296,9 +344,12 @@ public interface CordaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -311,9 +362,12 @@ public interface CordaEndpointBuilderFactory {
          * flow. The flowLogicClass must be annotated with
          * net.corda.core.flows.StartableByRPC.
          * 
-         * The option is a: <code>java.lang.Object[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object[]&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param flowLogicArguments the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder flowLogicArguments(
                 Object[] flowLogicArguments) {
@@ -326,10 +380,13 @@ public interface CordaEndpointBuilderFactory {
          * flow. The flowLogicClass must be annotated with
          * net.corda.core.flows.StartableByRPC.
          * 
-         * The option will be converted to a <code>java.lang.Object[]</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object[]&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param flowLogicArguments the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder flowLogicArguments(
                 String flowLogicArguments) {
@@ -343,9 +400,12 @@ public interface CordaEndpointBuilderFactory {
          * net.corda.core.flows.StartableByRPC.
          * 
          * The option is a:
-         * <code>java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.flows.FlowLogic&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param flowLogicClass the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder flowLogicClass(
                 Class<Object> flowLogicClass) {
@@ -359,9 +419,12 @@ public interface CordaEndpointBuilderFactory {
          * net.corda.core.flows.StartableByRPC.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.flows.FlowLogic&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param flowLogicClass the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder flowLogicClass(
                 String flowLogicClass) {
@@ -373,9 +436,12 @@ public interface CordaEndpointBuilderFactory {
          * for performance.
          * 
          * The option is a:
-         * <code>net.corda.core.node.services.vault.QueryCriteria</code> type.
+         * &lt;code&gt;net.corda.core.node.services.vault.QueryCriteria&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param queryCriteria the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder queryCriteria(
                 Object queryCriteria) {
@@ -387,9 +453,12 @@ public interface CordaEndpointBuilderFactory {
          * for performance.
          * 
          * The option will be converted to a
-         * <code>net.corda.core.node.services.vault.QueryCriteria</code> type.
+         * &lt;code&gt;net.corda.core.node.services.vault.QueryCriteria&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param queryCriteria the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder queryCriteria(
                 String queryCriteria) {
@@ -397,41 +466,16 @@ public interface CordaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -442,10 +486,14 @@ public interface CordaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -474,10 +522,13 @@ public interface CordaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -495,10 +546,14 @@ public interface CordaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -508,9 +563,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Operation to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default CordaEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -519,9 +577,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CordaEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -530,9 +591,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CordaEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -550,41 +614,16 @@ public interface CordaEndpointBuilderFactory {
             return (CordaEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -595,10 +634,14 @@ public interface CordaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -620,9 +663,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CordaEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -631,9 +677,12 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CordaEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -652,41 +701,16 @@ public interface CordaEndpointBuilderFactory {
             return (CordaEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCordaEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCordaEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -696,10 +720,14 @@ public interface CordaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCordaEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -723,6 +751,7 @@ public interface CordaEndpointBuilderFactory {
          * The url for the corda node
          * 
          * @param path node
+         * @return the dsl builder
          */
         default CordaEndpointBuilder corda(String path) {
             return CordaEndpointBuilderFactory.endpointBuilder("corda", path);
@@ -744,6 +773,7 @@ public interface CordaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path node
+         * @return the dsl builder
          */
         default CordaEndpointBuilder corda(String componentName, String path) {
             return CordaEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -38,8 +38,6 @@ public enum FhirApiName implements ApiName {
     VALIDATE("validate");
 
 
-    private static final FhirApiName[] VALUES = values();
-    
     private final String name;
 
     private FhirApiName(String name) {
@@ -51,12 +49,4 @@ public enum FhirApiName implements ApiName {
         return name;
     }
 
-    public static FhirApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

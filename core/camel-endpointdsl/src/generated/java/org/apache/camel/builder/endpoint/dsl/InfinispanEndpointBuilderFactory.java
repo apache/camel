@@ -47,9 +47,12 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Specifies the host of the cache on Infinispan instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hosts the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder hosts(String hosts) {
             doSetProperty("hosts", hosts);
@@ -59,9 +62,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queryBuilder the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder queryBuilder(
                 Object queryBuilder) {
@@ -72,13 +78,47 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queryBuilder the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder queryBuilder(
                 String queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder secure(String secure) {
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -90,10 +130,13 @@ public interface InfinispanEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -109,10 +152,14 @@ public interface InfinispanEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -122,10 +169,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * If true, the listener will be installed for the entire cluster.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param clusteredListener the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder clusteredListener(
                 boolean clusteredListener) {
@@ -135,10 +185,14 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * If true, the listener will be installed for the entire cluster.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param clusteredListener the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder clusteredListener(
                 String clusteredListener) {
@@ -148,10 +202,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * The operation to perform.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: PUT
          * Group: consumer
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default InfinispanEndpointConsumerBuilder command(String command) {
@@ -162,9 +219,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.infinispan.InfinispanCustomListener</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanCustomListener&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param customListener the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder customListener(
                 Object customListener) {
@@ -175,9 +235,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.infinispan.InfinispanCustomListener</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanCustomListener&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param customListener the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder customListener(
                 String customListener) {
@@ -194,10 +257,13 @@ public interface InfinispanEndpointBuilderFactory {
          * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
          * PARTITION_STATUS_CHANGED.
          * 
-         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder eventTypes(
                 Set<String> eventTypes) {
@@ -215,9 +281,12 @@ public interface InfinispanEndpointBuilderFactory {
          * PARTITION_STATUS_CHANGED.
          * 
          * The option will be converted to a
-         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder eventTypes(String eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -226,10 +295,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * If true, the consumer will receive notifications synchronously.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -238,13 +310,90 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * If true, the consumer will receive notifications synchronously.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointConsumerBuilder sync(String sync) {
             doSetProperty("sync", sync);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param saslMechanism the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder saslMechanism(
+                String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param securityRealm the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder securityRealm(
+                String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param securityServerName the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder securityServerName(
+                String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -264,10 +413,13 @@ public interface InfinispanEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -281,9 +433,12 @@ public interface InfinispanEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -293,9 +448,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -306,9 +465,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -316,40 +478,15 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
+         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
                 Object cacheContainer) {
@@ -360,9 +497,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
+         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
                 String cacheContainer) {
@@ -377,9 +517,12 @@ public interface InfinispanEndpointBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainerConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
@@ -394,9 +537,13 @@ public interface InfinispanEndpointBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainerConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
@@ -406,10 +553,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
@@ -420,10 +570,13 @@ public interface InfinispanEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
                 String configurationProperties) {
@@ -433,9 +586,12 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
@@ -446,9 +602,13 @@ public interface InfinispanEndpointBuilderFactory {
          * A comma separated list of Flag to be applied by default on each cache
          * invocation, not applicable to remote caches.
          * 
-         * The option is a: <code>org.infinispan.context.Flag[]</code> type.
+         * The option is a:
+         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param flags the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder flags(Flag[] flags) {
             doSetProperty("flags", flags);
@@ -459,9 +619,12 @@ public interface InfinispanEndpointBuilderFactory {
          * invocation, not applicable to remote caches.
          * 
          * The option will be converted to a
-         * <code>org.infinispan.context.Flag[]</code> type.
+         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param flags the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder flags(String flags) {
             doSetProperty("flags", flags);
@@ -470,9 +633,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a: <code>java.util.function.BiFunction</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param remappingFunction the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
                 BiFunction remappingFunction) {
@@ -483,9 +650,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * <code>java.util.function.BiFunction</code> type.
+         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param remappingFunction the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
                 String remappingFunction) {
@@ -501,9 +671,12 @@ public interface InfinispanEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
                 Object resultHeader) {
@@ -519,9 +692,13 @@ public interface InfinispanEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
@@ -532,10 +709,13 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -546,10 +726,14 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -570,9 +754,12 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Specifies the host of the cache on Infinispan instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hosts the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder hosts(String hosts) {
             doSetProperty("hosts", hosts);
@@ -582,9 +769,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queryBuilder the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder queryBuilder(
                 Object queryBuilder) {
@@ -595,13 +785,107 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queryBuilder the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder queryBuilder(
                 String queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder secure(String secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Set a specific default value for some producer operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param defaultValue the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder defaultValue(
+                Object defaultValue) {
+            doSetProperty("defaultValue", defaultValue);
+            return this;
+        }
+        /**
+         * Set a specific default value for some producer operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param defaultValue the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder defaultValue(
+                String defaultValue) {
+            doSetProperty("defaultValue", defaultValue);
+            return this;
+        }
+        /**
+         * Set a specific key for producer operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder key(Object key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Set a specific key for producer operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder key(String key) {
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -615,10 +899,13 @@ public interface InfinispanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -636,10 +923,14 @@ public interface InfinispanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -647,13 +938,45 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a specific old value for some producer operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param oldValue the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder oldValue(Object oldValue) {
+            doSetProperty("oldValue", oldValue);
+            return this;
+        }
+        /**
+         * Set a specific old value for some producer operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param oldValue the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder oldValue(String oldValue) {
+            doSetProperty("oldValue", oldValue);
+            return this;
+        }
+        /**
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanOperation&lt;/code&gt; type.
          * 
          * Default: PUT
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder operation(
                 InfinispanOperation operation) {
@@ -664,13 +987,118 @@ public interface InfinispanEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanOperation&lt;/code&gt; type.
          * 
          * Default: PUT
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set a specific value for producer operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder value(Object value) {
+            doSetProperty("value", value);
+            return this;
+        }
+        /**
+         * Set a specific value for producer operations.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder value(String value) {
+            doSetProperty("value", value);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param saslMechanism the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder saslMechanism(
+                String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param securityRealm the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder securityRealm(
+                String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param securityServerName the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder securityServerName(
+                String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -685,40 +1113,15 @@ public interface InfinispanEndpointBuilderFactory {
             return (InfinispanEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
+         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
                 Object cacheContainer) {
@@ -729,9 +1132,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
+         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
                 String cacheContainer) {
@@ -746,9 +1152,12 @@ public interface InfinispanEndpointBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainerConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
@@ -763,9 +1172,13 @@ public interface InfinispanEndpointBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainerConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
@@ -775,10 +1188,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
@@ -789,10 +1205,13 @@ public interface InfinispanEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
                 String configurationProperties) {
@@ -802,9 +1221,12 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationUri(
                 String configurationUri) {
@@ -815,9 +1237,13 @@ public interface InfinispanEndpointBuilderFactory {
          * A comma separated list of Flag to be applied by default on each cache
          * invocation, not applicable to remote caches.
          * 
-         * The option is a: <code>org.infinispan.context.Flag[]</code> type.
+         * The option is a:
+         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param flags the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder flags(Flag[] flags) {
             doSetProperty("flags", flags);
@@ -828,9 +1254,12 @@ public interface InfinispanEndpointBuilderFactory {
          * invocation, not applicable to remote caches.
          * 
          * The option will be converted to a
-         * <code>org.infinispan.context.Flag[]</code> type.
+         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param flags the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder flags(String flags) {
             doSetProperty("flags", flags);
@@ -839,9 +1268,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a: <code>java.util.function.BiFunction</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param remappingFunction the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
                 BiFunction remappingFunction) {
@@ -852,9 +1285,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * <code>java.util.function.BiFunction</code> type.
+         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param remappingFunction the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
                 String remappingFunction) {
@@ -870,9 +1306,12 @@ public interface InfinispanEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder resultHeader(
                 Object resultHeader) {
@@ -888,9 +1327,13 @@ public interface InfinispanEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder resultHeader(
                 String resultHeader) {
@@ -901,10 +1344,13 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -915,10 +1361,14 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -940,9 +1390,12 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Specifies the host of the cache on Infinispan instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hosts the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder hosts(String hosts) {
             doSetProperty("hosts", hosts);
@@ -952,9 +1405,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queryBuilder the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder queryBuilder(Object queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
@@ -964,12 +1420,117 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the query builder.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanQueryBuilder&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queryBuilder the value to set
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder queryBuilder(String queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder secure(String secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param saslMechanism the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder saslMechanism(String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param securityRealm the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder securityRealm(String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param securityServerName the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder securityServerName(
+                String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group:  security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default InfinispanEndpointBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -985,40 +1546,15 @@ public interface InfinispanEndpointBuilderFactory {
             return (InfinispanEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
+         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder cacheContainer(
                 Object cacheContainer) {
@@ -1029,9 +1565,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option will be converted to a
-         * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
+         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder cacheContainer(
                 String cacheContainer) {
@@ -1046,9 +1585,12 @@ public interface InfinispanEndpointBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainerConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
@@ -1063,9 +1605,13 @@ public interface InfinispanEndpointBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cacheContainerConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
@@ -1075,10 +1621,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
@@ -1089,10 +1638,13 @@ public interface InfinispanEndpointBuilderFactory {
          * Implementation specific properties for the CacheManager.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder configurationProperties(
                 String configurationProperties) {
@@ -1102,9 +1654,12 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder configurationUri(
                 String configurationUri) {
@@ -1115,9 +1670,13 @@ public interface InfinispanEndpointBuilderFactory {
          * A comma separated list of Flag to be applied by default on each cache
          * invocation, not applicable to remote caches.
          * 
-         * The option is a: <code>org.infinispan.context.Flag[]</code> type.
+         * The option is a:
+         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param flags the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder flags(Flag[] flags) {
             doSetProperty("flags", flags);
@@ -1128,9 +1687,12 @@ public interface InfinispanEndpointBuilderFactory {
          * invocation, not applicable to remote caches.
          * 
          * The option will be converted to a
-         * <code>org.infinispan.context.Flag[]</code> type.
+         * &lt;code&gt;org.infinispan.context.Flag[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param flags the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder flags(String flags) {
             doSetProperty("flags", flags);
@@ -1139,9 +1701,13 @@ public interface InfinispanEndpointBuilderFactory {
         /**
          * Set a specific remappingFunction to use in a compute operation.
          * 
-         * The option is a: <code>java.util.function.BiFunction</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param remappingFunction the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder remappingFunction(
                 BiFunction remappingFunction) {
@@ -1152,9 +1718,12 @@ public interface InfinispanEndpointBuilderFactory {
          * Set a specific remappingFunction to use in a compute operation.
          * 
          * The option will be converted to a
-         * <code>java.util.function.BiFunction</code> type.
+         * &lt;code&gt;java.util.function.BiFunction&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param remappingFunction the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder remappingFunction(
                 String remappingFunction) {
@@ -1170,9 +1739,12 @@ public interface InfinispanEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder resultHeader(
                 Object resultHeader) {
@@ -1188,9 +1760,13 @@ public interface InfinispanEndpointBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder resultHeader(
                 String resultHeader) {
@@ -1201,10 +1777,13 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1215,10 +1794,14 @@ public interface InfinispanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfinispanEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1309,6 +1892,7 @@ public interface InfinispanEndpointBuilderFactory {
          * the default cache manager name.
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder infinispan(String path) {
             return InfinispanEndpointBuilderFactory.endpointBuilder("infinispan", path);
@@ -1332,6 +1916,7 @@ public interface InfinispanEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder infinispan(
                 String componentName,

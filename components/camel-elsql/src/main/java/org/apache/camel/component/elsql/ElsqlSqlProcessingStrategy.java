@@ -43,8 +43,10 @@ public class ElsqlSqlProcessingStrategy implements SqlNamedProcessingStrategy {
     }
 
     @Override
-    public int commit(DefaultSqlEndpoint defaultSqlEndpoint, Exchange exchange, Object data, NamedParameterJdbcTemplate jdbcTemplate,
-                      SqlParameterSource parameterSource, String query) throws Exception {
+    public int commit(
+            DefaultSqlEndpoint defaultSqlEndpoint, Exchange exchange, Object data, NamedParameterJdbcTemplate jdbcTemplate,
+            SqlParameterSource parameterSource, String query)
+            throws Exception {
 
         final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
         final String sql = elSql.getSql(query, new SpringSqlParams(param));
@@ -65,8 +67,10 @@ public class ElsqlSqlProcessingStrategy implements SqlNamedProcessingStrategy {
     }
 
     @Override
-    public int commitBatchComplete(DefaultSqlEndpoint endpoint, NamedParameterJdbcTemplate namedJdbcTemplate,
-                            SqlParameterSource parameterSource, String query) throws Exception {
+    public int commitBatchComplete(
+            DefaultSqlEndpoint endpoint, NamedParameterJdbcTemplate namedJdbcTemplate,
+            SqlParameterSource parameterSource, String query)
+            throws Exception {
 
         final SqlParameterSource param = new EmptySqlParameterSource();
         final String sql = elSql.getSql(query, new SpringSqlParams(param));
@@ -87,12 +91,15 @@ public class ElsqlSqlProcessingStrategy implements SqlNamedProcessingStrategy {
     }
 
     @Override
-    public int commit(DefaultSqlEndpoint defaultSqlEndpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query) throws Exception {
+    public int commit(
+            DefaultSqlEndpoint defaultSqlEndpoint, Exchange exchange, Object data, JdbcTemplate jdbcTemplate, String query)
+            throws Exception {
         throw new UnsupportedOperationException("Should not be called");
     }
 
     @Override
-    public int commitBatchComplete(DefaultSqlEndpoint defaultSqlEndpoint, JdbcTemplate jdbcTemplate, String query) throws Exception {
+    public int commitBatchComplete(DefaultSqlEndpoint defaultSqlEndpoint, JdbcTemplate jdbcTemplate, String query)
+            throws Exception {
         throw new UnsupportedOperationException("Should not be called");
     }
 }

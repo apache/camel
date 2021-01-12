@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.opentelemetry.trace.Span;
+import io.opentelemetry.api.trace.Span;
 
 public class SpanTestData {
 
@@ -34,6 +34,7 @@ public class SpanTestData {
     private List<String> logMessages = new ArrayList<>();
     private Map<String, String> tags = new HashMap<>();
     private ArrayList<SpanTestData> childs = new ArrayList<>();
+    private Map<String, String> baggage = new HashMap<>();
 
     public String getLabel() {
         return label;
@@ -102,4 +103,5 @@ public class SpanTestData {
         Collections.addAll(this.childs, childs);
         return this;
     }
+
 }

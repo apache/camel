@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class SecurityProviderTest extends AbstractSecurityProviderTest {
 
-
     @Test
     public void testSecuredAllowed() throws Exception {
         securityConfiguration.setRoleToAssign("user");

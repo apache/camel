@@ -39,6 +39,8 @@ public interface CryptoComponentBuilderFactory {
      * Category: security,transformation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-crypto
+     * 
+     * @return the dsl builder
      */
     static CryptoComponentBuilder crypto() {
         return new CryptoComponentBuilderImpl();
@@ -54,10 +56,13 @@ public interface CryptoComponentBuilderFactory {
          * Sets the JCE name of the Algorithm that should be used for the
          * signer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SHA256withRSA
          * Group: producer
+         * 
+         * @param algorithm the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder algorithm(java.lang.String algorithm) {
             doSetProperty("algorithm", algorithm);
@@ -70,9 +75,12 @@ public interface CryptoComponentBuilderFactory {
          * the message header
          * org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder alias(java.lang.String alias) {
             doSetProperty("alias", alias);
@@ -82,9 +90,12 @@ public interface CryptoComponentBuilderFactory {
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param certificateName the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder certificateName(
                 java.lang.String certificateName) {
@@ -99,9 +110,13 @@ public interface CryptoComponentBuilderFactory {
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
          * 
-         * The option is a: <code>java.security.KeyStore</code> type.
+         * The option is a: &lt;code&gt;java.security.KeyStore&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param keystore the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder keystore(java.security.KeyStore keystore) {
             doSetProperty("keystore", keystore);
@@ -111,9 +126,12 @@ public interface CryptoComponentBuilderFactory {
          * Sets the reference name for a Keystore that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keystoreName the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder keystoreName(
                 java.lang.String keystoreName) {
@@ -131,10 +149,13 @@ public interface CryptoComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -144,9 +165,13 @@ public interface CryptoComponentBuilderFactory {
         /**
          * Set the PrivateKey that should be used to sign the exchange.
          * 
-         * The option is a: <code>java.security.PrivateKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder privateKey(
                 java.security.PrivateKey privateKey) {
@@ -157,9 +182,12 @@ public interface CryptoComponentBuilderFactory {
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param privateKeyName the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder privateKeyName(
                 java.lang.String privateKeyName) {
@@ -170,9 +198,12 @@ public interface CryptoComponentBuilderFactory {
          * Set the id of the security provider that provides the configured
          * Signature algorithm.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param provider the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder provider(java.lang.String provider) {
             doSetProperty("provider", provider);
@@ -181,9 +212,12 @@ public interface CryptoComponentBuilderFactory {
         /**
          * references that should be resolved when the context changes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param publicKeyName the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder publicKeyName(
                 java.lang.String publicKeyName) {
@@ -194,9 +228,12 @@ public interface CryptoComponentBuilderFactory {
          * Sets the reference name for a SecureRandom that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secureRandomName the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder secureRandomName(
                 java.lang.String secureRandomName) {
@@ -207,9 +244,12 @@ public interface CryptoComponentBuilderFactory {
          * Set the name of the message header that should be used to store the
          * base64 encoded signature. This defaults to 'CamelDigitalSignature'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param signatureHeaderName the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder signatureHeaderName(
                 java.lang.String signatureHeaderName) {
@@ -217,26 +257,35 @@ public interface CryptoComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CryptoComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CryptoComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder bufferSize(java.lang.Integer bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -246,9 +295,13 @@ public interface CryptoComponentBuilderFactory {
          * Set the Certificate that should be used to verify the signature in
          * the exchange based on its payload.
          * 
-         * The option is a: <code>java.security.cert.Certificate</code> type.
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param certificate the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder certificate(
                 java.security.cert.Certificate certificate) {
@@ -261,10 +314,13 @@ public interface CryptoComponentBuilderFactory {
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param clearHeaders the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder clearHeaders(boolean clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -274,9 +330,12 @@ public interface CryptoComponentBuilderFactory {
          * To use the shared DigitalSignatureConfiguration as configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.DigitalSignatureConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.DigitalSignatureConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder configuration(
                 org.apache.camel.component.crypto.DigitalSignatureConfiguration configuration) {
@@ -293,9 +352,12 @@ public interface CryptoComponentBuilderFactory {
          * entry will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyStoreParameters the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder keyStoreParameters(
                 org.apache.camel.support.jsse.KeyStoreParameters keyStoreParameters) {
@@ -306,9 +368,13 @@ public interface CryptoComponentBuilderFactory {
          * Set the PublicKey that should be used to verify the signature in the
          * exchange.
          * 
-         * The option is a: <code>java.security.PublicKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder publicKey(
                 java.security.PublicKey publicKey) {
@@ -318,9 +384,13 @@ public interface CryptoComponentBuilderFactory {
         /**
          * Set the SecureRandom used to initialize the Signature service.
          * 
-         * The option is a: <code>java.security.SecureRandom</code> type.
+         * The option is a: &lt;code&gt;java.security.SecureRandom&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param secureRandom the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder secureRandom(
                 java.security.SecureRandom secureRandom) {
@@ -331,9 +401,12 @@ public interface CryptoComponentBuilderFactory {
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CryptoComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -375,7 +448,7 @@ public interface CryptoComponentBuilderFactory {
             case "publicKeyName": getOrCreateConfiguration((DigitalSignatureComponent) component).setPublicKeyName((java.lang.String) value); return true;
             case "secureRandomName": getOrCreateConfiguration((DigitalSignatureComponent) component).setSecureRandomName((java.lang.String) value); return true;
             case "signatureHeaderName": getOrCreateConfiguration((DigitalSignatureComponent) component).setSignatureHeaderName((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((DigitalSignatureComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((DigitalSignatureComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bufferSize": getOrCreateConfiguration((DigitalSignatureComponent) component).setBufferSize((java.lang.Integer) value); return true;
             case "certificate": getOrCreateConfiguration((DigitalSignatureComponent) component).setCertificate((java.security.cert.Certificate) value); return true;
             case "clearHeaders": getOrCreateConfiguration((DigitalSignatureComponent) component).setClearHeaders((boolean) value); return true;

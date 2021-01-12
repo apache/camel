@@ -38,23 +38,23 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class DefaultCxfRsBindingTest {
 
     private DefaultCamelContext context = new DefaultCamelContext();
-    
+
     @Test
     public void testSetCharsetWithContentType() {
         DefaultCxfRsBinding cxfRsBinding = new DefaultCxfRsBinding();
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml;charset=ISO-8859-1");
         cxfRsBinding.setCharsetWithContentType(exchange);
-        
+
         String charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("ISO-8859-1", charset, "Get a wrong charset");
-        
+
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         cxfRsBinding.setCharsetWithContentType(exchange);
         charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("UTF-8", charset, "Get a worng charset name");
     }
-    
+
     @Test
     public void testCopyProtocolHeader() {
         DefaultCxfRsBinding cxfRsBinding = new DefaultCxfRsBinding();
@@ -63,7 +63,7 @@ public class DefaultCxfRsBindingTest {
         Message camelMessage = new DefaultMessage(context);
         org.apache.cxf.message.Message cxfMessage = new MessageImpl();
         Map<String, List<String>> headers = new HashMap<>();
-        headers.put("emptyList", Collections.<String>emptyList());
+        headers.put("emptyList", Collections.<String> emptyList());
         headers.put("zeroSizeList", new ArrayList<String>(0));
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
         cxfRsBinding.copyProtocolHeader(cxfMessage, camelMessage, exchange);

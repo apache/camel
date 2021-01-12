@@ -37,6 +37,8 @@ public interface AzureBlobComponentBuilderFactory {
      * Category: cloud,file
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
+     * 
+     * @return the dsl builder
      */
     @Deprecated
     static AzureBlobComponentBuilder azureBlob() {
@@ -53,9 +55,13 @@ public interface AzureBlobComponentBuilderFactory {
          * The blob service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder azureBlobClient(
                 com.microsoft.azure.storage.blob.CloudBlob azureBlobClient) {
@@ -66,10 +72,13 @@ public interface AzureBlobComponentBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder blobOffset(java.lang.Long blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -79,10 +88,13 @@ public interface AzureBlobComponentBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder blobType(
                 org.apache.camel.component.azure.blob.BlobType blobType) {
@@ -92,10 +104,13 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
@@ -106,9 +121,12 @@ public interface AzureBlobComponentBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder credentials(
                 com.microsoft.azure.storage.StorageCredentials credentials) {
@@ -118,9 +136,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder dataLength(java.lang.Long dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -129,9 +150,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the file directory where the downloaded blobs will be saved to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileDir the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder fileDir(java.lang.String fileDir) {
             doSetProperty("fileDir", fileDir);
@@ -141,10 +165,13 @@ public interface AzureBlobComponentBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder publicForRead(boolean publicForRead) {
             doSetProperty("publicForRead", publicForRead);
@@ -153,9 +180,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder streamReadSize(int streamReadSize) {
             doSetProperty("streamReadSize", streamReadSize);
@@ -164,10 +194,13 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -183,10 +216,13 @@ public interface AzureBlobComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -196,10 +232,13 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the blob meta-data.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.String></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param blobMetadata the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder blobMetadata(
                 java.util.Map<java.lang.String, java.lang.String> blobMetadata) {
@@ -209,9 +248,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set a prefix which can be used for listing the blobs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param blobPrefix the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder blobPrefix(java.lang.String blobPrefix) {
             doSetProperty("blobPrefix", blobPrefix);
@@ -220,10 +262,13 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Close the stream after write or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param closeStreamAfterWrite the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder closeStreamAfterWrite(
                 boolean closeStreamAfterWrite) {
@@ -241,10 +286,13 @@ public interface AzureBlobComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -255,10 +303,13 @@ public interface AzureBlobComponentBuilderFactory {
          * Blob service operation hint to the producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobServiceOperations&lt;/code&gt; type.
          * 
          * Default: listBlobs
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder operation(
                 org.apache.camel.component.azure.blob.BlobServiceOperations operation) {
@@ -268,9 +319,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the size of the buffer for writing block and page blocks.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param streamWriteSize the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder streamWriteSize(int streamWriteSize) {
             doSetProperty("streamWriteSize", streamWriteSize);
@@ -279,36 +333,49 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Specify if the flat or hierarchical blob listing should be used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param useFlatListing the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder useFlatListing(boolean useFlatListing) {
             doSetProperty("useFlatListing", useFlatListing);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default AzureBlobComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureBlobComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The Blob Service configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobServiceConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobServiceConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder configuration(
                 org.apache.camel.component.azure.blob.BlobServiceConfiguration configuration) {
@@ -318,9 +385,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder credentialsAccountKey(
                 java.lang.String credentialsAccountKey) {
@@ -330,9 +400,12 @@ public interface AzureBlobComponentBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default AzureBlobComponentBuilder credentialsAccountName(
                 java.lang.String credentialsAccountName) {
@@ -381,7 +454,7 @@ public interface AzureBlobComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((BlobServiceComponent) component).setOperation((org.apache.camel.component.azure.blob.BlobServiceOperations) value); return true;
             case "streamWriteSize": getOrCreateConfiguration((BlobServiceComponent) component).setStreamWriteSize((int) value); return true;
             case "useFlatListing": getOrCreateConfiguration((BlobServiceComponent) component).setUseFlatListing((boolean) value); return true;
-            case "basicPropertyBinding": ((BlobServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((BlobServiceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((BlobServiceComponent) component).setConfiguration((org.apache.camel.component.azure.blob.BlobServiceConfiguration) value); return true;
             case "credentialsAccountKey": getOrCreateConfiguration((BlobServiceComponent) component).setCredentialsAccountKey((java.lang.String) value); return true;
             case "credentialsAccountName": getOrCreateConfiguration((BlobServiceComponent) component).setCredentialsAccountName((java.lang.String) value); return true;

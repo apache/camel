@@ -36,7 +36,7 @@ public abstract class AtomixClientTestSupport extends CamelTestSupport {
         SimpleRegistry registry = new SimpleRegistry();
 
         createComponents().entrySet().stream()
-            .forEach(e -> registry.bind(e.getKey(), e.getValue()));
+                .forEach(e -> registry.bind(e.getKey(), e.getValue()));
 
         return registry;
     }

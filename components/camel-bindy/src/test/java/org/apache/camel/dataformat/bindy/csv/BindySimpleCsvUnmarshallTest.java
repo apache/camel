@@ -59,12 +59,18 @@ public class BindySimpleCsvUnmarshallTest {
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
-                   + "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" + "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n"
-                   + "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n" + "06,A5,Andr" + "\uc3a9" + ",Rieux,ISIN,XD12345678,SELL,Share,,USD,08-01-2009\r\n"
-                   + "07,A6,Myl" + "\uc3a8" + "ne,Farmer,ISIN,BE12345678,BUY,1500,,,08-01-2009\r\n" + "08,A7,Eva,Longoria,ISIN,XD12345678,SELL,Share,2500,USD,\r\n"
-                   + ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" + ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n" + ",,,D,ISIN,LU123456789,,,,,\r\n"
-                   + "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n" + "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45,USD,08-01-2009";
+        expected = "01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
+                   + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
+                   + "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
+                   + "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n"
+                   + "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n" + "06,A5,Andr" + "\uc3a9"
+                   + ",Rieux,ISIN,XD12345678,SELL,Share,,USD,08-01-2009\r\n"
+                   + "07,A6,Myl" + "\uc3a8" + "ne,Farmer,ISIN,BE12345678,BUY,1500,,,08-01-2009\r\n"
+                   + "08,A7,Eva,Longoria,ISIN,XD12345678,SELL,Share,2500,USD,\r\n"
+                   + ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" + ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n"
+                   + ",,,D,ISIN,LU123456789,,,,,\r\n"
+                   + "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n"
+                   + "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45,USD,08-01-2009";
 
         template.sendBody(expected);
 
@@ -103,24 +109,30 @@ public class BindySimpleCsvUnmarshallTest {
         assertEquals("Date provided does not fit the pattern defined, position: 11, line: 1", cause.getMessage());
 
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     @DirtiesContext
     public void testUnMarshallMessageWithMissingFields() throws Exception {
-       
+
         // We suppress the firstName field of the first record
-        expected = "01,,,Cartier,ISIN,BE12345678,SELL,,1500,EUR\r\n" + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
-            + "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" + "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n"
-            + "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n" + "06,A5,Andr" + "\uc3a9" + ",Rieux,ISIN,XD12345678,SELL,Share,,USD,08-01-2009\r\n"
-            + "07,A6,Myl" + "\uc3a8" + "ne,Farmer,ISIN,BE12345678,BUY,1500,,,08-01-2009\r\n" + "08,A7,Eva,Longoria,ISIN,XD12345678,SELL,Share,2500,USD,\r\n"
-            + ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" + ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n" + ",,,D,ISIN,LU123456789,,,,,\r\n"
-            + "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n" + "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45";
+        expected = "01,,,Cartier,ISIN,BE12345678,SELL,,1500,EUR\r\n"
+                   + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
+                   + "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
+                   + "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n"
+                   + "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n" + "06,A5,Andr" + "\uc3a9"
+                   + ",Rieux,ISIN,XD12345678,SELL,Share,,USD,08-01-2009\r\n"
+                   + "07,A6,Myl" + "\uc3a8" + "ne,Farmer,ISIN,BE12345678,BUY,1500,,,08-01-2009\r\n"
+                   + "08,A7,Eva,Longoria,ISIN,XD12345678,SELL,Share,2500,USD,\r\n"
+                   + ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" + ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n"
+                   + ",,,D,ISIN,LU123456789,,,,,\r\n"
+                   + "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n"
+                   + "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45";
 
         template.sendBody(expected);
 
         List<Order> orders = (List<Order>) result.getExchanges().get(0).getIn().getBody();
-        
+
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
@@ -130,13 +142,14 @@ public class BindySimpleCsvUnmarshallTest {
         // inside @DataField annotation
         assertFalse(orders.get(0).getFirstName().isEmpty());
         assertEquals("Joe", orders.get(0).getFirstName());
-        
+
         // Check default String value set to empty ("") for the skipped clientNr field
         assertEquals("", orders.get(0).getClientNr());
     }
-    
+
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+        BindyCsvDataFormat camelDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
 
         @Override
         public void configure() {

@@ -27,13 +27,12 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for Twilio component.
  */
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public class TwilioConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = true)
     private TwilioApiName apiName;
-
     @UriPath(enums = "create,delete,fetch,read,update")
     @Metadata(required = true)
     private String methodName;
@@ -61,8 +60,7 @@ public class TwilioConfiguration implements Cloneable {
     /**
      * What kind of operation to perform
      *
-     * @param apiName
-     *            the API Name to set
+     * @param apiName the API Name to set
      */
     public void setApiName(TwilioApiName apiName) {
         this.apiName = apiName;
@@ -80,8 +78,7 @@ public class TwilioConfiguration implements Cloneable {
     /**
      * What sub operation to use for the selected operation
      *
-     * @param methodName
-     *            the methodName to set
+     * @param methodName the methodName to set
      */
     public void setMethodName(String methodName) {
         this.methodName = methodName;

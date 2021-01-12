@@ -64,7 +64,8 @@ public class DockerStatsConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("docker://stats?host=" + host + "&port=" + port + "&containerId=" + containerId).log("${body}").to("mock:result");
+                from("docker://stats?host=" + host + "&port=" + port + "&containerId=" + containerId).log("${body}")
+                        .to("mock:result");
             }
         };
     }

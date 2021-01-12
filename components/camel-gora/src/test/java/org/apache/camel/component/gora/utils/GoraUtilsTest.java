@@ -39,13 +39,13 @@ public class GoraUtilsTest {
     public void configurationExistShouldThrowExceptionIfMethodDoesNotExist() throws Exception {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(NoSuchMethodException.class,
-            () -> GoraUtils.configurationExist(GoraAttribute.GORA_KEY, conf));
+                () -> GoraUtils.configurationExist(GoraAttribute.GORA_KEY, conf));
     }
 
     @Test
     public void getAttributeAsLongShouldSReturnTheCorrectValue() throws Exception {
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setLimit(3L);
-        assertEquals(new Long(3), GoraUtils.getAttributeAsLong(GoraAttribute.GORA_QUERY_LIMIT, conf));
+        assertEquals(Long.valueOf(3), GoraUtils.getAttributeAsLong(GoraAttribute.GORA_QUERY_LIMIT, conf));
     }
 }

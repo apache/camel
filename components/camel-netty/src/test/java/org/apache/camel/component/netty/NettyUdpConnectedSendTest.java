@@ -39,7 +39,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //We need to run the tests with fix order
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class NettyUdpConnectedSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 10;
@@ -61,7 +61,6 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
                     }
                 }).localAddress(new InetSocketAddress(getPort()));
     }
-
 
     public void bind() {
         serverChannel = bootstrap.bind().syncUninterruptibly().channel();
@@ -110,7 +109,8 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
 
     public class UdpHandler extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects) throws Exception {
+        protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket, List<Object> objects)
+                throws Exception {
             objects.add(datagramPacket.content().toString(CharsetUtil.UTF_8));
         }
     }

@@ -52,14 +52,13 @@ public class SplunkHECProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        HttpClientBuilder builder = HttpClients.custom().
-                setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion()).
-                setMaxConnTotal(10);
+        HttpClientBuilder builder = HttpClients.custom()
+                .setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion()).setMaxConnTotal(10);
         if (endpoint.getConfiguration().isSkipTlsVerify()) {
             SSLContextBuilder sslbuilder = new SSLContextBuilder();
             sslbuilder.loadTrustMaterial(null, (chain, authType) -> true);
-            SSLConnectionSocketFactory sslsf = new
-                    SSLConnectionSocketFactory(sslbuilder.build(), NoopHostnameVerifier.INSTANCE);
+            SSLConnectionSocketFactory sslsf
+                    = new SSLConnectionSocketFactory(sslbuilder.build(), NoopHostnameVerifier.INSTANCE);
             builder.setSSLSocketFactory(sslsf);
         }
         httpClient = builder.build();
@@ -69,7 +68,9 @@ public class SplunkHECProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Map<String, Object> payload = createPayload(exchange.getIn());
 
-        HttpPost httppost = new HttpPost((endpoint.getConfiguration().isHttps() ? "https" : "http") + "://" + endpoint.getSplunkURL() + "/services/collector/event");
+        HttpPost httppost = new HttpPost(
+                (endpoint.getConfiguration().isHttps() ? "https" : "http") + "://" + endpoint.getSplunkURL()
+                                         + "/services/collector/event");
         httppost.addHeader("Authorization", " Splunk " + endpoint.getToken());
 
         EntityTemplate entityTemplate = new EntityTemplate(outputStream -> MAPPER.writer().writeValue(outputStream, payload));
@@ -81,7 +82,8 @@ public class SplunkHECProducer extends DefaultProducer {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
                 response.getEntity().writeTo(output);
 
-                throw new RuntimeException(response.getStatusLine().toString() + "\n" + new String(output.toByteArray(), StandardCharsets.UTF_8));
+                throw new RuntimeException(
+                        response.getStatusLine().toString() + "\n" + new String(output.toByteArray(), StandardCharsets.UTF_8));
             }
         }
     }

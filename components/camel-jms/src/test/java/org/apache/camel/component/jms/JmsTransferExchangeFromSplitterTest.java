@@ -63,7 +63,7 @@ public class JmsTransferExchangeFromSplitterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body().tokenize(","))
+                        .split(body().tokenize(","))
                         .to(getUri());
 
                 from(getUri()).to("mock:result");

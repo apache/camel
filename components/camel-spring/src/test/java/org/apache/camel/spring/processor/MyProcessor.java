@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 
 /**
  * A simple processor which transforms the input
-*/
+ */
 public class MyProcessor implements Processor {
     @Override
     public void process(Exchange exchange) {

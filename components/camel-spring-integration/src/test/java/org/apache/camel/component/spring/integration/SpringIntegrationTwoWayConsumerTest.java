@@ -50,9 +50,9 @@ public class SpringIntegrationTwoWayConsumerTest extends CamelSpringTestSupport 
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
-                assertEquals(MESSAGE_BODY + " is processed",  message.getPayload(), "Get the wrong result");
-                assertEquals("Done",  message.getHeaders().get("Status"));
-            }             
+                assertEquals(MESSAGE_BODY + " is processed", message.getPayload(), "Get the wrong result");
+                assertEquals("Done", message.getHeaders().get("Status"));
+            }
         });
 
         requestChannel.send(message);

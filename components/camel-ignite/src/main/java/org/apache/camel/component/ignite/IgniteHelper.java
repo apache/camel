@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 public final class IgniteHelper {
 
     private IgniteHelper() {
-        
+
     }
 
     public static void maybePropagateIncomingBody(AbstractIgniteEndpoint endpoint, Message in, Message out) {

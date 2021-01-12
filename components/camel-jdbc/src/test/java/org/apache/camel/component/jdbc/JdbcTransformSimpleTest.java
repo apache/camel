@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JdbcTransformSimpleTest extends AbstractJdbcTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
@@ -41,10 +41,10 @@ public class JdbcTransformSimpleTest extends AbstractJdbcTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:hello")
-                    .to("jdbc:testdb")
-                    // grab the first row, and the name column
-                    .transform().simple("${body[0]['NAME']}")
-                    .to("mock:result");
+                        .to("jdbc:testdb")
+                        // grab the first row, and the name column
+                        .transform().simple("${body[0]['NAME']}")
+                        .to("mock:result");
             }
         };
     }

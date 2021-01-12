@@ -39,10 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 public class BindyNumberTest {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
     // *************************************************************************
     //
@@ -71,8 +71,8 @@ public class BindyNumberTest {
         rec.field1 = new BigDecimal(123.45);
         rec.field2 = new BigDecimal(10.00);
         rec.field3 = new BigDecimal(10.00);
-        rec.field4 = new Double(10.00);
-        rec.field5 = new Double(10.00);
+        rec.field4 = Double.valueOf(10.00);
+        rec.field5 = Double.valueOf(10.00);
 
         mresult.expectedBodiesReceived("1234510.00   1010.00   10\r\n");
 
@@ -90,7 +90,7 @@ public class BindyNumberTest {
         uresult.assertIsSatisfied();
 
         // check the model
-        Exchange  exc  = uresult.getReceivedExchanges().get(0);
+        Exchange exc = uresult.getReceivedExchanges().get(0);
         DataModel data = exc.getIn().getBody(DataModel.class);
 
         assertEquals(123.45D, data.field1.doubleValue(), 0D);
@@ -113,11 +113,11 @@ public class BindyNumberTest {
             bindy.type(BindyType.Fixed);
 
             from(URI_DIRECT_MARSHALL)
-                .marshal(bindy)
-                .to(URI_MOCK_MARSHALL_RESULT);
+                    .marshal(bindy)
+                    .to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
-                .unmarshal().bindy(BindyType.Fixed, DataModel.class)
-                .to(URI_MOCK_UNMARSHALL_RESULT);
+                    .unmarshal().bindy(BindyType.Fixed, DataModel.class)
+                    .to(URI_MOCK_UNMARSHALL_RESULT);
         }
     }
 
@@ -127,9 +127,9 @@ public class BindyNumberTest {
 
     @FixedLengthRecord(length = 25, paddingChar = ' ')
     public static class DataModel {
-        @DataField(pos =  1, length = 5, precision = 2, impliedDecimalSeparator = true)
+        @DataField(pos = 1, length = 5, precision = 2, impliedDecimalSeparator = true)
         public BigDecimal field1;
-        @DataField(pos =  6, length = 5, precision = 2)
+        @DataField(pos = 6, length = 5, precision = 2)
         public BigDecimal field2;
         @DataField(pos = 11, length = 5)
         public BigDecimal field3;

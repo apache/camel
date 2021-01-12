@@ -29,7 +29,7 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
-    
+
     @EndpointInject("mock:intercepted")
     protected MockEndpoint interceptedEndpoint;
 
@@ -60,7 +60,5 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
             }
         };
     }
-
-    
 
 }

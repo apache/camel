@@ -4,8 +4,10 @@ package org.apache.camel.component.digitalocean;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "digitaloceanclient":
         case "digitalOceanClient": target.getConfiguration().setDigitalOceanClient(property(camelContext, com.myjeeva.digitalocean.impl.DigitalOceanClient.class, value)); return true;
         case "httpproxyhost":
@@ -45,29 +45,35 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("digitalOceanClient", com.myjeeva.digitalocean.impl.DigitalOceanClient.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyUser", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("oAuthToken", java.lang.String.class);
-        answer.put("page", java.lang.Integer.class);
-        answer.put("perPage", java.lang.Integer.class);
-        answer.put("resource", org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "digitaloceanclient":
+        case "digitalOceanClient": return com.myjeeva.digitalocean.impl.DigitalOceanClient.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oAuthToken": return java.lang.String.class;
+        case "page": return java.lang.Integer.class;
+        case "perpage":
+        case "perPage": return java.lang.Integer.class;
+        case "resource": return org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "digitaloceanclient":
         case "digitalOceanClient": return target.getConfiguration().getDigitalOceanClient();
         case "httpproxyhost":

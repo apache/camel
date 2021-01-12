@@ -62,7 +62,7 @@ public class AmazonMSKClientMock extends AbstractAWSKafka {
         res.setState(ClusterState.DELETING.name());
         return res;
     }
-    
+
     @Override
     public DescribeClusterResult describeCluster(DescribeClusterRequest request) {
         DescribeClusterResult res = new DescribeClusterResult();

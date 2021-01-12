@@ -4,8 +4,10 @@ package org.apache.camel.component.activemq;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.jms.JmsComponentConfigurer;
 
@@ -32,13 +34,18 @@ public class ActiveMQComponentConfigurer extends JmsComponentConfigurer implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("brokerURL", java.lang.String.class);
-        answer.put("trustAllPackages", boolean.class);
-        answer.put("usePooledConnection", boolean.class);
-        answer.put("useSingleConnection", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "brokerurl":
+        case "brokerURL": return java.lang.String.class;
+        case "trustallpackages":
+        case "trustAllPackages": return boolean.class;
+        case "usepooledconnection":
+        case "usePooledConnection": return boolean.class;
+        case "usesingleconnection":
+        case "useSingleConnection": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

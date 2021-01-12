@@ -26,13 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AS2HeaderUtilsTest {
 
-    private static final String TEST_NAME_VALUES = " signed-receipt-protocol   =   optional  , pkcs7-signature  ;    signed-receipt-micalg   =    required  ,  sha1  ";
+    private static final String TEST_NAME_VALUES
+            = " signed-receipt-protocol   =   optional  , pkcs7-signature  ;    signed-receipt-micalg   =    required  ,  sha1  ";
     private static final String SIGNED_RECEIPT_PROTOCOL_ATTRIBUTE = "signed-receipt-protocol";
     private static final String SIGNED_RECEIPT_PROTOCOL_IMPORTANCE = "optional";
-    private static final String[] SIGNED_RECEIPT_PROTOCOL_VALUES = {"pkcs7-signature"};
+    private static final String[] SIGNED_RECEIPT_PROTOCOL_VALUES = { "pkcs7-signature" };
     private static final String SIGNED_RECEIPT_MICALG_ATTRIBUTE = "signed-receipt-micalg";
     private static final String SIGNED_RECEIPT_MICALG_IMPORTANCE = "required";
-    private static final String[] SIGNED_RECEIPT_MICALG_VALUES = {"sha1"};
+    private static final String[] SIGNED_RECEIPT_MICALG_VALUES = { "sha1" };
 
     @Test
     public void parseNameValuePairTest() {
@@ -43,12 +44,14 @@ public class AS2HeaderUtilsTest {
 
         Parameter parameter = AS2HeaderUtils.parseParameter(buffer, cursor);
         assertEquals(SIGNED_RECEIPT_PROTOCOL_ATTRIBUTE, parameter.getAttribute(), "Unexpected value for parameter attribute");
-        assertEquals(SIGNED_RECEIPT_PROTOCOL_IMPORTANCE, parameter.getImportance().getImportance(), "Unexpected value for parameter importance");
+        assertEquals(SIGNED_RECEIPT_PROTOCOL_IMPORTANCE, parameter.getImportance().getImportance(),
+                "Unexpected value for parameter importance");
         assertArrayEquals(SIGNED_RECEIPT_PROTOCOL_VALUES, parameter.getValues(), "Unexpected value for parameter values");
 
         parameter = AS2HeaderUtils.parseParameter(buffer, cursor);
         assertEquals(SIGNED_RECEIPT_MICALG_ATTRIBUTE, parameter.getAttribute(), "Unexpected value for parameter attribute");
-        assertEquals(SIGNED_RECEIPT_MICALG_IMPORTANCE, parameter.getImportance().getImportance(), "Unexpected value for parameter importance");
+        assertEquals(SIGNED_RECEIPT_MICALG_IMPORTANCE, parameter.getImportance().getImportance(),
+                "Unexpected value for parameter importance");
         assertArrayEquals(SIGNED_RECEIPT_MICALG_VALUES, parameter.getValues(), "Unexpected value for parameter values");
     }
 

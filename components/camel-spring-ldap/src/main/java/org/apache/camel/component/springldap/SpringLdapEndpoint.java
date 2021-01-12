@@ -32,7 +32,8 @@ import org.springframework.ldap.core.LdapTemplate;
 /**
  * Perform searches in LDAP servers using filters as the message payload.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName", producerOnly = true, category = {Category.SPRING, Category.LDAP})
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-ldap", title = "Spring LDAP", syntax = "spring-ldap:templateName",
+             producerOnly = true, category = { Category.SPRING, Category.LDAP })
 public class SpringLdapEndpoint extends DefaultEndpoint {
 
     private static final String OBJECT_SCOPE_NAME = "object";
@@ -40,9 +41,11 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     private static final String SUBTREE_SCOPE_NAME = "subtree";
 
     private LdapTemplate ldapTemplate;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String templateName;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private LdapOperation operation;
     @UriParam(defaultValue = "subtree", enums = "object,onelevel,subtree")
     private String scope = SUBTREE_SCOPE_NAME;
@@ -50,12 +53,13 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     /**
      * Initializes the SpringLdapEndpoint using the provided template
      *
-     * @param endpointUri the full URI used to create this endpoint
-     * @param component the component that created this endpoint
+     * @param endpointUri  the full URI used to create this endpoint
+     * @param component    the component that created this endpoint
      * @param templateName name of the LDAP template
      * @param ldapTemplate LDAP template, see org.springframework.ldap.core.LdapTemplate
      */
-    public SpringLdapEndpoint(String endpointUri, SpringLdapComponent component, String templateName, LdapTemplate ldapTemplate) {
+    public SpringLdapEndpoint(String endpointUri, SpringLdapComponent component, String templateName,
+                              LdapTemplate ldapTemplate) {
         super(endpointUri, component);
         this.templateName = templateName;
         this.ldapTemplate = ldapTemplate;

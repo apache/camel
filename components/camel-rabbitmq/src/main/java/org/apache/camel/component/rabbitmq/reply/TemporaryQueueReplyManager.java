@@ -45,8 +45,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId,
-                                              long requestTimeout) {
+    protected ReplyHandler createReplyHandler(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId,
+            String correlationId,
+            long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
@@ -135,8 +137,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private String tag;
 
         /**
-         * Constructs a new instance and records its association to the
-         * passed-in channel.
+         * Constructs a new instance and records its association to the passed-in channel.
          *
          * @param channel the channel to which this consumer is attached
          */
@@ -147,7 +148,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+                throws IOException {
             consumer.onMessage(properties, body);
         }
 

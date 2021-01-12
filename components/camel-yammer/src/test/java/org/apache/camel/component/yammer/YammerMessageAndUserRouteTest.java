@@ -29,8 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class YammerMessageAndUserRouteTest extends CamelTestSupport {
 
-    private static final String YAMMER_CURRENT_USER_CONSUMER = "yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
-    private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
+    private static final String YAMMER_CURRENT_USER_CONSUMER
+            = "yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
+    private static final String YAMMER_MESSAGES_CONSUMER
+            = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -53,26 +55,27 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
         MockEndpoint messagesMock = getMockEndpoint("mock:messages");
         messagesMock.expectedMinimumMessageCount(1);
         messagesMock.assertIsSatisfied();
-        
+
         Exchange exchange = messagesMock.getExchanges().get(0);
         Messages messages = exchange.getIn().getBody(Messages.class);
 
         assertEquals(2, messages.getMessages().size());
         assertEquals("Testing yammer API...", messages.getMessages().get(0).getBody().getPlain());
-        assertEquals("(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.", messages.getMessages().get(1).getBody().getPlain());
-        
+        assertEquals("(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.",
+                messages.getMessages().get(1).getBody().getPlain());
+
         MockEndpoint userMock = getMockEndpoint("mock:user");
         userMock.expectedMinimumMessageCount(1);
-        
-        template.sendBody("direct:start", "overwrite me");        
-        
+
+        template.sendBody("direct:start", "overwrite me");
+
         userMock.assertIsSatisfied();
-        
+
         exchange = userMock.getExchanges().get(0);
         User user = exchange.getIn().getBody(User.class);
 
-        assertEquals("Joe Camel", user.getFullName());        
-        assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());        
+        assertEquals("Joe Camel", user.getFullName());
+        assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());
     }
 
     @Override

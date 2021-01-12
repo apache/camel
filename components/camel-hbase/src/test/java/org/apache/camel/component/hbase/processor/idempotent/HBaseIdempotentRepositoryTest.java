@@ -38,7 +38,7 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        this.repository = new HBaseIdempotentRepository(getHBaseConfig(), PERSON_TABLE, INFO_FAMILY, "mycolumn");
+        this.repository = new HBaseIdempotentRepository(service.getConfiguration(), PERSON_TABLE, INFO_FAMILY, "mycolumn");
         super.setUp();
         try {
             createTable(PERSON_TABLE, INFO_FAMILY);

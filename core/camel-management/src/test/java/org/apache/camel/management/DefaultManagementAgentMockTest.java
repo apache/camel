@@ -34,8 +34,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests proper behavior of DefaultManagementAgent when
- * {@link MBeanServer#registerMBean(Object, ObjectName)} returns an
+ * Tests proper behavior of DefaultManagementAgent when {@link MBeanServer#registerMBean(Object, ObjectName)} returns an
  * {@link ObjectInstance} with a different ObjectName
  */
 public class DefaultManagementAgentMockTest {

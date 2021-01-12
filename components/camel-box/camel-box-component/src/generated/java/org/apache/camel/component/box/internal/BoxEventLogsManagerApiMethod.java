@@ -20,15 +20,13 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxEventLogsManagerApiMethod implements ApiMethod {
 
-    GETENTERPRISEEVENTS(
+    GET_ENTERPRISE_EVENTS(
         java.util.List.class,
         "getEnterpriseEvents",
         arg("position", String.class),
         arg("after", java.util.Date.class),
         arg("before", java.util.Date.class),
         arg("types", new com.box.sdk.BoxEvent.Type[0].getClass()));
-
-    
 
     private final ApiMethod apiMethod;
 

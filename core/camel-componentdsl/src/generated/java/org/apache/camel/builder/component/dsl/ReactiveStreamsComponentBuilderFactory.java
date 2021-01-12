@@ -39,6 +39,8 @@ public interface ReactiveStreamsComponentBuilderFactory {
      * Category: reactive,streams
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-reactive-streams
+     * 
+     * @return the dsl builder
      */
     static ReactiveStreamsComponentBuilder reactiveStreams() {
         return new ReactiveStreamsComponentBuilderImpl();
@@ -54,10 +56,13 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * The maximum number of threads used by the reactive streams internal
          * engine.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param threadPoolMaxSize the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder threadPoolMaxSize(
                 int threadPoolMaxSize) {
@@ -68,9 +73,12 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * The minimum number of threads used by the reactive streams internal
          * engine.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param threadPoolMinSize the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder threadPoolMinSize(
                 int threadPoolMinSize) {
@@ -81,10 +89,13 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * The name of the thread pool used by the reactive streams internal
          * engine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelReactiveStreamsWorker
          * Group: common
+         * 
+         * @param threadPoolName the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder threadPoolName(
                 java.lang.String threadPoolName) {
@@ -100,10 +111,13 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -115,10 +129,13 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * subscriber.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy&lt;/code&gt; type.
          * 
          * Default: BUFFER
          * Group: producer
+         * 
+         * @param backpressureStrategy the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder backpressureStrategy(
                 org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy backpressureStrategy) {
@@ -136,10 +153,13 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -147,26 +167,36 @@ public interface ReactiveStreamsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ReactiveStreamsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ReactiveStreamsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use an existing reactive stream engine configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reactiveStreamsEngineConfiguration the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder reactiveStreamsEngineConfiguration(
                 org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration) {
@@ -179,9 +209,12 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * ServiceLoader, the default implementation is
          * DefaultCamelReactiveStreamsService.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param serviceType the value to set
+         * @return the dsl builder
          */
         default ReactiveStreamsComponentBuilder serviceType(
                 java.lang.String serviceType) {
@@ -211,7 +244,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
             case "bridgeErrorHandler": ((ReactiveStreamsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "backpressureStrategy": ((ReactiveStreamsComponent) component).setBackpressureStrategy((org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy) value); return true;
             case "lazyStartProducer": ((ReactiveStreamsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((ReactiveStreamsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ReactiveStreamsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "reactiveStreamsEngineConfiguration": ((ReactiveStreamsComponent) component).setReactiveStreamsEngineConfiguration((org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration) value); return true;
             case "serviceType": ((ReactiveStreamsComponent) component).setServiceType((java.lang.String) value); return true;
             default: return false;

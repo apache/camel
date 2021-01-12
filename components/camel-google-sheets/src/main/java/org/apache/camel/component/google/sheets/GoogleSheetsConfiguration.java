@@ -22,34 +22,29 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.component.AbstractApiConfiguration;
 
 /**
  * Component configuration for GoogleSheets component.
  */
 @UriParams
-@Configurer
-public class GoogleSheetsConfiguration {
+@Configurer(extended = true)
+public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
 
     @UriPath
     @Metadata(required = true)
     private GoogleSheetsApiName apiName;
-
     @UriPath(enums = "create,get,update,append,batchUpdate,clear")
     @Metadata(required = true)
     private String methodName;
-
     @UriParam
     private String clientId;
-
     @UriParam(label = "security", secret = true)
     private String clientSecret;
-
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
 
@@ -113,7 +108,8 @@ public class GoogleSheetsConfiguration {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Sheets component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Sheets component can obtain a new accessToken whenever the current
+     * one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

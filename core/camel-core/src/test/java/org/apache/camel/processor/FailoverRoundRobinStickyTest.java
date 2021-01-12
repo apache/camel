@@ -56,14 +56,15 @@ public class FailoverRoundRobinStickyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // Use failover load balancer in stateful round robin and
-                    // sticky mode
-                    // which mean it will failover immediately in case of an
-                    // exception
-                    // as it does NOT inherit error handler. It will also keep
-                    // retrying as
-                    // its configured to newer exhaust.
-                    .loadBalance().failover(-1, false, true, true).to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
+                        // Use failover load balancer in stateful round robin and
+                        // sticky mode
+                        // which mean it will failover immediately in case of an
+                        // exception
+                        // as it does NOT inherit error handler. It will also keep
+                        // retrying as
+                        // its configured to newer exhaust.
+                        .loadBalance().failover(-1, false, true, true)
+                        .to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
                 // END SNIPPET: e1
 
                 from("direct:bad").to("mock:bad").throwException(new IllegalArgumentException("Damn"));

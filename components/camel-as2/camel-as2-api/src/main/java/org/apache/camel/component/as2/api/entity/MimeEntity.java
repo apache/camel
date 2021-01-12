@@ -40,10 +40,9 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     /**
      * An OuputStream wrapper that doesn't close its underlying output stream.
      * <p>
-     * Instances of this stream are used by entities to attach encoding streams
-     * to underlying output stream in order to write out their encoded content
-     * and then flush and close these encoding streams without closing the
-     * underlying output stream.
+     * Instances of this stream are used by entities to attach encoding streams to underlying output stream in order to
+     * write out their encoded content and then flush and close these encoding streams without closing the underlying
+     * output stream.
      */
     protected static class NoCloseOutputStream extends FilterOutputStream {
         public NoCloseOutputStream(OutputStream os) {
@@ -128,23 +127,20 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     }
 
     /**
-     * Obtains the Content-Transfer-Encoding header.
-     * The default implementation returns the value of the
+     * Obtains the Content-Transfer-Encoding header. The default implementation returns the value of the
      * {@link #contentEncoding contentEncoding} attribute.
      *
-     * @return  the Content-Transfer-Encoding header, or {@code null}
+     * @return the Content-Transfer-Encoding header, or {@code null}
      */
     public Header getContentTransferEncoding() {
         return this.contentTransferEncoding;
     }
 
     /**
-     * Specifies the Content-Transfer-Encoding header.
-     * The default implementation sets the value of the
+     * Specifies the Content-Transfer-Encoding header. The default implementation sets the value of the
      * {@link #contentTransferEncoding contentTransferEncoding} attribute.
      *
-     * @param contentTransferEncoding   the new Content-Transfer-Encoding header, or
-     *                          {@code null} to unset
+     * @param contentTransferEncoding the new Content-Transfer-Encoding header, or {@code null} to unset
      */
     public void setContentTransferEncoding(final Header contentTransferEncoding) {
         this.contentTransferEncoding = contentTransferEncoding;
@@ -156,12 +152,10 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     }
 
     /**
-     * Specifies the Content-Transfer-Encoding header, as a string.
-     * The default implementation calls
+     * Specifies the Content-Transfer-Encoding header, as a string. The default implementation calls
      * {@link #setContentTransferEncoding(Header) setContentTransferEncoding(Header)}.
      *
-     * @param contentTranserEncoding - the new Content-Transfer-Encoding header, or
-     *                     {@code null} to unset
+     * @param contentTranserEncoding - the new Content-Transfer-Encoding header, or {@code null} to unset
      */
     public void setContentTransferEncoding(final String contentTranserEncoding) {
         Header h = null;
@@ -170,8 +164,6 @@ public abstract class MimeEntity extends AbstractHttpEntity {
         }
         setContentTransferEncoding(h);
     }
-
-
 
     public boolean containsHeader(final String name) {
         return this.headergroup.containsHeader(name);

@@ -54,8 +54,9 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    // just return the default country here
-                    .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).route().bean(new UserService(), "livesWhere");
+                        // just return the default country here
+                        .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).route()
+                        .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");

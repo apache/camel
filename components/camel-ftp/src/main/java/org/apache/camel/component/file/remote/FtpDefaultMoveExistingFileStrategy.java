@@ -29,6 +29,8 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
+
 public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpDefaultMoveExistingFileStrategy.class);
@@ -37,16 +39,17 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName) throws GenericFileOperationFailedException {
+    public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
+            throws GenericFileOperationFailedException {
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
         // create a dummy exchange as Exchange is needed for expression
         // evaluation
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
-        // we only support relative paths for the ftp component, so dont provide
-        // any parent
-        String parent = null;
+        // we only support relative paths for the ftp component, so we strip out
+        //any leading separator
+        String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
         dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
         dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
@@ -57,10 +60,16 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         // leading paths
         to = FileUtil.stripLeadingSeparator(to);
         // normalize accordingly to configuration
-        to = ((FtpEndpoint<FTPFile>)endpoint).getConfiguration().normalizePath(to);
+
         if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+            throw new GenericFileOperationFailedException(
+                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
+
+        to = completePartialRelativePath(to, onlyName, parent);
+
+        // normalize accordingly to configuration
+        to = ((FtpEndpoint<FTPFile>) endpoint).getConfiguration().normalizePath(to);
 
         // do we have a sub directory
         String dir = FileUtil.onlyPath(to);
@@ -75,16 +84,20 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
                 LOG.trace("Deleting existing file: {}", to);
                 boolean result;
                 try {
-                    result = ((FtpOperations)operations).getClient().deleteFile(to);
+                    result = ((FtpOperations) operations).getClient().deleteFile(to);
                     if (!result) {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                     }
                 } catch (IOException e) {
-                    throw new GenericFileOperationFailedException(((FtpOperations)operations).getClient().getReplyCode(), ((FtpOperations)operations).getClient().getReplyString(),
-                                                                  "Cannot delete file: " + to, e);
+                    throw new GenericFileOperationFailedException(
+                            ((FtpOperations) operations).getClient().getReplyCode(),
+                            ((FtpOperations) operations).getClient().getReplyString(),
+                            "Cannot delete file: " + to, e);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException(
+                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
+                                                              + to);
             }
         }
 

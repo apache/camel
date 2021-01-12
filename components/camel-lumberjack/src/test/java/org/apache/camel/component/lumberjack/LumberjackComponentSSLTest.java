@@ -58,17 +58,18 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
     public void shouldListenToMessagesOverSSL() throws Exception {
         // We're expecting 25 messages with Maps
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedMessageCount(25);
+        mock.expectedMessageCount(60);
         mock.allMessages().body().isInstanceOf(Map.class);
+        List<Integer> windows = Arrays.asList(15, 10, 15, 10, 10);
 
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port, createClientSSLContextParameters());
+        List<Integer> responses = LumberjackUtil.sendMessages(port, createClientSSLContextParameters(), windows);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
 
         // And we should have replied with 2 acknowledgments for each window frame
-        assertEquals(Arrays.asList(10, 15), responses);
+        assertEquals(windows, responses);
     }
 
     /**

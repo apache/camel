@@ -33,7 +33,7 @@ public interface JaxbNamespacePrefixMapper {
      * <p/>
      * The key is the namespace, the value is the prefix to use.
      *
-     * @param namespaces  namespace mappings
+     * @param namespaces namespace mappings
      */
     void setNamespaces(Map<String, String> namespaces);
 

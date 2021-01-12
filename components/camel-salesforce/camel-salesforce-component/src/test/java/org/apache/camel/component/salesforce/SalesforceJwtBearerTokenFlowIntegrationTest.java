@@ -21,8 +21,8 @@ import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assumptions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.*;
 
 public class SalesforceJwtBearerTokenFlowIntegrationTest extends CamelTestSupport {
 

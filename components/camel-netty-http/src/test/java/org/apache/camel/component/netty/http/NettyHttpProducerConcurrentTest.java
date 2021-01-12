@@ -78,7 +78,6 @@ public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
         executor.shutdownNow();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

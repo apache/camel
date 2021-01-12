@@ -42,44 +42,57 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     protected static final String LS = System.lineSeparator();
     private static final String SEPARATOR = "###REPLACE_ME###";
 
-    public enum OutputStyle { Default, Tab, Fixed }
+    public enum OutputStyle {
+        Default,
+        Tab,
+        Fixed
+    }
 
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Shows the Message Exchange Pattern (or MEP for short).")
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Shows the Message Exchange Pattern (or MEP for short).")
     private boolean showExchangePattern = true;
     @UriParam(label = "formatting", description = "Show the exchange properties.")
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body."
-    + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Whether to skip line separators when logging the message body."
+                            + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
     private boolean skipBodyLineSeparator = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
     private boolean showBodyType = true;
-    @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
+    @UriParam(label = "formatting",
+              description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
-    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)."
-    + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
+    @UriParam(label = "formatting",
+              description = "f the exchange has a caught exception, show the exception message (no stack trace)."
+                            + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
-    @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
+    @UriParam(label = "formatting",
+              description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;
-    @UriParam(label = "formatting", description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
+    @UriParam(label = "formatting",
+              description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
     private boolean showAll;
     @UriParam(label = "formatting", description = "If enabled then each information is outputted on a newline.")
     private boolean multiline;
-    @UriParam(label = "formatting", description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
+    @UriParam(label = "formatting",
+              description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
-    @UriParam(label = "formatting", description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then " 
-    + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
+    @UriParam(label = "formatting",
+              description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
+                            + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
     private boolean showStreams;
     @UriParam(label = "formatting", description = "If enabled Camel will output files")
     private boolean showFiles;
     @UriParam(label = "formatting", defaultValue = "10000", description = "Limits the number of characters logged per line.")
     private int maxChars = 10000;
-    @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default", description = "Sets the outputs style to use.")
+    @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
+              description = "Sets the outputs style to use.")
     private OutputStyle style = OutputStyle.Default;
 
     private StringBuilder style(StringBuilder sb, String label) {
@@ -257,9 +270,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Whether to skip line separators when logging the message body.
-     * This allows to log the message body in one line, setting this option to false will preserve any line separators
-     * from the body, which then will log the body as is.
+     * Whether to skip line separators when logging the message body. This allows to log the message body in one line,
+     * setting this option to false will preserve any line separators from the body, which then will log the body as is.
      */
     public void setSkipBodyLineSeparator(boolean skipBodyLineSeparator) {
         this.skipBodyLineSeparator = skipBodyLineSeparator;
@@ -314,7 +326,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.
+     * Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or
+     * showCaughtException are enabled.
      */
     public void setShowStackTrace(boolean showStackTrace) {
         this.showStackTrace = showStackTrace;
@@ -325,9 +338,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * If the exchange has a caught exception, show the exception message (no stack trace).
-     * A caught exception is stored as a property on the exchange (using the key {@link org.apache.camel.Exchange#EXCEPTION_CAUGHT}
-     * and for instance a doCatch can catch exceptions.
+     * If the exchange has a caught exception, show the exception message (no stack trace). A caught exception is stored
+     * as a property on the exchange (using the key {@link org.apache.camel.Exchange#EXCEPTION_CAUGHT} and for instance
+     * a doCatch can catch exceptions.
      */
     public void setShowCaughtException(boolean showCaughtException) {
         this.showCaughtException = showCaughtException;
@@ -382,10 +395,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Whether Camel should show stream bodies or not (eg such as java.io.InputStream).
-     * Beware if you enable this option then you may not be able later to access the message body
-     * as the stream have already been read by this logger.
-     * To remedy this you will have to use Stream Caching.
+     * Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option
+     * then you may not be able later to access the message body as the stream have already been read by this logger. To
+     * remedy this you will have to use Stream Caching.
      */
     public void setShowStreams(boolean showStreams) {
         this.showStreams = showStreams;

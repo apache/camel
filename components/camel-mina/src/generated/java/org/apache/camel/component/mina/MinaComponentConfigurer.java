@@ -4,8 +4,10 @@ package org.apache.camel.component.mina;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -30,8 +32,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowDefaultCodec": getOrCreateConfiguration(target).setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
         case "autostarttls":
         case "autoStartTls": getOrCreateConfiguration(target).setAutoStartTls(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachedaddress":
@@ -79,37 +81,58 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowDefaultCodec", boolean.class);
-        answer.put("autoStartTls", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cachedAddress", boolean.class);
-        answer.put("clientMode", boolean.class);
-        answer.put("codec", org.apache.mina.filter.codec.ProtocolCodecFactory.class);
-        answer.put("configuration", org.apache.camel.component.mina.MinaConfiguration.class);
-        answer.put("decoderMaxLineLength", int.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("disconnectOnNoReply", boolean.class);
-        answer.put("encoderMaxLineLength", int.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("filters", java.util.List.class);
-        answer.put("lazySessionCreation", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maximumPoolSize", int.class);
-        answer.put("minaLogger", boolean.class);
-        answer.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("orderedThreadPoolExecutor", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sync", boolean.class);
-        answer.put("textline", boolean.class);
-        answer.put("textlineDelimiter", org.apache.camel.component.mina.MinaTextLineDelimiter.class);
-        answer.put("timeout", long.class);
-        answer.put("transferExchange", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("writeTimeout", long.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowdefaultcodec":
+        case "allowDefaultCodec": return boolean.class;
+        case "autostarttls":
+        case "autoStartTls": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachedaddress":
+        case "cachedAddress": return boolean.class;
+        case "clientmode":
+        case "clientMode": return boolean.class;
+        case "codec": return org.apache.mina.filter.codec.ProtocolCodecFactory.class;
+        case "configuration": return org.apache.camel.component.mina.MinaConfiguration.class;
+        case "decodermaxlinelength":
+        case "decoderMaxLineLength": return int.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonnoreply":
+        case "disconnectOnNoReply": return boolean.class;
+        case "encodermaxlinelength":
+        case "encoderMaxLineLength": return int.class;
+        case "encoding": return java.lang.String.class;
+        case "filters": return java.util.List.class;
+        case "lazysessioncreation":
+        case "lazySessionCreation": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximumpoolsize":
+        case "maximumPoolSize": return int.class;
+        case "minalogger":
+        case "minaLogger": return boolean.class;
+        case "noreplyloglevel":
+        case "noReplyLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "orderedthreadpoolexecutor":
+        case "orderedThreadPoolExecutor": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sync": return boolean.class;
+        case "textline": return boolean.class;
+        case "textlinedelimiter":
+        case "textlineDelimiter": return org.apache.camel.component.mina.MinaTextLineDelimiter.class;
+        case "timeout": return long.class;
+        case "transferexchange":
+        case "transferExchange": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "writetimeout":
+        case "writeTimeout": return long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -120,8 +143,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowDefaultCodec": return getOrCreateConfiguration(target).isAllowDefaultCodec();
         case "autostarttls":
         case "autoStartTls": return getOrCreateConfiguration(target).isAutoStartTls();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachedaddress":
@@ -164,6 +187,14 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "writetimeout":
         case "writeTimeout": return getOrCreateConfiguration(target).getWriteTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filters": return org.apache.mina.core.filterchain.IoFilter.class;
         default: return null;
         }
     }

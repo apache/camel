@@ -69,7 +69,8 @@ public class DomainProducer extends AbstractKeystoneProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Domain ID");
         final Domain out = osV3Client.identity().domains().get(id);
         exchange.getIn().setBody(out);
@@ -89,7 +90,8 @@ public class DomainProducer extends AbstractKeystoneProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Domain ID");
         final ActionResponse response = osV3Client.identity().domains().delete(id);
         checkFailure(response, exchange, "Delete domain" + id);

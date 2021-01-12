@@ -38,6 +38,8 @@ public interface Aws2DdbComponentBuilderFactory {
      * Category: cloud,database,nosql
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
+     * 
+     * @return the dsl builder
      */
     static Aws2DdbComponentBuilder aws2Ddb() {
         return new Aws2DdbComponentBuilderImpl();
@@ -51,10 +53,12 @@ public interface Aws2DdbComponentBuilderFactory {
          * To use the AmazonDynamoDB as the client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonDDBClient the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder amazonDDBClient(
                 software.amazon.awssdk.services.dynamodb.DynamoDbClient amazonDDBClient) {
@@ -62,28 +66,15 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2DdbComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ddb.Ddb2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddb.Ddb2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder configuration(
                 org.apache.camel.component.aws2.ddb.Ddb2Configuration configuration) {
@@ -94,10 +85,13 @@ public interface Aws2DdbComponentBuilderFactory {
          * Determines whether or not strong consistency should be enforced when
          * data is read.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param consistentRead the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder consistentRead(boolean consistentRead) {
             doSetProperty("consistentRead", consistentRead);
@@ -106,9 +100,12 @@ public interface Aws2DdbComponentBuilderFactory {
         /**
          * Attribute name when creating table.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyAttributeName the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder keyAttributeName(
                 java.lang.String keyAttributeName) {
@@ -118,9 +115,12 @@ public interface Aws2DdbComponentBuilderFactory {
         /**
          * Attribute type when creating table.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyAttributeType the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder keyAttributeType(
                 java.lang.String keyAttributeType) {
@@ -138,10 +138,13 @@ public interface Aws2DdbComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -152,10 +155,13 @@ public interface Aws2DdbComponentBuilderFactory {
          * What operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddb.Ddb2Operations&lt;/code&gt; type.
          * 
          * Default: PutItem
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder operation(
                 org.apache.camel.component.aws2.ddb.Ddb2Operations operation) {
@@ -165,9 +171,12 @@ public interface Aws2DdbComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the DDB client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -179,9 +188,12 @@ public interface Aws2DdbComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -190,11 +202,14 @@ public interface Aws2DdbComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the DDB client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -205,9 +220,12 @@ public interface Aws2DdbComponentBuilderFactory {
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param readCapacity the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder readCapacity(java.lang.Long readCapacity) {
             doSetProperty("readCapacity", readCapacity);
@@ -216,9 +234,12 @@ public interface Aws2DdbComponentBuilderFactory {
         /**
          * The region in which DDB client needs to work.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -228,10 +249,13 @@ public interface Aws2DdbComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -242,9 +266,12 @@ public interface Aws2DdbComponentBuilderFactory {
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param writeCapacity the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder writeCapacity(
                 java.lang.Long writeCapacity) {
@@ -252,25 +279,35 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2DdbComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2DdbComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -279,9 +316,12 @@ public interface Aws2DdbComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2DdbComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -312,7 +352,6 @@ public interface Aws2DdbComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonDDBClient": getOrCreateConfiguration((Ddb2Component) component).setAmazonDDBClient((software.amazon.awssdk.services.dynamodb.DynamoDbClient) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Ddb2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Ddb2Component) component).setConfiguration((org.apache.camel.component.aws2.ddb.Ddb2Configuration) value); return true;
             case "consistentRead": getOrCreateConfiguration((Ddb2Component) component).setConsistentRead((boolean) value); return true;
             case "keyAttributeName": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeName((java.lang.String) value); return true;
@@ -326,7 +365,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ddb2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
-            case "basicPropertyBinding": ((Ddb2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Ddb2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

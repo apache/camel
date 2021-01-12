@@ -231,10 +231,13 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Message [repliedToId=" + repliedToId + ", networkId=" + networkId + ", url=" + url + ", threadId=" + threadId + ", id=" + id + ", messageType=" + messageType + ", chatClientSequence="
-                + chatClientSequence + ", body=" + body + ", clientUrl=" + clientUrl + ", contentExcerpt=" + contentExcerpt + ", createdAt=" + createdAt + ", clientType=" + clientType + ", privacy="
-                + privacy + ", senderType=" + senderType + ", likedBy=" + likedBy + ", senderId=" + senderId + ", language=" + language + ", systemMessage=" + systemMessage + ", attachments="
-                + attachments + ", directMessage=" + directMessage + ", webUrl=" + webUrl + "]";
+        return "Message [repliedToId=" + repliedToId + ", networkId=" + networkId + ", url=" + url + ", threadId=" + threadId
+               + ", id=" + id + ", messageType=" + messageType + ", chatClientSequence="
+               + chatClientSequence + ", body=" + body + ", clientUrl=" + clientUrl + ", contentExcerpt=" + contentExcerpt
+               + ", createdAt=" + createdAt + ", clientType=" + clientType + ", privacy="
+               + privacy + ", senderType=" + senderType + ", likedBy=" + likedBy + ", senderId=" + senderId + ", language="
+               + language + ", systemMessage=" + systemMessage + ", attachments="
+               + attachments + ", directMessage=" + directMessage + ", webUrl=" + webUrl + "]";
     }
-    
+
 }

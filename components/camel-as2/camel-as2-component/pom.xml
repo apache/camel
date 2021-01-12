@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-as2</artifactId>
@@ -51,15 +51,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-as2-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-as2-api</artifactId>
-            <version>${project.version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
         </dependency>
 
         <!-- testing -->
@@ -109,12 +100,13 @@
                             <apis>
                                 <api>
                                     <apiName>client</apiName>
+                                    <producerOnly>true</producerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>
                                             createSigningGenerator|createEncryptingGenerator|createCompressorGenerator|createEncryptor|createCompressor
                                         </excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <nullableOptions>
                                         <nullableOption>ediMessageTransferEncoding</nullableOption>
                                         <nullableOption>signingAlgorithm</nullableOption>
@@ -129,10 +121,11 @@
                                 </api>
                                 <api>
                                     <apiName>server</apiName>
+                                    <consumerOnly>true</consumerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <excludeConfigNames>handler</excludeConfigNames>
                                     <!--                     <nullableOptions>
                                                             <nullableOption>decryptingPrivateKey</nullableOption>
@@ -145,13 +138,22 @@
                             <excludeConfigNames />
                             <excludeConfigTypes />
                             <extraOptions />
-                            <fromJavadoc />
+                            <fromJavasource />
                             <aliases />
                             <nullableOptions />
                             -->
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-as2-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

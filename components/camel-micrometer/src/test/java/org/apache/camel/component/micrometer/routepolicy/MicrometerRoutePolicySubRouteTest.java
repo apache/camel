@@ -41,9 +41,9 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
 
         assertMockEndpointsSatisfied();
 
-        // there should be 6 names
+        // there should be 6 metrics per route
         List<Meter> meters = meterRegistry.getMeters();
-        assertEquals(6, meters.size());
+        assertEquals(6 * context.getRouteDefinitions().size(), meters.size());
         meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter));
     }
 
@@ -53,11 +53,11 @@ public class MicrometerRoutePolicySubRouteTest extends AbstractMicrometerRoutePo
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo")
-                    .to("direct:bar")
-                    .to("mock:foo");
+                        .to("direct:bar")
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

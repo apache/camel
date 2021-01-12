@@ -42,7 +42,7 @@ public class GrokMarshalTest extends CamelTestSupport {
     @Test
     public void testMarshalNotSupported() throws Exception {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:direct", ""));
+                () -> template.sendBody("direct:direct", ""));
         assertIsInstanceOf(UnsupportedOperationException.class, e.getCause());
     }
 

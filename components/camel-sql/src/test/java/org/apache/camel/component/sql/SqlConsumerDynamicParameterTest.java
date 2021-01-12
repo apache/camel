@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
-    
+
     @BindToRegistry("myIdGenerator")
     MyIdGenerator idGenerator = new MyIdGenerator();
 
@@ -45,7 +45,7 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         super.setUp();
     }
@@ -88,8 +88,8 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}?initialDelay=0&delay=50")
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                        .routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

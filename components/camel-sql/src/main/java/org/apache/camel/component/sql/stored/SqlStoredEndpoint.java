@@ -33,7 +33,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template", producerOnly = true, label = "database,sql")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template",
+             producerOnly = true, label = "database,sql")
 public class SqlStoredEndpoint extends DefaultEndpoint {
 
     private CallableStatementWrapperFactory wrapperFactory;
@@ -52,8 +53,8 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     @UriParam(description = "If set, will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing")
     private boolean noop;
     @UriParam(description = "Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored"
-            + " in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header"
-            + " to store the template result and the original message body is preserved.")
+                            + " in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header"
+                            + " to store the template result and the original message body is preserved.")
     private String outputHeader;
     @UriParam(description = "Whether this call is for a function.")
     private boolean function;
@@ -86,7 +87,8 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        this.wrapperFactory = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(getCamelContext().getClassResolver()), isFunction());
+        this.wrapperFactory = new CallableStatementWrapperFactory(
+                jdbcTemplate, new TemplateParser(getCamelContext().getClassResolver()), isFunction());
     }
 
     @Override

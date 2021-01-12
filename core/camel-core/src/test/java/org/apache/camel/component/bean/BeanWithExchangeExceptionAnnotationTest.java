@@ -56,7 +56,8 @@ public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport 
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                onException(MyCustomException.class).maximumRedeliveries(0).handled(true).bean("myBean", "handleException").to("mock:error");
+                onException(MyCustomException.class).maximumRedeliveries(0).handled(true).bean("myBean", "handleException")
+                        .to("mock:error");
 
                 from("direct:start").bean("myBean", "throwException").to("mock:result");
             }

@@ -52,7 +52,8 @@ public class PubNubStateExample extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         headers.clear();
         headers.put(PubNubConstants.OPERATION, "GETSTATE");
-        PNGetStateResult getStateResult = template.requestBodyAndHeader("direct:publish", null, PubNubConstants.OPERATION, "GETSTATE", PNGetStateResult.class);
+        PNGetStateResult getStateResult = template.requestBodyAndHeader("direct:publish", null, PubNubConstants.OPERATION,
+                "GETSTATE", PNGetStateResult.class);
         assertMockEndpointsSatisfied();
         assertEquals("preben", getStateResult.getStateByUUID().get("iot").getAsJsonObject().get("name").getAsString());
     }
@@ -61,8 +62,9 @@ public class PubNubStateExample extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:publish").to("pubnub:iot?uuid=myuuid&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
-                    .to("mock:result");
+                from("direct:publish")
+                        .to("pubnub:iot?uuid=myuuid&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
+                        .to("mock:result");
             }
         };
     }

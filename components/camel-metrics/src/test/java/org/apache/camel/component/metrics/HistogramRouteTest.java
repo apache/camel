@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = { HistogramRouteTest.TestConfig.class })
+                      classes = { HistogramRouteTest.TestConfig.class })
 @MockEndpoints
 public class HistogramRouteTest {
 

@@ -85,7 +85,7 @@ public class DebeziumConsumer extends DefaultConsumer {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange,
-                                                      exchange.getException());
+                        exchange.getException());
             }
         }
     }

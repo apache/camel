@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-javaconfig</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Spring JavaConfig</name>
+    <name>Camel :: Spring JavaConfig (deprecated)</name>
     <description>Using Camel with Spring Java Configuration</description>
 
     <properties>

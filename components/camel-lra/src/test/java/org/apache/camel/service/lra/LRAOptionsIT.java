@@ -50,7 +50,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
         compensate.expectedMessagesMatches(ex -> ex.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) != null);
 
         assertThrows(Exception.class,
-            () -> template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola"));
+                () -> template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola"));
 
         compensate.assertIsSatisfied();
     }
@@ -58,7 +58,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
     @Test
     public void testRouteDoesNotHangOnOptionError() throws Exception {
         assertThrows(RuntimeCamelException.class,
-            () -> template.sendBody("direct:wrong-expression", "Hello"));
+                () -> template.sendBody("direct:wrong-expression", "Hello"));
     }
 
     @Override

@@ -61,16 +61,16 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         // START SNIPPET: e2
         // register the NotificationListener
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
-        MyNotificationListener listener = new MyNotificationListener();   
+        MyNotificationListener listener = new MyNotificationListener();
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
-            listener,                                                                                         
-            new NotificationFilter() {            
-                private static final long serialVersionUID = 1L;
+                listener,
+                new NotificationFilter() {
+                    private static final long serialVersionUID = 1L;
 
-                public boolean isNotificationEnabled(Notification notification) {
-                    return notification.getSource().equals("MyCamel");
-                }
-            }, null);
+                    public boolean isNotificationEnabled(Notification notification) {
+                        return notification.getSource().equals("MyCamel");
+                    }
+                }, null);
 
         // END SNIPPET: e2
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -78,7 +78,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-        
+
         assertEquals(8, listener.getEventCounter(), "Get a wrong number of events");
 
         context.stop();
@@ -87,17 +87,17 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
     @Test
     public void testExchangeFailed() throws Exception {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
-        
-        MyNotificationListener listener = new MyNotificationListener();   
-        context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
-            listener, new NotificationFilter() {
-                private static final long serialVersionUID = 1L;
 
-                public boolean isNotificationEnabled(Notification notification) {
-                    return true;
-                }
-            }, null);
-        
+        MyNotificationListener listener = new MyNotificationListener();
+        context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
+                listener, new NotificationFilter() {
+                    private static final long serialVersionUID = 1L;
+
+                    public boolean isNotificationEnabled(Notification notification) {
+                        return true;
+                    }
+                }, null);
+
         try {
             template.sendBody("direct:fail", "Hello World");
             fail("Should have thrown an exception");
@@ -105,7 +105,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
             // expected
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         }
-        
+
         assertEquals(4, listener.getEventCounter(), "Get a wrong number of events");
 
         context.stop();
@@ -122,21 +122,21 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
             }
         };
     }
-    
+
     private class MyNotificationListener implements NotificationListener {
-        
+
         private int eventCounter;
 
         @Override
         public void handleNotification(Notification notification, Object handback) {
             log.debug("Get the notification : " + notification);
-            eventCounter++;            
+            eventCounter++;
         }
-        
+
         public int getEventCounter() {
             return eventCounter;
         }
-        
+
     }
 
 }

@@ -91,7 +91,7 @@ public class ManagedEnricherTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .enrich().simple("direct:${header.whereto}").id("mysend");
+                        .enrich().simple("direct:${header.whereto}").id("mysend");
 
                 from("direct:foo").to("mock:foo");
 

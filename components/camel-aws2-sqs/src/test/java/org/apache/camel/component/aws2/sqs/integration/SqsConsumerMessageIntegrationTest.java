@@ -23,13 +23,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws2.common.SystemPropertiesAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
 
-
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static AWSService service = AWSServiceFactory.createSQSService();
+
+    @RegisterExtension
+    public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -58,15 +69,29 @@ public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws2-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1");
+        TestAWSCredentialsProvider credentialsProvider = new SystemPropertiesAWSCredentialsProvider();
+        AwsCredentials credentials = credentialsProvider.resolveCredentials();
+
+        final String sqsEndpointUri
+                = String.format("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&configuration=%s",
+                        sharedNameGenerator.getName(),
+                        credentials.accessKeyId(),
+                        credentials.secretAccessKey(),
+                        "#class:" + TestSqsConfiguration.class.getName());
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws2-sqs://camel-1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&deleteAfterRead=false&deleteIfFiltered=true").startupOrder(1)
-                    .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
+                fromF("aws2-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=eu-west-1&deleteAfterRead=false&deleteIfFiltered=true&configuration=%s",
+                        sharedNameGenerator.getName(),
+                        credentials.accessKeyId(),
+                        credentials.secretAccessKey(),
+                        "#class:" + TestSqsConfiguration.class.getName())
+                                .startupOrder(1)
+                                .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                                .to("mock:result");
             }
         };
     }

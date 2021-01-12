@@ -19,31 +19,27 @@ package org.apache.camel.component.dozer;
 import com.github.dozermapper.core.ConfigurableCustomConverter;
 
 /**
- * Configurable converters in Dozer are not thread-safe if a single converter 
- * instance is used.  One thread could step on the parameter being used by 
- * another thread since setParameter() is called first and convert() is called 
- * separately.  This implementation holds a copy of the parameter in 
- * thread-local storage which eliminates the possibility of collision between
- * threads on a single converter instance.
+ * Configurable converters in Dozer are not thread-safe if a single converter instance is used. One thread could step on
+ * the parameter being used by another thread since setParameter() is called first and convert() is called separately.
+ * This implementation holds a copy of the parameter in thread-local storage which eliminates the possibility of
+ * collision between threads on a single converter instance.
  * 
- * Any converter which is referenced by ID with the Dozer component should
- * extend this class.  It is recommended to call done() in a finally block 
- * in the implementation of convert() to clean up the value stored in the 
- * thread local.
+ * Any converter which is referenced by ID with the Dozer component should extend this class. It is recommended to call
+ * done() in a finally block in the implementation of convert() to clean up the value stored in the thread local.
  */
 public abstract class BaseConverter implements ConfigurableCustomConverter {
-    
+
     private ThreadLocal<String> localParameter = new ThreadLocal<>();
-    
+
     @Override
     public void setParameter(String parameter) {
         localParameter.set(parameter);
     }
-    
+
     public void done() {
         localParameter.set(null);
     }
-    
+
     public String getParameter() {
         return localParameter.get();
     }

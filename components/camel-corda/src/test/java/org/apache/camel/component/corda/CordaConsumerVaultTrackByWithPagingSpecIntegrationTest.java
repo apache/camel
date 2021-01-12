@@ -39,10 +39,10 @@ public class CordaConsumerVaultTrackByWithPagingSpecIntegrationTest extends Cord
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_WITH_PAGING_SPEC
-                        + "&contractStateClass=#contractStateClass"
-                        + "&queryCriteria=#queryCriteria"
-                        + "&pageSpecification=#pageSpecification")
-                        .to("mock:result");
+                     + "&contractStateClass=#contractStateClass"
+                     + "&queryCriteria=#queryCriteria"
+                     + "&pageSpecification=#pageSpecification")
+                             .to("mock:result");
             }
         };
     }

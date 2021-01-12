@@ -43,6 +43,7 @@ import org.wildfly.security.http.bearer.WildFlyElytronHttpBearerProvider;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class ElytronBearerTokenTest extends BaseElytronTest {
@@ -54,7 +55,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     }
 
     @Override
-    TokenSecurityRealm createBearerRealm()  {
+    TokenSecurityRealm createBearerRealm() {
         try {
             return TokenSecurityRealm.builder().principalClaimName("username")
                     .validator(JwtValidator.builder().publicKey(getKeyPair().getPublic()).build()).build();
@@ -74,7 +75,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
         String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
                 "empty body",
                 Headers.AUTHORIZATION.toString(),
-                "Bearer " + createToken("alice", "user",  new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
+                "Bearer " + createToken("alice", "user", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
                 String.class);
         assertNotNull(response);
         assertEquals("Hello alice!", response);
@@ -82,18 +83,16 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
 
     @Test
     public void testBearerTokenBadRole() throws Exception {
-        try {
-            String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
-                    "empty body",
-                    Headers.AUTHORIZATION.toString(),
-                    "Bearer " + createToken("alice", "guest", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
-                    String.class);
-            fail("Should throw exception");
+        Date date = new Date(new Date().getTime() + 10000);
+        String authHeader = Headers.AUTHORIZATION.toString();
+        String authHeaderValue = "Bearer " + createToken("alice", "guest", date, getKeyPair().getPrivate());
 
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(403, he.getStatusCode());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
+                        "empty body", authHeader, authHeaderValue, String.class));
+
+        HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(403, he.getStatusCode());
     }
 
     @Override
@@ -106,8 +105,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
         };
     }
 
-
-    private String createToken(String userName, String roles,  Date expirationDate, PrivateKey signingKey) {
+    private String createToken(String userName, String roles, Date expirationDate, PrivateKey signingKey) {
         JWTClaimsSet.Builder claimsSet = new JWTClaimsSet.Builder();
 
         claimsSet.subject("123445667");
@@ -122,7 +120,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
         try {
             signedJWT.sign(new RSASSASigner(signingKey));
         } catch (JOSEException e) {
-            e.printStackTrace();
+            LOG.warn("Cannot sign object: {}", e.getMessage(), e);
         }
 
         return signedJWT.serialize();

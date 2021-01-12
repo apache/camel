@@ -24,12 +24,17 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tests</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-itest</artifactId>
-    <name>Camel :: Integration Tests :: Non OSGi</name>
+    <name>Camel :: Integration Tests</name>
     <description>Performs cross component integration tests</description>
+
+    <properties>
+        <camel.itest.fork.count>1</camel.itest.fork.count>
+        <camel.itest.fork.reuse>true</camel.itest.fork.reuse>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -366,6 +371,14 @@
             <version>${jboss-logging-version}</version>
         </dependency>
 
+        <!-- needed by jetty http server to load class: org.jvnet.staxex.util.XMLStreamReaderToXMLStreamWriter -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-osgi</artifactId>
+            <version>${jaxb-osgi-version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -388,8 +401,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- must for per test -->
-                    <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
+                    <forkCount>${camel.itest.fork.count}</forkCount>
+                    <reuseForks>${camel.itest.fork.reuse}</reuseForks>
                     <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
                     <systemPropertyVariables>
                         <derby.stream.error.file>target/derby.log</derby.stream.error.file>

@@ -39,6 +39,8 @@ public interface MiloClientComponentBuilderFactory {
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
      */
     static MiloClientComponentBuilder miloClient() {
         return new MiloClientComponentBuilderImpl();
@@ -54,9 +56,12 @@ public interface MiloClientComponentBuilderFactory {
          * A virtual client id to force the creation of a new connection
          * instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -66,9 +71,12 @@ public interface MiloClientComponentBuilderFactory {
          * All default options for client configurations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.milo.client.MiloClientConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.milo.client.MiloClientConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder configuration(
                 org.apache.camel.component.milo.client.MiloClientConfiguration configuration) {
@@ -78,9 +86,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * A suffix for endpoint URI when discovering.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param discoveryEndpointSuffix the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder discoveryEndpointSuffix(
                 java.lang.String discoveryEndpointSuffix) {
@@ -90,9 +101,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * An alternative discovery URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param discoveryEndpointUri the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder discoveryEndpointUri(
                 java.lang.String discoveryEndpointUri) {
@@ -108,10 +122,13 @@ public interface MiloClientComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -129,10 +146,13 @@ public interface MiloClientComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -140,26 +160,36 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MiloClientComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MiloClientComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param allowedSecurityPolicies the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder allowedSecurityPolicies(
                 java.lang.String allowedSecurityPolicies) {
@@ -169,10 +199,13 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The application name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Apache Camel adapter for Eclipse Milo
          * Group: client
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -182,10 +215,13 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The application URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://camel.apache.org/EclipseMilo/Client
          * Group: client
+         * 
+         * @param applicationUri the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder applicationUri(
                 java.lang.String applicationUri) {
@@ -195,9 +231,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * Channel lifetime in milliseconds.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param channelLifetime the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder channelLifetime(
                 java.lang.Long channelLifetime) {
@@ -207,9 +246,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The name of the key in the keystore file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param keyAlias the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder keyAlias(java.lang.String keyAlias) {
             doSetProperty("keyAlias", keyAlias);
@@ -218,9 +260,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The key password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param keyPassword the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder keyPassword(
                 java.lang.String keyPassword) {
@@ -230,9 +275,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The keystore password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param keyStorePassword the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder keyStorePassword(
                 java.lang.String keyStorePassword) {
@@ -242,9 +290,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The key store type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param keyStoreType the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder keyStoreType(
                 java.lang.String keyStoreType) {
@@ -254,9 +305,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The URL where the key should be loaded from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param keyStoreUrl the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder keyStoreUrl(
                 java.lang.String keyStoreUrl) {
@@ -266,9 +320,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The maximum number of pending publish requests.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param maxPendingPublishRequests the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder maxPendingPublishRequests(
                 java.lang.Long maxPendingPublishRequests) {
@@ -278,9 +335,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The maximum number of bytes a response message may have.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param maxResponseMessageSize the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder maxResponseMessageSize(
                 java.lang.Long maxResponseMessageSize) {
@@ -291,10 +351,13 @@ public interface MiloClientComponentBuilderFactory {
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: client
+         * 
+         * @param overrideHost the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder overrideHost(boolean overrideHost) {
             doSetProperty("overrideHost", overrideHost);
@@ -303,10 +366,13 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The product URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://camel.apache.org/EclipseMilo
          * Group: client
+         * 
+         * @param productUri the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder productUri(
                 java.lang.String productUri) {
@@ -316,10 +382,13 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * The requested publishing interval in milliseconds.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Default: 1_000.0
          * Group: client
+         * 
+         * @param requestedPublishingInterval the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder requestedPublishingInterval(
                 java.lang.Double requestedPublishingInterval) {
@@ -329,9 +398,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * Request timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder requestTimeout(
                 java.lang.Long requestTimeout) {
@@ -341,9 +413,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * Session name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param sessionName the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder sessionName(
                 java.lang.String sessionName) {
@@ -353,9 +428,12 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * Session timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: client
+         * 
+         * @param sessionTimeout the value to set
+         * @return the dsl builder
          */
         default MiloClientComponentBuilder sessionTimeout(
                 java.lang.Long sessionTimeout) {
@@ -392,7 +470,7 @@ public interface MiloClientComponentBuilderFactory {
             case "discoveryEndpointUri": getOrCreateConfiguration((MiloClientComponent) component).setDiscoveryEndpointUri((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((MiloClientComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MiloClientComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MiloClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MiloClientComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "allowedSecurityPolicies": getOrCreateConfiguration((MiloClientComponent) component).setAllowedSecurityPolicies((java.lang.String) value); return true;
             case "applicationName": getOrCreateConfiguration((MiloClientComponent) component).setApplicationName((java.lang.String) value); return true;
             case "applicationUri": getOrCreateConfiguration((MiloClientComponent) component).setApplicationUri((java.lang.String) value); return true;

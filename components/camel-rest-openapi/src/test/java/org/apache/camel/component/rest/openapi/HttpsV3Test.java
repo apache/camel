@@ -64,9 +64,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class HttpsV3Test extends CamelTestSupport {
 
     public static WireMockServer petstore = new WireMockServer(
-        wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
-            .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-            .keystorePassword("changeit"));
+            wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
+                    .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
+                    .keystorePassword("changeit"));
 
     static final Object NO_BODY = null;
 
@@ -109,7 +109,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
         petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-            equalTo("application/xml, application/json")));
+                equalTo("application/xml, application/json")));
     }
 
     @Override
@@ -151,20 +151,21 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/openapi.json")).willReturn(aResponse().withBody(
-            Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi.json").toURI())))));
+                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi.json").toURI())))));
 
         petstore.stubFor(
-            get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+                get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
 
     static SSLContextParameters createHttpsParameters(final CamelContext camelContext) throws Exception {
         final TrustManagersParameters trustManagerParameters = new TrustManagersParameters();
         trustManagerParameters.setCamelContext(camelContext);
-        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        final TrustManagerFactory trustManagerFactory
+                = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         final HttpsSettings httpsSettings = petstore.getOptions().httpsSettings();
         final KeyStore trustStore = CertificateUtils.getKeyStore(Resource.newResource(httpsSettings.keyStorePath()),
-            httpsSettings.keyStoreType(), null, httpsSettings.keyStorePassword());
+                httpsSettings.keyStoreType(), null, httpsSettings.keyStorePassword());
         trustManagerFactory.init(trustStore);
         final TrustManager trustManager = trustManagerFactory.getTrustManagers()[0];
         trustManagerParameters.setTrustManager(trustManager);

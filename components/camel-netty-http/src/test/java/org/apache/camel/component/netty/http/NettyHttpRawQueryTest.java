@@ -49,7 +49,7 @@ public class NettyHttpRawQueryTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/")
-                    .to(mockEndpoint);
+                        .to(mockEndpoint);
             }
         };
     }

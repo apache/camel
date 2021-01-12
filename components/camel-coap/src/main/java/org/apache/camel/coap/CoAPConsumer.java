@@ -64,7 +64,7 @@ public class CoAPConsumer extends DefaultConsumer {
                 cr.add(child);
                 cr = child;
             } else if (path.isEmpty()) {
-                ((CamelCoapResource)child).addConsumer(this);
+                ((CamelCoapResource) child).addConsumer(this);
             } else {
                 cr = child;
             }

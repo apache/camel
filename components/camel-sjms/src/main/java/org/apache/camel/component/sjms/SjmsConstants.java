@@ -18,8 +18,10 @@ package org.apache.camel.component.sjms;
 
 public interface SjmsConstants {
 
-    String JMS_MESSAGE_TYPE = "JmsMessageType";
-
+    String JMS_MESSAGE_TYPE = "CamelJmsMessageType";
     String JMS_SESSION = "CamelJMSSession";
+    String JMS_DESTINATION_NAME = "CamelJMSDestinationName";
+    String JMS_REQUEST_TIMEOUT = "CamelJmsRequestTimeout";
+    String JMS_DELIVERY_MODE = "CamelJmsDeliveryMode";
 
 }

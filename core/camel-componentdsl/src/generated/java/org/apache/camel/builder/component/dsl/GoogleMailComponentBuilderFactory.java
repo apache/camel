@@ -37,6 +37,8 @@ public interface GoogleMailComponentBuilderFactory {
      * Category: cloud,api,mail
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-mail
+     * 
+     * @return the dsl builder
      */
     static GoogleMailComponentBuilder googleMail() {
         return new GoogleMailComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface GoogleMailComponentBuilderFactory {
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -63,9 +68,12 @@ public interface GoogleMailComponentBuilderFactory {
         /**
          * Client ID of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -75,9 +83,12 @@ public interface GoogleMailComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.mail.GoogleMailConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.mail.GoogleMailConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder configuration(
                 org.apache.camel.component.google.mail.GoogleMailConfiguration configuration) {
@@ -93,10 +104,13 @@ public interface GoogleMailComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -114,10 +128,13 @@ public interface GoogleMailComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -125,17 +142,24 @@ public interface GoogleMailComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GoogleMailComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleMailComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -143,9 +167,12 @@ public interface GoogleMailComponentBuilderFactory {
          * client. Will by default use BatchGoogleMailClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.mail.GoogleMailClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.mail.GoogleMailClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder clientFactory(
                 org.apache.camel.component.google.mail.GoogleMailClientFactory clientFactory) {
@@ -156,9 +183,12 @@ public interface GoogleMailComponentBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -168,9 +198,12 @@ public interface GoogleMailComponentBuilderFactory {
         /**
          * Client secret of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -182,9 +215,12 @@ public interface GoogleMailComponentBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
@@ -220,7 +256,7 @@ public interface GoogleMailComponentBuilderFactory {
             case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
             case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((GoogleMailComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleMailComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleMailComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleMailComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleMailComponent) component).setClientSecret((java.lang.String) value); return true;

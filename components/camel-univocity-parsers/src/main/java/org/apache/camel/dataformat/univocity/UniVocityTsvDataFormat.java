@@ -29,27 +29,27 @@ import org.apache.camel.spi.annotations.Dataformat;
  * This class is the data format that uses the TSV uniVocity parser.
  */
 @Dataformat("univocity-tsv")
-public class UniVocityTsvDataFormat extends AbstractUniVocityDataFormat<TsvFormat, TsvWriterSettings, TsvWriter, TsvParserSettings, TsvParser, UniVocityTsvDataFormat> {
+public class UniVocityTsvDataFormat
+        extends
+        AbstractUniVocityDataFormat<TsvFormat, TsvWriterSettings, TsvWriter, TsvParserSettings, TsvParser, UniVocityTsvDataFormat> {
     protected Character escapeChar;
 
     /**
-     * Gets the escape character symbol.
-     * If {@code null} then the default format value is used.
+     * Gets the escape character symbol. If {@code null} then the default format value is used.
      *
      * @return the escape character symbol
-     * @see com.univocity.parsers.tsv.TsvFormat#getEscapeChar()
+     * @see    com.univocity.parsers.tsv.TsvFormat#getEscapeChar()
      */
     public Character getEscapeChar() {
         return escapeChar;
     }
 
     /**
-     * Sets the escape character symbol.
-     * If {@code null} then the default settings value is used.
+     * Sets the escape character symbol. If {@code null} then the default settings value is used.
      *
-     * @param escapeChar the escape character symbol
-     * @return current data format instance, fluent API
-     * @see com.univocity.parsers.tsv.TsvFormat#setEscapeChar(char)
+     * @param  escapeChar the escape character symbol
+     * @return            current data format instance, fluent API
+     * @see               com.univocity.parsers.tsv.TsvFormat#setEscapeChar(char)
      */
     public UniVocityTsvDataFormat setEscapeChar(Character escapeChar) {
         this.escapeChar = escapeChar;

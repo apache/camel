@@ -47,42 +47,15 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return (AdvancedDdb2StreamEndpointBuilder) this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Ddb2StreamEndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Ddb2StreamEndpointBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param amazonDynamoDbStreamsClient the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
                 Object amazonDynamoDbStreamsClient) {
@@ -93,9 +66,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param amazonDynamoDbStreamsClient the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder amazonDynamoDbStreamsClient(
                 String amazonDynamoDbStreamsClient) {
@@ -111,10 +87,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -130,10 +109,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -147,10 +130,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * used, then a sequenceNumberProvider MUST be supplied.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.dynamodb.model.ShardIteratorType</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder iteratorType(
                 ShardIteratorType iteratorType) {
@@ -164,10 +150,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * used, then a sequenceNumberProvider MUST be supplied.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.dynamodb.model.ShardIteratorType</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder iteratorType(String iteratorType) {
             doSetProperty("iteratorType", iteratorType);
@@ -176,9 +165,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -188,9 +180,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder maxResultsPerRequest(
                 String maxResultsPerRequest) {
@@ -200,9 +195,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -211,9 +209,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -222,10 +223,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the DDBStreams client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -234,11 +238,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: consumer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -248,10 +255,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * To define a proxy protocol when instantiating the DDBStreams client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: consumer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -260,9 +270,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * The region in which DDBStreams client needs to work.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -272,10 +285,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -286,10 +302,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -302,9 +322,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * registry reference or a literal sequence number.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumberProvider the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder sequenceNumberProvider(
                 Object sequenceNumberProvider) {
@@ -317,9 +340,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * registry reference or a literal sequence number.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumberProvider the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder sequenceNumberProvider(
                 String sequenceNumberProvider) {
@@ -330,10 +356,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -344,10 +373,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -358,9 +391,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -371,9 +407,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -384,9 +423,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -397,9 +439,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -414,9 +459,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -431,9 +479,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -443,10 +494,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -455,10 +509,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -468,10 +525,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -481,10 +541,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -493,10 +557,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -505,10 +572,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -519,10 +589,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -533,10 +606,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -546,10 +622,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -561,10 +641,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder runLoggingLevel(String runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
@@ -576,9 +659,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -591,9 +677,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -602,12 +691,32 @@ public interface Ddb2StreamEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default Ddb2StreamEndpointBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -617,13 +726,17 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder schedulerProperties(
                 String key,
@@ -635,13 +748,16 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -650,10 +766,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder startScheduler(boolean startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -662,10 +781,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -674,10 +797,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -687,10 +814,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -700,10 +830,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -713,10 +846,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -725,9 +862,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -736,9 +876,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -761,10 +904,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -778,9 +924,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -790,9 +939,13 @@ public interface Ddb2StreamEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -803,9 +956,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -819,9 +975,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -835,9 +994,12 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder pollStrategy(
                 String pollStrategy) {
@@ -845,41 +1007,16 @@ public interface Ddb2StreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDdb2StreamEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDdb2StreamEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -890,10 +1027,14 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2StreamEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -937,6 +1078,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Name of the dynamodb table
          * 
          * @param path tableName
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder aws2Ddbstream(String path) {
             return Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
@@ -958,6 +1100,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path tableName
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder aws2Ddbstream(
                 String componentName,

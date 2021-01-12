@@ -35,9 +35,10 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     @UriParam(label = "sign", defaultValue = "true")
     private Boolean includeContent = Boolean.TRUE;
 
-    @UriParam(label = "sign", javaType = "java.lang.String", 
+    @UriParam(label = "sign", javaType = "java.lang.String",
               description = "Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma")
-    private List<SignerInfo> signer = new ArrayList<>();
+    private String signer;
+    private final List<SignerInfo> signerList = new ArrayList<>();
 
     public SignedDataCreatorConfiguration(CamelContext context) {
         super(context);
@@ -48,20 +49,15 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
     }
 
     /**
-     * Indicates whether the signed content should be included into the Signed
-     * Data instance. If false then a detached Signed Data instance is created
-     * in the header CamelCryptoCmsSignedData.
+     * Indicates whether the signed content should be included into the Signed Data instance. If false then a detached
+     * Signed Data instance is created in the header CamelCryptoCmsSignedData.
      */
     public void setIncludeContent(Boolean includeContent) {
         this.includeContent = includeContent;
     }
 
-    public List<SignerInfo> getSigner() {
+    public String getSigner() {
         return signer;
-    }
-
-    public void setSigner(List<SignerInfo> signer) {
-        this.signer = signer;
     }
 
     public void setSigner(String signer) {
@@ -79,19 +75,22 @@ public class SignedDataCreatorConfiguration extends CryptoCmsMarshallerConfigura
         }
     }
 
+    public void setSigner(SignerInfo signer) {
+        addSigner(signer);
+    }
+
     public void addSigner(SignerInfo info) {
-        if (this.signer == null) {
-            this.signer = new ArrayList<>();
-        }
-        this.signer.add(info);
+        this.signerList.add(info);
+    }
+
+    public List<SignerInfo> getSignerList() {
+        return signerList;
     }
 
     public void init() throws CryptoCmsException {
-
-        if (signer.isEmpty()) {
+        if (signerList.isEmpty()) {
             logErrorAndThrow(LOG, "No signer set.");
         }
-
     }
 
 }

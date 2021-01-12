@@ -35,8 +35,9 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
 
     @Test
     public void testHttpClient() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
-                                                        "application/xml", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello",
+                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
+                "application/xml", String.class);
         assertEquals("/", response, "Get a wrong response");
 
         response = template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
@@ -63,10 +64,11 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         // get the request URL and copy it to the request body
                         String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                        exchange.getOut().setBody(uri);
+                        exchange.getMessage().setBody(uri);
                     }
                 };
-                from("jetty:http://localhost:" + port2 + "/test/hello").to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port2 + "/test/hello")
+                        .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
             }

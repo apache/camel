@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerSkipDotFilesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/dotfiles?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/dotfiles?password=admin";
     }
 
     @Override

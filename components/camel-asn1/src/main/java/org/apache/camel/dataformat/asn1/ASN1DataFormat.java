@@ -87,7 +87,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     private void encodeGenericTypeObject(Exchange exchange, Class<?> clazz, OutputStream stream)
-        throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
+            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, IOException {
         Class<?>[] paramOut = new Class<?>[1];
         paramOut[0] = OutputStream.class;
         ReverseByteArrayOutputStream berOut = new ReverseByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE / 256, true);
@@ -96,7 +97,7 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         stream.write(berOut.getArray());
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (usingIterator) {
@@ -110,7 +111,8 @@ public class ASN1DataFormat extends ServiceSupport implements DataFormat, DataFo
         } else {
             ASN1Primitive asn1Record = null;
             byte[] asn1Bytes;
-            try (ASN1InputStream ais = new ASN1InputStream(stream); ByteArrayOutputStream asn1Out = new ByteArrayOutputStream();) {
+            try (ASN1InputStream ais = new ASN1InputStream(stream);
+                 ByteArrayOutputStream asn1Out = new ByteArrayOutputStream();) {
                 while (ais.available() > 0) {
                     asn1Record = ais.readObject();
                     asn1Out.write(asn1Record.getEncoded());

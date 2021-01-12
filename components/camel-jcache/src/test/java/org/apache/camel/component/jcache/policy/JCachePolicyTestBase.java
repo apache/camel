@@ -31,8 +31,8 @@ public class JCachePolicyTestBase extends CamelTestSupport {
     @BeforeEach
     public void before() {
         //Setup mock
-        getMockEndpoint("mock:value").whenAnyExchangeReceived(e ->
-                e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
+        getMockEndpoint("mock:value")
+                .whenAnyExchangeReceived(e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
     public static String randomString() {

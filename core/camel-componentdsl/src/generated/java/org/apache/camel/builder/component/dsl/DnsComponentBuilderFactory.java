@@ -37,6 +37,8 @@ public interface DnsComponentBuilderFactory {
      * Category: networking
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-dns
+     * 
+     * @return the dsl builder
      */
     static DnsComponentBuilder dns() {
         return new DnsComponentBuilderImpl();
@@ -57,27 +59,36 @@ public interface DnsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DnsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default DnsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default DnsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -98,7 +109,7 @@ public interface DnsComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((DnsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((DnsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((DnsComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

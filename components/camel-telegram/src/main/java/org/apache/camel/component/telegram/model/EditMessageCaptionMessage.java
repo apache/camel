@@ -42,14 +42,13 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
     /**
      * Builds {@link EditMessageCaptionMessage} instance.
      *
-     * @param chatId                Unique identifier for the target chat or username of the target channel.
-     * @param messageId             Identifier of the message to edit. Required if inline_message_id is not specified.
-     * @param inlineMessageId       Required if chat_id and message_id are not specified.
-     *                              Identifier of the inline message.
-     * @param caption               New caption of the message.
-     * @param parseMode             Send Markdown or HTML, if you want Telegram apps to show bold, italic,
-     *                              fixed-width text or inline URLs in your bot's message.
-     * @param replyMarkup           An inline keyboard that appears right next to the message it belongs to.
+     * @param chatId          Unique identifier for the target chat or username of the target channel.
+     * @param messageId       Identifier of the message to edit. Required if inline_message_id is not specified.
+     * @param inlineMessageId Required if chat_id and message_id are not specified. Identifier of the inline message.
+     * @param caption         New caption of the message.
+     * @param parseMode       Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or
+     *                        inline URLs in your bot's message.
+     * @param replyMarkup     An inline keyboard that appears right next to the message it belongs to.
      */
     public EditMessageCaptionMessage(String chatId, Integer messageId, String inlineMessageId, String caption,
                                      String parseMode, InlineKeyboardMarkup replyMarkup) {
@@ -128,7 +127,7 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
 
         public EditMessageCaptionMessage build() {
             return new EditMessageCaptionMessage(
-                chatId, messageId, inlineMessageId, caption, parseMode, replyMarkup);
+                    chatId, messageId, inlineMessageId, caption, parseMode, replyMarkup);
         }
     }
 }

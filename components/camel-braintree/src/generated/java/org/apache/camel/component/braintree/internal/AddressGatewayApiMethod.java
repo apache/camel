@@ -45,8 +45,6 @@ public enum AddressGatewayApiMethod implements ApiMethod {
         arg("id", String.class),
         arg("request", com.braintreegateway.AddressRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AddressGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -64,7 +64,7 @@ public class FacebookMethodsTypeHelperTest {
 
                 if (searchIncludes.contains(shortName)) {
                     candidates = FacebookMethodsTypeHelper.getCandidateMethods(
-                        FacebookMethodsTypeHelper.convertToSearchMethod(shortName), new String[0]);
+                            FacebookMethodsTypeHelper.convertToSearchMethod(shortName), new String[0]);
                     assertFalse(candidates.isEmpty(), "No candidate search methods for " + shortName);
                 }
             }
@@ -124,12 +124,14 @@ public class FacebookMethodsTypeHelperTest {
 
     @Test
     public void testConvertToGetMethod() throws Exception {
-        assertEquals(FacebookMethodsType.GET_ACCOUNTS.getName(), FacebookMethodsTypeHelper.convertToGetMethod("accounts"), "Invalid get method name");
+        assertEquals(FacebookMethodsType.GET_ACCOUNTS.getName(), FacebookMethodsTypeHelper.convertToGetMethod("accounts"),
+                "Invalid get method name");
     }
 
     @Test
     public void testConvertToSearchMethod() throws Exception {
-        assertEquals(FacebookMethodsType.SEARCHPOSTS.getName(), FacebookMethodsTypeHelper.convertToSearchMethod("posts"), "Invalid search method name");
+        assertEquals(FacebookMethodsType.SEARCHPOSTS.getName(), FacebookMethodsTypeHelper.convertToSearchMethod("posts"),
+                "Invalid search method name");
     }
 
 }

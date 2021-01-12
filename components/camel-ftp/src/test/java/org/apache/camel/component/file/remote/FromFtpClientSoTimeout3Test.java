@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/timeout/?soTimeout=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/timeout/?soTimeout=5000";
     }
 
     private String getPort() {
@@ -52,13 +52,13 @@ public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
         ftpEndpoint.setFtpClientParameters(ftpClientParameters);
 
         // test RemoteFileConsumer#buildConsumer
-        assertEquals(ftpClientParameters.get("soTimeout"), "10");
+        assertEquals("10", ftpClientParameters.get("soTimeout"));
         ftpEndpoint.createRemoteFileOperations();
 
         // test RemoteFileConsumer#recoverableConnectIfNecessary
         // recover by re-creating operations which should most likely be able to
         // recover
-        assertEquals(ftpClientParameters.get("soTimeout"), "10");
+        assertEquals("10", ftpClientParameters.get("soTimeout"));
         ftpEndpoint.createRemoteFileOperations();
     }
 

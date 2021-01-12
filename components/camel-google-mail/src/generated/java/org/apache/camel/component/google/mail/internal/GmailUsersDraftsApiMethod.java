@@ -78,8 +78,6 @@ public enum GmailUsersDraftsApiMethod implements ApiMethod {
         arg("content", com.google.api.services.gmail.model.Draft.class),
         arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private GmailUsersDraftsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

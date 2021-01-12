@@ -35,7 +35,7 @@ public class ThriftProducerBaseTest extends CamelTestSupport {
     protected static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
     protected static final int THRIFT_TEST_NUM1 = 12;
     protected static final int THRIFT_TEST_NUM2 = 13;
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({ "rawtypes" })
     protected static Calculator.Processor processor;
 
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerBaseTest.class);
@@ -43,7 +43,7 @@ public class ThriftProducerBaseTest extends CamelTestSupport {
     private static TServer server;
 
     @BeforeAll
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
         serverTransport = new TNonblockingServerSocket(THRIFT_TEST_PORT);

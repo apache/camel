@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -45,23 +46,26 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
 
+    private ModelReifierFactory modelReifierFactory = new DefaultModelReifierFactory();
     private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
     private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
+    private final Map<String, RouteTemplateDefinition.Converter> routeTemplateConverters = new ConcurrentHashMap<>();
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
-    private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
-    private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
-    private Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
-    private Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
 
     public DefaultModel(CamelContext camelContext) {
@@ -74,7 +78,10 @@ public class DefaultModel implements Model {
 
     @Override
     public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
-        this.modelLifecycleStrategies.add(modelLifecycleStrategy);
+        // avoid adding double which can happen with spring xml on spring boot
+        if (!this.modelLifecycleStrategies.contains(modelLifecycleStrategy)) {
+            this.modelLifecycleStrategies.add(modelLifecycleStrategy);
+        }
     }
 
     @Override
@@ -194,7 +201,13 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters) throws Exception {
+    public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+        routeTemplateConverters.put(templateIdPattern, converter);
+    }
+
+    @Override
+    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
+            throws Exception {
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
             if (routeTemplateId.equals(def.getId())) {
@@ -206,30 +219,52 @@ public class DefaultModel implements Model {
             throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
         }
 
-        CollectionStringBuffer cbs = new CollectionStringBuffer();
-        final Map<String, Object> prop = new HashMap();
+        final Map<String, Object> prop = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
+            StringJoiner templatesBuilder = new StringJoiner(", ");
+
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
                 if (temp.getDefaultValue() != null) {
                     prop.put(temp.getName(), temp.getDefaultValue());
                 } else {
                     // this is a required parameter do we have that as input
                     if (!parameters.containsKey(temp.getName())) {
-                        cbs.append(temp.getName());
+                        templatesBuilder.add(temp.getName());
                     }
                 }
             }
+            if (templatesBuilder.length() > 0) {
+                throw new IllegalArgumentException(
+                        "Route template " + routeTemplateId + " the following mandatory parameters must be provided: "
+                                                   + templatesBuilder.toString());
+            }
         }
-        if (!cbs.isEmpty()) {
-            throw new IllegalArgumentException("Route template " + routeTemplateId + " the following mandatory parameters must be provided: " + cbs.toString());
-        }
+
         // then override with user parameters
         if (parameters != null) {
             prop.putAll(parameters);
         }
 
-        RouteDefinition def = target.asRouteDefinition();
+        RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
+
+        for (Map.Entry<String, RouteTemplateDefinition.Converter> entry : routeTemplateConverters.entrySet()) {
+            final String key = entry.getKey();
+            final String templateId = target.getId();
+
+            if ("*".equals(key) || templateId.equals(key)) {
+                converter = entry.getValue();
+                break;
+            } else if (AntPathMatcher.INSTANCE.match(key, templateId)) {
+                converter = entry.getValue();
+                break;
+            } else if (templateId.matches(key)) {
+                converter = entry.getValue();
+                break;
+            }
+        }
+
+        RouteDefinition def = converter.apply(target, prop);
         if (routeId != null) {
             def.setId(routeId);
         }
@@ -244,7 +279,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
+    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes)
+            throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
         }
@@ -385,7 +421,8 @@ public class DefaultModel implements Model {
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
-            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            Iterator<ProcessorDefinition> it
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {
                 ProcessorDefinition<?> proc = it.next();
                 if (id.equals(proc.getId())) {
@@ -406,18 +443,13 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
-        this.dataFormats = dataFormats;
-    }
-
-    @Override
     public Map<String, DataFormatDefinition> getDataFormats() {
         return dataFormats;
     }
 
     @Override
-    public void setTransformers(List<TransformerDefinition> transformers) {
-        this.transformers = transformers;
+    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
+        this.dataFormats = dataFormats;
     }
 
     @Override
@@ -426,13 +458,18 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setValidators(List<ValidatorDefinition> validators) {
-        this.validators = validators;
+    public void setTransformers(List<TransformerDefinition> transformers) {
+        this.transformers = transformers;
     }
 
     @Override
     public List<ValidatorDefinition> getValidators() {
         return validators;
+    }
+
+    @Override
+    public void setValidators(List<ValidatorDefinition> validators) {
+        this.validators = validators;
     }
 
     @Override
@@ -450,6 +487,16 @@ public class DefaultModel implements Model {
         this.routeFilter = routeFilter;
     }
 
+    @Override
+    public ModelReifierFactory getModelReifierFactory() {
+        return modelReifierFactory;
+    }
+
+    @Override
+    public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        this.modelReifierFactory = modelReifierFactory;
+    }
+
     /**
      * Should we start newly added routes?
      */
@@ -457,7 +504,7 @@ public class DefaultModel implements Model {
         return camelContext.isStarted() && !camelContext.isStarting();
     }
 
-    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
         try {
             return context.getRegistry().lookupByNameAndType(ref, type);
         } catch (Exception e) {

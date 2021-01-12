@@ -54,9 +54,9 @@ public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    // just return the default country here
-                    .get("lives").to("direct:start")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+                        // just return the default country here
+                        .get("lives").to("direct:start")
+                        .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
                         .bean(new UserService(), "livesWhere");
 

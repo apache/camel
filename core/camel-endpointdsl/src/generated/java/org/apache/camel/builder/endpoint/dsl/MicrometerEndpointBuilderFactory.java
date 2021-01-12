@@ -43,9 +43,12 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Action expression when using timer type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder action(String action) {
             doSetProperty("action", action);
@@ -54,9 +57,12 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Decrement value expression when using counter type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param decrement the value to set
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder decrement(String decrement) {
             doSetProperty("decrement", decrement);
@@ -65,9 +71,12 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Increment value expression when using counter type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param increment the value to set
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder increment(String increment) {
             doSetProperty("increment", increment);
@@ -84,10 +93,13 @@ public interface MicrometerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -105,10 +117,14 @@ public interface MicrometerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -118,9 +134,12 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Value expression when using histogram type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder value(String value) {
             doSetProperty("value", value);
@@ -138,41 +157,16 @@ public interface MicrometerEndpointBuilderFactory {
             return (MicrometerEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMicrometerEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -183,10 +177,14 @@ public interface MicrometerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMicrometerEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -208,8 +206,8 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-         * DISTRIBUTION_SUMMARY, OTHER
+         * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+         * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
@@ -218,6 +216,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Tags of metrics
          * 
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder micrometer(String path) {
             return MicrometerEndpointBuilderFactory.endpointBuilder("micrometer", path);
@@ -235,8 +234,8 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-         * DISTRIBUTION_SUMMARY, OTHER
+         * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+         * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
@@ -247,6 +246,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder micrometer(
                 String componentName,

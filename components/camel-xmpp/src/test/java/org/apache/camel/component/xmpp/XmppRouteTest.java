@@ -19,18 +19,10 @@ package org.apache.camel.component.xmpp;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.jivesoftware.smack.packet.Message;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target")
-public class XmppRouteTest {
-    protected static boolean enabled;
-    protected static String xmppUrl;
+public class XmppRouteTest extends XmppBaseTest {
+
     private static final Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
-    protected Exchange receivedExchange;
-    protected CamelContext context = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint endpoint;
-    protected ProducerTemplate client;
-    private EmbeddedXmppTestServer embeddedXmppTestServer;
+    protected Exchange receivedExchange;
 
     @Test
     public void testXmppRouteWithTextMessage() throws Exception {
@@ -59,14 +46,12 @@ public class XmppRouteTest {
         Object body = assertReceivedValidExchange();
         assertEquals(expectedBody, body, "body");
     }
-    
+
     protected void sendExchange(final Object expectedBody) {
-        client.send(endpoint, new Processor() {
-            public void process(Exchange exchange) {
-                // now lets fire in a message
-                exchange.getIn().setBody(expectedBody);
-                exchange.getIn().setHeader("cheese", 123);
-            }
+        Exchange cheese = template.send(endpoint, exchange -> {
+            // now lets fire in a message
+            exchange.getIn().setBody(expectedBody);
+            exchange.getIn().setHeader("cheese", 123);
         });
     }
 
@@ -75,7 +60,7 @@ public class XmppRouteTest {
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertNotNull(receivedExchange);
-        XmppMessage receivedMessage = (XmppMessage)receivedExchange.getIn();
+        XmppMessage receivedMessage = (XmppMessage) receivedExchange.getIn();
 
         assertEquals(123, receivedMessage.getHeader("cheese"), "cheese header");
         Object body = receivedMessage.getBody();
@@ -87,10 +72,8 @@ public class XmppRouteTest {
         return body;
     }
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        client = new DefaultProducerTemplate(context);
-
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         String uriPrefix = getUriPrefix();
         final String uri1 = uriPrefix + "&resource=camel-test-from&nickname=came-test-from";
         final String uri2 = uriPrefix + "&resource=camel-test-to&nickname=came-test-to";
@@ -101,31 +84,21 @@ public class XmppRouteTest {
         assertNotNull(endpoint, "No endpoint found!");
 
         // lets add some routes
-        context.addRoutes(new RouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from(uri1).to(uri2);
-                from(uri3).process(new Processor() {
-                    public void process(Exchange e) {
-                        LOG.info("Received exchange: " + e);
-                        receivedExchange = e;
-                        latch.countDown();
-                    }
+                from(uri3).process(e -> {
+                    LOG.info("Received exchange: " + e);
+                    receivedExchange = e;
+                    latch.countDown();
                 });
             }
-        });
-
-        context.start();
-        embeddedXmppTestServer = new EmbeddedXmppTestServer();
+        };
     }
 
     protected String getUriPrefix() {
-        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort() + "/camel?login=false&room=camel-anon";
+        return "xmpp://" + getUrl()
+               + "/camel?connectionConfig=#customConnectionConfig&room=camel-anon&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 
-    @AfterEach
-    public void tearDown() throws Exception {
-        client.stop();
-        context.stop();
-        embeddedXmppTestServer.stop();
-    }
 }

@@ -25,10 +25,10 @@ import java.lang.annotation.Target;
 /**
  * Marks a parameter as being an injection point of the exchange properties of an {@link Exchange}
  *
- * @see Exchange#getProperties()  
+ * @see Exchange#getProperties()
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.PARAMETER })
+@Target({ ElementType.PARAMETER })
 public @interface ExchangeProperties {
 }

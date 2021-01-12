@@ -44,7 +44,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&ignoreUnsupportedCharset=true").to("mock:result");
+                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&ignoreUnsupportedCharset=true")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -73,7 +74,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&ignoreUnsupportedCharset=false").to("mock:result");
+                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&ignoreUnsupportedCharset=false")
+                        .to("mock:result");
             }
         });
         context.start();

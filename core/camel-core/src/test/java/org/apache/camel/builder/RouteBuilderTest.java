@@ -120,7 +120,8 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
+            SendProcessor sendProcessor
+                    = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
             assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
@@ -131,7 +132,8 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b").when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b")
+                        .when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
             }
         };
         // END SNIPPET: e3
@@ -157,10 +159,10 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals(2, filters.size(), "Should be two when clauses");
 
             Processor filter1 = filters.get(0);
-            assertSendTo(unwrapChannel(((FilterProcessor)filter1).getProcessor()).getNextProcessor(), "direct://b");
+            assertSendTo(unwrapChannel(((FilterProcessor) filter1).getProcessor()).getNextProcessor(), "direct://b");
 
             Processor filter2 = filters.get(1);
-            assertSendTo(unwrapChannel(((FilterProcessor)filter2).getProcessor()).getNextProcessor(), "direct://c");
+            assertSendTo(unwrapChannel(((FilterProcessor) filter2).getProcessor()).getNextProcessor(), "direct://c");
 
             assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "direct://d");
         }
@@ -412,7 +414,9 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a").idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).to("direct:b");
+                from("direct:a")
+                        .idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .to("direct:b");
             }
         };
         // END SNIPPET: idempotent
@@ -438,7 +442,8 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString(), "messageIdExpression");
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
+                    unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
             assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
@@ -502,8 +507,8 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     /**
-     * By default routes should be wrapped in the {@link DeadLetterChannel} so
-     * lets unwrap that and return the actual processor
+     * By default routes should be wrapped in the {@link DeadLetterChannel} so lets unwrap that and return the actual
+     * processor
      */
     protected Processor getProcessorWithoutErrorHandler(Route route) {
         DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
@@ -513,7 +518,7 @@ public class RouteBuilderTest extends TestSupport {
 
     protected Processor unwrapErrorHandler(Processor processor) {
         if (processor instanceof DeadLetterChannel) {
-            DeadLetterChannel deadLetter = (DeadLetterChannel)processor;
+            DeadLetterChannel deadLetter = (DeadLetterChannel) processor;
             return deadLetter.getOutput();
         } else {
             return processor;
@@ -522,7 +527,7 @@ public class RouteBuilderTest extends TestSupport {
 
     protected Processor unwrapDelegateProcessor(Processor processor) {
         if (processor instanceof DelegateProcessor) {
-            DelegateProcessor delegate = (DelegateProcessor)processor;
+            DelegateProcessor delegate = (DelegateProcessor) processor;
             return delegate.getProcessor();
         } else {
             return processor;
@@ -561,6 +566,7 @@ public class RouteBuilderTest extends TestSupport {
             public void beforeConfigure(RouteBuilder builder) {
                 before.incrementAndGet();
             }
+
             @Override
             public void afterConfigure(RouteBuilder builder) {
                 after.incrementAndGet();

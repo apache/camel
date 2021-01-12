@@ -28,8 +28,9 @@ public final class UnsafeUriCharactersEncoder {
     private static BitSet unsafeCharactersFastParser;
     private static BitSet unsafeCharactersRfc1738;
     private static BitSet unsafeCharactersHttp;
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
-                                              'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] HEX_DIGITS = {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
+            'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f' };
 
     static {
         unsafeCharactersFastParser = new BitSet(14);
@@ -98,19 +99,19 @@ public final class UnsafeUriCharactersEncoder {
     public static String encode(String s) {
         return encode(s, unsafeCharactersRfc1738);
     }
-    
+
     public static String encodeHttpURI(String s) {
         return encode(s, unsafeCharactersHttp);
     }
-    
+
     public static String encode(String s, BitSet unsafeCharacters) {
         return encode(s, unsafeCharacters, false);
     }
-    
+
     public static String encode(String s, boolean checkRaw) {
         return encode(s, unsafeCharactersRfc1738, checkRaw);
     }
-    
+
     public static String encodeHttpURI(String s, boolean checkRaw) {
         return encode(s, unsafeCharactersHttp, checkRaw);
     }
@@ -163,11 +164,11 @@ public final class UnsafeUriCharactersEncoder {
                         sb.append(ch);
                     } else {
                         // must escape then, as its an unsafe character
-                        appendEscape(sb, (byte)ch);
+                        appendEscape(sb, (byte) ch);
                     }
                 } else {
                     // must escape then, as its an unsafe character
-                    appendEscape(sb, (byte)ch);
+                    appendEscape(sb, (byte) ch);
                 }
             } else {
                 sb.append(ch);

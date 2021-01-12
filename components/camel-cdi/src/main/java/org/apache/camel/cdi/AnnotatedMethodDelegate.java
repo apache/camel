@@ -21,13 +21,15 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 
+@Vetoed
 final class AnnotatedMethodDelegate<T> extends AnnotatedMemberDelegate<T> implements AnnotatedMethod<T> {
-    
+
     private final AnnotatedMethod<T> delegate;
-    
+
     AnnotatedMethodDelegate(AnnotatedMethod<T> delegate, Set<Annotation> annotations) {
         super(delegate, annotations);
         this.delegate = delegate;

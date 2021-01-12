@@ -28,11 +28,12 @@ public class NettyBacklogTest extends NettyTCPSyncTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=true&backlog=500")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(
+                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                            }
+                        });
             }
         };
     }

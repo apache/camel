@@ -1,10 +1,11 @@
-[[test-junit5-component]]
+[[test-junit5-other]]
 = Test JUnit5 Component
 :docTitle: Test JUnit5
 :artifactId: camel-test-junit5
 :description: Camel unit testing with JUnit 5
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test-junit5.adoc[opts=optional]
 
 *Since Camel {since}*
 

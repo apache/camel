@@ -47,8 +47,7 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
         mock.expectedBodiesReceived(SUM);
 
         IntStream.of(VALUES).forEach(
-            i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR)
-        );
+                i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR));
 
         mock.assertIsSatisfied();
     }
@@ -73,11 +72,11 @@ public class EhcacheAggregationRepositoryRoutesTest extends EhcacheTestSupport {
             @Override
             public void configure() {
                 from(ENDPOINT_DIRECT)
-                    .routeId("AggregatingRouteOne")
-                    .aggregate(header(CORRELATOR))
-                    .aggregationRepository(createAggregateRepository())
-                    .aggregationStrategy(EhcacheAggregationRepositoryRoutesTest.this::aggregate)
-                    .completionSize(VALUES.length)
+                        .routeId("AggregatingRouteOne")
+                        .aggregate(header(CORRELATOR))
+                        .aggregationRepository(createAggregateRepository())
+                        .aggregationStrategy(EhcacheAggregationRepositoryRoutesTest.this::aggregate)
+                        .completionSize(VALUES.length)
                         .to("log:org.apache.camel.component.ehcache.processor.aggregate?level=INFO&showAll=true&multiline=true")
                         .to(ENDPOINT_MOCK);
             }

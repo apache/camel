@@ -20,28 +20,28 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxFilesManagerApiMethod implements ApiMethod {
 
-    CHECKUPLOAD(
+    CHECK_UPLOAD(
         void.class,
         "checkUpload",
         arg("fileName", String.class),
         arg("parentFolderId", String.class),
         arg("size", Long.class)),
 
-    COPYFILE(
+    COPY_FILE(
         com.box.sdk.BoxFile.class,
         "copyFile",
         arg("fileId", String.class),
         arg("destinationFolderId", String.class),
         arg("newName", String.class)),
 
-    CREATEFILEMETADATA(
+    CREATE_FILE_METADATA(
         com.box.sdk.Metadata.class,
         "createFileMetadata",
         arg("fileId", String.class),
         arg("metadata", com.box.sdk.Metadata.class),
         arg("typeName", String.class)),
 
-    CREATEFILESHAREDLINK(
+    CREATE_FILE_SHARED_LINK(
         com.box.sdk.BoxSharedLink.class,
         "createFileSharedLink",
         arg("fileId", String.class),
@@ -49,23 +49,23 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("unshareDate", java.util.Date.class),
         arg("permissions", com.box.sdk.BoxSharedLink.Permissions.class)),
 
-    DELETEFILE(
+    DELETE_FILE(
         void.class,
         "deleteFile",
         arg("fileId", String.class)),
 
-    DELETEFILEMETADATA(
+    DELETE_FILE_METADATA(
         void.class,
         "deleteFileMetadata",
         arg("fileId", String.class)),
 
-    DELETEFILEVERSION(
+    DELETE_FILE_VERSION(
         void.class,
         "deleteFileVersion",
         arg("fileId", String.class),
         arg("version", Integer.class)),
 
-    DOWNLOADFILE(
+    DOWNLOAD_FILE(
         java.io.OutputStream.class,
         "downloadFile",
         arg("fileId", String.class),
@@ -74,7 +74,7 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("rangeEnd", Long.class),
         arg("listener", com.box.sdk.ProgressListener.class)),
 
-    DOWNLOADPREVIOUSFILEVERSION(
+    DOWNLOAD_PREVIOUS_FILE_VERSION(
         java.io.OutputStream.class,
         "downloadPreviousFileVersion",
         arg("fileId", String.class),
@@ -82,30 +82,30 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("output", java.io.OutputStream.class),
         arg("listener", com.box.sdk.ProgressListener.class)),
 
-    GETDOWNLOADURL(
+    GET_DOWNLOAD_URL(
         java.net.URL.class,
         "getDownloadURL",
         arg("fileId", String.class)),
 
-    GETFILEINFO(
+    GET_FILE_INFO(
         com.box.sdk.BoxFile.Info.class,
         "getFileInfo",
         arg("fileId", String.class),
         arg("fields", new String[0].getClass())),
 
-    GETFILEMETADATA(
+    GET_FILE_METADATA(
         com.box.sdk.Metadata.class,
         "getFileMetadata",
         arg("fileId", String.class),
         arg("typeName", String.class)),
 
-    GETFILEPREVIEWLINK(
+    GET_FILE_PREVIEW_LINK(
         java.net.URL.class,
         "getFilePreviewLink",
         arg("fileId", String.class)),
 
-    GETFILETHUMBNAIL(
-        new byte[0].getClass(),
+    GET_FILE_THUMBNAIL(
+        byte[].class,
         "getFileThumbnail",
         arg("fileId", String.class),
         arg("fileType", com.box.sdk.BoxFile.ThumbnailFileType.class),
@@ -114,43 +114,43 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("maxWidth", Integer.class),
         arg("maxHeight", Integer.class)),
 
-    GETFILEVERSIONS(
+    GET_FILE_VERSIONS(
         java.util.Collection.class,
         "getFileVersions",
         arg("fileId", String.class)),
 
-    MOVEFILE(
+    MOVE_FILE(
         com.box.sdk.BoxFile.class,
         "moveFile",
         arg("fileId", String.class),
         arg("destinationFolderId", String.class),
         arg("newName", String.class)),
 
-    PROMOTEFILEVERSION(
+    PROMOTE_FILE_VERSION(
         com.box.sdk.BoxFileVersion.class,
         "promoteFileVersion",
         arg("fileId", String.class),
         arg("version", Integer.class)),
 
-    RENAMEFILE(
+    RENAME_FILE(
         com.box.sdk.BoxFile.class,
         "renameFile",
         arg("fileId", String.class),
         arg("newFileName", String.class)),
 
-    UPDATEFILEINFO(
+    UPDATE_FILE_INFO(
         com.box.sdk.BoxFile.class,
         "updateFileInfo",
         arg("fileId", String.class),
         arg("info", com.box.sdk.BoxFile.Info.class)),
 
-    UPDATEFILEMETADATA(
+    UPDATE_FILE_METADATA(
         com.box.sdk.Metadata.class,
         "updateFileMetadata",
         arg("fileId", String.class),
         arg("metadata", com.box.sdk.Metadata.class)),
 
-    UPLOADFILE(
+    UPLOAD_FILE(
         com.box.sdk.BoxFile.class,
         "uploadFile",
         arg("parentFolderId", String.class),
@@ -162,7 +162,7 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("check", Boolean.class),
         arg("listener", com.box.sdk.ProgressListener.class)),
 
-    UPLOADNEWFILEVERSION(
+    UPLOAD_NEW_FILE_VERSION(
         com.box.sdk.BoxFile.class,
         "uploadNewFileVersion",
         arg("fileId", String.class),
@@ -170,8 +170,6 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("modified", java.util.Date.class),
         arg("fileSize", Long.class),
         arg("listener", com.box.sdk.ProgressListener.class));
-
-    
 
     private final ApiMethod apiMethod;
 

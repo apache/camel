@@ -31,8 +31,6 @@ public enum WebhookNotificationGatewayApiMethod implements ApiMethod {
         "verify",
         arg("challenge", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private WebhookNotificationGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

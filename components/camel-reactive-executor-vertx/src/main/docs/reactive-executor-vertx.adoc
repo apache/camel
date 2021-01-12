@@ -1,10 +1,11 @@
-[[reactive-executor-vertx-component]]
+[[reactive-executor-vertx-other]]
 = Reactive Executor Vert.x Component
 :docTitle: Reactive Executor Vert.x
 :artifactId: camel-reactive-executor-vertx
 :description: Reactive Executor for camel-core using Vert.x
 :since: 3.0
 :supportLevel: Experimental
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactive-executor-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -33,4 +34,3 @@ and Camel should auto-detect this on startup and log as follows:
 ----
 Using ReactiveExecutor: camel-reactive-executor-vertx
 ----
-

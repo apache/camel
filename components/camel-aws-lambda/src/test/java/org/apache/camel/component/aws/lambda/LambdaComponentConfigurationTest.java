@@ -35,7 +35,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
-            "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+                "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
 
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -46,28 +46,28 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutOperation() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-lambda://myFunction"));
+                () -> component.createEndpoint("aws-lambda://myFunction"));
     }
 
     @Test
     public void createEndpointWithoutAmazonLambdaClientConfiguration() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-lambda://myFunction?operation=getFunction"));
+                () -> component.createEndpoint("aws-lambda://myFunction?operation=getFunction"));
     }
 
     @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-lambda://myFunction?operation=getFunction&secretKey=yyy"));
+                () -> component.createEndpoint("aws-lambda://myFunction?operation=getFunction&secretKey=yyy"));
     }
 
     @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-lambda://myFunction?operation=getFunction&accessKey=xxx"));
+                () -> component.createEndpoint("aws-lambda://myFunction?operation=getFunction&accessKey=xxx"));
     }
 
     @Test
@@ -77,41 +77,43 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         component.createEndpoint("aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient");
     }
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://myFunction");
-        
+        LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint("aws-lambda://myFunction");
+
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+        LambdaEndpoint endpoint = (LambdaEndpoint) component
+                .createEndpoint("aws-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
+                "aws-lambda://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());

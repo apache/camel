@@ -30,12 +30,15 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class SpringScheduledRoutePolicyTest  {
+public abstract class SpringScheduledRoutePolicyTest {
     protected enum TestType {
-        SIMPLE, CRON
+        SIMPLE,
+        CRON
     }
+
     private ClassPathXmlApplicationContext applicationContext;
     private TestType testType;
 
@@ -48,13 +51,12 @@ public abstract class SpringScheduledRoutePolicyTest  {
         context.getRouteController().stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(4000);
-        assertTrue(context.getRouteController().getRouteStatus("testRoute") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("testRoute"));
         context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
 
         context.stop();
         mock.assertIsSatisfied();
     }
-
 
     public void stopTest() throws Exception {
         boolean consumerStopped = false;
@@ -62,7 +64,7 @@ public abstract class SpringScheduledRoutePolicyTest  {
         CamelContext context = startRouteWithPolicy("stopPolicy");
 
         Thread.sleep(4000);
-        assertTrue(context.getRouteController().getRouteStatus("testRoute") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("testRoute"));
         try {
             context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
@@ -71,7 +73,6 @@ public abstract class SpringScheduledRoutePolicyTest  {
         context.stop();
         assertTrue(consumerStopped);
     }
-
 
     public void suspendTest() throws Exception {
         boolean consumerSuspended = false;
@@ -107,13 +108,13 @@ public abstract class SpringScheduledRoutePolicyTest  {
     @SuppressWarnings("unchecked")
     private CamelContext startRouteWithPolicy(String policyBeanName) throws Exception {
         CamelContext context = new DefaultCamelContext();
-        List<RouteDefinition> routes = (List<RouteDefinition>)applicationContext.getBean("testRouteContext");
+        List<RouteDefinition> routes = (List<RouteDefinition>) applicationContext.getBean("testRouteContext");
         RoutePolicy policy = applicationContext.getBean(policyBeanName, RoutePolicy.class);
         assertTrue(getTestType() == TestType.SIMPLE
-            ? policy instanceof SimpleScheduledRoutePolicy
-            : policy instanceof CronScheduledRoutePolicy);
+                ? policy instanceof SimpleScheduledRoutePolicy
+                : policy instanceof CronScheduledRoutePolicy);
         routes.get(0).routePolicy(policy);
-        ((ModelCamelContext)context).addRouteDefinitions(routes);
+        ((ModelCamelContext) context).addRouteDefinitions(routes);
         context.start();
         return context;
     }

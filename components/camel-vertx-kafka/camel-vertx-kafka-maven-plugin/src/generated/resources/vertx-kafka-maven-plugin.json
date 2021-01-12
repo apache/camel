@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "vertx-kafka-maven-plugin",
+    "title": "Vertx Kafka Maven Plugin",
+    "description": "Camel Vert.x Kafka Maven plugin",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel.maven",
+    "artifactId": "camel-vertx-kafka-maven-plugin",
+    "version": "3.8.0-SNAPSHOT"
+  }
+}

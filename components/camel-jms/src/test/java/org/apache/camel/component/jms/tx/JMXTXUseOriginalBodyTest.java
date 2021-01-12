@@ -21,8 +21,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -84,8 +84,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
         }
     }
 
-
-    public static class TestRoutes extends SpringRouteBuilder {
+    public static class TestRoutes extends RouteBuilder {
 
         @Override
         public void configure() throws Exception {

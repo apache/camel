@@ -36,15 +36,11 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-            setHttpProcessor(getBasicHttpProcessor()).
-            setConnectionReuseStrategy(getConnectionReuseStrategy()).
-            setResponseFactory(getHttpResponseFactory()).
-            setExpectationVerifier(getHttpExpectationVerifier()).
-            setSslContext(getSSLContext()).
-            registerHandler("/moes", new DrinkValidationHandler(GET.name(), null, null, "drink")).
-            registerHandler("/joes", new DrinkValidationHandler(GET.name(), null, null, "drink")).
-            create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/moes", new DrinkValidationHandler(GET.name(), null, null, "drink"))
+                .registerHandler("/joes", new DrinkValidationHandler(GET.name(), null, null, "drink")).create();
         localServer.start();
 
         super.setUp();
@@ -66,10 +62,12 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:moes")
-                    .toD("http://localhost:" + localServer.getLocalPort() + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("http://localhost:" + localServer.getLocalPort()
+                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
-                    .toD("http://localhost:" + localServer.getLocalPort() + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("http://localhost:" + localServer.getLocalPort()
+                             + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
             }
         };
     }
@@ -83,7 +81,8 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap().containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
+        boolean found = context.getEndpointMap()
+                .containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
         assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 1xhttp

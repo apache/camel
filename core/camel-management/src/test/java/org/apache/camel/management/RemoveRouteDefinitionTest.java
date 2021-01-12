@@ -45,10 +45,10 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals(1, set.size());
 
         ObjectName on = set.iterator().next();
-        
+
         boolean registered = mbeanServer.isRegistered(on);
         assertTrue(registered, "Should be registered");
-        
+
         context.getRouteController().stopRoute("route1");
         context.removeRoute("route1");
 
@@ -56,7 +56,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
     }
-    
+
     @Test
     public void testStopAndRemoveRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -99,10 +99,10 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         assertEquals(1, set.size());
 
         ObjectName on = set.iterator().next();
-        
+
         boolean registered = mbeanServer.isRegistered(on);
         assertEquals(true, registered, "Should be registered");
-        
+
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);

@@ -37,14 +37,14 @@ public class PutAttributesCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new PutAttributesCommand(sdbClient, configuration, exchange);
     }
 
@@ -56,15 +56,15 @@ public class PutAttributesCommandTest {
         exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
         UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, updateCondition);
-        
+
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.putAttributesRequest.getDomainName());
         assertEquals("ITEM1", sdbClient.putAttributesRequest.getItemName());
         assertEquals(updateCondition, sdbClient.putAttributesRequest.getExpected());
         assertEquals(replaceableAttributes, sdbClient.putAttributesRequest.getAttributes());
     }
-    
+
     @Test
     public void executeWithoutItemName() {
         List<ReplaceableAttribute> replaceableAttributes = new ArrayList<>();
@@ -74,7 +74,7 @@ public class PutAttributesCommandTest {
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, updateCondition);
 
         assertThrows(IllegalArgumentException.class,
-            () -> command.execute());
+                () -> command.execute());
     }
 
     @Test

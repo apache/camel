@@ -61,7 +61,6 @@ public class CwComponentTest extends CamelTestSupport {
             }
         });
 
-
         ArgumentCaptor<PutMetricDataRequest> argument = ArgumentCaptor.forClass(PutMetricDataRequest.class);
         verify(cloudWatchClient).putMetricData(argument.capture());
 
@@ -83,7 +82,6 @@ public class CwComponentTest extends CamelTestSupport {
             }
         });
 
-
         ArgumentCaptor<PutMetricDataRequest> argument = ArgumentCaptor.forClass(PutMetricDataRequest.class);
         verify(cloudWatchClient).putMetricData(argument.capture());
 
@@ -98,7 +96,6 @@ public class CwComponentTest extends CamelTestSupport {
                 exchange.getIn().setHeader(CwConstants.METRIC_NAME, "errorCount");
             }
         });
-
 
         ArgumentCaptor<PutMetricDataRequest> argument = ArgumentCaptor.forClass(PutMetricDataRequest.class);
         verify(cloudWatchClient).putMetricData(argument.capture());

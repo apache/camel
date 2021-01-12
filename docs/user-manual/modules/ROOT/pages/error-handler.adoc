@@ -34,7 +34,7 @@ The current implementations Camel provides out of the box are:
 * DefaultErrorHandler is the default
 error handler in Camel. This error handler does not support a dead
 letter queue, it will propagate exceptions back to the caller, as if
-there where no error handler at all. It has a limited set of features.
+there were no error handler at all. It has a limited set of features.
 * Dead Letter Channel which supports
 attempting to redeliver the message exchange a number of times before
 sending it to a dead letter endpoint

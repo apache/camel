@@ -47,7 +47,7 @@ public class TelegramConsumerMediaGameTest extends TelegramTestSupport {
         IncomingMessage msg = mediaExchange.getIn().getBody(IncomingMessage.class);
 
         IncomingGame game = msg.getGame();
-        InlineKeyboardMarkup inlineKeyboardMarkup = (InlineKeyboardMarkup)msg.getReplyMarkup();
+        InlineKeyboardMarkup inlineKeyboardMarkup = (InlineKeyboardMarkup) msg.getReplyMarkup();
 
         Assertions.assertNotNull(game);
         Assertions.assertEquals("test_game", game.getTitle());
@@ -55,7 +55,7 @@ public class TelegramConsumerMediaGameTest extends TelegramTestSupport {
         Assertions.assertEquals("game text", game.getText());
         Assertions.assertEquals(1, game.getPhoto().size());
         Assertions.assertEquals("AgADBAADnrAxG1rhiVAsV1IghUpUwn4eqhsABAEAAwIAA20AA32sBQABFgQ",
-            game.getPhoto().get(0).getFileId());
+                game.getPhoto().get(0).getFileId());
         Assertions.assertEquals(2469, game.getPhoto().get(0).getFileSize());
         Assertions.assertEquals(180, game.getPhoto().get(0).getHeight());
         Assertions.assertEquals(320, game.getPhoto().get(0).getWidth());
@@ -68,25 +68,25 @@ public class TelegramConsumerMediaGameTest extends TelegramTestSupport {
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
-        return new RoutesBuilder[]{
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("telegram:bots?authorizationToken=mock-token")
-                        .to("mock:telegram");
-                }
-            }};
+        return new RoutesBuilder[] {
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("telegram:bots?authorizationToken=mock-token")
+                                .to("mock:telegram");
+                    }
+                } };
     }
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
         return new TelegramMockRoutes(port)
-            .addEndpoint(
-                "getUpdates",
-                "GET",
-                String.class,
-                TelegramTestUtil.stringResource("messages/updates-media-game.json"),
-                TelegramTestUtil.stringResource("messages/updates-empty.json"));
+                .addEndpoint(
+                        "getUpdates",
+                        "GET",
+                        String.class,
+                        TelegramTestUtil.stringResource("messages/updates-media-game.json"),
+                        TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
 }

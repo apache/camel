@@ -27,5 +27,6 @@ public final class PdfPageSizeConstant {
     public static final String PAGE_SIZE_A6 = "PAGE_SIZE_A6";
     public static final String PAGE_SIZE_LETTER = "PAGE_SIZE_LETTER";
 
-    private PdfPageSizeConstant() { }
+    private PdfPageSizeConstant() {
+    }
 }

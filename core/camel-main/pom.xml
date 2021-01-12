@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-main</artifactId>
@@ -35,6 +35,14 @@
     <properties>
         <firstVersion>3.0</firstVersion>
         <label>core</label>
+
+        <sourcecheckExcludes>
+            **/MySecondFooConfigurer.java,
+            **/MySecondBarConfigurer.java
+        </sourcecheckExcludes>
+        <sourcecheckExcludesComma>
+            ${sourcecheckExcludes},
+        </sourcecheckExcludesComma>
     </properties>
 
     <dependencies>
@@ -137,6 +145,18 @@
                         <goals>
                             <goal>generate-configurer</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-test-configurer</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>generate-test-configurer</goal>
+                        </goals>
+                        <!-- only do these test classes -->
+                        <configuration>
+                            <discoverClasses>false</discoverClasses>
+                            <classes>org.apache.camel.main.MySecondFoo,org.apache.camel.main.MySecondBar</classes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -31,8 +31,6 @@ public enum AvailablePhoneNumberCountryMobileApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathCountryCode", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AvailablePhoneNumberCountryMobileApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -64,18 +64,19 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message input = exchange.getIn().getBody(Message.class);
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message input = exchange.getIn().getBody(Message.class);
 
-                        assertEquals("2.4", input.getVersion());
-                        QRD qrd = (QRD)input.get("QRD");
-                        assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                                assertEquals("2.4", input.getVersion());
+                                QRD qrd = (QRD) input.get("QRD");
+                                assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
-                        Message response = createHL7AsMessage();
-                        exchange.getMessage().setBody(response);
-                    }
-                }).to("mock:result");
+                                Message response = createHL7AsMessage();
+                                exchange.getMessage().setBody(response);
+                            }
+                        }).to("mock:result");
             }
         };
     }
@@ -90,7 +91,9 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder", in.toString(), String.class);
+        String out = template.requestBody(
+                "netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder", in.toString(),
+                String.class);
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);

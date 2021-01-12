@@ -64,7 +64,8 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
 
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false&delay=500").to("mock:result2");
 
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500").to("mock:result3");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500")
+                        .to("mock:result3");
             }
         };
     }

@@ -41,10 +41,13 @@ public interface JdbcEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param allowNamedParameters the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
@@ -54,10 +57,14 @@ public interface JdbcEndpointBuilderFactory {
         /**
          * Whether to allow using named parameters in the queries.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param allowNamedParameters the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
@@ -75,10 +82,13 @@ public interface JdbcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -95,10 +105,14 @@ public interface JdbcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -108,9 +122,12 @@ public interface JdbcEndpointBuilderFactory {
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne or SelectList.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputClass the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder outputClass(String outputClass) {
             doSetProperty("outputClass", outputClass);
@@ -120,10 +137,13 @@ public interface JdbcEndpointBuilderFactory {
          * Determines the output the producer should use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcOutputType&lt;/code&gt; type.
          * 
          * Default: SelectList
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder outputType(JdbcOutputType outputType) {
             doSetProperty("outputType", outputType);
@@ -133,10 +153,13 @@ public interface JdbcEndpointBuilderFactory {
          * Determines the output the producer should use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcOutputType&lt;/code&gt; type.
          * 
          * Default: SelectList
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
@@ -146,13 +169,17 @@ public interface JdbcEndpointBuilderFactory {
          * Optional parameters to the java.sql.Statement. For example to set
          * maxRows, fetchSize etc.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder parameters(String key, Object value) {
             doSetMultiValueProperty("parameters", "statement." + key, value);
@@ -162,13 +189,16 @@ public interface JdbcEndpointBuilderFactory {
          * Optional parameters to the java.sql.Statement. For example to set
          * maxRows, fetchSize etc.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder parameters(Map values) {
             doSetMultiValueProperties("parameters", "statement.", values);
@@ -178,9 +208,12 @@ public interface JdbcEndpointBuilderFactory {
          * The default maximum number of rows that can be read by a polling
          * query. The default value is 0.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param readSize the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder readSize(int readSize) {
             doSetProperty("readSize", readSize);
@@ -190,9 +223,12 @@ public interface JdbcEndpointBuilderFactory {
          * The default maximum number of rows that can be read by a polling
          * query. The default value is 0.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param readSize the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder readSize(String readSize) {
             doSetProperty("readSize", readSize);
@@ -208,10 +244,13 @@ public interface JdbcEndpointBuilderFactory {
          * XA transactions you most likely need to set it to false so that the
          * transaction manager is in charge of committing this tx.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param resetAutoCommit the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder resetAutoCommit(boolean resetAutoCommit) {
             doSetProperty("resetAutoCommit", resetAutoCommit);
@@ -227,10 +266,14 @@ public interface JdbcEndpointBuilderFactory {
          * XA transactions you most likely need to set it to false so that the
          * transaction manager is in charge of committing this tx.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param resetAutoCommit the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder resetAutoCommit(String resetAutoCommit) {
             doSetProperty("resetAutoCommit", resetAutoCommit);
@@ -239,10 +282,13 @@ public interface JdbcEndpointBuilderFactory {
         /**
          * Whether transactions are in use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
@@ -251,10 +297,14 @@ public interface JdbcEndpointBuilderFactory {
         /**
          * Whether transactions are in use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
@@ -265,10 +315,13 @@ public interface JdbcEndpointBuilderFactory {
          * needed for certain databases such as Oracle where you must read BLOB
          * columns as bytes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useGetBytesForBlob the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder useGetBytesForBlob(
                 boolean useGetBytesForBlob) {
@@ -280,10 +333,14 @@ public interface JdbcEndpointBuilderFactory {
          * needed for certain databases such as Oracle where you must read BLOB
          * columns as bytes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useGetBytesForBlob the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder useGetBytesForBlob(String useGetBytesForBlob) {
             doSetProperty("useGetBytesForBlob", useGetBytesForBlob);
@@ -295,10 +352,13 @@ public interface JdbcEndpointBuilderFactory {
          * placeholders, and use headers with the dynamic values for the query
          * placeholders.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useHeadersAsParameters the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder useHeadersAsParameters(
                 boolean useHeadersAsParameters) {
@@ -311,10 +371,14 @@ public interface JdbcEndpointBuilderFactory {
          * placeholders, and use headers with the dynamic values for the query
          * placeholders.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useHeadersAsParameters the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder useHeadersAsParameters(
                 String useHeadersAsParameters) {
@@ -329,10 +393,13 @@ public interface JdbcEndpointBuilderFactory {
          * option to work out issues around your JDBC driver if you get problem
          * using this component This option is default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param useJDBC4ColumnNameAndLabelSemantics the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
                 boolean useJDBC4ColumnNameAndLabelSemantics) {
@@ -347,10 +414,14 @@ public interface JdbcEndpointBuilderFactory {
          * option to work out issues around your JDBC driver if you get problem
          * using this component This option is default true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param useJDBC4ColumnNameAndLabelSemantics the value to set
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
                 String useJDBC4ColumnNameAndLabelSemantics) {
@@ -369,43 +440,18 @@ public interface JdbcEndpointBuilderFactory {
             return (JdbcEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJdbcEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJdbcEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.component.jdbc.BeanRowMapper when
          * using outputClass. The default implementation will lower case the row
          * names and skip underscores, and dashes. For example CUST_ID is mapped
          * as custId.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
+         * &lt;code&gt;org.apache.camel.component.jdbc.BeanRowMapper&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param beanRowMapper the value to set
+         * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder beanRowMapper(Object beanRowMapper) {
             doSetProperty("beanRowMapper", beanRowMapper);
@@ -418,9 +464,12 @@ public interface JdbcEndpointBuilderFactory {
          * as custId.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
+         * &lt;code&gt;org.apache.camel.component.jdbc.BeanRowMapper&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param beanRowMapper the value to set
+         * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder beanRowMapper(String beanRowMapper) {
             doSetProperty("beanRowMapper", beanRowMapper);
@@ -432,9 +481,12 @@ public interface JdbcEndpointBuilderFactory {
          * control preparation of the query and prepared statement.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param prepareStatementStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
@@ -447,9 +499,12 @@ public interface JdbcEndpointBuilderFactory {
          * control preparation of the query and prepared statement.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param prepareStatementStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
@@ -460,10 +515,13 @@ public interface JdbcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -473,10 +531,14 @@ public interface JdbcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJdbcEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -512,6 +574,7 @@ public interface JdbcEndpointBuilderFactory {
          * of DataSource found, then this DataSource will be used.
          * 
          * @param path dataSourceName
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder jdbc(String path) {
             return JdbcEndpointBuilderFactory.endpointBuilder("jdbc", path);
@@ -535,6 +598,7 @@ public interface JdbcEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path dataSourceName
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder jdbc(String componentName, String path) {
             return JdbcEndpointBuilderFactory.endpointBuilder(componentName, path);

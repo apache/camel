@@ -29,6 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CxfGreeterMessageRouterTest extends AbstractCXFGreeterRouterTest {
     protected static Endpoint endpoint;
+
     @AfterAll
     public static void stopService() {
         if (endpoint != null) {
@@ -36,29 +37,27 @@ public class CxfGreeterMessageRouterTest extends AbstractCXFGreeterRouterTest {
         }
     }
 
-
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1() 
-            + "/CxfGreeterMessageRouterTest/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor); 
+        String address = "http://localhost:" + getPort1()
+                         + "/CxfGreeterMessageRouterTest/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(address, implementor);
     }
-    
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf:bean:routerEndpoint?dataFormat=RAW&publishedEndpointUrl=http://www.simple.com/services/test")
-                    .to("cxf:bean:serviceEndpoint?dataFormat=RAW");
+                        .to("cxf:bean:serviceEndpoint?dataFormat=RAW");
             }
         };
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
     }
-  
+
 }

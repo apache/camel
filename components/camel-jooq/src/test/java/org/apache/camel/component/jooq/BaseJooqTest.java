@@ -29,7 +29,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 
 @CamelSpringTest
-@ContextConfiguration(locations = {"/jooq-spring.xml"})
+@ContextConfiguration(locations = { "/jooq-spring.xml" })
 public abstract class BaseJooqTest extends CamelTestSupport {
 
     @Autowired

@@ -22,11 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An experimental user-facing API. Experimental API's might change or be removed
- * in minor versions.
+ * An experimental user-facing API. Experimental API's might change or be removed in minor versions.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Experimental {
     int revision() default 1;
 }

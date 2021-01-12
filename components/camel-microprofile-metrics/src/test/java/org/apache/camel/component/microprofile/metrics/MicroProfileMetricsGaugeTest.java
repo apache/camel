@@ -64,11 +64,11 @@ public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:gaugeValue")
-                    .to("microprofile-metrics:gauge:test-gauge?gaugeValue=10");
+                        .to("microprofile-metrics:gauge:test-gauge?gaugeValue=10");
 
                 from("direct:gaugeValueHeader")
-                    .setHeader(HEADER_GAUGE_VALUE, constant(20))
-                    .to("microprofile-metrics:gauge:test-gauge-header");
+                        .setHeader(HEADER_GAUGE_VALUE, constant(20))
+                        .to("microprofile-metrics:gauge:test-gauge-header");
             }
         };
     }

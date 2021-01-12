@@ -37,7 +37,8 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase5.sql").build();
+        db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase5.sql")
+                .build();
 
         super.setUp();
     }
@@ -49,7 +50,7 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
 
         db.shutdown();
     }
-    
+
     @Test
     public void testSqlEndpoint() throws Exception {
         String expectedBody = "body";
@@ -57,8 +58,7 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
         template.sendBody("direct:start", expectedBody);
         result.assertIsSatisfied();
     }
-    
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -66,8 +66,8 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select id from mytable where 1 = 2?outputHeader=myHeader&outputType=SelectOne")
-                    .log("${body}").to("mock:result");
+                        .to("sql:select id from mytable where 1 = 2?outputHeader=myHeader&outputType=SelectOne")
+                        .log("${body}").to("mock:result");
             }
         };
     }

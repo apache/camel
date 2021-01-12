@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a contact with a phone number.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcontact">
- * https://core.telegram.org/bots/api#inlinequeryresultcontact</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcontact</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultContact extends InlineQueryResult {

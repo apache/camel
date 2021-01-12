@@ -37,6 +37,8 @@ public interface StringTemplateComponentBuilderFactory {
      * Category: transformation,script
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
+     * 
+     * @return the dsl builder
      */
     static StringTemplateComponentBuilder stringTemplate() {
         return new StringTemplateComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface StringTemplateComponentBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default StringTemplateComponentBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -72,10 +77,13 @@ public interface StringTemplateComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default StringTemplateComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -93,10 +101,13 @@ public interface StringTemplateComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StringTemplateComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,17 +115,24 @@ public interface StringTemplateComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default StringTemplateComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default StringTemplateComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -137,7 +155,7 @@ public interface StringTemplateComponentBuilderFactory {
             case "allowContextMapAll": ((StringTemplateComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((StringTemplateComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((StringTemplateComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((StringTemplateComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((StringTemplateComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

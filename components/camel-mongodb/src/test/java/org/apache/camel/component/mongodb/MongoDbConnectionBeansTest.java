@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import org.apache.camel.Endpoint;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
     @Test
     public void checkConnectionFromProperties() {
-        MongoClient client = container.createClient();
+        MongoClient client = MongoClients.create(service.getReplicaSetUrl());
 
         context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
         context.getRegistry().bind("myDb", client);
@@ -41,7 +42,7 @@ public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
 
     @Test
     public void checkConnectionFromBean() {
-        MongoClient client = container.createClient();
+        MongoClient client = MongoClients.create(service.getReplicaSetUrl());
 
         context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
         context.getRegistry().bind("myDb", client);
@@ -51,11 +52,10 @@ public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
         assertEquals(client, testEndpoint.getMongoConnection());
     }
 
-
     @Test
     public void checkConnectionBothExisting() {
-        MongoClient client1 = container.createClient();
-        MongoClient client2 = container.createClient();
+        MongoClient client1 = MongoClients.create(service.getReplicaSetUrl());
+        MongoClient client2 = MongoClients.create(service.getReplicaSetUrl());
 
         context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
         context.getRegistry().bind("myDb", client1);

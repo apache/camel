@@ -26,7 +26,7 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
     private String repositoryName;
     private IMap<String, Boolean> repo;
     private HazelcastInstance hazelcastInstance;
-    
+
     public HazelcastIdempotentRepository(HazelcastInstance hazelcastInstance) {
         this(hazelcastInstance, HazelcastIdempotentRepository.class.getSimpleName());
     }
@@ -85,10 +85,10 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
             repo.unlock(key);
         }
     }
-    
+
     @Override
     public void clear() {
-        repo.clear();        
+        repo.clear();
     }
 
     public String getRepositoryName() {

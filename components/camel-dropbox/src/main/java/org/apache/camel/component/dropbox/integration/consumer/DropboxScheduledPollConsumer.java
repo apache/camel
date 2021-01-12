@@ -38,8 +38,9 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
     protected abstract int poll() throws Exception;
 
     /**
-     * Lifecycle method invoked when the consumer has created.
-     * Internally create or reuse a connection to the low level dropbox client
+     * Lifecycle method invoked when the consumer has created. Internally create or reuse a connection to the low level
+     * dropbox client
+     * 
      * @throws Exception
      */
     @Override
@@ -55,8 +56,8 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
     }
 
     /**
-     * Lifecycle method invoked when the consumer has destroyed.
-     * Erase the reference to the dropbox low level client
+     * Lifecycle method invoked when the consumer has destroyed. Erase the reference to the dropbox low level client
+     * 
      * @throws Exception
      */
     @Override

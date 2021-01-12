@@ -43,9 +43,9 @@ public class XQueryTransformIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
-                    .to("log:info")
-                    .to("mock:result");
+                        .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
+                        .to("log:info")
+                        .to("mock:result");
             }
         };
     }

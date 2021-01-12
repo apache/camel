@@ -39,12 +39,10 @@ public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
     @Produce(DIRECT_ONE)
     private ProducerTemplate produceOne;
 
-
     @Test
     public void checkAggregationFromOneRoute() throws Exception {
         Configuration conf = new ConfigurationBuilder().build();
-        final InfinispanLocalAggregationRepository repoOne =
-                new InfinispanLocalAggregationRepository();
+        final InfinispanLocalAggregationRepository repoOne = new InfinispanLocalAggregationRepository();
         repoOne.setConfiguration(conf);
 
         final int completionSize = 4;
@@ -72,7 +70,7 @@ public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
         produceOne.sendBodyAndHeader(3, correlator, correlator);
         produceOne.sendBodyAndHeader(4, correlator, correlator);
         produceOne.sendBodyAndHeader(5, correlator, correlator);
-        
+
         produceOne.sendBodyAndHeader(6, correlator, correlator);
         produceOne.sendBodyAndHeader(7, correlator, correlator);
         produceOne.sendBodyAndHeader(20, correlator, correlator);
@@ -80,7 +78,7 @@ public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     class SumOfIntsAggregationStrategy implements AggregationStrategy {
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

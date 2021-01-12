@@ -36,7 +36,6 @@ import org.openstack4j.model.network.Network;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -88,7 +87,6 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
         msg.setHeader(KeystoneConstants.DOMAIN_ID, dummyProject.getDomainId());
         msg.setHeader(KeystoneConstants.PARENT_ID, dummyProject.getParentId());
 
-
         producer.process(exchange);
 
         verify(projectService).create(projectCaptor.capture());
@@ -117,7 +115,7 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
         producer.process(exchange);
 
         final List<Network> result = msg.getBody(List.class);
-        assertTrue(result.size() == 2);
+        assertEquals(2, result.size());
         assertEquals(testOSproject, result.get(0));
     }
 

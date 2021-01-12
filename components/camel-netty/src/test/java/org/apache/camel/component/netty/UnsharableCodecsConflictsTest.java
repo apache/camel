@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
-    private static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 4096 bytes
+    private static final byte[] LENGTH_HEADER = { 0x00, 0x00, 0x40, 0x00 }; // 4096 bytes
 
     private static final Logger LOG = LoggerFactory.getLogger(UnsharableCodecsConflictsTest.class);
 
@@ -55,8 +55,8 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     public void canSupplyMultipleCodecsToEndpointPipeline() throws Exception {
         byte[] sPort1 = new byte[8192];
         byte[] sPort2 = new byte[16383];
-        Arrays.fill(sPort1, (byte)0x38);
-        Arrays.fill(sPort2, (byte)0x39);
+        Arrays.fill(sPort1, (byte) 0x38);
+        Arrays.fill(sPort2, (byte) 0x39);
         byte[] bodyPort1 = (new String(LENGTH_HEADER) + new String(sPort1)).getBytes();
         byte[] bodyPort2 = (new String(LENGTH_HEADER) + new String(sPort2)).getBytes();
 
@@ -89,7 +89,8 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
                 from("netty:tcp://localhost:" + port1 + "?decoders=#length-decoder&sync=false").process(processor);
 
-                from("netty:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false").process(processor).to("mock:result");
+                from("netty:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false").process(processor)
+                        .to("mock:result");
             }
         };
     }

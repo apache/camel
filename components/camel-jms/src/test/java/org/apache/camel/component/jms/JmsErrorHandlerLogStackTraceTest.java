@@ -43,7 +43,7 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:foo", "Hello World");
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
     }
 
     @Override
@@ -55,7 +55,7 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
                 errorHandler(defaultErrorHandler().logExhausted(false));
 
                 from("jms:queue:foo")
-                    .throwException(new IllegalArgumentException("Forced"));
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

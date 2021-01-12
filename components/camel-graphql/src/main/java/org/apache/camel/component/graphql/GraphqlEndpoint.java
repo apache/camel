@@ -49,7 +49,8 @@ import org.apache.http.message.BasicHeader;
 /**
  * Send GraphQL queries and mutations to external systems.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri", category = {Category.API}, producerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
+             category = { Category.API }, producerOnly = true)
 public class GraphqlEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -63,6 +64,8 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     private String username;
     @UriParam(label = "security", secret = true)
     private String password;
+    @UriParam(label = "security", defaultValue = "Bearer")
+    private String jwtAuthorizationType;
     @UriParam
     private String query;
     @UriParam
@@ -109,8 +112,12 @@ public class GraphqlEndpoint extends DefaultEndpoint {
             httpClientBuilder.setProxy(new HttpHost(hostname, port));
         }
         if (accessToken != null) {
+            String authType = "Bearer";
+            if (this.jwtAuthorizationType != null) {
+                authType = this.jwtAuthorizationType;
+            }
             httpClientBuilder.setDefaultHeaders(
-                    Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)));
+                    Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
         }
         if (username != null && password != null) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -184,6 +191,17 @@ public class GraphqlEndpoint extends DefaultEndpoint {
             }
         }
         return query;
+    }
+
+    /**
+     * The JWT Authorization type. Default is Bearer.
+     */
+    public void setJwtAuthorizationType(String jwtAuthorizationType) {
+        this.jwtAuthorizationType = jwtAuthorizationType;
+    }
+
+    public String getJwtAuthorizationType() {
+        return this.jwtAuthorizationType;
     }
 
     /**

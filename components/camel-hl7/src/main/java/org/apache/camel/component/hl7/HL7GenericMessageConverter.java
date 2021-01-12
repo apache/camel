@@ -47,7 +47,8 @@ public final class HL7GenericMessageConverter {
         parserConfiguration.setInvalidObx2Type("ST");
         parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
 
-        GENERIC_MESSAGE_CONTEXT = new DefaultHapiContext(parserConfiguration, ValidationContextFactory.noValidation(), new GenericModelClassFactory());
+        GENERIC_MESSAGE_CONTEXT = new DefaultHapiContext(
+                parserConfiguration, ValidationContextFactory.noValidation(), new GenericModelClassFactory());
     }
 
     private HL7GenericMessageConverter() {
@@ -164,7 +165,6 @@ public final class HL7GenericMessageConverter {
 
         }
     }
-
 
     static <T extends Message> T toGenericMessage(Class<T> messageClass, byte[] hl7Bytes, Exchange exchange) {
         try {

@@ -54,9 +54,9 @@ public class NettySuspendResumeTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=true").routeId("foo")
-                    .to("log:result")
-                    .to("mock:result")
-                    .transform(body().prepend("Bye "));
+                        .to("log:result")
+                        .to("mock:result")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

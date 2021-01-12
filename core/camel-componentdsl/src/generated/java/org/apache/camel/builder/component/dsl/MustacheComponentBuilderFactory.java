@@ -37,6 +37,8 @@ public interface MustacheComponentBuilderFactory {
      * Category: transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mustache
+     * 
+     * @return the dsl builder
      */
     static MustacheComponentBuilder mustache() {
         return new MustacheComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface MustacheComponentBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default MustacheComponentBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -72,10 +77,13 @@ public interface MustacheComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default MustacheComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -93,10 +101,13 @@ public interface MustacheComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MustacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,26 +115,37 @@ public interface MustacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MustacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MustacheComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a custom MustacheFactory.
          * 
-         * The option is a: <code>com.github.mustachejava.MustacheFactory</code>
+         * The option is a:
+         * &lt;code&gt;com.github.mustachejava.MustacheFactory&lt;/code&gt;
          * type.
          * 
          * Group: advanced
+         * 
+         * @param mustacheFactory the value to set
+         * @return the dsl builder
          */
         default MustacheComponentBuilder mustacheFactory(
                 com.github.mustachejava.MustacheFactory mustacheFactory) {
@@ -150,7 +172,7 @@ public interface MustacheComponentBuilderFactory {
             case "allowContextMapAll": ((MustacheComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((MustacheComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((MustacheComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MustacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MustacheComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "mustacheFactory": ((MustacheComponent) component).setMustacheFactory((com.github.mustachejava.MustacheFactory) value); return true;
             default: return false;
             }

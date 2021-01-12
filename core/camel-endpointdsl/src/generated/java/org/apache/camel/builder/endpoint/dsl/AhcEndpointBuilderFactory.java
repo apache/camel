@@ -45,10 +45,13 @@ public interface AhcEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -60,10 +63,14 @@ public interface AhcEndpointBuilderFactory {
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -73,10 +80,13 @@ public interface AhcEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: producer
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -86,10 +96,13 @@ public interface AhcEndpointBuilderFactory {
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4096
          * Group: producer
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -99,10 +112,13 @@ public interface AhcEndpointBuilderFactory {
          * Define if the Connection Close header has to be added to HTTP
          * Request. This parameter is false by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param connectionClose the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder connectionClose(boolean connectionClose) {
             doSetProperty("connectionClose", connectionClose);
@@ -112,10 +128,14 @@ public interface AhcEndpointBuilderFactory {
          * Define if the Connection Close header has to be added to HTTP
          * Request. This parameter is false by default.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param connectionClose the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder connectionClose(String connectionClose) {
             doSetProperty("connectionClose", connectionClose);
@@ -125,9 +145,12 @@ public interface AhcEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder cookieHandler(Object cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -137,9 +160,12 @@ public interface AhcEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder cookieHandler(String cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -150,9 +176,13 @@ public interface AhcEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -164,9 +194,13 @@ public interface AhcEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -184,10 +218,13 @@ public interface AhcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -204,10 +241,14 @@ public interface AhcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -218,10 +259,13 @@ public interface AhcEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -233,10 +277,14 @@ public interface AhcEndpointBuilderFactory {
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -254,10 +302,13 @@ public interface AhcEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder transferException(boolean transferException) {
             doSetProperty("transferException", transferException);
@@ -274,10 +325,14 @@ public interface AhcEndpointBuilderFactory {
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder transferException(String transferException) {
             doSetProperty("transferException", transferException);
@@ -292,9 +347,12 @@ public interface AhcEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -310,9 +368,12 @@ public interface AhcEndpointBuilderFactory {
          * clientConfig option at the endpoint or component level.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default AhcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -331,41 +392,17 @@ public interface AhcEndpointBuilderFactory {
             return (AhcEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAhcEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAhcEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -376,9 +413,13 @@ public interface AhcEndpointBuilderFactory {
          * between AHC and Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -389,9 +430,13 @@ public interface AhcEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
             doSetProperty("clientConfig", clientConfig);
@@ -402,9 +447,13 @@ public interface AhcEndpointBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option will be converted to a
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder clientConfig(String clientConfig) {
             doSetProperty("clientConfig", clientConfig);
@@ -414,13 +463,17 @@ public interface AhcEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 String key,
@@ -432,13 +485,16 @@ public interface AhcEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(Map values) {
             doSetMultiValueProperties("clientConfigOptions", "clientConfig.", values);
@@ -448,10 +504,13 @@ public interface AhcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -461,10 +520,14 @@ public interface AhcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -474,13 +537,17 @@ public interface AhcEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 String key,
@@ -492,13 +559,16 @@ public interface AhcEndpointBuilderFactory {
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigRealmOptions(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(Map values) {
             doSetMultiValueProperties("clientConfigRealmOptions", "clientConfig.realm.", values);
@@ -521,6 +591,7 @@ public interface AhcEndpointBuilderFactory {
          * The URI to use such as http://hostname:port/path
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default AhcEndpointBuilder ahc(String path) {
             return AhcEndpointBuilderFactory.endpointBuilder("ahc", path);
@@ -541,6 +612,7 @@ public interface AhcEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default AhcEndpointBuilder ahc(String componentName, String path) {
             return AhcEndpointBuilderFactory.endpointBuilder(componentName, path);

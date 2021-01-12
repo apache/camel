@@ -1,10 +1,11 @@
-[[undertow-spring-security-component]]
+[[undertow-spring-security-other]]
 = Undertow Spring Security Component
 :docTitle: Undertow Spring Security
 :artifactId: camel-undertow-spring-security
 :description: Spring Security Provider for camel-undertow
 :since: 3.3
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/undertow-spring-security.adoc[opts=optional]
 
 *Since Camel {since}*
 

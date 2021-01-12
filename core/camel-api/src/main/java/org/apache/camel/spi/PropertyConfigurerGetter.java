@@ -16,34 +16,58 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-
 /**
- * A marker interface to identify the object as being a configurer which can
- * provide details about the options the configurer supports.
+ * A marker interface to identify the object as being a configurer which can provide details about the options the
+ * configurer supports.
  * <p/>
- * This is used in Camel to have fast property configuration of Camel components & endpoints,
- * and for EIP patterns as well.
+ * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
+ * well.
  *
  * @see PropertyConfigurer
+ * @see ExtendedPropertyConfigurerGetter
  */
 public interface PropertyConfigurerGetter {
 
     /**
-     * Provides a map of which options the cofigurer supports and their class type.
+     * Gets the option class type.
      *
-     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
-     * @return configurable options from the target as a Map name -> class type.
+     * @param  name the property name
+     * @return      the class type, or <tt>null</tt> if no option exists with the name
      */
-    Map<String, Object> getAllOptions(Object target);
+    Class<?> getOptionType(String name, boolean ignoreCase);
+
+    /**
+     * Gets the names of the autowired options.
+     *
+     * @return the names as an array, or null if there are no autowire options.
+     */
+    default String[] getAutowiredNames() {
+        return null;
+    }
+
+    /**
+     * This method can be used to retrieve the class type for an option if the option is a collection kind (list, map,
+     * or array). For maps, then the nested type returned is the type of the value in the map (not the map key type).
+     *
+     * @param  target     the target instance such as {@link org.apache.camel.Endpoint} or
+     *                    {@link org.apache.camel.Component}.
+     * @param  name       the property name
+     * @param  ignoreCase whether to ignore case for matching the property name
+     * @return            the class type, or <tt>null</tt> if the option is not a collection kind or not possible to
+     *                    determine
+     */
+    default Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        return null;
+    }
 
     /**
      * Gets the property value
      *
-     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
-     * @param name          the property name
-     * @param ignoreCase    whether to ignore case for matching the property name
-     * @return the property value
+     * @param  target     the target instance such as {@link org.apache.camel.Endpoint} or
+     *                    {@link org.apache.camel.Component}.
+     * @param  name       the property name
+     * @param  ignoreCase whether to ignore case for matching the property name
+     * @return            the property value
      */
     Object getOptionValue(Object target, String name, boolean ignoreCase);
 

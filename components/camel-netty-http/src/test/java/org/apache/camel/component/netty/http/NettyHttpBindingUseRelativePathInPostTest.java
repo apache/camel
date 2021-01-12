@@ -28,11 +28,12 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
     @Test
     public void testSendToNetty() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/myapp/myservice?query1=a&query2=b&useRelativePath=true", exchange1 -> {
-            exchange1.getIn().setBody("b1=x&b2=y");
-            exchange1.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
-            exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
-        });
+        Exchange exchange = template.request(
+                "netty-http:http://localhost:{{port}}/myapp/myservice?query1=a&query2=b&useRelativePath=true", exchange1 -> {
+                    exchange1.getIn().setBody("b1=x&b2=y");
+                    exchange1.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
+                    exchange1.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
+                });
         // convert the response to a String
         String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
@@ -47,11 +48,14 @@ public class NettyHttpBindingUseRelativePathInPostTest extends BaseNettyTest {
 
                     // for unit testing make sure we got right message
                     assertEquals("b1=x&b2=y", body, "The body message is wrong");
-                    assertEquals("a", exchange.getIn().getHeader("query1"), "Get a wrong query parameter from the message header");
-                    assertEquals("b", exchange.getIn().getHeader("query2"), "Get a wrong query parameter from the message header");
+                    assertEquals("a", exchange.getIn().getHeader("query1"),
+                            "Get a wrong query parameter from the message header");
+                    assertEquals("b", exchange.getIn().getHeader("query2"),
+                            "Get a wrong query parameter from the message header");
                     assertEquals("x", exchange.getIn().getHeader("b1"), "Get a wrong form parameter from the message header");
                     assertEquals("y", exchange.getIn().getHeader("b2"), "Get a wrong form parameter from the message header");
-                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"), "Get a wrong form parameter from the message header");
+                    assertEquals("localhost:" + getPort(), exchange.getIn().getHeader("host"),
+                            "Get a wrong form parameter from the message header");
 
                     NettyHttpMessage in = (NettyHttpMessage) exchange.getIn();
                     FullHttpRequest request = in.getHttpRequest();

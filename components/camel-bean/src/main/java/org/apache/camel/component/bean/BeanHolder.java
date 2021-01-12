@@ -28,6 +28,13 @@ import org.apache.camel.Processor;
 public interface BeanHolder {
 
     /**
+     * Sets error handler used by @RecipientList EIP
+     *
+     * @param errorHandler the error handler
+     */
+    void setErrorHandler(Processor errorHandler);
+
+    /**
      * Additional options that should be configured on the bean
      */
     Map<String, Object> getOptions();
@@ -66,11 +73,11 @@ public interface BeanHolder {
     /**
      * Gets bean info for the given bean.
      * <p/>
-     * This implementation allows a thread safe usage for {@link BeanHolder} implementations
-     * such as the {@link RegistryBean}.
+     * This implementation allows a thread safe usage for {@link BeanHolder} implementations such as the
+     * {@link RegistryBean}.
      *
-     * @param bean the bean
-     * @return <tt>null</tt> if not supported, then use {@link #getBeanInfo()} instead.
+     * @param  bean the bean
+     * @return      <tt>null</tt> if not supported, then use {@link #getBeanInfo()} instead.
      */
     BeanInfo getBeanInfo(Object bean);
 }

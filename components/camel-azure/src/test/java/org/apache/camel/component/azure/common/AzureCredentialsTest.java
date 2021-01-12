@@ -122,7 +122,8 @@ public class AzureCredentialsTest extends CamelTestSupport {
     @Test
     public void createBlobEndpointWithAccountCredentialsAndCredentialsRef() throws Exception {
         registerCredentials(context, CREDENTIALS_ACCOUNT_NAME, CREDENTIALS_ACCOUNT_KEY);
-        executeBlobAssertions(inlineCredentialBlobURIAndCredentialRefEndpoint, CREDENTIALS_ACCOUNT_NAME, CREDENTIALS_ACCOUNT_KEY);
+        executeBlobAssertions(inlineCredentialBlobURIAndCredentialRefEndpoint, CREDENTIALS_ACCOUNT_NAME,
+                CREDENTIALS_ACCOUNT_KEY);
     }
 
     @Test
@@ -130,8 +131,8 @@ public class AzureCredentialsTest extends CamelTestSupport {
         registerCredentials(context, CREDENTIALS_ACCOUNT_NAME, CREDENTIALS_ACCOUNT_KEY);
         registerBlockBlobClient(context, CLIENT_CREDENTIALS_ACCOUNT_NAME, CLIENT_CREDENTIALS_ACCOUNT_KEY);
 
-        BlobServiceEndpoint endpoint = (BlobServiceEndpoint)
-                context.getEndpoint(inlineCredentialBlobURIAndCredentialRefEndpointAndAzureClient);
+        BlobServiceEndpoint endpoint
+                = (BlobServiceEndpoint) context.getEndpoint(inlineCredentialBlobURIAndCredentialRefEndpointAndAzureClient);
         CloudBlob client = context.getRegistry().lookupByNameAndType("blobClient", CloudBlockBlob.class);
         executeBlobAccountCredentialsAssertion(client, endpoint.getConfiguration());
         executeBlobCredentialsAssertion(client, CLIENT_CREDENTIALS_ACCOUNT_NAME, CLIENT_CREDENTIALS_ACCOUNT_KEY);
@@ -141,13 +142,15 @@ public class AzureCredentialsTest extends CamelTestSupport {
 
     @Test
     public void createQueueEndpointWithAccountCredentials() throws Exception {
-        executeQueueAssertions(inlineCredentialQueueURIEndpoint, INLINE_CREDENTIALS_ACCOUNT_NAME, INLINE_CREDENTIALS_ACCOUNT_KEY);
+        executeQueueAssertions(inlineCredentialQueueURIEndpoint, INLINE_CREDENTIALS_ACCOUNT_NAME,
+                INLINE_CREDENTIALS_ACCOUNT_KEY);
     }
 
     @Test
     public void createQueueEndpointWithAccountCredentialsAndCredentialsRef() throws Exception {
         registerCredentials(context, CREDENTIALS_ACCOUNT_NAME, CREDENTIALS_ACCOUNT_KEY);
-        executeQueueAssertions(inlineCredentialQueueURIAndCredentialRefEndpoint, CREDENTIALS_ACCOUNT_NAME, CREDENTIALS_ACCOUNT_KEY);
+        executeQueueAssertions(inlineCredentialQueueURIAndCredentialRefEndpoint, CREDENTIALS_ACCOUNT_NAME,
+                CREDENTIALS_ACCOUNT_KEY);
     }
 
     @Test
@@ -155,14 +158,15 @@ public class AzureCredentialsTest extends CamelTestSupport {
         registerCredentials(context, CREDENTIALS_ACCOUNT_NAME, CREDENTIALS_ACCOUNT_KEY);
         registerQueueClient(context, CLIENT_CREDENTIALS_ACCOUNT_NAME, CLIENT_CREDENTIALS_ACCOUNT_KEY);
 
-        QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint(inlineCredentialQueueURIAndCredentialRefEndpointAndAzureClient);
+        QueueServiceEndpoint endpoint
+                = (QueueServiceEndpoint) context.getEndpoint(inlineCredentialQueueURIAndCredentialRefEndpointAndAzureClient);
         CloudQueue client = context.getRegistry().lookupByNameAndType("queueClient", CloudQueue.class);
         executeQueueAccountCredentialsAssertion(client, endpoint.getConfiguration());
         executeQueueCredentialsAssertion(client, CLIENT_CREDENTIALS_ACCOUNT_NAME, CLIENT_CREDENTIALS_ACCOUNT_KEY);
     }
-    
 
-    private void executeQueueAssertions(String uriString, String expectedAccountName, String  expectedAccountKey) throws Exception {
+    private void executeQueueAssertions(String uriString, String expectedAccountName, String expectedAccountKey)
+            throws Exception {
         QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint(uriString);
         CloudQueue queueClient = QueueServiceUtil.createQueueClient(endpoint.getConfiguration());
         executeQueueAccountCredentialsAssertion(queueClient, endpoint.getConfiguration());
@@ -177,26 +181,29 @@ public class AzureCredentialsTest extends CamelTestSupport {
     }
 
     private void executeQueueCredentialsAssertion(CloudQueue client, String expectedAccountName, String expectedAccountKey) {
-        StorageCredentialsAccountAndKey credentials =
-                (StorageCredentialsAccountAndKey) client.getServiceClient().getCredentials();
+        StorageCredentialsAccountAndKey credentials
+                = (StorageCredentialsAccountAndKey) client.getServiceClient().getCredentials();
 
         assertNotNull(client.getServiceClient().getCredentials());
         assertEquals(expectedAccountName, credentials.getAccountName());
         assertEquals(expectedAccountKey, credentials.exportBase64EncodedKey());
     }
 
-    private void executeBlobAssertions(String uriString, String expectedAccountName, String  expectedAccountKey) throws Exception {
+    private void executeBlobAssertions(String uriString, String expectedAccountName, String expectedAccountKey)
+            throws Exception {
         BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context.getEndpoint(uriString);
 
         CloudBlob pageBlobClient = BlobServiceUtil.createPageBlobClient(endpoint.createExchange(), endpoint.getConfiguration());
         executeBlobAccountCredentialsAssertion(pageBlobClient, endpoint.getConfiguration());
         executeBlobCredentialsAssertion(pageBlobClient, expectedAccountName, expectedAccountKey);
 
-        CloudBlob blockBlobClient = BlobServiceUtil.createBlockBlobClient(endpoint.createExchange(), endpoint.getConfiguration());
+        CloudBlob blockBlobClient
+                = BlobServiceUtil.createBlockBlobClient(endpoint.createExchange(), endpoint.getConfiguration());
         executeBlobAccountCredentialsAssertion(blockBlobClient, endpoint.getConfiguration());
         executeBlobCredentialsAssertion(blockBlobClient, expectedAccountName, expectedAccountKey);
 
-        CloudBlob appendBlobClient = BlobServiceUtil.createAppendBlobClient(endpoint.createExchange(), endpoint.getConfiguration());
+        CloudBlob appendBlobClient
+                = BlobServiceUtil.createAppendBlobClient(endpoint.createExchange(), endpoint.getConfiguration());
         executeBlobAccountCredentialsAssertion(appendBlobClient, endpoint.getConfiguration());
         executeBlobCredentialsAssertion(appendBlobClient, expectedAccountName, expectedAccountKey);
     }
@@ -211,8 +218,8 @@ public class AzureCredentialsTest extends CamelTestSupport {
     }
 
     private void executeBlobCredentialsAssertion(CloudBlob client, String expectedAccountName, String expectedAccountKey) {
-        StorageCredentialsAccountAndKey credentials = (StorageCredentialsAccountAndKey)
-                client.getServiceClient().getCredentials();
+        StorageCredentialsAccountAndKey credentials
+                = (StorageCredentialsAccountAndKey) client.getServiceClient().getCredentials();
         assertNotNull(client.getServiceClient().getCredentials());
         assertEquals(expectedAccountName, credentials.getAccountName());
         assertEquals(expectedAccountKey, credentials.exportBase64EncodedKey());

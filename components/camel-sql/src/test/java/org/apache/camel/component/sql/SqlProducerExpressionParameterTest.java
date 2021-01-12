@@ -46,7 +46,8 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+        db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         super.setUp();
     }
@@ -95,9 +96,12 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:start").to("sql:select * from projects where license = :#${exchangeProperty.license} order by id").to("mock:result");
+                from("direct:start").to("sql:select * from projects where license = :#${exchangeProperty.license} order by id")
+                        .to("mock:result");
 
-                from("direct:start-simple").to("sql:select * from projects where license = :#$simple{exchangeProperty.license} order by id").to("mock:result-simple");
+                from("direct:start-simple")
+                        .to("sql:select * from projects where license = :#$simple{exchangeProperty.license} order by id")
+                        .to("mock:result-simple");
             }
         };
     }

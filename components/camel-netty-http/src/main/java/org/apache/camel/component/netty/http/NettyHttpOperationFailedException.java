@@ -36,9 +36,11 @@ public class NettyHttpOperationFailedException extends CamelException {
     private final transient HttpContent content;
     private final String contentAsString;
 
-    public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location, HttpContent content) {
+    public NettyHttpOperationFailedException(String uri, int statusCode, String statusText, String location,
+                                             HttpContent content) {
         // sanitize uri so we do not show sensitive information such as passwords
-        super("Netty HTTP operation failed invoking " + URISupport.sanitizeUri(uri) + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
+        super("Netty HTTP operation failed invoking " + URISupport.sanitizeUri(uri) + " with statusCode: " + statusCode
+              + (location != null ? ", redirectLocation: " + location : ""));
         this.uri = URISupport.sanitizeUri(uri);
         this.statusCode = statusCode;
         this.statusText = statusText;
@@ -81,8 +83,8 @@ public class NettyHttpOperationFailedException extends CamelException {
     /**
      * Gets the {@link HttpContent}.
      * <p/>
-     * Notice this may be <tt>null</tt> if this exception has been serialized,
-     * as the {@link HttpContent} instance is marked as transient in this class.
+     * Notice this may be <tt>null</tt> if this exception has been serialized, as the {@link HttpContent} instance is
+     * marked as transient in this class.
      *
      * @deprecated use getContentAsString();
      */

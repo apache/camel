@@ -55,7 +55,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
-        
+
         assertNull(msg.getHeader("CamelFileName"), "We should not get the message header here");
         assertNull(msg.getHeader("org.apache.camel.test"), "We should not get the message header here");
     }
@@ -68,14 +68,15 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         map.put("Subject", "Camel rocks");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders("smtp://davsclaus@apache.org?from=James Strachan <jstrachan@apache.org>&to=davsclaus@apache.org", body, map);
+        template.sendBodyAndHeaders(
+                "smtp://davsclaus@apache.org?from=James Strachan <jstrachan@apache.org>&to=davsclaus@apache.org", body, map);
 
         Mailbox box = Mailbox.get("davsclaus@apache.org");
         Message msg = box.get(0);
         assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("James Strachan <jstrachan@apache.org>", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
-        
+
     }
 
     @Override

@@ -40,10 +40,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Helvetica
          * Group: producer
+         * 
+         * @param font the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder font(String font) {
             doSetProperty("font", font);
@@ -52,10 +55,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font size in pixels.
          * 
-         * The option is a: <code>float</code> type.
+         * The option is a: &lt;code&gt;float&lt;/code&gt; type.
          * 
-         * Default: 14
+         * Default: 14.0
          * Group: producer
+         * 
+         * @param fontSize the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder fontSize(float fontSize) {
             doSetProperty("fontSize", fontSize);
@@ -64,10 +70,14 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Font size in pixels.
          * 
-         * The option will be converted to a <code>float</code> type.
+         * The option will be converted to a &lt;code&gt;float&lt;/code&gt;
+         * type.
          * 
-         * Default: 14
+         * Default: 14.0
          * Group: producer
+         * 
+         * @param fontSize the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder fontSize(String fontSize) {
             doSetProperty("fontSize", fontSize);
@@ -84,10 +94,13 @@ public interface PdfEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -104,10 +117,14 @@ public interface PdfEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -116,10 +133,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin bottom in pixels.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param marginBottom the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginBottom(int marginBottom) {
             doSetProperty("marginBottom", marginBottom);
@@ -128,10 +148,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin bottom in pixels.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param marginBottom the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginBottom(String marginBottom) {
             doSetProperty("marginBottom", marginBottom);
@@ -140,10 +163,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin left in pixels.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param marginLeft the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginLeft(int marginLeft) {
             doSetProperty("marginLeft", marginLeft);
@@ -152,10 +178,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin left in pixels.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param marginLeft the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginLeft(String marginLeft) {
             doSetProperty("marginLeft", marginLeft);
@@ -164,10 +193,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin right in pixels.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 40
          * Group: producer
+         * 
+         * @param marginRight the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginRight(int marginRight) {
             doSetProperty("marginRight", marginRight);
@@ -176,10 +208,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin right in pixels.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 40
          * Group: producer
+         * 
+         * @param marginRight the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginRight(String marginRight) {
             doSetProperty("marginRight", marginRight);
@@ -188,10 +223,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin top in pixels.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param marginTop the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginTop(int marginTop) {
             doSetProperty("marginTop", marginTop);
@@ -200,10 +238,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Margin top in pixels.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: producer
+         * 
+         * @param marginTop the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder marginTop(String marginTop) {
             doSetProperty("marginTop", marginTop);
@@ -212,10 +253,13 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Page size.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: A4
          * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -231,11 +275,13 @@ public interface PdfEndpointBuilderFactory {
          * fits in the line or not.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.pdf.TextProcessingFactory&lt;/code&gt; type.
          * 
          * Default: lineTermination
          * Group: producer
+         * 
+         * @param textProcessingFactory the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder textProcessingFactory(
                 TextProcessingFactory textProcessingFactory) {
@@ -252,11 +298,13 @@ public interface PdfEndpointBuilderFactory {
          * fits in the line or not.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.pdf.TextProcessingFactory&lt;/code&gt; type.
          * 
          * Default: lineTermination
          * Group: producer
+         * 
+         * @param textProcessingFactory the value to set
+         * @return the dsl builder
          */
         default PdfEndpointBuilder textProcessingFactory(
                 String textProcessingFactory) {
@@ -275,41 +323,16 @@ public interface PdfEndpointBuilderFactory {
             return (PdfEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPdfEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPdfEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPdfEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -319,10 +342,14 @@ public interface PdfEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPdfEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -352,9 +379,11 @@ public interface PdfEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation type
-         * The value can be one of: create, append, extractText
+         * There are 3 enums and the value can be one of: create, append,
+         * extractText
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default PdfEndpointBuilder pdf(String path) {
             return PdfEndpointBuilderFactory.endpointBuilder("pdf", path);
@@ -371,11 +400,13 @@ public interface PdfEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation type
-         * The value can be one of: create, append, extractText
+         * There are 3 enums and the value can be one of: create, append,
+         * extractText
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default PdfEndpointBuilder pdf(String componentName, String path) {
             return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);

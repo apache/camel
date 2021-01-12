@@ -43,9 +43,12 @@ public interface ChatScriptEndpointBuilderFactory {
          * Username who initializes the CS conversation. To be set when chat is
          * initialized from camel route.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param chatUserName the value to set
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
             doSetProperty("chatUserName", chatUserName);
@@ -62,10 +65,13 @@ public interface ChatScriptEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -83,10 +89,14 @@ public interface ChatScriptEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -96,10 +106,13 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Issues :reset command to start a new conversation everytime.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param resetChat the value to set
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder resetChat(boolean resetChat) {
             doSetProperty("resetChat", resetChat);
@@ -108,10 +121,14 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Issues :reset command to start a new conversation everytime.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param resetChat the value to set
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder resetChat(String resetChat) {
             doSetProperty("resetChat", resetChat);
@@ -129,41 +146,16 @@ public interface ChatScriptEndpointBuilderFactory {
             return (ChatScriptEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedChatScriptEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -174,10 +166,14 @@ public interface ChatScriptEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -207,6 +203,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Name of the Bot in CS to converse with
          * 
          * @param path host:port/botName
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder chatscript(String path) {
             return ChatScriptEndpointBuilderFactory.endpointBuilder("chatscript", path);
@@ -234,6 +231,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/botName
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder chatscript(
                 String componentName,

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityMethodInvokationTest extends CamelTestSupport {
-    
+
     @Test
     public void testVelocityLetter() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -47,8 +47,8 @@ public class VelocityMethodInvokationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                    .setHeader("esc", constant(new EscapeTool()))
-                    .to("velocity:org/apache/camel/component/velocity/escape.vm?allowContextMapAll=true");
+                        .setHeader("esc", constant(new EscapeTool()))
+                        .to("velocity:org/apache/camel/component/velocity/escape.vm?allowContextMapAll=true");
             }
         };
     }

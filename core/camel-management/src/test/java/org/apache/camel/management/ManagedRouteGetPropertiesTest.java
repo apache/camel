@@ -48,14 +48,13 @@ public class ManagedRouteGetPropertiesTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "getRouteProperties", null, null);
 
         assertNotNull(data);
-        assertTrue(data.containsKey(new Object[] {"key1" }));
-        assertEquals("key1", data.get(new Object[] {"key1" }).get("key"));
-        assertEquals("val1", data.get(new Object[] {"key1" }).get("value"));
-        assertTrue(data.containsKey(new Object[] {"key2" }));
-        assertEquals("key2", data.get(new Object[] {"key2" }).get("key"));
-        assertEquals("val2", data.get(new Object[] {"key2" }).get("value"));
+        assertTrue(data.containsKey(new Object[] { "key1" }));
+        assertEquals("key1", data.get(new Object[] { "key1" }).get("key"));
+        assertEquals("val1", data.get(new Object[] { "key1" }).get("value"));
+        assertTrue(data.containsKey(new Object[] { "key2" }));
+        assertEquals("key2", data.get(new Object[] { "key2" }).get("key"));
+        assertEquals("val2", data.get(new Object[] { "key2" }).get("value"));
     }
-
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -70,10 +69,10 @@ public class ManagedRouteGetPropertiesTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .routeId("myRoute")
-                    .routeProperty("key1", "val1")
-                    .routeProperty("key2", "val2")
-                    .to("mock:result");
+                        .routeId("myRoute")
+                        .routeProperty("key1", "val1")
+                        .routeProperty("key2", "val2")
+                        .to("mock:result");
             }
         };
     }

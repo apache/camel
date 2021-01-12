@@ -94,13 +94,12 @@ public class BindyComplexCsvMarshallTest {
         return models;
     }
 
-    
     public static class ContextConfig extends RouteBuilder {
 
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class);
+            BindyCsvDataFormat camelDataFormat
+                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");

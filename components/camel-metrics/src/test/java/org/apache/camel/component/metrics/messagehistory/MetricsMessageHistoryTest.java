@@ -83,11 +83,11 @@ public class MetricsMessageHistoryTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo")
-                    .to("mock:foo").id("foo");
+                        .to("mock:foo").id("foo");
 
                 from("seda:bar")
-                    .to("mock:bar").id("bar")
-                    .to("mock:baz").id("baz");
+                        .to("mock:bar").id("bar")
+                        .to("mock:baz").id("baz");
             }
         };
     }

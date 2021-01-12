@@ -17,8 +17,8 @@
 package org.apache.camel.component.lumberjack.io;
 
 final class LumberjackConstants {
-    static final int VERSION_V1 = '1';
-    static final int VERSION_V2 = '2';
+    static final byte VERSION_V1 = '1';
+    static final byte VERSION_V2 = '2';
 
     static final int TYPE_ACKNOWLEDGE = 'A';
 
@@ -30,8 +30,6 @@ final class LumberjackConstants {
     static final int INT_LENGTH = 4;
 
     static final int FRAME_HEADER_LENGTH = 1 + 1; // version(byte) + type(byte)
-
-    static final int FRAME_ACKNOWLEDGE_LENGTH = FRAME_HEADER_LENGTH + INT_LENGTH; // sequence number(int)
 
     static final int FRAME_JSON_HEADER_LENGTH = INT_LENGTH + INT_LENGTH; // sequence number(int) + payload length(int)
 

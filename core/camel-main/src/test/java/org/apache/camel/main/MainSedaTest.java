@@ -24,43 +24,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MainSedaTest {
 
     @Test
     public void testSedaMain() throws Exception {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
-        main.addProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.addProperty("camel.component.seda.defaultQueueFactory.counter", "123");
+        main.addProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
-        SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
-        assertNotNull(seda);
-        assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);
-        MySedaBlockingQueueFactory myBQF = (MySedaBlockingQueueFactory) seda.getDefaultQueueFactory();
-        assertEquals(123, myBQF.getCounter());
-
-        main.stop();
-    }
-
-    @Test
-    public void testSedaAutowireFromRegistryMain() throws Exception {
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new MyRouteBuilder());
-        main.addProperty("camel.beans.myqf", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
-        main.addProperty("camel.beans.myqf.counter", "123");
-        main.start();
-
-        CamelContext camelContext = main.getCamelContext();
-        assertNotNull(camelContext);
-
-        // the keys will be lower-cased
-        assertNotNull(camelContext.getRegistry().lookupByName("myqf"));
-
-        // seda will autowire from registry and discover the custom qf and use it
         SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
         assertNotNull(seda);
         assertTrue(seda.getDefaultQueueFactory() instanceof MySedaBlockingQueueFactory);

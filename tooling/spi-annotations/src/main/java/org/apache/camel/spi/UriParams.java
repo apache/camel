@@ -23,12 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to annotate a nested configuration parameter type (such as a nested Configuration object) which can then be used on a
- * Component, Endpoint and/or Consumer and then be configured via Camel URI query arguments.
+ * Used to annotate a nested configuration parameter type (such as a nested Configuration object) which can then be used
+ * on a Component, Endpoint and/or Consumer and then be configured via Camel URI query arguments.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE })
+@Target({ ElementType.TYPE })
 public @interface UriParams {
 
     /**

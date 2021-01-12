@@ -16,7 +16,23 @@
  */
 package org.apache.camel.util.function;
 
+/**
+ * Represents an operation that accepts two input arguments and returns no result and may thrown an exception.
+ *
+ * @param <I1> the type of the first argument to the operation
+ * @param <I2> the type of the second argument to the operation
+ * @param <T>  the type of the exception the accept method may throw
+ *
+ * @see        java.util.function.BiConsumer
+ */
 @FunctionalInterface
 public interface ThrowingBiConsumer<I1, I2, T extends Throwable> {
+    /**
+     * Performs this operation on the given arguments, potentially throwing an exception.
+     *
+     * @param  i1 the first function argument
+     * @param  i2 the first function argument
+     * @throws T  the exception that may be thrown
+     */
     void accept(I1 i1, I2 i2) throws T;
 }

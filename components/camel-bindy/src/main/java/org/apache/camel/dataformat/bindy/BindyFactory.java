@@ -22,40 +22,37 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 
 /**
- * The bindy factory is a factory used to create the POJO models and bind or
- * unbind the data to and from the record (CSV, ...)
+ * The bindy factory is a factory used to create the POJO models and bind or unbind the data to and from the record
+ * (CSV, ...)
  */
 public interface BindyFactory {
 
     /**
-     * Prior to bind or unbind the data to and from string or model classes, the
-     * factory must create a collection of objects representing the model
+     * Prior to bind or unbind the data to and from string or model classes, the factory must create a collection of
+     * objects representing the model
      * 
      * @throws Exception can be thrown
      */
     void initModel() throws Exception;
 
     /**
-     * The bind allow to read the content of a record (expressed as a
-     * List<String>) and map it to the model classes.
+     * The bind allow to read the content of a record (expressed as a List<String>) and map it to the model classes.
      * 
-     * @param data List<String> represents the csv, ... data to transform
-     * @param model Map<String, object> is a collection of objects used to bind
-     *            data. String is the key name of the class link to POJO
-     *            objects
-     * @param line is the position of the record into the file
+     * @param  data      List<String> represents the csv, ... data to transform
+     * @param  model     Map<String, object> is a collection of objects used to bind data. String is the key name of the
+     *                   class link to POJO objects
+     * @param  line      is the position of the record into the file
      * @throws Exception can be thrown
      */
     void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception;
 
     /**
-     * The unbind is used to transform the content of the classes model objects
-     * into a string. The string represents a record of a CSV file
+     * The unbind is used to transform the content of the classes model objects into a string. The string represents a
+     * record of a CSV file
      * 
-     * @return String represents a csv record created
-     * @param model Map<String, Object> is a collection of objects used to
-     *            create csv, ... records. String is the key name of the
-     *            class link to POJO objects
+     * @return           String represents a csv record created
+     * @param  model     Map<String, Object> is a collection of objects used to create csv, ... records. String is the
+     *                   key name of the class link to POJO objects
      * @throws Exception can be thrown
      */
     String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception;

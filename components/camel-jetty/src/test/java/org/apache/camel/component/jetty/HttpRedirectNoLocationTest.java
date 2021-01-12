@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -50,7 +50,7 @@ public class HttpRedirectNoLocationTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
                     }
                 });
             }

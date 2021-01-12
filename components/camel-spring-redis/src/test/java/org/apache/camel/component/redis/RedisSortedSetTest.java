@@ -138,7 +138,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         assertEquals(keys, result);
     }
 
-
     @Test
     public void shouldExecuteZRANGEWithScores() {
         when(zSetOperations.rangeWithScores(anyString(), anyLong(), anyLong())).thenReturn(null);
@@ -153,7 +152,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         verify(zSetOperations).rangeWithScores("key", 1, 3);
         assertEquals(null, result);
     }
-
 
     @Test
     public void shouldExecuteZRANGEBYSCORE() {
@@ -171,7 +169,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         verify(zSetOperations).rangeByScore("key", 1.0, 2.0);
         assertEquals(keys, result);
     }
-
 
     @Test
     public void shouldExecuteZRANK() {
@@ -199,7 +196,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         assertEquals(1L, result);
     }
 
-
     @Test
     public void shouldExecuteZREMRANGEBYRANK() {
         sendHeaders(
@@ -222,7 +218,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         verify(zSetOperations).removeRangeByScore("key", 1.0, 2.0);
     }
 
-
     @Test
     public void shouldExecuteZREVRANGE() {
         Set<String> keys = new HashSet<>();
@@ -240,7 +235,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         assertEquals(keys, result);
     }
 
-
     @Test
     public void shouldExecuteZREVRANGEWithScores() {
         when(zSetOperations.reverseRangeWithScores(anyString(), anyLong(), anyLong())).thenReturn(null);
@@ -255,7 +249,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         verify(zSetOperations).reverseRangeWithScores("key", 1, 3);
         assertEquals(null, result);
     }
-
 
     @Test
     public void shouldExecuteZREVRANGEBYSCORE() {
@@ -273,7 +266,6 @@ public class RedisSortedSetTest extends RedisTestSupport {
         verify(zSetOperations).reverseRangeByScore("key", 1.0, 2.0);
         assertEquals(keys, result);
     }
-
 
     @Test
     public void shouldExecuteZREVRANK() {
@@ -302,4 +294,3 @@ public class RedisSortedSetTest extends RedisTestSupport {
         verify(zSetOperations).unionAndStore("key", keys, "destination");
     }
 }
-

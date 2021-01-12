@@ -54,7 +54,10 @@ public class OpenShiftServer implements BeforeEachCallback, AfterEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        this.mock = this.curdMode ? new OpenShiftMockServer(new Context(), new MockWebServer(), new HashMap(), new KubernetesCrudDispatcher(), true) : new OpenShiftMockServer(this.https);
+        this.mock = this.curdMode
+                ? new OpenShiftMockServer(
+                        new Context(), new MockWebServer(), new HashMap(), new KubernetesCrudDispatcher(), true)
+                : new OpenShiftMockServer(this.https);
         this.mock.init();
         this.client = this.mock.createOpenShiftClient();
     }
@@ -80,13 +83,13 @@ public class OpenShiftServer implements BeforeEachCallback, AfterEachCallback {
     /** @deprecated */
     @Deprecated
     public <T> void expectAndReturnAsJson(String path, int code, T body) {
-        ((TimesOnceableOrHttpHeaderable)((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
+        ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
     /** @deprecated */
     @Deprecated
     public void expectAndReturnAsString(String path, int code, String body) {
-        ((TimesOnceableOrHttpHeaderable)((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
+        ((TimesOnceableOrHttpHeaderable) ((ReturnOrWebsocketable) this.expect().withPath(path)).andReturn(code, body)).always();
     }
 
     public MockWebServer getMockServer() {

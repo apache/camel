@@ -4,8 +4,10 @@ package org.apache.camel.component.websocket;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,8 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketComponent target = (WebsocketComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "enablejmx":
@@ -52,32 +54,46 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxThreads", java.lang.Integer.class);
-        answer.put("minThreads", java.lang.Integer.class);
-        answer.put("port", java.lang.Integer.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sslKeyPassword", java.lang.String.class);
-        answer.put("sslKeystore", java.lang.String.class);
-        answer.put("sslPassword", java.lang.String.class);
-        answer.put("staticResources", java.lang.String.class);
-        answer.put("threadPool", org.eclipse.jetty.util.thread.ThreadPool.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxthreads":
+        case "maxThreads": return java.lang.Integer.class;
+        case "minthreads":
+        case "minThreads": return java.lang.Integer.class;
+        case "port": return java.lang.Integer.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslkeystore":
+        case "sslKeystore": return java.lang.String.class;
+        case "sslpassword":
+        case "sslPassword": return java.lang.String.class;
+        case "staticresources":
+        case "staticResources": return java.lang.String.class;
+        case "threadpool":
+        case "threadPool": return org.eclipse.jetty.util.thread.ThreadPool.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WebsocketComponent target = (WebsocketComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "enablejmx":

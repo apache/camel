@@ -20,12 +20,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Used to get data for high score tables.
- * Will return the score of the specified user and several of his neighbors in a game.
- * On success, returns a {@link MessageResultGameScores} object.
+ * Used to get data for high score tables. Will return the score of the specified user and several of his neighbors in a
+ * game. On success, returns a {@link MessageResultGameScores} object.
  *
  * @see <a href="https://core.telegram.org/bots/api#getgamehighscores">
- *     https://core.telegram.org/bots/api#getgamehighscores</a>
+ *      https://core.telegram.org/bots/api#getgamehighscores</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OutgoingGetGameHighScoresMessage extends OutgoingMessage {
@@ -42,9 +41,9 @@ public class OutgoingGetGameHighScoresMessage extends OutgoingMessage {
     /**
      * Builds {@link OutgoingGetGameHighScoresMessage} instance.
      *
-     * @param userId             User identifier
-     * @param messageId          Required if inline_message_id is not specified. Identifier of the sent message
-     * @param inlineMessageId    Required if chat_id and message_id are not specified. Identifier of the inline message
+     * @param userId          User identifier
+     * @param messageId       Required if inline_message_id is not specified. Identifier of the sent message
+     * @param inlineMessageId Required if chat_id and message_id are not specified. Identifier of the inline message
      */
     public OutgoingGetGameHighScoresMessage(Long userId, Long messageId, String inlineMessageId) {
         this.userId = userId;

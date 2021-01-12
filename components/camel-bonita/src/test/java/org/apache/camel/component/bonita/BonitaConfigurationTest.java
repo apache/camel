@@ -28,8 +28,7 @@ public class BonitaConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testBonitaConfigurationDefaults() {
-        BonitaEndpoint bonitaEndpoint =
-                context.getEndpoint("bonita:startCase", BonitaEndpoint.class);
+        BonitaEndpoint bonitaEndpoint = context.getEndpoint("bonita:startCase", BonitaEndpoint.class);
         BonitaConfiguration configuration = bonitaEndpoint.getConfiguration();
 
         assertEquals("localhost", configuration.getHostname());
@@ -54,7 +53,7 @@ public class BonitaConfigurationTest extends CamelTestSupport {
     @Test
     public void testBonitaConfigurationWrongOperation() {
         assertThrows(ResolveEndpointFailedException.class,
-            () -> context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class));
+                () -> context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class));
     }
 
 }

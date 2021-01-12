@@ -48,10 +48,13 @@ public interface DozerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -68,10 +71,14 @@ public interface DozerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -86,9 +93,12 @@ public interface DozerEndpointBuilderFactory {
          * registry (e.g. #myDozerConfig).
          * 
          * The option is a:
-         * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.converter.dozer.DozerBeanMapperConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mappingConfiguration the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder mappingConfiguration(
                 Object mappingConfiguration) {
@@ -104,9 +114,12 @@ public interface DozerEndpointBuilderFactory {
          * registry (e.g. #myDozerConfig).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.converter.dozer.DozerBeanMapperConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mappingConfiguration the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder mappingConfiguration(
                 String mappingConfiguration) {
@@ -118,10 +131,13 @@ public interface DozerEndpointBuilderFactory {
          * the classpath by default, but you can use file:, classpath:, or http:
          * to load the configuration from a specific location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: dozerBeanMapping.xml
          * Group: producer
+         * 
+         * @param mappingFile the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder mappingFile(String mappingFile) {
             doSetProperty("mappingFile", mappingFile);
@@ -131,9 +147,12 @@ public interface DozerEndpointBuilderFactory {
          * The id of a dataFormat defined within the Camel Context to use for
          * marshalling the mapping output to a non-Java type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param marshalId the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder marshalId(String marshalId) {
             doSetProperty("marshalId", marshalId);
@@ -144,9 +163,12 @@ public interface DozerEndpointBuilderFactory {
          * If specified, the input to the mapping is converted to the specified
          * type before being mapped with Dozer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceModel the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder sourceModel(String sourceModel) {
             doSetProperty("sourceModel", sourceModel);
@@ -155,10 +177,13 @@ public interface DozerEndpointBuilderFactory {
         /**
          * Fully-qualified class name for the target type used in the mapping.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param targetModel the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder targetModel(String targetModel) {
             doSetProperty("targetModel", targetModel);
@@ -168,9 +193,12 @@ public interface DozerEndpointBuilderFactory {
          * The id of a dataFormat defined within the Camel Context to use for
          * unmarshalling the mapping input from a non-Java type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param unmarshalId the value to set
+         * @return the dsl builder
          */
         default DozerEndpointBuilder unmarshalId(String unmarshalId) {
             doSetProperty("unmarshalId", unmarshalId);
@@ -188,41 +216,16 @@ public interface DozerEndpointBuilderFactory {
             return (DozerEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDozerEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDozerEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -232,10 +235,14 @@ public interface DozerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDozerEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -258,6 +265,7 @@ public interface DozerEndpointBuilderFactory {
          * A human readable name of the mapping.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DozerEndpointBuilder dozer(String path) {
             return DozerEndpointBuilderFactory.endpointBuilder("dozer", path);
@@ -278,6 +286,7 @@ public interface DozerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DozerEndpointBuilder dozer(String componentName, String path) {
             return DozerEndpointBuilderFactory.endpointBuilder(componentName, path);

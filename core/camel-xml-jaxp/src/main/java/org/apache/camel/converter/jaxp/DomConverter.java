@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -39,7 +40,7 @@ import org.apache.camel.support.ObjectHelper;
 /**
  * Converts from some DOM types to Java types
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class DomConverter {
     private final XmlConverter xml;
 
@@ -47,7 +48,7 @@ public final class DomConverter {
         xml = new XmlConverter();
     }
 
-    @Converter
+    @Converter(order = 1)
     public String toString(NodeList nodeList, Exchange exchange) throws TransformerException {
         // converting NodeList to String is more tricky
         // sometimes the NodeList is a Node which we can then leverage
@@ -85,12 +86,13 @@ public final class DomConverter {
 
         return buffer.toString();
     }
-    
-    private String toString(Node node, Exchange exchange) throws TransformerException {
+
+    @Converter(order = 2)
+    public String toString(Node node, Exchange exchange) throws TransformerException {
         String s;
         if (node instanceof Text) {
             Text textnode = (Text) node;
-            
+
             StringBuilder b = new StringBuilder();
             b.append(textnode.getNodeValue());
             textnode = (Text) textnode.getNextSibling();
@@ -100,13 +102,12 @@ public final class DomConverter {
             }
             s = b.toString();
         } else {
-            s = xml.toString(node, exchange);
-            
+            s = xml.toString(new DOMSource(node), exchange);
         }
         return s;
     }
 
-    @Converter
+    @Converter(order = 3)
     public static Integer toInteger(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
@@ -114,7 +115,7 @@ public final class DomConverter {
         return Integer.valueOf(s);
     }
 
-    @Converter
+    @Converter(order = 4)
     public static Long toLong(NodeList nodeList) {
         StringBuilder buffer = new StringBuilder();
         append(buffer, nodeList);
@@ -122,7 +123,7 @@ public final class DomConverter {
         return Long.valueOf(s);
     }
 
-    @Converter
+    @Converter(order = 5)
     public static List<?> toList(NodeList nodeList) {
         List<Object> answer = new ArrayList<>();
         Iterator<?> it = ObjectHelper.createIterator(nodeList);
@@ -132,12 +133,13 @@ public final class DomConverter {
         return answer;
     }
 
-    @Converter
-    public InputStream toInputStream(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
+    @Converter(order = 6)
+    public InputStream toInputStream(NodeList nodeList, Exchange exchange)
+            throws TransformerException, UnsupportedEncodingException {
         return new ByteArrayInputStream(toByteArray(nodeList, exchange));
     }
 
-    @Converter
+    @Converter(order = 7)
     public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
         String data = toString(nodeList, exchange);
         return data.getBytes(ExchangeHelper.getCharsetName(exchange));

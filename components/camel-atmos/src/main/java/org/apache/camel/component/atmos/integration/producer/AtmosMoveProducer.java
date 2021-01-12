@@ -23,7 +23,7 @@ import org.apache.camel.component.atmos.core.AtmosAPIFacade;
 import org.apache.camel.component.atmos.dto.AtmosResult;
 
 public class AtmosMoveProducer extends AtmosProducer {
-    
+
     public AtmosMoveProducer(AtmosEndpoint endpoint, AtmosConfiguration configuration) {
         super(endpoint, configuration);
     }

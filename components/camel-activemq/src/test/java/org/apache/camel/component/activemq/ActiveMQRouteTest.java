@@ -54,7 +54,7 @@ public class ActiveMQRouteTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        resultEndpoint = (MockEndpoint)context.getEndpoint("mock:result");
+        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
     }
 
     @Override
@@ -75,12 +75,12 @@ public class ActiveMQRouteTest extends CamelTestSupport {
                 from(startEndpointUri).to("activemq:queue:test.b");
                 from("activemq:queue:test.b").to("mock:result");
 
-                JmsEndpoint endpoint1 = (JmsEndpoint)endpoint("activemq:topic:quote.IONA");
+                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
                 endpoint1.getConfiguration().setTransactionManager(new JmsTransactionManager());
                 endpoint1.getConfiguration().setTransacted(true);
                 from(endpoint1).to("mock:transactedClient");
 
-                JmsEndpoint endpoint2 = (JmsEndpoint)endpoint("activemq:topic:quote.IONA");
+                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint("activemq:topic:quote.IONA");
                 endpoint2.getConfiguration().setTransacted(false);
                 from(endpoint2).to("mock:nonTrasnactedClient");
             }

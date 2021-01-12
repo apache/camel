@@ -21,40 +21,34 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
-    
-    private String data = "abcdefg";
 
+    private String data = "abcdefg";
 
     @Test
     public void testTwoWayStreaming() throws Exception {
         Exchange exchange = template.request("undertow:http://localhost:{{port}}/client", null);
-        
-        assertTrue(new String((byte[])exchange.getMessage().getBody()).equals(data));
+
+        assertEquals(data, new String((byte[]) exchange.getMessage().getBody()));
     }
 
-    
-
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 getContext().setStreamCaching(true);
                 getContext().getStreamCachingStrategy().setSpoolThreshold(3);
 
-                
-
                 from("undertow:http://localhost:{{port}}/client")
-                    .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
-                    .to("http://localhost:{{port}}/server?bridgeEndpoint=true").to("log:lgName?showBody=true")
-                    .end();
+                        .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
+                        .to("http://localhost:{{port}}/server?bridgeEndpoint=true").to("log:lgName?showBody=true")
+                        .end();
                 from("undertow:http://localhost:{{port}}/server?httpMethodRestrict=POST").setBody(simple(data))
-                    .to("log:lgName?showBody=true").end();
+                        .to("log:lgName?showBody=true").end();
             }
         };
     }

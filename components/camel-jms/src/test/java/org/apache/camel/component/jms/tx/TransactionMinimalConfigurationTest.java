@@ -31,7 +31,7 @@ public class TransactionMinimalConfigurationTest extends CamelSpringTestSupport 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml");
+                "/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml");
     }
 
     @Test

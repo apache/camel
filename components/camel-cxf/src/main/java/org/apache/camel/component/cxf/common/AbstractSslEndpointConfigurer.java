@@ -27,21 +27,19 @@ import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.transport.http.HTTPConduit;
 
 public class AbstractSslEndpointConfigurer extends AbstractTLSClientParameterConfigurer {
-    protected final SSLContextParameters sslContextParameters;
-    protected final CamelContext camelContext;
+    protected final SSLSocketFactory sslSocketFactory;
 
     public AbstractSslEndpointConfigurer(SSLContextParameters sslContextParameters, CamelContext camelContext) {
-        this.sslContextParameters = sslContextParameters;
-        this.camelContext = camelContext;
+        this.sslSocketFactory = tryToGetSSLSocketFactory(sslContextParameters, camelContext);
     }
 
     protected void setupHttpConduit(HTTPConduit httpConduit) {
         TLSClientParameters tlsClientParameters = tryToGetTLSClientParametersFromConduit(httpConduit);
-        tlsClientParameters.setSSLSocketFactory(tryToGetSSLSocketFactory());
+        tlsClientParameters.setSSLSocketFactory(sslSocketFactory);
         httpConduit.setTlsClientParameters(tlsClientParameters);
     }
 
-    private SSLSocketFactory tryToGetSSLSocketFactory() {
+    private SSLSocketFactory tryToGetSSLSocketFactory(SSLContextParameters sslContextParameters, CamelContext camelContext) {
         try {
             return sslContextParameters.createSSLContext(camelContext)
                     .getSocketFactory();

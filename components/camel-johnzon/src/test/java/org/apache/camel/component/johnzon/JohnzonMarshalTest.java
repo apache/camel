@@ -46,7 +46,7 @@ public class JohnzonMarshalTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
         TestPojo in = new TestPojo();
@@ -76,7 +76,7 @@ public class JohnzonMarshalTest extends CamelTestSupport {
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
-                
+
                 JohnzonDataFormat formatPojo = new JohnzonDataFormat(TestPojo.class);
 
                 from("direct:inPojo").marshal(formatPojo);

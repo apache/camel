@@ -26,7 +26,8 @@ public class StringsTest {
 
     @Test
     public void testBetween() {
-        assertEquals("org.apache.camel.model.OnCompletionDefinition", between("java.util.List<org.apache.camel.model.OnCompletionDefinition>", "<", ">"));
+        assertEquals("org.apache.camel.model.OnCompletionDefinition",
+                between("java.util.List<org.apache.camel.model.OnCompletionDefinition>", "<", ">"));
     }
 
     @Test

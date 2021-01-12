@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs. The class source won't be generated again
+ * if the generator MOJO finds it under src/test/java.
  */
 public class FhirSearchIT extends AbstractFhirTestSupport {
 
@@ -55,7 +55,7 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for searchByUrl
                 from("direct://SEARCH_BY_URL")
-                    .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
+                        .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
 
             }
         };

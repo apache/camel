@@ -4,8 +4,10 @@ package org.apache.camel.component.caffeine.cache;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -27,9 +29,8 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         CaffeineCacheComponent target = (CaffeineCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cache": getOrCreateConfiguration(target).setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": getOrCreateConfiguration(target).setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.caffeine.CaffeineConfiguration.class, value)); return true;
@@ -63,27 +64,41 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("cache", com.github.benmanes.caffeine.cache.Cache.class);
-        answer.put("cacheLoader", com.github.benmanes.caffeine.cache.CacheLoader.class);
-        answer.put("configuration", org.apache.camel.component.caffeine.CaffeineConfiguration.class);
-        answer.put("createCacheIfNotExist", boolean.class);
-        answer.put("evictionType", org.apache.camel.component.caffeine.EvictionType.class);
-        answer.put("expireAfterAccessTime", int.class);
-        answer.put("expireAfterWriteTime", int.class);
-        answer.put("initialCapacity", int.class);
-        answer.put("key", java.lang.Object.class);
-        answer.put("keyType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maximumSize", int.class);
-        answer.put("removalListener", com.github.benmanes.caffeine.cache.RemovalListener.class);
-        answer.put("statsCounter", com.github.benmanes.caffeine.cache.stats.StatsCounter.class);
-        answer.put("statsEnabled", boolean.class);
-        answer.put("valueType", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "cacheloader":
+        case "cacheLoader": return com.github.benmanes.caffeine.cache.CacheLoader.class;
+        case "configuration": return org.apache.camel.component.caffeine.CaffeineConfiguration.class;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": return boolean.class;
+        case "evictiontype":
+        case "evictionType": return org.apache.camel.component.caffeine.EvictionType.class;
+        case "expireafteraccesstime":
+        case "expireAfterAccessTime": return int.class;
+        case "expireafterwritetime":
+        case "expireAfterWriteTime": return int.class;
+        case "initialcapacity":
+        case "initialCapacity": return int.class;
+        case "key": return java.lang.Object.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximumsize":
+        case "maximumSize": return int.class;
+        case "removallistener":
+        case "removalListener": return com.github.benmanes.caffeine.cache.RemovalListener.class;
+        case "statscounter":
+        case "statsCounter": return com.github.benmanes.caffeine.cache.stats.StatsCounter.class;
+        case "statsenabled":
+        case "statsEnabled": return boolean.class;
+        case "valuetype":
+        case "valueType": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -91,9 +106,8 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         CaffeineCacheComponent target = (CaffeineCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
-        case "cache": return getOrCreateConfiguration(target).getCache();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "cacheloader":
         case "cacheLoader": return getOrCreateConfiguration(target).getCacheLoader();
         case "configuration": return target.getConfiguration();

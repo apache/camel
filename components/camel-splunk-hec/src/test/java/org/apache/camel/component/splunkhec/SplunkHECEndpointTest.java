@@ -33,14 +33,16 @@ public class SplunkHECEndpointTest {
     public void testInvalidURL() {
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
         SplunkHECComponent component = new SplunkHECComponent();
-        assertThrows(IllegalArgumentException.class, () -> new SplunkHECEndpoint("splunk-hec:yo,lo:1234/11111111-1111-1111-1111-111111111111", component, configuration));
+        assertThrows(IllegalArgumentException.class, () -> new SplunkHECEndpoint(
+                "splunk-hec:yo,lo:1234/11111111-1111-1111-1111-111111111111", component, configuration));
     }
 
     @Test
     public void testLocalHostValid() {
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
         SplunkHECComponent component = new SplunkHECComponent();
-        SplunkHECEndpoint endpoint = new SplunkHECEndpoint("splunk-hec:localhost:18808/11111111-1111-1111-1111-111111111111", component, configuration);
+        SplunkHECEndpoint endpoint = new SplunkHECEndpoint(
+                "splunk-hec:localhost:18808/11111111-1111-1111-1111-111111111111", component, configuration);
         assertEquals("localhost:18808", endpoint.getSplunkURL());
         assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getToken());
     }
@@ -49,7 +51,8 @@ public class SplunkHECEndpointTest {
     public void testFQHNValid() {
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
         SplunkHECComponent component = new SplunkHECComponent();
-        SplunkHECEndpoint endpoint = new SplunkHECEndpoint("splunk-hec:http-input.splunkcloud.com:18808/11111111-1111-1111-1111-111111111111", component, configuration);
+        SplunkHECEndpoint endpoint = new SplunkHECEndpoint(
+                "splunk-hec:http-input.splunkcloud.com:18808/11111111-1111-1111-1111-111111111111", component, configuration);
         assertEquals("http-input.splunkcloud.com:18808", endpoint.getSplunkURL());
         assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getToken());
     }
@@ -58,7 +61,8 @@ public class SplunkHECEndpointTest {
     public void testValidWithOptions() {
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
         SplunkHECComponent component = new SplunkHECComponent();
-        SplunkHECEndpoint endpoint = new SplunkHECEndpoint("splunk-hec:localhost:18808/11111111-1111-1111-1111-111111111111?index=foo", component, configuration);
+        SplunkHECEndpoint endpoint = new SplunkHECEndpoint(
+                "splunk-hec:localhost:18808/11111111-1111-1111-1111-111111111111?index=foo", component, configuration);
         assertEquals("localhost:18808", endpoint.getSplunkURL());
         assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getToken());
     }
@@ -67,7 +71,8 @@ public class SplunkHECEndpointTest {
     public void testInvalidPort() {
         SplunkHECConfiguration configuration = new SplunkHECConfiguration();
         SplunkHECComponent component = new SplunkHECComponent();
-        Exception e = assertThrows(IllegalArgumentException.class, () -> new SplunkHECEndpoint("splunk-hec:yolo:188508/11111111-1111-1111-1111-111111111111", component, configuration));
+        Exception e = assertThrows(IllegalArgumentException.class, () -> new SplunkHECEndpoint(
+                "splunk-hec:yolo:188508/11111111-1111-1111-1111-111111111111", component, configuration));
         assertEquals("Invalid port: 188508", e.getMessage());
     }
 }

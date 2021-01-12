@@ -47,6 +47,7 @@ public class TwoRouteRefOnExceptionAndDLCErrorHandlerTest extends SpringTestSupp
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/TwoRouteRefOnExceptionAndDLCErrorHandler.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/TwoRouteRefOnExceptionAndDLCErrorHandler.xml");
     }
 }

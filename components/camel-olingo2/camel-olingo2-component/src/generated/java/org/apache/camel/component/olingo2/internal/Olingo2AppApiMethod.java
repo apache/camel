@@ -89,8 +89,6 @@ public enum Olingo2AppApiMethod implements ApiMethod {
         arg("endpointHttpHeaders", java.util.Map.class),
         arg("responseHandler", org.apache.camel.component.olingo2.api.Olingo2ResponseHandler.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private Olingo2AppApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -32,11 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveAppsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveAppsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveAppsApiMethod.class).getName();
 
     // TODO getting permission errors for this one
     // May have to adjust scopes used
-    @Disabled    
+    @Disabled
     @Test
     public void testList() throws Exception {
         final com.google.api.services.drive.model.App result = requestBody("direct://LIST", null);
@@ -51,11 +52,11 @@ public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get?inBody=appId");
+                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=appId");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list");
+                        .to("google-drive://" + PATH_PREFIX + "/list");
 
             }
         };

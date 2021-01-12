@@ -4,8 +4,10 @@ package org.apache.camel.component.openshift.builds;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class OpenshiftBuildsEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cacertdata":
         case "caCertData": target.getConfiguration().setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertfile":
@@ -64,31 +64,48 @@ public class OpenshiftBuildsEndpointConfigurer extends PropertyConfigurerSupport
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("caCertData", java.lang.String.class);
-        answer.put("caCertFile", java.lang.String.class);
-        answer.put("clientCertData", java.lang.String.class);
-        answer.put("clientCertFile", java.lang.String.class);
-        answer.put("clientKeyAlgo", java.lang.String.class);
-        answer.put("clientKeyData", java.lang.String.class);
-        answer.put("clientKeyFile", java.lang.String.class);
-        answer.put("clientKeyPassphrase", java.lang.String.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("dnsDomain", java.lang.String.class);
-        answer.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("oauthToken", java.lang.String.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("portName", java.lang.String.class);
-        answer.put("portProtocol", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustCerts", java.lang.Boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "cacertdata":
+        case "caCertData": return java.lang.String.class;
+        case "cacertfile":
+        case "caCertFile": return java.lang.String.class;
+        case "clientcertdata":
+        case "clientCertData": return java.lang.String.class;
+        case "clientcertfile":
+        case "clientCertFile": return java.lang.String.class;
+        case "clientkeyalgo":
+        case "clientKeyAlgo": return java.lang.String.class;
+        case "clientkeydata":
+        case "clientKeyData": return java.lang.String.class;
+        case "clientkeyfile":
+        case "clientKeyFile": return java.lang.String.class;
+        case "clientkeypassphrase":
+        case "clientKeyPassphrase": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "dnsdomain":
+        case "dnsDomain": return java.lang.String.class;
+        case "kubernetesclient":
+        case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "portname":
+        case "portName": return java.lang.String.class;
+        case "portprotocol":
+        case "portProtocol": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustcerts":
+        case "trustCerts": return java.lang.Boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -97,8 +114,6 @@ public class OpenshiftBuildsEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cacertdata":
         case "caCertData": return target.getConfiguration().getCaCertData();
         case "cacertfile":

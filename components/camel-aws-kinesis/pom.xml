@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws-kinesis</artifactId>
@@ -45,6 +45,11 @@
             <artifactId>aws-java-sdk-kinesis</artifactId>
             <version>${aws-java-sdk-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
@@ -55,6 +60,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-catalog</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

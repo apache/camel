@@ -124,13 +124,17 @@ public class JettyEnableJmxTest extends BaseJettyTest {
                 serverUri2 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
                 serverUri3 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
 
-                from("jetty:" + serverUri0).routeId("route0").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+                from("jetty:" + serverUri0).routeId("route0").setBody().simple("<html><body>${in.header.x}</body></html>")
+                        .to("mock:result");
 
-                from("jetty:" + serverUri1).routeId("route1").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+                from("jetty:" + serverUri1).routeId("route1").setBody().simple("<html><body>${in.header.x}</body></html>")
+                        .to("mock:result");
 
-                from("jetty:" + serverUri2).routeId("route2").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+                from("jetty:" + serverUri2).routeId("route2").setBody().simple("<html><body>${in.header.x}</body></html>")
+                        .to("mock:result");
 
-                from("jetty:" + serverUri3).routeId("route3").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+                from("jetty:" + serverUri3).routeId("route3").setBody().simple("<html><body>${in.header.x}</body></html>")
+                        .to("mock:result");
             }
         };
     }

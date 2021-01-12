@@ -1,8 +1,8 @@
 [[HowdoesCamelcomparetoServiceMixEIP-HowdoesCamelcomparetoServiceMixEIP]]
 = How does Camel compare to ServiceMix EIP
 
-http://servicemix.apache.org/servicemix-eip.html[ServiceMix EIP] was the
-ancestor though they both do similar things.
+https://servicemix.apache.org/docs/4.4.x/jbi/components/servicemix-eip.html[ServiceMix EIP] was the
+ancestor and is now deprecated, superseded by the servicemix-camel component.
 
 The main difference with ServiceMix EIP is its integrated into the
 existing ServiceMix XBean XML configuration whereas Camel has more

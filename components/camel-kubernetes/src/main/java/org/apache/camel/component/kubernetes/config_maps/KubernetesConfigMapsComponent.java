@@ -24,7 +24,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesConfigMapsComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesConfigMapsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
+    protected KubernetesConfigMapsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
+            throws Exception {
         KubernetesConfigMapsEndpoint endpoint = new KubernetesConfigMapsEndpoint(uri, this, config);
         return endpoint;
     }

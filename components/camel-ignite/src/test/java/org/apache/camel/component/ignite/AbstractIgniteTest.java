@@ -41,8 +41,7 @@ public abstract class AbstractIgniteTest extends CamelTestSupport implements Bef
     };
 
     /**
-     * A unique identifier for the ignite resource (cache, queue, set...) being
-     * tested.
+     * A unique identifier for the ignite resource (cache, queue, set...) being tested.
      */
     protected String resourceUid;
 

@@ -4,8 +4,10 @@ package org.apache.camel.component.dataset;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.mock.MockEndpointConfigurer;
 
@@ -29,13 +31,15 @@ public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("anyOrder", boolean.class);
-        answer.put("delimiter", java.lang.String.class);
-        answer.put("split", boolean.class);
-        answer.put("timeout", long.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "anyorder":
+        case "anyOrder": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "split": return boolean.class;
+        case "timeout": return long.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

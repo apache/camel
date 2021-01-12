@@ -54,6 +54,9 @@ public final class ExpressionToPredicateAdapter implements Predicate, CamelConte
      * Converts the given expression into an {@link Predicate}
      */
     public static Predicate toPredicate(final Expression expression) {
+        if (expression instanceof Predicate) {
+            return (Predicate) expression;
+        }
         return new ExpressionToPredicateAdapter(expression);
     }
 

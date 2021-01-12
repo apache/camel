@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.client.util.Strings;
-import com.google.api.services.bigquery.Bigquery;
-import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
-import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
-import com.google.api.services.bigquery.model.TableRow;
+import com.google.cloud.bigquery.BigQuery;
+import com.google.cloud.bigquery.InsertAllRequest;
+import com.google.cloud.bigquery.InsertAllResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +38,10 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleBigQueryProducer.class);
 
     private final GoogleBigQueryConfiguration configuration;
-    private Bigquery bigquery;
+    private BigQuery bigquery;
 
-    public GoogleBigQueryProducer(Bigquery bigquery, GoogleBigQueryEndpoint endpoint, GoogleBigQueryConfiguration configuration) {
+    public GoogleBigQueryProducer(BigQuery bigquery, GoogleBigQueryEndpoint endpoint,
+                                  GoogleBigQueryConfiguration configuration) {
         super(endpoint);
         this.bigquery = bigquery;
         this.configuration = configuration;
@@ -69,13 +70,11 @@ public class GoogleBigQueryProducer extends DefaultProducer {
      *
      * The incoming can be
      * <ul>
-     *     <li>A map where all map keys will map to field records. One map object maps to one bigquery row</li>
-     *     <li>A list of maps. Each entry in the list will map to one bigquery row</li>
+     * <li>A map where all map keys will map to field records. One map object maps to one bigquery row</li>
+     * <li>A list of maps. Each entry in the list will map to one bigquery row</li>
      * </ul>
-     * The incoming message is expected to be a List of Maps
-     * The assumptions:
-     * - All incoming records go into the same table
-     * - Incoming records sorted by the timestamp
+     * The incoming message is expected to be a List of Maps The assumptions: - All incoming records go into the same
+     * table - Incoming records sorted by the timestamp
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -88,13 +87,14 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         String tableId = configuration.getTableId() == null ? "" : configuration.getTableId();
         int totalProcessed = 0;
 
-        for (Exchange ex: exchanges) {
+        for (Exchange ex : exchanges) {
             String tmpPartitionDecorator = ex.getIn().getHeader(GoogleBigQueryConstants.PARTITION_DECORATOR, "", String.class);
             String tmpSuffix = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_SUFFIX, "", String.class);
             String tmpTableId = ex.getIn().getHeader(GoogleBigQueryConstants.TABLE_ID, tableId, String.class);
 
             if (tmpTableId.isEmpty()) {
-                throw new IllegalArgumentException("tableId need to be specified in one of endpoint configuration or exchange header");
+                throw new IllegalArgumentException(
+                        "tableId need to be specified in one of endpoint configuration or exchange header");
             }
 
             // Ensure all rows of same request goes to same table and suffix
@@ -118,16 +118,17 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
     }
 
-    private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId) throws Exception {
+    private int process(String tableId, String partitionDecorator, String suffix, List<Exchange> exchanges, String exchangeId)
+            throws Exception {
         String tableIdWithPartition = Strings.isNullOrEmpty(partitionDecorator)
                 ? tableId
                 : (tableId + "$" + partitionDecorator);
 
-        List<TableDataInsertAllRequest.Rows> apiRequestRows = new ArrayList<>();
-        for (Exchange ex: exchanges) {
+        List<InsertAllRequest.RowToInsert> apiRequestRows = new ArrayList<>();
+        for (Exchange ex : exchanges) {
             Object entryObject = ex.getIn().getBody();
             if (entryObject instanceof List) {
-                for (Map<String, Object> entry: (List<Map<String, Object>>) entryObject) {
+                for (Map<String, Object> entry : (List<Map<String, Object>>) entryObject) {
                     apiRequestRows.add(createRowRequest(null, entry));
                 }
             } else if (entryObject instanceof Map) {
@@ -141,24 +142,21 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             return 0;
         }
 
-        TableDataInsertAllRequest apiRequestData = new TableDataInsertAllRequest().setRows(apiRequestRows);
+        InsertAllRequest.Builder builder = InsertAllRequest.newBuilder(configuration.getDatasetId(), tableIdWithPartition)
+                .setRows(apiRequestRows);
 
-        Bigquery.Tabledata.InsertAll apiRequest = bigquery
-                .tabledata()
-                .insertAll(configuration.getProjectId(),
-                        configuration.getDatasetId(),
-                        tableIdWithPartition,
-                        apiRequestData);
-        if (suffix != null) {
-            apiRequest.set("template_suffix", suffix);
+        if (ObjectHelper.isNotEmpty(suffix)) {
+            builder.setTemplateSuffix(suffix);
         }
+
+        InsertAllRequest insertAllRequest = builder.build();
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Sending {} messages to bigquery table {}, suffix {}, partition {}",
                     apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
 
-        TableDataInsertAllResponse apiResponse = apiRequest.execute();
+        InsertAllResponse apiResponse = bigquery.insertAll(insertAllRequest);
 
         if (apiResponse.getInsertErrors() != null && !apiResponse.getInsertErrors().isEmpty()) {
             throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
@@ -166,29 +164,27 @@ public class GoogleBigQueryProducer extends DefaultProducer {
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Sent {} messages to bigquery table {}, suffix {}, partition {}",
-                apiRequestRows.size(), tableId, suffix, partitionDecorator);
+                    apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
         }
-        return apiRequestData.size();
+        return insertAllRequest.getRows().size();
     }
 
-    private TableDataInsertAllRequest.Rows createRowRequest(Exchange exchange, Map<String, Object> object) {
-        TableRow tableRow = new TableRow();
-        tableRow.putAll(object);
+    private InsertAllRequest.RowToInsert createRowRequest(Exchange exchange, Map<String, Object> object) {
         String insertId = null;
         if (configuration.getUseAsInsertId() != null) {
-            insertId = (String)(object.get(configuration.getUseAsInsertId()));
+            insertId = (String) (object.get(configuration.getUseAsInsertId()));
         } else {
             if (exchange != null) {
                 insertId = exchange.getIn().getHeader(GoogleBigQueryConstants.INSERT_ID, String.class);
             }
         }
-        TableDataInsertAllRequest.Rows rows = new TableDataInsertAllRequest.Rows();
-        rows.setInsertId(insertId);
-        rows.setJson(tableRow);
-        return rows;
+        if (insertId != null) {
+            return InsertAllRequest.RowToInsert.of(insertId, object);
+        }
+        return InsertAllRequest.RowToInsert.of(object);
     }
 
     @Override

@@ -41,7 +41,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
  * The defualt implementation fetches the private key and certificate from a keystore.
  */
 @UriParams
-public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCmsUnMarshallerConfiguration implements EnvelopedDataDecryptorConfiguration, Cloneable {
+public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCmsUnMarshallerConfiguration
+        implements EnvelopedDataDecryptorConfiguration, Cloneable {
 
     @UriParam(label = "decrypt")
     private char[] password;
@@ -50,10 +51,9 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
     }
 
     /**
-     * Sets the password of the private keys. It is assumed that all private
-     * keys in the keystore have the same password. If not set then it is
-     * assumed that the password of the private keys is given by the keystore
-     * password given in the {@link KeyStoreParameters}.
+     * Sets the password of the private keys. It is assumed that all private keys in the keystore have the same
+     * password. If not set then it is assumed that the password of the private keys is given by the keystore password
+     * given in the {@link KeyStoreParameters}.
      */
     public void setPassword(char[] password) {
         this.password = password;
@@ -77,7 +77,8 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
     }
 
     @Override
-    public Collection<PrivateKeyWithCertificate> getPrivateKeyCertificateCollection(Exchange exchange) throws CryptoCmsException {
+    public Collection<PrivateKeyWithCertificate> getPrivateKeyCertificateCollection(Exchange exchange)
+            throws CryptoCmsException {
         KeyStore keystore = getKeyStore();
         try {
             List<PrivateKeyWithCertificate> privateKeys = new ArrayList<>(keystore.size());
@@ -91,7 +92,7 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
                 if (privateKey instanceof PrivateKey) { // we currently only support assymmetric keys
                     Certificate cert = keystore.getCertificate(alias);
                     if (cert instanceof X509Certificate) {
-                        privateKeys.add(new PrivateKeyWithCertificate((PrivateKey)privateKey, (X509Certificate)cert));
+                        privateKeys.add(new PrivateKeyWithCertificate((PrivateKey) privateKey, (X509Certificate) cert));
                     }
                 }
             }
@@ -107,7 +108,7 @@ public class DefaultEnvelopedDataDecryptorConfiguration extends DefaultCryptoCms
     @Override
     public DefaultEnvelopedDataDecryptorConfiguration copy() {
         try {
-            return (DefaultEnvelopedDataDecryptorConfiguration)clone();
+            return (DefaultEnvelopedDataDecryptorConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e); // should never happen
         }

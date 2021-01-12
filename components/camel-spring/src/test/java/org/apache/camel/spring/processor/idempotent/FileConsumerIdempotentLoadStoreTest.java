@@ -85,4 +85,3 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
     }
 
 }
-

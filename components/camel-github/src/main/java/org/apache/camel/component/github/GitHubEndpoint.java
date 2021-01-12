@@ -21,9 +21,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.github.consumer.CommitConsumer;
+import org.apache.camel.component.github.consumer.EventsConsumer;
 import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
+import org.apache.camel.component.github.event.GitHubEventFetchStrategy;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
 import org.apache.camel.component.github.producer.CreateIssueProducer;
 import org.apache.camel.component.github.producer.GetCommitFileProducer;
@@ -34,48 +36,46 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
  * Interact with the GitHub API.
  *
- * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
- * Available endpoint URIs include:
+ * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK. Available
+ * endpoint URIs include:
  *
- * CONSUMERS
- * github://pullRequest (new pull requests)
- * github://pullRequestComment (new pull request comments)
- * github://commit/[branch] (new commits)
- * github://tag (new tags)
+ * CONSUMERS github://pullRequest (new pull requests) github://pullRequestComment (new pull request comments)
+ * github://commit/[branch] (new commits) github://tag (new tags)
  *
- * PRODUCERS
- * github://pullRequestComment (create a new pull request comment; see PullRequestCommentProducer for header requirements)
+ * PRODUCERS github://pullRequestComment (create a new pull request comment; see PullRequestCommentProducer for header
+ * requirements)
  *
  * The endpoints will respond with org.eclipse.egit.github.core-provided POJOs (PullRequest, CommitComment,
  * RepositoryTag, RepositoryCommit, etc.)
  *
- * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include:
- * - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?)
- * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
- * - need to support apps running somewhere not publicly accessible where a webhook would fail
+ * Note: Rather than webhooks, this endpoint relies on simple polling. Reasons include: - concerned about
+ * reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the types of payloads we're
+ * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
+ * publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", category = {Category.FILE, Category.CLOUD, Category.API})
-public class GitHubEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
+             category = { Category.FILE, Category.CLOUD, Category.API })
+public class GitHubEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
-    @UriParam
-    private String username;
-    @UriParam
-    private String password;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String oauthToken;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String repoOwner;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String repoName;
     @UriParam(label = "producer", enums = "error,failure,pending,success")
     private String state;
@@ -83,6 +83,8 @@ public class GitHubEndpoint extends DefaultEndpoint {
     private String targetUrl;
     @UriParam(label = "producer")
     private String encoding;
+    @UriParam(label = "consumer,advanced")
+    private GitHubEventFetchStrategy eventFetchStrategy;
 
     public GitHubEndpoint(String uri, GitHubComponent component) {
         super(uri, component);
@@ -108,17 +110,26 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer consumer = null;
         if (type == GitHubType.COMMIT) {
             StringHelper.notEmpty(branchName, "branchName", this);
-            return new CommitConsumer(this, processor, branchName);
+            consumer = new CommitConsumer(this, processor, branchName);
         } else if (type == GitHubType.PULLREQUEST) {
-            return new PullRequestConsumer(this, processor);
+            consumer = new PullRequestConsumer(this, processor);
         } else if (type == GitHubType.PULLREQUESTCOMMENT) {
-            return new PullRequestCommentConsumer(this, processor);
+            consumer = new PullRequestCommentConsumer(this, processor);
         } else if (type == GitHubType.TAG) {
-            return new TagConsumer(this, processor);
+            consumer = new TagConsumer(this, processor);
+        } else if (type == GitHubType.EVENT) {
+            consumer = new EventsConsumer(this, processor);
         }
-        throw new IllegalArgumentException("Cannot create consumer with type " + type);
+
+        if (consumer == null) {
+            throw new IllegalArgumentException("Cannot create consumer with type " + type);
+        }
+
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public GitHubType getType() {
@@ -143,41 +154,15 @@ public class GitHubEndpoint extends DefaultEndpoint {
         this.branchName = branchName;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * GitHub username, required unless oauthToken is provided
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * GitHub password, required unless oauthToken is provided
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getOauthToken() {
         return oauthToken;
     }
 
     /**
-     * GitHub OAuth token, required unless username & password are provided
+     * GitHub OAuth token. Must be configured on either component or endpoint.
      */
     public void setOauthToken(String oauthToken) {
         this.oauthToken = oauthToken;
-    }
-
-    public boolean hasOauth() {
-        return oauthToken != null && oauthToken.length() > 0;
     }
 
     public String getRepoOwner() {
@@ -233,5 +218,23 @@ public class GitHubEndpoint extends DefaultEndpoint {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public GitHubEventFetchStrategy getEventFetchStrategy() {
+        return eventFetchStrategy;
+    }
+
+    /**
+     * To specify a custom strategy that configures how the EventsConsumer fetches events.
+     */
+    public void setEventFetchStrategy(GitHubEventFetchStrategy eventFetchStrategy) {
+        this.eventFetchStrategy = eventFetchStrategy;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        ObjectHelper.notNull(oauthToken, "oauthToken");
     }
 }

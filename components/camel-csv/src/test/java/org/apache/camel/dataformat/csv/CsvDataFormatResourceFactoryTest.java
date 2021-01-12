@@ -46,13 +46,13 @@ public class CsvDataFormatResourceFactoryTest extends CamelSpringTestSupport {
 
     private List<List<String>> getData() {
         return Arrays.asList(
-            Arrays.asList("A1", "B1", "C1"),
-            Arrays.asList("A2", "B2", "C2")
-        );
+                Arrays.asList("A1", "B1", "C1"),
+                Arrays.asList("A2", "B2", "C2"));
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvDataFormatResourceFactoryTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvDataFormatResourceFactoryTest-context.xml");
     }
 }

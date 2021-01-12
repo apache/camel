@@ -41,8 +41,8 @@ public final class AzureServiceCommonTestUtil {
     private static final String DEFAULT_ACCOUNT_NAME = "camelazure";
     private static final String DEFAULT_ACCOUNT_KEY = Base64.encode("camelazure".getBytes());
 
-
-    private AzureServiceCommonTestUtil() { }
+    private AzureServiceCommonTestUtil() {
+    }
 
     // Credentials
 
@@ -91,7 +91,6 @@ public final class AzureServiceCommonTestUtil {
     public static CloudQueue createQueueClient() throws Exception {
         return createQueueClient(DEFAULT_ACCOUNT_NAME, DEFAULT_ACCOUNT_KEY);
     }
-
 
     // AccountCredentials
 

@@ -18,14 +18,17 @@ package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
 
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.PushImageCmd;
-import com.github.dockerjava.core.command.PushImageResultCallback;
+import com.github.dockerjava.api.model.Frame;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,13 +37,14 @@ import static org.mockito.ArgumentMatchers.anyString;
  * Validates Push Image Request headers are applied properly
  */
 public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
+    private static final Logger LOG = LoggerFactory.getLogger(PushImageCmdHeaderTest.class);
 
     @Mock
     private PushImageCmd mockObject;
 
     @Mock
-    private PushImageResultCallback callback;
-    
+    private ResultCallback.Adapter<Frame> callback;
+
     private String userName = "jdoe";
     private String password = "password";
     private String email = "jdoe@example.com";
@@ -51,7 +55,6 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     @Test
     void pushImageHeaderTest() {
 
-
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_USERNAME, userName);
         headers.put(DockerConstants.DOCKER_PASSWORD, password);
@@ -60,12 +63,10 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         headers.put(DockerConstants.DOCKER_NAME, name);
         headers.put(DockerConstants.DOCKER_TAG, tag);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
-
 
     }
 
@@ -76,7 +77,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.warn("Interrupted while setting up mocks", e);
         }
     }
 
@@ -96,6 +97,5 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         return clientProfile;
 
     }
-
 
 }

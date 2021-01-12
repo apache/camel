@@ -47,15 +47,14 @@ public class OAuthToken {
             LOGGER.debug("Generate OAuth token");
 
             token = OAuthClientUtils.getAccessToken(
-                WebClient.create(configuration.getOauthTokenUrl()),
-                new Consumer(
-                    configuration.getOauthClientId(),
-                    configuration.getOauthClientSecret()),
-                new ResourceOwnerGrant(
-                    configuration.getUserName(),
-                    configuration.getPassword()),
-                true
-            );
+                    WebClient.create(configuration.getOauthTokenUrl()),
+                    new Consumer(
+                            configuration.getOauthClientId(),
+                            configuration.getOauthClientSecret()),
+                    new ResourceOwnerGrant(
+                            configuration.getUserName(),
+                            configuration.getPassword()),
+                    true);
 
             LOGGER.debug("OAuth token expires in {}s", token.getExpiresIn());
 
@@ -72,14 +71,13 @@ public class OAuthToken {
             LOGGER.debug("OAuth token is expired, refresh it");
 
             token = OAuthClientUtils.refreshAccessToken(
-                WebClient.create(configuration.getOauthTokenUrl()),
-                new Consumer(
-                    configuration.getOauthClientId(),
-                    configuration.getOauthClientSecret()),
-                token,
-                null,
-                false
-            );
+                    WebClient.create(configuration.getOauthTokenUrl()),
+                    new Consumer(
+                            configuration.getOauthClientId(),
+                            configuration.getOauthClientSecret()),
+                    token,
+                    null,
+                    false);
 
             LOGGER.debug("Refreshed OAuth token expires in {}s", token.getExpiresIn());
 

@@ -60,7 +60,6 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
         mllpClient.setMllpHost("localhost");
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
-
         return new RouteBuilder() {
             String routeId = "mllp-receiver";
 
@@ -68,15 +67,16 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             public void configure() throws Exception {
 
                 onCompletion()
-                    .log(LoggingLevel.INFO, routeId, "Test route complete");
+                        .log(LoggingLevel.INFO, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort())
-                    .routeId(routeId)
-                    .process(new PassthroughProcessor("Before send to result"))
-                    .to(result)
-                    .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly)
-                    .log(LoggingLevel.DEBUG, routeId, "Test route received message");
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort())
+                                .routeId(routeId)
+                                .process(new PassthroughProcessor("Before send to result"))
+                                .to(result)
+                                .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval,
+                                        groupActiveOnly)
+                                .log(LoggingLevel.DEBUG, routeId, "Test route received message");
 
             }
         };
@@ -94,9 +94,9 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
 
-        assertThat("Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|00001")));
+        assertThat("Should be acknowledgment for message 1", acknowledgement,
+                CoreMatchers.containsString(String.format("MSA|AA|00001")));
     }
-
 
     @Test
     public void testReceiveMultipleMessages() throws Exception {
@@ -111,7 +111,8 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             result.message(i - 1).body().isEqualTo(testMessage);
             mllpClient.sendFramedDataInMultiplePackets(testMessage, (byte) '\r');
             String acknowledgement = mllpClient.receiveFramedData();
-            assertThat("Should be acknowledgment for message " + i, acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
+            assertThat("Should be acknowledgment for message " + i, acknowledgement,
+                    CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);

@@ -70,12 +70,13 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
                 from("seda:foo").startupOrder(1).to("file://target/data/deferred");
 
                 // use file component to transfer files from route 1 -> route 2
-                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
+                MyDeferFileEndpoint defer = new MyDeferFileEndpoint(
+                        "file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
                 defer.setFile(new File("target/data/deferred"));
 
                 from(defer)
-                    // do NOT defer it but use default for testing this
-                    .startupOrder(2).shutdownRoute(Default).to("mock:bar");
+                        // do NOT defer it but use default for testing this
+                        .startupOrder(2).shutdownRoute(Default).to("mock:bar");
             }
         };
     }

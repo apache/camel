@@ -63,6 +63,7 @@ public final class BlobConstants {
     public static final String LIST_BLOB_OPTIONS = HEADER_PREFIX + "ListBlobOptions";
     public static final String BLOB_LIST_DETAILS = HEADER_PREFIX + "ListDetails";
     public static final String PREFIX = HEADER_PREFIX + "Prefix";
+    public static final String REGEX = HEADER_PREFIX + "Regex";
     public static final String MAX_RESULTS_PER_PAGE = HEADER_PREFIX + "MaxResultsPerPage";
     public static final String TIMEOUT = HEADER_PREFIX + "Timeout";
     public static final String PUBLIC_ACCESS_TYPE = HEADER_PREFIX + "PublicAccessType";

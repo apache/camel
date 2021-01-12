@@ -64,27 +64,31 @@ public class CamelSWFWorkflowClient {
         dynamicWorkflowClientExternal.terminateWorkflowExecution(reason, details, policy);
     }
 
-    public String[] startWorkflowExecution(String workflowId, String runId, String eventName, String version, Object arguments, List<String> tags) {
-        DynamicWorkflowClientExternalImpl dynamicWorkflowClientExternal = (DynamicWorkflowClientExternalImpl) getDynamicWorkflowClient(workflowId, runId);
+    public String[] startWorkflowExecution(
+            String workflowId, String runId, String eventName, String version, Object arguments, List<String> tags) {
+        DynamicWorkflowClientExternalImpl dynamicWorkflowClientExternal
+                = (DynamicWorkflowClientExternalImpl) getDynamicWorkflowClient(workflowId, runId);
 
         WorkflowType workflowType = new WorkflowType();
         workflowType.setName(eventName);
         workflowType.setVersion(version);
-        
+
         dynamicWorkflowClientExternal.setWorkflowType(workflowType);
-        
+
         StartWorkflowOptions startWorkflowOptions = new StartWorkflowOptions();
-        startWorkflowOptions.setTaskStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getTaskStartToCloseTimeout()));
-        startWorkflowOptions.setExecutionStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getExecutionStartToCloseTimeout()));
+        startWorkflowOptions
+                .setTaskStartToCloseTimeoutSeconds(FlowHelpers.durationToSeconds(configuration.getTaskStartToCloseTimeout()));
+        startWorkflowOptions.setExecutionStartToCloseTimeoutSeconds(
+                FlowHelpers.durationToSeconds(configuration.getExecutionStartToCloseTimeout()));
         startWorkflowOptions.setTagList(tags);
         dynamicWorkflowClientExternal.setSchedulingOptions(startWorkflowOptions);
-        
+
         dynamicWorkflowClientExternal.startWorkflowExecution(toArray(arguments));
 
         String newWorkflowId = dynamicWorkflowClientExternal.getWorkflowExecution().getWorkflowId();
         String newRunId = dynamicWorkflowClientExternal.getWorkflowExecution().getRunId();
 
-        return new String[] {newWorkflowId, newRunId};
+        return new String[] { newWorkflowId, newRunId };
     }
 
     public Map<String, Object> describeWorkflowInstance(String workflowId, String runId) {
@@ -109,17 +113,19 @@ public class CamelSWFWorkflowClient {
     }
 
     DynamicWorkflowClientExternal getDynamicWorkflowClient(String workflowId, String runId) {
-        GenericWorkflowClientExternalImpl genericClient = new GenericWorkflowClientExternalImpl(endpoint.getSWClient(), configuration.getDomainName());
+        GenericWorkflowClientExternalImpl genericClient
+                = new GenericWorkflowClientExternalImpl(endpoint.getSWClient(), configuration.getDomainName());
         WorkflowExecution workflowExecution = new WorkflowExecution();
         workflowExecution.setWorkflowId(workflowId != null ? workflowId : genericClient.generateUniqueId());
         workflowExecution.setRunId(runId);
-        return new DynamicWorkflowClientExternalImpl(workflowExecution, null, endpoint.getStartWorkflowOptions(), configuration.getDataConverter(), genericClient);
+        return new DynamicWorkflowClientExternalImpl(
+                workflowExecution, null, endpoint.getStartWorkflowOptions(), configuration.getDataConverter(), genericClient);
     }
 
     private Object[] toArray(Object input) {
         Object[] inputArray;
         if (input instanceof Object[]) {
-            inputArray = (Object[])input;
+            inputArray = (Object[]) input;
         } else {
             inputArray = new Object[1];
             inputArray[0] = input;

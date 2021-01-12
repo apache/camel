@@ -58,7 +58,7 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").to("mock:start")
-                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done", 1000).to("mock:result");
+                        .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done", 1000).to("mock:result");
             }
         };
     }

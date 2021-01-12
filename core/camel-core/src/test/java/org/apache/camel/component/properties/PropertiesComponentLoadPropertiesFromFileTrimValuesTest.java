@@ -41,7 +41,8 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
 
         // create space.properties file
         FileOutputStream fos = new FileOutputStream("target/data/space/space.properties");
-        String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS + "cool.both= Both leading and trailing space ";
+        String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS
+                      + "cool.both= Both leading and trailing space ";
         fos.write(cool.getBytes());
         fos.write(LS.getBytes());
 
@@ -49,7 +50,8 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         fos.write(space.getBytes());
         fos.write(LS.getBytes());
 
-        String mixed = "mixed.leading=   Leading space\\r\\n" + LS + "mixed.trailing=Trailing space\\t   " + LS + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   ";
+        String mixed = "mixed.leading=   Leading space\\r\\n" + LS + "mixed.trailing=Trailing space\\t   " + LS
+                       + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   ";
         fos.write(mixed.getBytes());
         fos.write(LS.getBytes());
 

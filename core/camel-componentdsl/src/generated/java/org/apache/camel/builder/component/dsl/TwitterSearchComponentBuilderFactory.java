@@ -37,6 +37,8 @@ public interface TwitterSearchComponentBuilderFactory {
      * Category: cloud,api,search,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
+     * 
+     * @return the dsl builder
      */
     static TwitterSearchComponentBuilder twitterSearch() {
         return new TwitterSearchComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface TwitterSearchComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface TwitterSearchComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,25 +97,35 @@ public interface TwitterSearchComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default TwitterSearchComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default TwitterSearchComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The http proxy host which can be used for the camel-twitter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
@@ -117,9 +135,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The http proxy password which can be used for the camel-twitter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
@@ -129,9 +150,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder httpProxyPort(int httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -140,9 +164,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The http proxy user which can be used for the camel-twitter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder httpProxyUser(
                 java.lang.String httpProxyUser) {
@@ -152,9 +179,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -164,9 +194,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The access token secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder accessTokenSecret(
                 java.lang.String accessTokenSecret) {
@@ -176,9 +209,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The consumer key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder consumerKey(
                 java.lang.String consumerKey) {
@@ -188,9 +224,12 @@ public interface TwitterSearchComponentBuilderFactory {
         /**
          * The consumer secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchComponentBuilder consumerSecret(
                 java.lang.String consumerSecret) {
@@ -216,7 +255,7 @@ public interface TwitterSearchComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((TwitterSearchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((TwitterSearchComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((TwitterSearchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((TwitterSearchComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpProxyHost": ((TwitterSearchComponent) component).setHttpProxyHost((java.lang.String) value); return true;
             case "httpProxyPassword": ((TwitterSearchComponent) component).setHttpProxyPassword((java.lang.String) value); return true;
             case "httpProxyPort": ((TwitterSearchComponent) component).setHttpProxyPort((int) value); return true;

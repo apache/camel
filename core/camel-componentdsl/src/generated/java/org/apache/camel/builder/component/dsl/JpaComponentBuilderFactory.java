@@ -39,6 +39,8 @@ public interface JpaComponentBuilderFactory {
      * Category: database,sql
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
+     * 
+     * @return the dsl builder
      */
     static JpaComponentBuilder jpa() {
         return new JpaComponentBuilderImpl();
@@ -52,10 +54,13 @@ public interface JpaComponentBuilderFactory {
          * To use the EntityManagerFactory. This is strongly recommended to
          * configure.
          * 
-         * The option is a: <code>javax.persistence.EntityManagerFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.persistence.EntityManagerFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param entityManagerFactory the value to set
+         * @return the dsl builder
          */
         default JpaComponentBuilder entityManagerFactory(
                 javax.persistence.EntityManagerFactory entityManagerFactory) {
@@ -69,10 +74,13 @@ public interface JpaComponentBuilderFactory {
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param joinTransaction the value to set
+         * @return the dsl builder
          */
         default JpaComponentBuilder joinTransaction(boolean joinTransaction) {
             doSetProperty("joinTransaction", joinTransaction);
@@ -83,10 +91,13 @@ public interface JpaComponentBuilderFactory {
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param sharedEntityManager the value to set
+         * @return the dsl builder
          */
         default JpaComponentBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
@@ -97,9 +108,12 @@ public interface JpaComponentBuilderFactory {
          * To use the PlatformTransactionManager for managing transactions.
          * 
          * The option is a:
-         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
+         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param transactionManager the value to set
+         * @return the dsl builder
          */
         default JpaComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
@@ -115,10 +129,13 @@ public interface JpaComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JpaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -136,27 +153,36 @@ public interface JpaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JpaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default JpaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JpaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -182,7 +208,7 @@ public interface JpaComponentBuilderFactory {
             case "transactionManager": ((JpaComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
             case "bridgeErrorHandler": ((JpaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JpaComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((JpaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JpaComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

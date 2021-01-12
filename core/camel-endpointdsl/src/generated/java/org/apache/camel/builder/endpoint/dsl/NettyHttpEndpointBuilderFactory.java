@@ -55,10 +55,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
@@ -74,10 +77,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
@@ -88,10 +95,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -101,10 +111,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -113,10 +127,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder keepAlive(boolean keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -125,10 +142,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder keepAlive(String keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -137,10 +158,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder reuseAddress(
                 boolean reuseAddress) {
@@ -150,10 +174,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder reuseAddress(
                 String reuseAddress) {
@@ -171,10 +199,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder reuseChannel(
                 boolean reuseChannel) {
@@ -192,10 +223,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder reuseChannel(
                 String reuseChannel) {
@@ -205,10 +240,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -217,10 +255,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sync(String sync) {
             doSetProperty("sync", sync);
@@ -229,10 +271,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder tcpNoDelay(boolean tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -241,10 +286,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -259,10 +308,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -278,10 +330,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -292,10 +348,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not Camel should try to find a target consumer by matching
          * the URI prefix if no exact match is found.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
@@ -306,10 +365,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not Camel should try to find a target consumer by matching
          * the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
@@ -320,10 +383,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder muteException(
                 boolean muteException) {
@@ -334,10 +400,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder muteException(
                 String muteException) {
@@ -349,10 +419,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * suspended. If the option is false then the Netty Acceptor is unbound
          * when the consumer is suspended, so clients cannot connect anymore.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param send503whenSuspended the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder send503whenSuspended(
                 boolean send503whenSuspended) {
@@ -364,10 +437,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * suspended. If the option is false then the Netty Acceptor is unbound
          * when the consumer is suspended, so clients cannot connect anymore.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param send503whenSuspended the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder send503whenSuspended(
                 String send503whenSuspended) {
@@ -381,10 +458,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder decoders(List<Object> decoders) {
             doSetProperty("decoders", decoders);
@@ -397,10 +476,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder decoders(String decoders) {
             doSetProperty("decoders", decoders);
@@ -413,10 +494,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder encoders(List<Object> encoders) {
             doSetProperty("encoders", encoders);
@@ -429,10 +512,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder encoders(String encoders) {
             doSetProperty("encoders", encoders);
@@ -441,10 +526,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Which protocols to enable when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
+         * 
+         * @param enabledProtocols the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder enabledProtocols(
                 String enabledProtocols) {
@@ -454,9 +542,12 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFile(File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
@@ -465,9 +556,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFile(
                 String keyStoreFile) {
@@ -478,9 +573,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFormat the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFormat(
                 String keyStoreFormat) {
@@ -492,9 +590,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder keyStoreResource(
                 String keyStoreResource) {
@@ -505,10 +606,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures whether the server needs client authentication when using
          * SSL.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param needClientAuth the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder needClientAuth(
                 boolean needClientAuth) {
@@ -519,10 +623,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures whether the server needs client authentication when using
          * SSL.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param needClientAuth the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder needClientAuth(
                 String needClientAuth) {
@@ -533,9 +641,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Password setting to use in order to encrypt/decrypt payloads sent
          * using SSH.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passphrase the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder passphrase(String passphrase) {
             doSetProperty("passphrase", passphrase);
@@ -547,9 +658,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * for configuring secure web resources.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityConfiguration the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
                 Object securityConfiguration) {
@@ -562,9 +676,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * for configuring secure web resources.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityConfiguration the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
                 String securityConfiguration) {
@@ -575,13 +692,17 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure NettyHttpSecurityConfiguration using key/value pairs
          * from the map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * securityOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder securityOptions(
                 String key,
@@ -593,13 +714,16 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure NettyHttpSecurityConfiguration using key/value pairs
          * from the map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * securityOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder securityOptions(Map values) {
             doSetMultiValueProperties("securityOptions", "securityConfiguration.", values);
@@ -609,9 +733,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Security provider to be used for payload encryption. Defaults to
          * SunX509 if not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityProvider the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder securityProvider(
                 String securityProvider) {
@@ -622,10 +749,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -635,10 +765,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
@@ -650,10 +784,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
@@ -666,10 +803,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
@@ -680,9 +821,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -693,9 +837,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -705,9 +852,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Reference to a class that could be used to return an SSL Handler.
          * 
-         * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(Object sslHandler) {
             doSetProperty("sslHandler", sslHandler);
@@ -717,9 +868,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Reference to a class that could be used to return an SSL Handler.
          * 
          * The option will be converted to a
-         * <code>io.netty.handler.ssl.SslHandler</code> type.
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(String sslHandler) {
             doSetProperty("sslHandler", sslHandler);
@@ -728,9 +882,12 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
                 File trustStoreFile) {
@@ -740,9 +897,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
                 String trustStoreFile) {
@@ -754,9 +915,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointConsumerBuilder trustStoreResource(
                 String trustStoreResource) {
@@ -781,9 +945,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * long the accept queue can be If this option is not configured, then
          * the backlog depends on OS setting.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param backlog the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder backlog(int backlog) {
             doSetProperty("backlog", backlog);
@@ -796,9 +963,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * long the accept queue can be If this option is not configured, then
          * the backlog depends on OS setting.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param backlog the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder backlog(String backlog) {
             doSetProperty("backlog", backlog);
@@ -809,10 +979,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer (advanced)
+         * 
+         * @param bossCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossCount(int bossCount) {
             doSetProperty("bossCount", bossCount);
@@ -823,10 +996,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer (advanced)
+         * 
+         * @param bossCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossCount(
                 String bossCount) {
@@ -837,9 +1013,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Set the BossGroup which could be used for handling the new connection
          * of the server side across the NettyEndpoint.
          * 
-         * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param bossGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
                 Object bossGroup) {
@@ -851,9 +1031,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * of the server side across the NettyEndpoint.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.EventLoopGroup</code> type.
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param bossGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
                 String bossGroup) {
@@ -864,10 +1047,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Value in bytes the max content length per chunked frame received on
          * the Netty HTTP server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: consumer (advanced)
+         * 
+         * @param chunkedMaxContentLength the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder chunkedMaxContentLength(
                 int chunkedMaxContentLength) {
@@ -878,10 +1064,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Value in bytes the max content length per chunked frame received on
          * the Netty HTTP server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: consumer (advanced)
+         * 
+         * @param chunkedMaxContentLength the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder chunkedMaxContentLength(
                 String chunkedMaxContentLength) {
@@ -892,10 +1081,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Allow using gzip/deflate for compression on the Netty HTTP server if
          * the client supports it from the HTTP headers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param compression the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder compression(
                 boolean compression) {
@@ -906,10 +1098,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Allow using gzip/deflate for compression on the Netty HTTP server if
          * the client supports it from the HTTP headers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param compression the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder compression(
                 String compression) {
@@ -920,10 +1116,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * If sync is enabled then this option dictates NettyConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
@@ -934,10 +1133,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * If sync is enabled then this option dictates NettyConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
@@ -950,10 +1153,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -967,9 +1173,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -979,9 +1188,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -992,9 +1205,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1005,9 +1221,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To disable HTTP methods on the Netty HTTP consumer. You can specify
          * multiple separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param httpMethodRestrict the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
@@ -1018,10 +1237,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether Netty HTTP server should log a WARN if decoding the HTTP
          * request failed and a HTTP Status 400 (bad request) is returned.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param logWarnOnBadRequest the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
                 boolean logWarnOnBadRequest) {
@@ -1032,10 +1254,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether Netty HTTP server should log a WARN if decoding the HTTP
          * request failed and a HTTP Status 400 (bad request) is returned.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param logWarnOnBadRequest the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
                 String logWarnOnBadRequest) {
@@ -1051,10 +1277,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * the method getHttpRequest() that returns the Netty HTTP request
          * io.netty.handler.codec.http.HttpRequest instance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param mapHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder mapHeaders(
                 boolean mapHeaders) {
@@ -1070,10 +1299,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * the method getHttpRequest() that returns the Netty HTTP request
          * io.netty.handler.codec.http.HttpRequest instance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param mapHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder mapHeaders(
                 String mapHeaders) {
@@ -1085,10 +1318,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * header exceeds this value, a
          * io.netty.handler.codec.TooLongFrameException will be raised.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: consumer (advanced)
+         * 
+         * @param maxHeaderSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder maxHeaderSize(
                 int maxHeaderSize) {
@@ -1100,10 +1336,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * header exceeds this value, a
          * io.netty.handler.codec.TooLongFrameException will be raised.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: consumer (advanced)
+         * 
+         * @param maxHeaderSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder maxHeaderSize(
                 String maxHeaderSize) {
@@ -1114,9 +1353,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.NettyServerBootstrapFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param nettyServerBootstrapFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
                 Object nettyServerBootstrapFactory) {
@@ -1127,9 +1369,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.NettyServerBootstrapFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param nettyServerBootstrapFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
                 String nettyServerBootstrapFactory) {
@@ -1141,9 +1386,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * more details.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettySharedHttpServer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param nettySharedHttpServer the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
                 Object nettySharedHttpServer) {
@@ -1155,9 +1403,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * more details.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettySharedHttpServer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param nettySharedHttpServer the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
                 String nettySharedHttpServer) {
@@ -1168,10 +1419,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * If sync is enabled this option dictates NettyConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
@@ -1183,10 +1438,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * level to use when logging a there is no reply to send back.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
@@ -1200,10 +1458,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * exceptions, as clients can disconnect abruptly and then cause a flood
          * of closed exceptions in the Netty server.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: consumer (advanced)
+         * 
+         * @param serverClosedChannelExceptionCaughtLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
@@ -1218,10 +1480,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * of closed exceptions in the Netty server.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: consumer (advanced)
+         * 
+         * @param serverClosedChannelExceptionCaughtLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 String serverClosedChannelExceptionCaughtLogLevel) {
@@ -1232,10 +1497,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * If the server (NettyConsumer) catches an exception then its logged
          * using this logging level.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param serverExceptionCaughtLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 LoggingLevel serverExceptionCaughtLogLevel) {
@@ -1247,10 +1516,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * using this logging level.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param serverExceptionCaughtLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 String serverExceptionCaughtLogLevel) {
@@ -1261,9 +1533,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.ServerInitializerFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param serverInitializerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
                 Object serverInitializerFactory) {
@@ -1274,9 +1549,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.ServerInitializerFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param serverInitializerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
                 String serverInitializerFactory) {
@@ -1287,10 +1565,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Netty HTTP consumer.
          * By default TRACE is turned off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param traceEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder traceEnabled(
                 boolean traceEnabled) {
@@ -1301,10 +1582,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Netty HTTP consumer.
          * By default TRACE is turned off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param traceEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder traceEnabled(
                 String traceEnabled) {
@@ -1320,10 +1605,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.component.netty.http.NettyHttpBinding then you would
          * need to decode the headers accordingly to this option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param urlDecodeHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder urlDecodeHeaders(
                 boolean urlDecodeHeaders) {
@@ -1339,10 +1627,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.component.netty.http.NettyHttpBinding then you would
          * need to decode the headers accordingly to this option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param urlDecodeHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder urlDecodeHeaders(
                 String urlDecodeHeaders) {
@@ -1353,10 +1645,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param usingExecutorService the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder usingExecutorService(
                 boolean usingExecutorService) {
@@ -1367,10 +1662,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param usingExecutorService the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder usingExecutorService(
                 String usingExecutorService) {
@@ -1383,10 +1682,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
@@ -1399,10 +1701,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
@@ -1410,40 +1716,15 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a explicit ChannelGroup.
          * 
-         * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
                 Object channelGroup) {
@@ -1454,9 +1735,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a explicit ChannelGroup.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.group.ChannelGroup</code> type.
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
                 String channelGroup) {
@@ -1468,9 +1752,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
                 Object configuration) {
@@ -1482,9 +1769,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
                 String configuration) {
@@ -1509,10 +1799,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.Exchange may not be able to read the Netty stream,
          * because Netty has closed it.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -1537,10 +1830,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.Exchange may not be able to read the Netty stream,
          * because Netty has closed it.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -1552,9 +1849,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1566,9 +1867,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1582,10 +1887,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nativeTransport(
                 boolean nativeTransport) {
@@ -1599,10 +1907,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nativeTransport(
                 String nativeTransport) {
@@ -1615,10 +1927,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
                 Object nettyHttpBinding) {
@@ -1631,10 +1945,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
                 String nettyHttpBinding) {
@@ -1647,13 +1963,17 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder options(
                 String key,
@@ -1667,13 +1987,16 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder options(Map values) {
             doSetMultiValueProperties("options", "option.", values);
@@ -1683,10 +2006,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSize(
                 int receiveBufferSize) {
@@ -1697,10 +2023,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
@@ -1711,9 +2040,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
@@ -1724,9 +2056,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
@@ -1737,10 +2072,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder sendBufferSize(
                 int sendBufferSize) {
@@ -1751,10 +2089,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
@@ -1765,10 +2106,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1779,10 +2123,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1800,10 +2148,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferException(
                 boolean transferException) {
@@ -1821,10 +2172,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferException(
                 String transferException) {
@@ -1839,10 +2194,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
@@ -1857,10 +2215,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
@@ -1872,9 +2234,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerCount(
                 int workerCount) {
@@ -1886,9 +2251,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerCount(
                 String workerCount) {
@@ -1901,9 +2269,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * default each consumer or producer has their own worker pool with 2 x
          * cpu count core threads.
          * 
-         * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
                 Object workerGroup) {
@@ -1917,9 +2289,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * cpu count core threads.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.EventLoopGroup</code> type.
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
                 String workerGroup) {
@@ -1946,10 +2321,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
@@ -1965,10 +2343,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
@@ -1979,10 +2361,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -1992,10 +2377,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -2004,10 +2393,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder keepAlive(boolean keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -2016,10 +2408,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder keepAlive(String keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -2028,10 +2424,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder reuseAddress(
                 boolean reuseAddress) {
@@ -2041,10 +2440,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder reuseAddress(
                 String reuseAddress) {
@@ -2062,10 +2465,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder reuseChannel(
                 boolean reuseChannel) {
@@ -2083,10 +2489,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder reuseChannel(
                 String reuseChannel) {
@@ -2096,10 +2506,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -2108,10 +2521,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sync(String sync) {
             doSetProperty("sync", sync);
@@ -2120,10 +2537,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder tcpNoDelay(boolean tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -2132,10 +2552,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -2145,10 +2569,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Time to wait for a socket connection to be available. Value is in
          * milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
@@ -2159,10 +2586,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Time to wait for a socket connection to be available. Value is in
          * milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -2173,9 +2603,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
@@ -2186,9 +2619,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
@@ -2206,10 +2642,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -2227,10 +2666,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -2243,9 +2686,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * seconds, so eg 30000 is 30 seconds. The requestTimeout is using
          * Netty's ReadTimeoutHandler to trigger the timeout.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder requestTimeout(
                 long requestTimeout) {
@@ -2258,9 +2704,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * seconds, so eg 30000 is 30 seconds. The requestTimeout is using
          * Netty's ReadTimeoutHandler to trigger the timeout.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
@@ -2272,10 +2721,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -2287,10 +2739,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -2304,10 +2760,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder decoders(List<Object> decoders) {
             doSetProperty("decoders", decoders);
@@ -2320,10 +2778,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder decoders(String decoders) {
             doSetProperty("decoders", decoders);
@@ -2336,10 +2796,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder encoders(List<Object> encoders) {
             doSetProperty("encoders", encoders);
@@ -2352,10 +2814,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder encoders(String encoders) {
             doSetProperty("encoders", encoders);
@@ -2364,10 +2828,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Which protocols to enable when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
+         * 
+         * @param enabledProtocols the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder enabledProtocols(
                 String enabledProtocols) {
@@ -2377,9 +2844,12 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder keyStoreFile(File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
@@ -2388,9 +2858,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder keyStoreFile(
                 String keyStoreFile) {
@@ -2401,9 +2875,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFormat the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder keyStoreFormat(
                 String keyStoreFormat) {
@@ -2415,9 +2892,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder keyStoreResource(
                 String keyStoreResource) {
@@ -2428,9 +2908,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Password setting to use in order to encrypt/decrypt payloads sent
          * using SSH.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passphrase the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder passphrase(String passphrase) {
             doSetProperty("passphrase", passphrase);
@@ -2440,9 +2923,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Security provider to be used for payload encryption. Defaults to
          * SunX509 if not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityProvider the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder securityProvider(
                 String securityProvider) {
@@ -2453,10 +2939,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -2466,10 +2955,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
@@ -2481,10 +2974,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
@@ -2497,10 +2993,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
@@ -2511,9 +3011,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -2524,9 +3027,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -2536,9 +3042,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Reference to a class that could be used to return an SSL Handler.
          * 
-         * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslHandler(Object sslHandler) {
             doSetProperty("sslHandler", sslHandler);
@@ -2548,9 +3058,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Reference to a class that could be used to return an SSL Handler.
          * 
          * The option will be converted to a
-         * <code>io.netty.handler.ssl.SslHandler</code> type.
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder sslHandler(String sslHandler) {
             doSetProperty("sslHandler", sslHandler);
@@ -2559,9 +3072,12 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
                 File trustStoreFile) {
@@ -2571,9 +3087,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
                 String trustStoreFile) {
@@ -2585,9 +3105,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointProducerBuilder trustStoreResource(
                 String trustStoreResource) {
@@ -2609,9 +3132,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.ClientInitializerFactory&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param clientInitializerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
                 Object clientInitializerFactory) {
@@ -2622,9 +3148,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.ClientInitializerFactory&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param clientInitializerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
                 String clientInitializerFactory) {
@@ -2635,10 +3164,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Channels can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param lazyChannelCreation the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder lazyChannelCreation(
                 boolean lazyChannelCreation) {
@@ -2649,10 +3181,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Channels can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param lazyChannelCreation the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder lazyChannelCreation(
                 String lazyChannelCreation) {
@@ -2665,10 +3201,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * e.g. 200-204,209,301-304. Each range must be a single number or
          * from-to with the dash included. The default range is 200-299.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 200-299
          * Group: producer (advanced)
+         * 
+         * @param okStatusCodeRange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder okStatusCodeRange(
                 String okStatusCodeRange) {
@@ -2688,10 +3227,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * configure it via the correlationManager option. See also the
          * correlationManager option for more details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param producerPoolEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolEnabled(
                 boolean producerPoolEnabled) {
@@ -2711,10 +3253,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * configure it via the correlationManager option. See also the
          * correlationManager option for more details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param producerPoolEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolEnabled(
                 String producerPoolEnabled) {
@@ -2726,10 +3272,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * pool (checked out to clients, or idle awaiting checkout) at a given
          * time. Use a negative value for no limit.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxActive the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
                 int producerPoolMaxActive) {
@@ -2741,10 +3290,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * pool (checked out to clients, or idle awaiting checkout) at a given
          * time. Use a negative value for no limit.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxActive the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
                 String producerPoolMaxActive) {
@@ -2754,10 +3306,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Sets the cap on the number of idle instances in the pool.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxIdle the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
@@ -2767,10 +3322,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Sets the cap on the number of idle instances in the pool.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxIdle the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
                 String producerPoolMaxIdle) {
@@ -2782,10 +3340,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * idle in the pool before it is eligible for eviction by the idle
          * object evictor.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMinEvictableIdle the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinEvictableIdle(
                 long producerPoolMinEvictableIdle) {
@@ -2797,10 +3358,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * idle in the pool before it is eligible for eviction by the idle
          * object evictor.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMinEvictableIdle the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinEvictableIdle(
                 String producerPoolMinEvictableIdle) {
@@ -2811,9 +3375,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets the minimum number of instances allowed in the producer pool
          * before the evictor thread (if active) spawns new objects.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMinIdle the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinIdle(
                 int producerPoolMinIdle) {
@@ -2824,9 +3391,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets the minimum number of instances allowed in the producer pool
          * before the evictor thread (if active) spawns new objects.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMinIdle the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinIdle(
                 String producerPoolMinIdle) {
@@ -2836,10 +3406,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Sets whether to use a relative path in HTTP requests.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param useRelativePath the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder useRelativePath(
                 boolean useRelativePath) {
@@ -2849,10 +3422,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Sets whether to use a relative path in HTTP requests.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param useRelativePath the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder useRelativePath(
                 String useRelativePath) {
@@ -2865,10 +3442,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
@@ -2881,10 +3461,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
@@ -2892,40 +3476,15 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a explicit ChannelGroup.
          * 
-         * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
                 Object channelGroup) {
@@ -2936,9 +3495,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a explicit ChannelGroup.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.group.ChannelGroup</code> type.
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
                 String channelGroup) {
@@ -2950,9 +3512,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
                 Object configuration) {
@@ -2964,9 +3529,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
                 String configuration) {
@@ -2991,10 +3559,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.Exchange may not be able to read the Netty stream,
          * because Netty has closed it.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -3019,10 +3590,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.Exchange may not be able to read the Netty stream,
          * because Netty has closed it.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -3034,9 +3609,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -3048,9 +3627,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -3064,10 +3647,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder nativeTransport(
                 boolean nativeTransport) {
@@ -3081,10 +3667,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder nativeTransport(
                 String nativeTransport) {
@@ -3097,10 +3687,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
                 Object nettyHttpBinding) {
@@ -3113,10 +3705,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
                 String nettyHttpBinding) {
@@ -3129,13 +3723,17 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder options(
                 String key,
@@ -3149,13 +3747,16 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder options(Map values) {
             doSetMultiValueProperties("options", "option.", values);
@@ -3165,10 +3766,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSize(
                 int receiveBufferSize) {
@@ -3179,10 +3783,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
@@ -3193,9 +3800,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
@@ -3206,9 +3816,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
@@ -3219,10 +3832,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder sendBufferSize(
                 int sendBufferSize) {
@@ -3233,10 +3849,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
@@ -3247,10 +3866,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -3261,10 +3883,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -3282,10 +3908,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferException(
                 boolean transferException) {
@@ -3303,10 +3932,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferException(
                 String transferException) {
@@ -3321,10 +3954,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
@@ -3339,10 +3975,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferExchange(
                 String transferExchange) {
@@ -3354,9 +3994,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerCount(
                 int workerCount) {
@@ -3368,9 +4011,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerCount(
                 String workerCount) {
@@ -3383,9 +4029,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * default each consumer or producer has their own worker pool with 2 x
          * cpu count core threads.
          * 
-         * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
                 Object workerGroup) {
@@ -3399,9 +4049,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * cpu count core threads.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.EventLoopGroup</code> type.
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
                 String workerGroup) {
@@ -3429,10 +4082,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -3447,10 +4103,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -3460,10 +4120,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -3473,10 +4136,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -3485,10 +4152,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder keepAlive(boolean keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -3497,10 +4167,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder keepAlive(String keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -3509,10 +4183,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder reuseAddress(boolean reuseAddress) {
             doSetProperty("reuseAddress", reuseAddress);
@@ -3521,10 +4198,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder reuseAddress(String reuseAddress) {
             doSetProperty("reuseAddress", reuseAddress);
@@ -3541,10 +4222,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder reuseChannel(boolean reuseChannel) {
             doSetProperty("reuseChannel", reuseChannel);
@@ -3561,10 +4245,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder reuseChannel(String reuseChannel) {
             doSetProperty("reuseChannel", reuseChannel);
@@ -3573,10 +4261,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -3585,10 +4276,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sync(String sync) {
             doSetProperty("sync", sync);
@@ -3597,10 +4292,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder tcpNoDelay(boolean tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -3609,10 +4307,14 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -3625,10 +4327,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder decoders(List<Object> decoders) {
             doSetProperty("decoders", decoders);
@@ -3641,10 +4345,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder decoders(String decoders) {
             doSetProperty("decoders", decoders);
@@ -3657,10 +4363,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder encoders(List<Object> encoders) {
             doSetProperty("encoders", encoders);
@@ -3673,10 +4381,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder encoders(String encoders) {
             doSetProperty("encoders", encoders);
@@ -3685,10 +4395,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Which protocols to enable when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
+         * 
+         * @param enabledProtocols the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder enabledProtocols(
                 String enabledProtocols) {
@@ -3698,9 +4411,12 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder keyStoreFile(File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
@@ -3709,9 +4425,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder keyStoreFile(String keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
@@ -3721,9 +4441,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFormat the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder keyStoreFormat(String keyStoreFormat) {
             doSetProperty("keyStoreFormat", keyStoreFormat);
@@ -3734,9 +4457,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder keyStoreResource(
                 String keyStoreResource) {
@@ -3747,9 +4473,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Password setting to use in order to encrypt/decrypt payloads sent
          * using SSH.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passphrase the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder passphrase(String passphrase) {
             doSetProperty("passphrase", passphrase);
@@ -3759,9 +4488,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Security provider to be used for payload encryption. Defaults to
          * SunX509 if not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityProvider the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder securityProvider(
                 String securityProvider) {
@@ -3772,10 +4504,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -3785,10 +4520,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
@@ -3800,10 +4539,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
@@ -3816,10 +4558,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
@@ -3830,9 +4576,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -3843,9 +4592,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -3855,9 +4607,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Reference to a class that could be used to return an SSL Handler.
          * 
-         * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslHandler(Object sslHandler) {
             doSetProperty("sslHandler", sslHandler);
@@ -3867,9 +4623,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Reference to a class that could be used to return an SSL Handler.
          * 
          * The option will be converted to a
-         * <code>io.netty.handler.ssl.SslHandler</code> type.
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder sslHandler(String sslHandler) {
             doSetProperty("sslHandler", sslHandler);
@@ -3878,9 +4637,12 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder trustStoreFile(File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
@@ -3889,9 +4651,13 @@ public interface NettyHttpEndpointBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder trustStoreFile(String trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
@@ -3902,9 +4668,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder trustStoreResource(
                 String trustStoreResource) {
@@ -3929,10 +4698,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
@@ -3945,10 +4717,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
@@ -3956,40 +4732,15 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a explicit ChannelGroup.
          * 
-         * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
                 Object channelGroup) {
@@ -4000,9 +4751,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a explicit ChannelGroup.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.group.ChannelGroup</code> type.
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
                 String channelGroup) {
@@ -4014,9 +4768,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
                 Object configuration) {
@@ -4028,9 +4785,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
                 String configuration) {
@@ -4055,10 +4815,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.Exchange may not be able to read the Netty stream,
          * because Netty has closed it.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -4083,10 +4846,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * org.apache.camel.Exchange may not be able to read the Netty stream,
          * because Netty has closed it.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -4098,9 +4865,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -4112,9 +4883,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -4128,10 +4903,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder nativeTransport(
                 boolean nativeTransport) {
@@ -4145,10 +4923,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder nativeTransport(
                 String nativeTransport) {
@@ -4161,10 +4943,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
                 Object nettyHttpBinding) {
@@ -4177,10 +4961,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.http.NettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
                 String nettyHttpBinding) {
@@ -4193,13 +4979,17 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder options(
                 String key,
@@ -4213,13 +5003,16 @@ public interface NettyHttpEndpointBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the options(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder options(Map values) {
             doSetMultiValueProperties("options", "option.", values);
@@ -4229,10 +5022,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSize(
                 int receiveBufferSize) {
@@ -4243,10 +5039,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
@@ -4257,9 +5056,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
@@ -4270,9 +5072,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
@@ -4283,10 +5088,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder sendBufferSize(
                 int sendBufferSize) {
@@ -4297,10 +5105,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder sendBufferSize(
                 String sendBufferSize) {
@@ -4311,10 +5122,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -4324,10 +5138,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -4344,10 +5162,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder transferException(
                 boolean transferException) {
@@ -4365,10 +5186,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder transferException(
                 String transferException) {
@@ -4383,10 +5208,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder transferExchange(
                 boolean transferExchange) {
@@ -4401,10 +5229,14 @@ public interface NettyHttpEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder transferExchange(
                 String transferExchange) {
@@ -4416,9 +5248,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder workerCount(int workerCount) {
             doSetProperty("workerCount", workerCount);
@@ -4429,9 +5264,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder workerCount(String workerCount) {
             doSetProperty("workerCount", workerCount);
@@ -4443,9 +5281,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * default each consumer or producer has their own worker pool with 2 x
          * cpu count core threads.
          * 
-         * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder workerGroup(Object workerGroup) {
             doSetProperty("workerGroup", workerGroup);
@@ -4458,9 +5300,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * cpu count core threads.
          * 
          * The option will be converted to a
-         * <code>io.netty.channel.EventLoopGroup</code> type.
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default AdvancedNettyHttpEndpointBuilder workerGroup(String workerGroup) {
             doSetProperty("workerGroup", workerGroup);
@@ -4482,7 +5327,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Path parameter: protocol (required)
          * The protocol to use which is either http, https or proxy - a consumer
          * only option.
-         * The value can be one of: http, https
+         * There are 2 enums and the value can be one of: http, https
          * 
          * Path parameter: host (required)
          * The local hostname such as localhost, or 0.0.0.0 when being a
@@ -4495,6 +5340,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Resource path
          * 
          * @param path protocol:host:port/path
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(String path) {
             return NettyHttpEndpointBuilderFactory.endpointBuilder("netty-http", path);
@@ -4512,7 +5358,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Path parameter: protocol (required)
          * The protocol to use which is either http, https or proxy - a consumer
          * only option.
-         * The value can be one of: http, https
+         * There are 2 enums and the value can be one of: http, https
          * 
          * Path parameter: host (required)
          * The local hostname such as localhost, or 0.0.0.0 when being a
@@ -4527,6 +5373,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:host:port/path
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(
                 String componentName,

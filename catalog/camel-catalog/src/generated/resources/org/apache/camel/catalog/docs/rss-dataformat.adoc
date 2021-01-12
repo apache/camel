@@ -5,6 +5,7 @@
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa.
 :since: 2.1
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/rss.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -33,16 +34,8 @@ you can for example do
 == Options
 
 // dataformat options: START
-The RSS dataformat supports 1 options, which are listed below.
-
-
-
-[width="100%",cols="2s,1m,1m,6",options="header"]
-|===
-| Name | Default | Java Type | Description
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
-|===
+The RSS dataformat has no options.
 // dataformat options: END
-ND
+
 
 include::camel-spring-boot::page$rss-starter.adoc[]

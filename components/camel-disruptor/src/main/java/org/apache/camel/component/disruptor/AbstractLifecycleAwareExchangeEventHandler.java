@@ -31,7 +31,7 @@ abstract class AbstractLifecycleAwareExchangeEventHandler implements LifecycleAw
 
     @Override
     public abstract void onEvent(ExchangeEvent event, long sequence, boolean endOfBatch)
-        throws Exception;
+            throws Exception;
 
     @Override
     public void awaitStarted() throws InterruptedException {

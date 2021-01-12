@@ -32,9 +32,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test case for {@link Jt400DataQueueConsumer}.
  * <p>
- * So that timeout semantics can be tested, an URI to an empty data queue on an
- * AS400 system should be provided (in a resource named
- * <code>"jt400test.properties"</code>, in a property with key
+ * So that timeout semantics can be tested, an URI to an empty data queue on an AS400 system should be provided (in a
+ * resource named <code>"jt400test.properties"</code>, in a property with key
  * <code>"org.apache.camel.component.jt400.emptydtaq.uri"</code>).
  * </p>
  */
@@ -42,8 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class Jt400DataQueueConsumerTest {
 
     /**
-     * The deviation of the actual timeout value that we permit in our timeout
-     * tests.
+     * The deviation of the actual timeout value that we permit in our timeout tests.
      */
     private static final long TIMEOUT_TOLERANCE = 300L;
 
@@ -53,8 +51,7 @@ public class Jt400DataQueueConsumerTest {
     private static final long TIMEOUT_VALUE = 3999L;
 
     /**
-     * The amount of time in milliseconds to pass so that a call is assumed to
-     * be a blocking call.
+     * The amount of time in milliseconds to pass so that a call is assumed to be a blocking call.
      */
     private static final long BLOCKING_THRESHOLD = 5000L;
 
@@ -64,8 +61,7 @@ public class Jt400DataQueueConsumerTest {
     private Jt400DataQueueConsumer consumer;
 
     /**
-     * Flag that indicates whether <code>receive()</code> has returned from
-     * call.
+     * Flag that indicates whether <code>receive()</code> has returned from call.
      */
     private boolean receiveFlag;
 

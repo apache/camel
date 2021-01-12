@@ -77,8 +77,8 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         }
 
         return this.group.members().stream()
-            .map(AtomixClusterMember::new)
-            .collect(Collectors.toList());
+                .map(AtomixClusterMember::new)
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
@@ -88,10 +88,9 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             LOG.debug("Get group {}", getNamespace());
 
             group = this.atomix.getGroup(
-                getNamespace(),
-                new DistributedGroup.Config(configuration.getResourceConfig(getNamespace())),
-                new DistributedGroup.Options(configuration.getResourceOptions(getNamespace()))
-            ).get();
+                    getNamespace(),
+                    new DistributedGroup.Config(configuration.getResourceConfig(getNamespace())),
+                    new DistributedGroup.Options(configuration.getResourceOptions(getNamespace()))).get();
 
             LOG.debug("Listen election events");
             group.election().onElection(term -> {
@@ -124,10 +123,10 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         localMember.leave();
     }
 
-    protected CamelClusterMember toClusterMember(GroupMember member)  {
+    protected CamelClusterMember toClusterMember(GroupMember member) {
         return localMember != null && localMember.is(member)
-            ? localMember
-            : new AtomixClusterMember(member);
+                ? localMember
+                : new AtomixClusterMember(member);
     }
 
     // ***********************************************
@@ -167,8 +166,8 @@ final class AtomixClusterView extends AbstractCamelClusterView {
 
         boolean is(GroupMember member) {
             return this.member != null
-                ? this.member.equals(member)
-                : false;
+                    ? this.member.equals(member)
+                    : false;
         }
 
         boolean hasJoined() {

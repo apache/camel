@@ -42,10 +42,13 @@ public interface GeoCoderEndpointBuilderFactory {
          * Whether to only enrich the Exchange with headers, and leave the body
          * as-is.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param headersOnly the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder headersOnly(boolean headersOnly) {
             doSetProperty("headersOnly", headersOnly);
@@ -55,10 +58,14 @@ public interface GeoCoderEndpointBuilderFactory {
          * Whether to only enrich the Exchange with headers, and leave the body
          * as-is.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param headersOnly the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder headersOnly(String headersOnly) {
             doSetProperty("headersOnly", headersOnly);
@@ -67,10 +74,13 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * The language to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: en
          * Group: producer
+         * 
+         * @param language the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder language(String language) {
             doSetProperty("language", language);
@@ -87,10 +97,13 @@ public interface GeoCoderEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -108,10 +121,14 @@ public interface GeoCoderEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -121,9 +138,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * URL to the geocoder server. Mandatory for Nominatim server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder serverUrl(String serverUrl) {
             doSetProperty("serverUrl", serverUrl);
@@ -133,9 +153,12 @@ public interface GeoCoderEndpointBuilderFactory {
          * Type of GeoCoding server. Supported Nominatim and Google.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.geocoder.GeoCoderType</code> type.
+         * &lt;code&gt;org.apache.camel.component.geocoder.GeoCoderType&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder type(GeoCoderType type) {
             doSetProperty("type", type);
@@ -145,9 +168,12 @@ public interface GeoCoderEndpointBuilderFactory {
          * Type of GeoCoding server. Supported Nominatim and Google.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.geocoder.GeoCoderType</code> type.
+         * &lt;code&gt;org.apache.camel.component.geocoder.GeoCoderType&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder type(String type) {
             doSetProperty("type", type);
@@ -156,9 +182,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Authentication Domain to access Google GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthDomain the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             doSetProperty("proxyAuthDomain", proxyAuthDomain);
@@ -167,9 +196,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Authentication Host to access Google GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthHost the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyAuthHost(String proxyAuthHost) {
             doSetProperty("proxyAuthHost", proxyAuthHost);
@@ -178,9 +210,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Authentication Method to Google GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthMethod the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
             doSetProperty("proxyAuthMethod", proxyAuthMethod);
@@ -189,9 +224,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Password to access GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthPassword the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
@@ -201,9 +239,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Username to access GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthUsername the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
@@ -213,9 +254,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Host to access GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -224,9 +268,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Port to access GeoCoding server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -235,10 +282,13 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Proxy Port to access GeoCoding server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -247,9 +297,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * API Key to access Google. Mandatory for Google GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder apiKey(String apiKey) {
             doSetProperty("apiKey", apiKey);
@@ -258,9 +311,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Client ID to access Google GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -269,9 +325,12 @@ public interface GeoCoderEndpointBuilderFactory {
         /**
          * Client Key to access Google GeoCoding server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKey the value to set
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder clientKey(String clientKey) {
             doSetProperty("clientKey", clientKey);
@@ -289,41 +348,16 @@ public interface GeoCoderEndpointBuilderFactory {
             return (GeoCoderEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGeoCoderEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -333,10 +367,14 @@ public interface GeoCoderEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGeoCoderEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -372,6 +410,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The geo latitude and longitude which should be prefixed with latlng:
          * 
          * @param path address:latlng
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder geocoder(String path) {
             return GeoCoderEndpointBuilderFactory.endpointBuilder("geocoder", path);
@@ -396,6 +435,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path address:latlng
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder geocoder(
                 String componentName,

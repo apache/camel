@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Endpoints are stored in a LRU list with a default capacity of 1000. If the list is full,
- * then endpoints are removed and should be recreated.
+ * Endpoints are stored in a LRU list with a default capacity of 1000. If the list is full, then endpoints are removed
+ * and should be recreated.
  * <p/>
  * We simulate this behavior with a capacity of 1 element.
  */

@@ -160,14 +160,15 @@ public class HttpProducer extends DefaultProducer {
                 if (!values.isEmpty()) {
                     // use the default toString of a ArrayList to create in the form [xxx, yyy]
                     // if multi valued, for a single value, then just output the value as is
-                    String s =  values.size() > 1 ? values.toString() : values.get(0);
+                    String s = values.size() > 1 ? values.toString() : values.get(0);
                     httpRequest.addHeader(key, s);
                 }
             }
         }
 
         if (getEndpoint().getCookieHandler() != null) {
-            Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getURI());
+            Map<String, List<String>> cookieHeaders
+                    = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getURI());
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
                 if (!entry.getValue().isEmpty()) {
@@ -244,8 +245,10 @@ public class HttpProducer extends DefaultProducer {
         return (HttpEndpoint) super.getEndpoint();
     }
 
-    protected void populateResponse(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse,
-                                    Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException {
+    protected void populateResponse(
+            Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse,
+            Message in, HeaderFilterStrategy strategy, int responseCode)
+            throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
         Object response = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
@@ -285,7 +288,9 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    protected Exception populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException, ClassNotFoundException {
+    protected Exception populateHttpOperationFailedException(
+            Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode)
+            throws IOException, ClassNotFoundException {
         Exception answer;
 
         String uri = httpRequest.getURI().toString();
@@ -325,8 +330,8 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Strategy when executing the method (calling the remote server).
      *
-     * @param httpRequest the http Request to execute
-     * @return the response
+     * @param  httpRequest the http Request to execute
+     * @return             the response
      * @throws IOException can be thrown
      */
     protected HttpResponse executeMethod(HttpUriRequest httpRequest) throws IOException {
@@ -344,8 +349,8 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Extracts the response headers
      *
-     * @param responseHeaders the headers
-     * @return the extracted headers or <tt>null</tt> if no headers existed
+     * @param  responseHeaders the headers
+     * @return                 the extracted headers or <tt>null</tt> if no headers existed
      */
     protected static Map<String, String> extractResponseHeaders(Header[] responseHeaders) {
         if (responseHeaders == null || responseHeaders.length == 0) {
@@ -363,7 +368,9 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Extracts the response from the method as a InputStream.
      */
-    protected Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
+    protected Object extractResponseBody(
+            HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody)
+            throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
             return null;
@@ -438,10 +445,10 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates the HttpMethod to use to call the remote server, either its GET or POST.
      *
-     * @param exchange the exchange
-     * @return the created method as either GET or POST
+     * @param  exchange           the exchange
+     * @return                    the created method as either GET or POST
      * @throws URISyntaxException is thrown if the URI is invalid
-     * @throws Exception is thrown if error creating RequestEntity
+     * @throws Exception          is thrown if error creating RequestEntity
      */
     protected HttpRequestBase createMethod(Exchange exchange) throws Exception {
         // creating the url to use takes 2-steps
@@ -476,8 +483,10 @@ public class HttpProducer extends DefaultProducer {
 
         // there must be a host on the method
         if (method.getURI().getScheme() == null || method.getURI().getHost() == null) {
-            throw new IllegalArgumentException("Invalid uri: " + uri
-                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
+            throw new IllegalArgumentException(
+                    "Invalid uri: " + uri
+                                               + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
+                                               + getEndpoint());
         }
 
         return method;
@@ -486,8 +495,8 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates a holder object for the data to send to the remote server.
      *
-     * @param exchange the exchange with the IN message with data to send
-     * @return the data holder
+     * @param  exchange               the exchange with the IN message with data to send
+     * @return                        the data holder
      * @throws CamelExchangeException is thrown if error creating RequestEntity
      */
     protected HttpEntity createRequestEntity(Exchange exchange) throws CamelExchangeException {
@@ -516,9 +525,13 @@ public class HttpProducer extends DefaultProducer {
                         }
                     }
 
-                    if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
+                    if (contentTypeString != null
+                            && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
                         if (!getEndpoint().getComponent().isAllowJavaSerializedObject()) {
-                            throw new CamelExchangeException("Content-type " + org.apache.camel.http.common.HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                            throw new CamelExchangeException(
+                                    "Content-type " + org.apache.camel.http.common.HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT
+                                                             + " is not allowed",
+                                    exchange);
                         }
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);

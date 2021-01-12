@@ -40,7 +40,8 @@ public class EKS2ComponentVerifierExtensionTest extends CamelTestSupport {
     public void testParameters() throws Exception {
         Component component = context().getComponent("aws2-eks");
 
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -57,7 +58,8 @@ public class EKS2ComponentVerifierExtensionTest extends CamelTestSupport {
     @Test
     public void testConnectivity() throws Exception {
         Component component = context().getComponent("aws2-eks");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -70,11 +72,12 @@ public class EKS2ComponentVerifierExtensionTest extends CamelTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
-    
+
     @Test
     public void testConnectivityAndRegion() throws Exception {
         Component component = context().getComponent("aws2-eks");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("secretKey", "l");
@@ -84,7 +87,7 @@ public class EKS2ComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("operation", EKS2Operations.listClusters);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
-        
+
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 

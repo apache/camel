@@ -46,7 +46,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -54,7 +54,8 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -62,7 +63,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"securityDefinitions\" : {"));
@@ -85,19 +86,20 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
 
         context.stop();
     }
-    
+
     @Test
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -105,7 +107,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"securitySchemes\" : {"));

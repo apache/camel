@@ -47,9 +47,9 @@ public class JettyContentTypeTest extends BaseJettyTest {
         }
         template.send(endpoint, exchange);
 
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("<order>OK</order>", body);
-        assertEquals(MessageHelper.getContentType(exchange.getOut()), "text/xml", "Get a wrong content-type ");
+        assertEquals("text/xml", MessageHelper.getContentType(exchange.getMessage()), "Get a wrong content-type ");
     }
 
     @Test
@@ -72,9 +72,9 @@ public class JettyContentTypeTest extends BaseJettyTest {
         exchange.getIn().setHeader("Content-Type", "text/xml");
         template.send(endpoint, exchange);
 
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("FAIL", body);
-        assertEquals(MessageHelper.getContentType(exchange.getOut()), "text/plain", "Get a wrong content-type ");
+        assertEquals("text/plain", MessageHelper.getContentType(exchange.getMessage()), "Get a wrong content-type ");
     }
 
     @Override
@@ -94,18 +94,18 @@ public class JettyContentTypeTest extends BaseJettyTest {
             String body = exchange.getIn().getBody(String.class);
             String encoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
             if (encoding != null) {
-                exchange.getOut().setHeader(Exchange.CONTENT_ENCODING, encoding);
+                exchange.getMessage().setHeader(Exchange.CONTENT_ENCODING, encoding);
             }
             if ("Claus".equals(user) && contentType.startsWith("text/xml") && body.equals("<order>123</order>")) {
                 assertEquals("test", exchange.getIn().getHeader("SOAPAction", String.class));
                 if (contentType.endsWith("UTF-8")) {
-                    assertEquals(exchange.getProperty(Exchange.CHARSET_NAME), "UTF-8", "Get a wrong charset name.");
+                    assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME), "Get a wrong charset name.");
                 }
-                exchange.getOut().setBody("<order>OK</order>");
-                exchange.getOut().setHeader("Content-Type", "text/xml");
+                exchange.getMessage().setBody("<order>OK</order>");
+                exchange.getMessage().setHeader("Content-Type", "text/xml");
             } else {
-                exchange.getOut().setBody("FAIL");
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                exchange.getMessage().setBody("FAIL");
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
             }
         }
     }

@@ -24,8 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
+import org.apache.camel.support.BreakpointSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +49,8 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
             @Override
             public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
                 Exception e = exchange.getException();
-                logs.add("Breakpoint at " + definition.getShortName() + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
+                logs.add("Breakpoint at " + definition.getShortName() + " caused by: " + e.getClass().getSimpleName() + "["
+                         + e.getMessage() + "]");
             }
         };
 
@@ -88,7 +91,8 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
                 // use debugger
                 context.setDebugger(new DefaultDebugger());
 
-                from("direct:start").to("log:foo").choice().when(body().contains("Camel")).throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
+                from("direct:start").to("log:foo").choice().when(body().contains("Camel"))
+                        .throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
             }
         };
     }

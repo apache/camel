@@ -19,8 +19,8 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 
 /**
- * Allows to be used in combination with <tt>NotifyBuilder</tt> as external predicate implementations to compute
- * if the exchange matches.
+ * Allows to be used in combination with <tt>NotifyBuilder</tt> as external predicate implementations to compute if the
+ * exchange matches.
  * <p/>
  * This is used by the mock endpoint, for example.
  */
@@ -42,5 +42,5 @@ public interface NotifyBuilderMatcher {
      * Reset state
      */
     void notifyBuilderReset();
-    
+
 }

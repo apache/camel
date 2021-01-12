@@ -40,8 +40,6 @@ public enum IncomingPhoneNumberTollFreeApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private IncomingPhoneNumberTollFreeApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

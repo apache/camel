@@ -30,14 +30,14 @@ import org.apache.camel.spi.UriParam;
  * This component uses plain JMS 2.x API where as the jms component uses Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
-        syntax = "sjms2:destinationType:destinationName", category = {Category.MESSAGING})
+             syntax = "sjms2:destinationType:destinationName", category = { Category.MESSAGING })
 public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
 
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Sets the subscription Id, required for durable or shared topics.")
     private String subscriptionId;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Sets topic consumer to durable.")
     private boolean durable;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Sets the consumer to shared.")
     private boolean shared;
 
     public Sjms2Endpoint() {
@@ -53,12 +53,9 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
         return (Sjms2Component) super.getComponent();
     }
 
-    /**
-     * Sets the durable subscription Id required for durable topics.
-     */
     @Override
-    public void setDurableSubscriptionId(String durableSubscriptionId) {
-        super.setDurableSubscriptionId(durableSubscriptionId);
+    public void setDurableSubscriptionName(String durableSubscriptionId) {
+        super.setDurableSubscriptionName(durableSubscriptionId);
         subscriptionId = durableSubscriptionId;
         durable = true;
     }
@@ -67,9 +64,6 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
         return subscriptionId;
     }
 
-    /**
-     * Sets the subscription Id, required for durable or shared topics.
-     */
     public void setSubscriptionId(String subscriptionId) {
         this.subscriptionId = subscriptionId;
     }
@@ -78,9 +72,6 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
         return durable;
     }
 
-    /**
-     * Sets topic consumer to durable.
-     */
     public void setDurable(boolean durable) {
         this.durable = durable;
     }
@@ -89,9 +80,6 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
         return shared;
     }
 
-    /**
-     * Sets the consumer to shared.
-     */
     public void setShared(boolean shared) {
         this.shared = shared;
     }

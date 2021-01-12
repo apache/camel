@@ -53,7 +53,8 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
-    public PropertyBindingException(Object target, String propertyName, Object value, String optionPrefix, String optionKey, Throwable e) {
+    public PropertyBindingException(Object target, String propertyName, Object value, String optionPrefix, String optionKey,
+                                    Throwable e) {
         initCause(e);
         this.target = target;
         this.propertyName = propertyName;
@@ -71,7 +72,7 @@ public class PropertyBindingException extends RuntimeCamelException {
         }
         if (key != null) {
             return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName
-                    + " on bean: " + target + " with value: " + stringValue;
+                   + " on bean: " + target + " with value: " + stringValue;
         } else {
             return "Error binding properties on bean: " + target;
         }

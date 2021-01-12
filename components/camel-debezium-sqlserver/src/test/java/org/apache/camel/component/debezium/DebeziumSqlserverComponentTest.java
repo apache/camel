@@ -43,8 +43,8 @@ public class DebeziumSqlserverComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
-                + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                + "databaseServerName=test&databaseHistoryFileName=/test";
+                           + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                           + "databaseServerName=test&databaseHistoryFileName=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumSqlserverComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -53,7 +53,8 @@ public class DebeziumSqlserverComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = (SqlServerConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                    = (SqlServerConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getDatabaseHostname());
@@ -66,7 +67,8 @@ public class DebeziumSqlserverComponentTest {
 
     @Test
     void testIfCreatesComponentWithExternalConfiguration() throws Exception {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabasePassword("pwd");
@@ -85,7 +87,8 @@ public class DebeziumSqlserverComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final SqlServerConnectorEmbeddedDebeziumConfiguration actualConfigurations = (SqlServerConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final SqlServerConnectorEmbeddedDebeziumConfiguration actualConfigurations
+                    = (SqlServerConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getDatabaseUser(), actualConfigurations.getDatabaseUser());

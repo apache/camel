@@ -55,7 +55,7 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&idempotentRepositoryRemoveOnCommit=false&initialDelay=100&delay=100")
-                    .routeId("foo").noAutoStartup()
+                        .routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

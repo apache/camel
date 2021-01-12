@@ -52,7 +52,8 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
         }
 
         mockResultEndpoint.expectedMessageCount(3);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "MODIFIED", "MODIFIED");
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "MODIFIED", "MODIFIED");
         Exchange ex = template.request("direct:createPod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "test");
@@ -103,12 +104,14 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods", host, authToken);
-                from("direct:listByLabels").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host, authToken);
+                from("direct:listByLabels").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host,
+                        authToken);
                 from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host, authToken);
                 from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
                 from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
-                fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken).process(new KubernetesProcessor())
-                    .to(mockResultEndpoint);
+                fromF("kubernetes-pods://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken)
+                        .process(new KubernetesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
@@ -118,7 +121,8 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Pod pod = exchange.getIn().getBody(Pod.class);
-            log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action "
+                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

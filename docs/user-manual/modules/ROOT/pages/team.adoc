@@ -47,7 +47,8 @@ sort it in alphabetical order.
 |Luca Burgazzoli |lburgazzoli |Red Hat
 |Martin Krasser |krasserm | 
 |Nicky Sandhu |nsandhu | 
-|Onder Sezgin |onders | 
+|Onder Sezgin |onders |
+|Otavio Rodolfo Piske |orpiske | Red Hat
 |Quinn Stevenson |quinn | 
 |Raul Kripalani |raulk | 
 |Rich Newcomb |rnewcomb | 
@@ -90,7 +91,7 @@ added.
 |Arno Noordover |het CAK
 |Bahaa Zaid|
 |Barry Kaplan | 
-|Brett Meyer |3RiverDev, Savoir Technologies
+|Brett Meyer |Impact Upgrade
 |Brian Diesenhaus | 
 |Brian Guan | 
 |Brian Madigan | 
@@ -122,6 +123,7 @@ added.
 |Jérôme Delagnes | 
 |Jeff Sparkes | 
 |Jeff Lansing |SYS Technologies
+|Jeremy Ross |Elevation Solutions
 |Jeremy Volkman | 
 |Joe Fernandez |TTM
 |John Heitmann | 

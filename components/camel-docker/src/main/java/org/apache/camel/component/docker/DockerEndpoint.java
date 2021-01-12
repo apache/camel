@@ -33,7 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Manage Docker containers.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "docker", title = "Docker", syntax = "docker:operation",
-        category = {Category.CLOUD, Category.CONTAINER, Category.PAAS}, lenientProperties = true)
+             category = { Category.CLOUD, Category.CONTAINER, Category.PAAS }, lenientProperties = true)
 public class DockerEndpoint extends DefaultEndpoint {
 
     @UriParam

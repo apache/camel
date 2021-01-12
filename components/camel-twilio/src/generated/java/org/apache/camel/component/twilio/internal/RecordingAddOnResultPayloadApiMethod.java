@@ -63,8 +63,6 @@ public enum RecordingAddOnResultPayloadApiMethod implements ApiMethod {
         arg("pathReferenceSid", String.class),
         arg("pathAddOnResultSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private RecordingAddOnResultPayloadApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

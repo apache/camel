@@ -17,8 +17,8 @@
 package org.apache.camel.component.openstack.common;
 
 /**
- * General camel-openstack component constants.
- * The main purpose for this class is to avoid duplication general constants in each submodule.
+ * General camel-openstack component constants. The main purpose for this class is to avoid duplication general
+ * constants in each submodule.
  */
 public class OpenstackConstants {
 
@@ -34,5 +34,6 @@ public class OpenstackConstants {
     public static final String GET = "get";
     public static final String DELETE = "delete";
 
-    protected OpenstackConstants() { }
+    protected OpenstackConstants() {
+    }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.tracing.decorators;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanDecorator;
 import org.junit.jupiter.api.Test;

@@ -21,6 +21,13 @@ package org.apache.camel.component.ignite.set;
  */
 public enum IgniteSetOperation {
 
-    CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY
+    CONTAINS,
+    ADD,
+    SIZE,
+    REMOVE,
+    ITERATOR,
+    CLEAR,
+    RETAIN_ALL,
+    ARRAY
 
 }

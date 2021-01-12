@@ -36,7 +36,8 @@ public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTwoTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTwoTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {

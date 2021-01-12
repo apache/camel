@@ -35,44 +35,43 @@ import org.apache.camel.util.ObjectHelper;
  * Component configuration for Braintree component.
  */
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public class BraintreeConfiguration {
     private static final String ENVIRONMENT = "environment";
     private static final String MERCHANT_ID = "merchant_id";
-    private static final String PUBLIC_KEY  = "public_key";
+    private static final String PUBLIC_KEY = "public_key";
     private static final String PRIVATE_KEY = "private_key";
     private static final String ACCESS_TOKEN = "access_token";
 
     @UriPath
     @Metadata(required = true)
     private BraintreeApiName apiName;
-    @UriPath
+    @UriPath(enums = "accept,addFileEvidence,addTextEvidence,cancel,cancelRelease,cloneTransaction,create,createForCurrency"
+                     + ",credit,delete,fetchMerchantAccounts,finalize,find,generate,grant,holdInEscrow,parse,refund,releaseFromEscrow"
+                     + ",removeEvidence,retryCharge,revoke,sale,search,submitForPartialSettlement,submitForSettlement,transactionLevelFees"
+                     + ",update,updateDetails,verify,voidTransaction")
+    @Metadata(required = true)
     private String methodName;
-
     @UriParam
     private String environment;
     @UriParam
     private String merchantId;
-
     @UriParam(label = "security", secret = true)
     private String publicKey;
     @UriParam(label = "security", secret = true)
     private String privateKey;
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
-
     @UriParam(label = "logging", enums = "OFF,SEVERE,WARNING,INFO,CONFIG,FINE,FINER,FINEST,ALL")
     private String httpLogLevel;
     @UriParam(label = "logging", defaultValue = "Braintree")
     private String httpLogName;
     @UriParam(label = "logging", defaultValue = "true")
     private boolean logHandlerEnabled = true;
-
     @UriParam(label = "advanced")
     private Integer httpReadTimeout;
 
@@ -147,8 +146,8 @@ public class BraintreeConfiguration {
     }
 
     /**
-     * The access token granted by a merchant to another in order to process transactions on their behalf.
-     * Used in place of environment, merchant id, public key and private key fields.
+     * The access token granted by a merchant to another in order to process transactions on their behalf. Used in place
+     * of environment, merchant id, public key and private key fields.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -203,8 +202,8 @@ public class BraintreeConfiguration {
     }
 
     /**
-     * Sets whether to enable the BraintreeLogHandler. It may be desirable to set this to
-     * 'false' where an existing JUL - SLF4J logger bridge is on the classpath.
+     * Sets whether to enable the BraintreeLogHandler. It may be desirable to set this to 'false' where an existing JUL
+     * - SLF4J logger bridge is on the classpath.
      *
      * This option can also be configured globally on the BraintreeComponent.
      */
@@ -238,8 +237,9 @@ public class BraintreeConfiguration {
             return Environment.PRODUCTION;
         }
 
-        throw new IllegalArgumentException(String.format(
-            "Environment should be development, sandbox or production, got %s", name));
+        throw new IllegalArgumentException(
+                String.format(
+                        "Environment should be development, sandbox or production, got %s", name));
     }
 
     /**
@@ -250,16 +250,14 @@ public class BraintreeConfiguration {
 
         if (accessToken != null) {
             gateway = new BraintreeGateway(
-                    accessToken
-            );
+                    accessToken);
             setEnvironment(gateway.getConfiguration().getEnvironment().getEnvironmentName());
         } else {
             gateway = new BraintreeGateway(
                     getBraintreeEnvironment(),
                     getMerchantId(),
                     getPublicKey(),
-                    getPrivateKey()
-            );
+                    getPrivateKey());
         }
 
         if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
@@ -273,8 +271,8 @@ public class BraintreeConfiguration {
         // If custom log name is defined, a new logger wil be requested otherwise
         // the one supplied by Braintree' SDK will be used
         final Logger logger = ObjectHelper.isNotEmpty(httpLogName)
-            ? Logger.getLogger(httpLogName)
-            : gateway.getConfiguration().getLogger();
+                ? Logger.getLogger(httpLogName)
+                : gateway.getConfiguration().getLogger();
 
         // Cleanup handlers as by default braintree install a ConsoleHandler
         for (Handler handler : logger.getHandlers()) {

@@ -61,25 +61,25 @@ public class JmsMutateMessageTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(exchange -> {
-                        // do not mutate it
-                        JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                        assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                        .process(exchange -> {
+                            // do not mutate it
+                            JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
+                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
 
-                        // get header should not mutate it
-                        assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
-                    })
-                    // setting a new header should mutate it
-                    .setHeader("HEADER_1", constant("VALUE_2"))
-                    .process(exchange -> {
-                        // it should have been mutated
-                        JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                        assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                            // get header should not mutate it
+                            assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
+                        })
+                        // setting a new header should mutate it
+                        .setHeader("HEADER_1", constant("VALUE_2"))
+                        .process(exchange -> {
+                            // it should have been mutated
+                            JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
+                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
 
-                        // get header should not mutate it
-                        assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));
-                    })
-                    .to("mock:result");
+                            // get header should not mutate it
+                            assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));
+                        })
+                        .to("mock:result");
             }
         };
     }

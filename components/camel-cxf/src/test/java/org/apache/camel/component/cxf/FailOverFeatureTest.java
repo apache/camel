@@ -32,12 +32,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FailOverFeatureTest {
-    
-    private static int port1 = CXFTestSupport.getPort1(); 
+
+    private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort2();
     private static int port3 = CXFTestSupport.getPort3();
-    private static int port4 = AvailablePortFinder.getNextAvailable(); 
-    
+    private static int port4 = AvailablePortFinder.getNextAvailable();
+
     private static final String SERVICE_ADDRESS = "http://localhost:" + port1 + "/FailOverFeatureTest";
     private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/FailOverFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/FailOverFeatureTest/proxy";
@@ -115,7 +115,7 @@ public class FailOverFeatureTest {
                 FailoverFeature ff = new FailoverFeature();
                 ff.setStrategy(strategy);
 
-                CxfEndpoint endpoint = (CxfEndpoint)(endpoint(real));
+                CxfEndpoint endpoint = (CxfEndpoint) (endpoint(real));
                 endpoint.getFeatures().add(ff);
 
                 from(proxy).to(endpoint);
@@ -132,7 +132,7 @@ public class FailOverFeatureTest {
         factory.setServiceClass(HelloService.class);
         factory.setAddress(url);
 
-        HelloService client = (HelloService)factory.create();
+        HelloService client = (HelloService) factory.create();
         return client.sayHello();
     }
 

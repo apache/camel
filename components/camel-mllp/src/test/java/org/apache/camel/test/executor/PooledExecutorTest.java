@@ -29,7 +29,6 @@ public class PooledExecutorTest {
     Logger log = LoggerFactory.getLogger(this.getClass());
     TestExecutor instance;
 
-
     @BeforeEach
     public void setUp() throws Exception {
         instance = new TestExecutor(THREAD_COUNT);

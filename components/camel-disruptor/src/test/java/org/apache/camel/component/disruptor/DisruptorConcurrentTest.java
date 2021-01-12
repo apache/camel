@@ -117,7 +117,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
 
             assertEquals(20, replies.size());
             for (int i = 0; i < 20; i++) {
-                final String out = (String)replies.get(i).get();
+                final String out = (String) replies.get(i).get();
                 assertTrue(out.startsWith("Bye"));
             }
             pt.stop();

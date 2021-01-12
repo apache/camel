@@ -263,9 +263,8 @@ public class VertxPlatformHttpRouter implements Router {
 
     public static VertxPlatformHttpRouter lookup(CamelContext camelContext) {
         return CamelContextHelper.mandatoryLookup(
-            camelContext,
-            VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
-            VertxPlatformHttpRouter.class
-        );
+                camelContext,
+                VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
+                VertxPlatformHttpRouter.class);
     }
 }

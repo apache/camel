@@ -14,8 +14,6 @@ public enum Olingo2ApiName implements ApiName {
     DEFAULT("");
 
 
-    private static final Olingo2ApiName[] VALUES = values();
-    
     private final String name;
 
     private Olingo2ApiName(String name) {
@@ -27,12 +25,4 @@ public enum Olingo2ApiName implements ApiName {
         return name;
     }
 
-    public static Olingo2ApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

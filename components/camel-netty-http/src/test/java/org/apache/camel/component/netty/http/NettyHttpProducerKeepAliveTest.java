@@ -30,7 +30,8 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     public void testHttpKeepAlive() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello World", String.class);
+        String out
+                = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello Again", String.class);
@@ -43,7 +44,8 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     public void testHttpKeepAliveFalse() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello World", String.class);
+        String out
+                = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello Again", String.class);
@@ -55,12 +57,12 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     @Test
     public void testConnectionClosed() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        Exchange ex = template.request("netty-http:http://localhost:{{port}}/bar?keepAlive=false", exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange ex = template.request("netty-http:http://localhost:{{port}}/bar?keepAlive=false",
+                exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
         assertEquals(HttpHeaderValues.CLOSE.toString(), ex.getMessage().getHeader(HttpHeaderNames.CONNECTION.toString()));
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -68,14 +70,13 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
 
-                from("netty-http:http://localhost:{{port}}/bar").removeHeaders("*").to("mock:input").transform().constant("Bye World");
+                from("netty-http:http://localhost:{{port}}/bar").removeHeaders("*").to("mock:input").transform()
+                        .constant("Bye World");
             }
         };
     }
-
-
 
 }

@@ -35,8 +35,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Unmarshals the body of the incoming message using the given
- * <a href="http://camel.apache.org/data-format.html">data format</a>
+ * Unmarshals the body of the incoming message using the given <a href="http://camel.apache.org/data-format.html">data
+ * format</a>
  */
 public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware, RouteIdAware {
     private String id;
@@ -65,7 +65,9 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
             if (result instanceof Exchange) {
                 if (result != exchange) {
                     // it's not allowed to return another exchange other than the one provided to dataFormat
-                    throw new RuntimeCamelException("The returned exchange " + result + " is not the same as " + exchange + " provided to the DataFormat");
+                    throw new RuntimeCamelException(
+                            "The returned exchange " + result + " is not the same as " + exchange
+                                                    + " provided to the DataFormat");
                 }
             } else if (result instanceof Message) {
                 // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload

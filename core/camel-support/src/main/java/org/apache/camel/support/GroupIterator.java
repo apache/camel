@@ -28,8 +28,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 
 /**
- * Group based {@link Iterator} which groups the given {@link Iterator} a number of times
- * and then return a combined response as a <tt>List</tt>.
+ * Group based {@link Iterator} which groups the given {@link Iterator} a number of times and then return a combined
+ * response as a <tt>List</tt>.
  * <p/>
  * This implementation uses a internal array list, to combine the response.
  *
@@ -47,9 +47,9 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
     /**
      * Creates a new group iterator
      *
-     * @param exchange  the exchange used to create this group iterator
-     * @param it            the iterator to group
-     * @param group         number of parts to group together
+     * @param  exchange                 the exchange used to create this group iterator
+     * @param  it                       the iterator to group
+     * @param  group                    number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
     public GroupIterator(Exchange exchange, Iterator<?> it, int group) {
@@ -59,9 +59,9 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
     /**
      * Creates a new group iterator
      *
-     * @param exchange  the exchange used to create this group iterator
-     * @param it            the iterator to group
-     * @param group         number of parts to group together
+     * @param  exchange                 the exchange used to create this group iterator
+     * @param  it                       the iterator to group
+     * @param  group                    number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
     public GroupIterator(Exchange exchange, Iterator<?> it, int group, boolean skipFirst) {

@@ -33,7 +33,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltDTDTest extends ContextTestSupport {
-    private static final String MESSAGE = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
+    private static final String MESSAGE
+            = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
 
     @Test
     public void testSendingStringMessage() throws Exception {

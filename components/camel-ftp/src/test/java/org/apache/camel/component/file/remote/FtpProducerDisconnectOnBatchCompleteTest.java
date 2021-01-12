@@ -40,7 +40,7 @@ public class FtpProducerDisconnectOnBatchCompleteTest extends FtpServerTestSuppo
     }
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin&disconnectOnBatchComplete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&disconnectOnBatchComplete=true";
     }
 
     @Test

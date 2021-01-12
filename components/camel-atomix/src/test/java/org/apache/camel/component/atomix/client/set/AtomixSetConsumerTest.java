@@ -57,7 +57,9 @@ public class AtomixSetConsumerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        set.close();
+        if (set != null) {
+            set.close();
+        }
 
         super.tearDown();
     }
@@ -103,7 +105,7 @@ public class AtomixSetConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-set:%s", SET_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

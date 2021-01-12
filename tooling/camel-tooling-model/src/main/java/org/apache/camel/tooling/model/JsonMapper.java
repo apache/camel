@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
@@ -98,6 +99,68 @@ public final class JsonMapper {
                 model.addEndpointOption(option);
             }
         }
+        JsonObject mprap = (JsonObject) obj.get("apis");
+        if (mprap != null) {
+            for (Map.Entry<String, Object> entry : mprap.entrySet()) {
+                String name = entry.getKey();
+                JsonObject mp = (JsonObject) entry.getValue();
+                ApiModel am = new ApiModel();
+                am.setName(name);
+                am.setDescription(mp.getStringOrDefault("description", ""));
+                am.setConsumerOnly(mp.getBooleanOrDefault("consumerOnly", false));
+                am.setProducerOnly(mp.getBooleanOrDefault("producerOnly", false));
+                model.getApiOptions().add(am);
+                Collection<String> aliases = mp.getCollection("aliases");
+                if (aliases != null && !aliases.isEmpty()) {
+                    aliases.forEach(am::addAlias);
+                }
+                JsonObject mm = (JsonObject) mp.get("methods");
+                if (mm != null) {
+                    for (Map.Entry<String, Object> mme : mm.entrySet()) {
+                        JsonObject mmp = (JsonObject) mme.getValue();
+                        ApiMethodModel amm = am.newMethod(mme.getKey());
+                        Collection<String> signatures = mmp.getCollection("signatures");
+                        if (signatures != null && !signatures.isEmpty()) {
+                            signatures.forEach(amm::addSignature);
+                        }
+                        amm.setDescription(mmp.getStringOrDefault("description", ""));
+                    }
+                }
+            }
+        }
+        mprap = (JsonObject) obj.get("apiProperties");
+        if (mprap != null) {
+            for (Map.Entry<String, Object> entry : mprap.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                String name = entry.getKey();
+                ApiModel am = model.getApiOptions().stream().filter(a -> a.getName().equals(name)).findFirst().orElse(null);
+                if (am == null) {
+                    throw new RuntimeException("Invalid json. Cannot find ApiModel with name: " + name);
+                }
+                JsonObject mm = (JsonObject) mp.get("methods");
+                if (mm != null) {
+                    for (Map.Entry<String, Object> mme : mm.entrySet()) {
+                        JsonObject mmp = (JsonObject) mme.getValue();
+                        String mname = mme.getKey();
+                        ApiMethodModel amm
+                                = am.getMethods().stream().filter(a -> a.getName().equals(mname)).findFirst().orElse(null);
+                        if (amm == null) {
+                            throw new RuntimeException("Invalid json. Cannot find ApiMethodModel with name: " + mname);
+                        }
+                        JsonObject properties = (JsonObject) mmp.get("properties");
+                        if (properties != null) {
+                            for (Map.Entry<String, Object> pe : properties.entrySet()) {
+                                JsonObject prop = (JsonObject) pe.getValue();
+                                ComponentModel.ApiOptionModel option = new ComponentModel.ApiOptionModel();
+                                parseOption(prop, option, pe.getKey());
+                                option.setOptional(prop.getBooleanOrDefault("optional", false));
+                                amm.addApiOptionModel(option);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return model;
     }
 
@@ -109,6 +172,8 @@ public final class JsonMapper {
         model.setSyntax(mobj.getString("syntax"));
         model.setAlternativeSyntax(mobj.getString("alternativeSyntax"));
         model.setAsync(mobj.getBooleanOrDefault("async", false));
+        model.setApi(mobj.getBooleanOrDefault("api", false));
+        model.setApiSyntax(mobj.getString("apiSyntax"));
         model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
         model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
@@ -136,6 +201,10 @@ public final class JsonMapper {
         obj.put("syntax", model.getSyntax());
         obj.put("alternativeSyntax", model.getAlternativeSyntax());
         obj.put("async", model.isAsync());
+        obj.put("api", model.isApi());
+        if (model.isApi()) {
+            obj.put("apiSyntax", model.getApiSyntax());
+        }
         obj.put("consumerOnly", model.isConsumerOnly());
         obj.put("producerOnly", model.isProducerOnly());
         obj.put("lenientProperties", model.isLenientProperties());
@@ -145,6 +214,10 @@ public final class JsonMapper {
         wrapper.put("component", obj);
         wrapper.put("componentProperties", asJsonObject(model.getComponentOptions()));
         wrapper.put("properties", asJsonObject(model.getEndpointOptions()));
+        if (!model.getApiOptions().isEmpty()) {
+            wrapper.put("apis", apiModelAsJsonObject(model.getApiOptions(), false));
+            wrapper.put("apiProperties", apiModelAsJsonObject(model.getApiOptions(), true));
+        }
         return wrapper;
     }
 
@@ -349,6 +422,7 @@ public final class JsonMapper {
         option.setOptionalPrefix(mp.getString("optionalPrefix"));
         option.setMultiValue(mp.getBooleanOrDefault("multiValue", false));
         option.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
+        option.setAutowired(mp.getBooleanOrDefault("autowired", false));
         option.setDeprecationNote(mp.getString("deprecationNote"));
         option.setSecret(mp.getBooleanOrDefault("secret", false));
         option.setDefaultValue(mp.get("defaultValue"));
@@ -372,6 +446,44 @@ public final class JsonMapper {
         return json;
     }
 
+    public static JsonObject apiModelAsJsonObject(Collection<ApiModel> model, boolean options) {
+        JsonObject root = new JsonObject();
+        model.forEach(a -> {
+            JsonObject json = new JsonObject();
+            root.put(a.getName(), json);
+            if (!options) {
+                // lets be less verbose and only output these details for the api summary and not when we have all options included
+                json.put("consumerOnly", a.isConsumerOnly());
+                json.put("producerOnly", a.isProducerOnly());
+                if (a.getDescription() != null) {
+                    json.put("description", a.getDescription());
+                }
+                if (!a.getAliases().isEmpty()) {
+                    json.put("aliases", new JsonArray(a.getAliases()));
+                }
+            }
+            Map<String, JsonObject> methods = new TreeMap<>();
+            json.put("methods", methods);
+            a.getMethods().forEach(m -> {
+                JsonObject mJson = new JsonObject();
+                if (!options) {
+                    // lets be less verbose and only output these details for the api summary and not when we have all options included
+                    if (m.getDescription() != null) {
+                        mJson.put("description", m.getDescription());
+                    }
+                    if (!m.getSignatures().isEmpty()) {
+                        mJson.put("signatures", new JsonArray(m.getSignatures()));
+                    }
+                }
+                if (options) {
+                    mJson.put("properties", asJsonObject(m.getOptions()));
+                }
+                methods.put(m.getName(), mJson);
+            });
+        });
+        return root;
+    }
+
     public static JsonObject asJsonObject(BaseOptionModel option) {
         JsonObject prop = new JsonObject();
         prop.put("kind", option.getKind());
@@ -388,6 +500,7 @@ public final class JsonMapper {
         prop.put("multiValue", option.isMultiValue());
         prop.put("deprecated", option.isDeprecated());
         prop.put("deprecationNote", option.getDeprecationNote());
+        prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
         prop.put("defaultValue", option.getDefaultValue());
         prop.put("asPredicate", option.isAsPredicate());
@@ -396,6 +509,9 @@ public final class JsonMapper {
         prop.put("description", option.getDescription());
         prop.put("getterMethod", option.getGetterMethod());
         prop.put("setterMethod", option.getSetterMethod());
+        if (option instanceof ComponentModel.ApiOptionModel) {
+            prop.put("optional", ((ComponentModel.ApiOptionModel) option).isOptional());
+        }
         prop.entrySet().removeIf(e -> e.getValue() == null);
         prop.remove("prefix", "");
         prop.remove("optionalPrefix", "");
@@ -457,6 +573,9 @@ public final class JsonMapper {
             }
             if (prop.isDeprecated()) {
                 j.put("deprecated", prop.isDeprecated());
+            }
+            if (prop.isAutowired()) {
+                j.put("autowired", prop.isAutowired());
             }
             props.add(j);
         }

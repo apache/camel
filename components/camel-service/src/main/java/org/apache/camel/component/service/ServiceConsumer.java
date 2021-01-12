@@ -50,15 +50,14 @@ public class ServiceConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        final ServiceEndpoint endpoint = (ServiceEndpoint)getEndpoint();
+        final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
         final ServiceDefinition definition = endpoint.getServiceDefinition();
 
         LOG.debug("Using ServiceRegistry instance {} (id={}, type={}) to register: {}",
-            serviceRegistry,
-            serviceRegistry.getId(),
-            serviceRegistry.getClass().getName(),
-            definition
-        );
+                serviceRegistry,
+                serviceRegistry.getId(),
+                serviceRegistry.getClass().getName(),
+                definition);
 
         // register service
         serviceRegistry.register(definition);
@@ -77,7 +76,7 @@ public class ServiceConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        final ServiceEndpoint endpoint = (ServiceEndpoint)getEndpoint();
+        final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
         final ServiceDefinition definition = endpoint.getServiceDefinition();
 
         // de-register service
@@ -93,13 +92,13 @@ public class ServiceConsumer extends DefaultConsumer {
     @Override
     protected void doResume() throws Exception {
         if (delegatedConsumer instanceof SuspendableService) {
-            final ServiceEndpoint endpoint = (ServiceEndpoint)getEndpoint();
+            final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
             final ServiceDefinition definition = endpoint.getServiceDefinition();
 
             // register service
             serviceRegistry.register(definition);
 
-            ((SuspendableService)delegatedConsumer).resume();
+            ((SuspendableService) delegatedConsumer).resume();
         }
         super.doResume();
     }
@@ -107,13 +106,13 @@ public class ServiceConsumer extends DefaultConsumer {
     @Override
     protected void doSuspend() throws Exception {
         if (delegatedConsumer instanceof SuspendableService) {
-            final ServiceEndpoint endpoint = (ServiceEndpoint)getEndpoint();
+            final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
             final ServiceDefinition definition = endpoint.getServiceDefinition();
 
             // de-register service
             serviceRegistry.deregister(definition);
 
-            ((SuspendableService)delegatedConsumer).suspend();
+            ((SuspendableService) delegatedConsumer).suspend();
         }
         super.doSuspend();
     }

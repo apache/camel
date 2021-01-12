@@ -130,7 +130,6 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
         assertEquals(mockOsObject, msg.getBody(List.class).get(0));
     }
 
-
     @Test
     public void deleteObjectTest() throws Exception {
         when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionSuccess());
@@ -178,7 +177,6 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
         assertEquals(md, msg.getBody(Map.class));
     }
-
 
     private Payload<File> getTmpPayload() throws IOException {
         return Payloads.create(File.createTempFile("payloadPreffix", ".txt"));

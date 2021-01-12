@@ -37,12 +37,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_OUT_FILE;
-import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CamelSpringTest
-@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
+@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
 public class ExecOutFileTest {
 
     private static final String FILE_CONTENT = buildFileContent();
@@ -118,12 +117,12 @@ public class ExecOutFileTest {
 
     private static String buildFileContent() {
         StringBuilder builder = new StringBuilder();
-        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append(LINE_SEPARATOR);
-        builder.append("<data>").append(LINE_SEPARATOR);
-        builder.append("<element>data1</element>").append(LINE_SEPARATOR);
-        builder.append("<element>data2</element>").append(LINE_SEPARATOR);
-        builder.append("</data>").append(LINE_SEPARATOR);
-        builder.append(LINE_SEPARATOR);
+        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append(System.lineSeparator());
+        builder.append("<data>").append(System.lineSeparator());
+        builder.append("<element>data1</element>").append(System.lineSeparator());
+        builder.append("<element>data2</element>").append(System.lineSeparator());
+        builder.append("</data>").append(System.lineSeparator());
+        builder.append(System.lineSeparator());
         return builder.toString();
     }
 }

@@ -73,7 +73,7 @@ public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpring
 
     @Test
     public void testGet() {
-        when(map.get("4711")).thenReturn(Arrays.<Object>asList("my-foo"));
+        when(map.get("4711")).thenReturn(Arrays.<Object> asList("my-foo"));
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
         verify(map).get("4711");
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
@@ -85,7 +85,7 @@ public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpring
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         verify(map).remove(4711);
     }
-    
+
     @Test
     public void testValueCount() {
         template.sendBodyAndHeader("direct:valueCount", "test", HazelcastConstants.OBJECT_ID, "4711");
@@ -105,7 +105,7 @@ public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpring
         verify(map).containsKey("testKo");
         assertEquals(false, body);
     }
-    
+
     @Test
     public void testContainsValue() {
         when(map.containsValue("testOk")).thenReturn(true);

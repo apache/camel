@@ -4,28 +4,34 @@
  */
 package org.apache.camel.component.fhir;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirCapabilities
+ * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirCapabilities}.
  */
+@ApiParams(apiName = "capabilities", 
+           description = "API to Fetch the capability statement for the server",
+           apiMethods = {@ApiMethod(methodName = "ofType", description="Retrieve the conformance statement using the given model type", signatures={"org.hl7.fhir.instance.model.api.IBaseConformance ofType(Class<org.hl7.fhir.instance.model.api.IBaseConformance> type, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class FhirCapabilitiesEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
-    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "ofType", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})
+    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters;
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "ofType", description="The model type")})
     private Class<org.hl7.fhir.instance.model.api.IBaseConformance> type;
 
-    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {
+    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {
         return extraParameters;
     }
 
-    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters) {
+    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters) {
         this.extraParameters = extraParameters;
     }
 

@@ -38,4 +38,3 @@ public class XmlSecurityProducer extends DefaultAsyncProducer {
         return processor.process(exchange, callback);
     }
 }
-

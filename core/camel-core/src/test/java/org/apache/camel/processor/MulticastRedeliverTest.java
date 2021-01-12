@@ -119,7 +119,7 @@ public class MulticastRedeliverTest extends ContextTestSupport {
                         assertNull(exchange.getException());
 
                         // mutate OUT body
-                        exchange.getOut().setBody("Bye World");
+                        exchange.getMessage().setBody("Bye World");
 
                         counter++;
                         throw new IllegalArgumentException("Forced");

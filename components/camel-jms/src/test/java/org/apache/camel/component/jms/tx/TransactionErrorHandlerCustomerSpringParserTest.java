@@ -31,7 +31,7 @@ public class TransactionErrorHandlerCustomerSpringParserTest extends CamelSpring
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/TransactionErrorHandlerCustomerSpringParserTest.xml");
+                "/org/apache/camel/component/jms/tx/TransactionErrorHandlerCustomerSpringParserTest.xml");
     }
 
     @Test

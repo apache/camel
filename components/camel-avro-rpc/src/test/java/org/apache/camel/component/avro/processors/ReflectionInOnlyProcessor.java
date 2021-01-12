@@ -36,7 +36,7 @@ public class ReflectionInOnlyProcessor implements Processor {
             testReflection.setName(String.valueOf(body));
         }
         if (body instanceof TestPojo) {
-            testReflection.setTestPojo((TestPojo)body);
+            testReflection.setTestPojo((TestPojo) body);
         }
     }
 

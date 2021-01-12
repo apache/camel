@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/sortbynested?password=admin&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/sortbynested?password=admin&delay=5000";
     }
 
     @Override

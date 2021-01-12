@@ -37,7 +37,7 @@ By default Camel uses the non transaction type and orchestrates the
 error handling during processing and routing.
 
 As there isn't a single error handling configuration that suites all
-uses cases, you should consider altering the default configurations to
+use cases, you should consider altering the default configurations to
 better suit you needs.
 
 [[ErrorhandlinginCamel-Camel1.xdefaulterrorhandler]]

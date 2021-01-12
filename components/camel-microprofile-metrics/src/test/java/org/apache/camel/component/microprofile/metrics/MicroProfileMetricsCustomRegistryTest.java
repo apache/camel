@@ -37,7 +37,8 @@ public class MicroProfileMetricsCustomRegistryTest extends CamelTestSupport {
     @Test
     public void testMicroProfileMetricsComponentWithCustomMetricRegistry() {
         template.sendBody("direct:start", null);
-        SortedMap<MetricID, Counter> counters = metricRegistry.getCounters((metricID, metric) -> metricID.getName().equals("test-counter"));
+        SortedMap<MetricID, Counter> counters
+                = metricRegistry.getCounters((metricID, metric) -> metricID.getName().equals("test-counter"));
         MetricID metricID = counters.firstKey();
         assertEquals(1, counters.get(metricID).getCount());
     }
@@ -58,7 +59,7 @@ public class MicroProfileMetricsCustomRegistryTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("microprofile-metrics:counter:test-counter");
+                        .to("microprofile-metrics:counter:test-counter");
             }
         };
     }

@@ -39,6 +39,8 @@ public interface CometdComponentBuilderFactory {
      * Category: websocket
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
+     * 
+     * @return the dsl builder
      */
     static CometdComponentBuilder cometd() {
         return new CometdComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface CometdComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -80,10 +85,13 @@ public interface CometdComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -91,17 +99,23 @@ public interface CometdComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CometdComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CometdComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -109,9 +123,12 @@ public interface CometdComponentBuilderFactory {
          * incoming and outgoing requests.
          * 
          * The option is a:
-         * <code>java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension></code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.cometd.bayeux.server.BayeuxServer.Extension&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensions the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder extensions(
                 java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension> extensions) {
@@ -121,10 +138,14 @@ public interface CometdComponentBuilderFactory {
         /**
          * To use a custom configured SecurityPolicy to control authorization.
          * 
-         * The option is a: <code>org.cometd.bayeux.server.SecurityPolicy</code>
+         * The option is a:
+         * &lt;code&gt;org.cometd.bayeux.server.SecurityPolicy&lt;/code&gt;
          * type.
          * 
          * Group: security
+         * 
+         * @param securityPolicy the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder securityPolicy(
                 org.cometd.bayeux.server.SecurityPolicy securityPolicy) {
@@ -135,9 +156,12 @@ public interface CometdComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -147,9 +171,12 @@ public interface CometdComponentBuilderFactory {
         /**
          * The password for the keystore when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
@@ -159,9 +186,12 @@ public interface CometdComponentBuilderFactory {
         /**
          * The path to the keystore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeystore the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder sslKeystore(java.lang.String sslKeystore) {
             doSetProperty("sslKeystore", sslKeystore);
@@ -170,9 +200,12 @@ public interface CometdComponentBuilderFactory {
         /**
          * The password when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslPassword the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder sslPassword(java.lang.String sslPassword) {
             doSetProperty("sslPassword", sslPassword);
@@ -181,10 +214,13 @@ public interface CometdComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default CometdComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -210,7 +246,7 @@ public interface CometdComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((CometdComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CometdComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((CometdComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CometdComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "extensions": ((CometdComponent) component).setExtensions((java.util.List) value); return true;
             case "securityPolicy": ((CometdComponent) component).setSecurityPolicy((org.cometd.bayeux.server.SecurityPolicy) value); return true;
             case "sslContextParameters": ((CometdComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;

@@ -51,8 +51,10 @@ public class WordpressServicePostRevisionAdapterIT extends WordpressMockServerTe
     @BeforeAll
     public static void before() {
         final WordpressServiceProvider serviceProvider = WordpressServiceProvider.getInstance();
-        final WordpressAuthentication authentication = new WordpressBasicAuthentication("integration_test", "JD)e)Ox)z@HyDF*Dv4aWszm*");
-        final WordpressAPIConfiguration configuration = new WordpressAPIConfiguration(WordpressTestConstants.WORDPRESS4J_URL, WordpressConstants.API_VERSION);
+        final WordpressAuthentication authentication
+                = new WordpressBasicAuthentication("integration_test", "JD)e)Ox)z@HyDF*Dv4aWszm*");
+        final WordpressAPIConfiguration configuration
+                = new WordpressAPIConfiguration(WordpressTestConstants.WORDPRESS4J_URL, WordpressConstants.API_VERSION);
         configuration.setAuthentication(authentication);
         serviceProvider.init(configuration);
         servicePostRevision = serviceProvider.getService(WordpressServicePostRevision.class);

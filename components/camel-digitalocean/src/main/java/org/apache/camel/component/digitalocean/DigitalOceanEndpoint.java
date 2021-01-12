@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Manage Droplets and resources within the DigitalOcean cloud.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation",
+             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class DigitalOceanEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);
@@ -116,7 +117,8 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
                 BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
                 credsProvider.setCredentials(
                         new AuthScope(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()),
-                        new UsernamePasswordCredentials(configuration.getHttpProxyUser(), configuration.getHttpProxyPassword()));
+                        new UsernamePasswordCredentials(
+                                configuration.getHttpProxyUser(), configuration.getHttpProxyPassword()));
                 builder.setDefaultCredentialsProvider(credsProvider);
 
             }

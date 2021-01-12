@@ -28,7 +28,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOnlyIssueTest extends CamelTestSupport {
 
@@ -60,10 +60,15 @@ public class JmsInOnlyIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly,
+                exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
-        assertFalse(out.hasOut(), "Should not have OUT");
+        /*
+          The getMessage returns the In message if the Out one is not present. Therefore, we check if
+          the body of the returned message equals to the In one and infer that the out one was null.
+         */
+        assertEquals("Hello World", out.getMessage().getBody(), "There shouldn't be an out message");
     }
 
     @Test

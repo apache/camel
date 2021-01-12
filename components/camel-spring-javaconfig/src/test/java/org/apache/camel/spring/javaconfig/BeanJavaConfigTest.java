@@ -28,11 +28,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @CamelSpringTest
 @ContextConfiguration(classes = BeanJavaConfigTest.ContextConfig.class)
-public class BeanJavaConfigTest extends AbstractJUnit4SpringContextTests {
+public class BeanJavaConfigTest {
 
     @EndpointInject("mock:end")
     protected MockEndpoint endpoint;

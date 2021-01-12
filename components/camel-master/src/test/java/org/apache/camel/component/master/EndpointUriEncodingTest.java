@@ -50,7 +50,7 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
             public void configure() {
                 context.addComponent("dummy", new DummyComponent());
                 from("master:test:dummy://path?foo=hello}+world&bar=RAW(hello}+world)")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

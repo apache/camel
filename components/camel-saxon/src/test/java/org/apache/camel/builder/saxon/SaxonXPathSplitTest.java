@@ -49,17 +49,16 @@ public class SaxonXPathSplitTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().xpath("/persons/person")
-                    .choice()
+                        .split().xpath("/persons/person")
+                        .choice()
                         .when().xpath("person/city = 'London'")
-                            .to("mock:london")
+                        .to("mock:london")
                         .when().xpath("person/city = 'Paris'")
-                            .to("mock:paris")
+                        .to("mock:paris")
                         .otherwise()
-                            .to("mock:other");
+                        .to("mock:other");
             }
         };
     }
-
 
 }

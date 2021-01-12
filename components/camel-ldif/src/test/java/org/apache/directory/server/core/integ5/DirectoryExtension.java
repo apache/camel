@@ -16,7 +16,6 @@
  */
 package org.apache.directory.server.core.integ5;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -46,10 +45,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * The class responsible for running all the tests. t read the annotations,
- * initialize the DirectoryService, call each test and do the cleanup at the end.
+ * The class responsible for running all the tests. t read the annotations, initialize the DirectoryService, call each
+ * test and do the cleanup at the end.
  *
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
@@ -211,7 +209,8 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             }
         }
 
-        private <T> void inject(ExtensionContext context, String name, Class<T> type, T instance) throws InvocationTargetException, IllegalAccessException {
+        private <T> void inject(ExtensionContext context, String name, Class<T> type, T instance)
+                throws InvocationTargetException, IllegalAccessException {
             try {
                 Method setter = context.getRequiredTestClass().getMethod(name, type);
                 setter.invoke(context.getRequiredTestInstance(), instance);
@@ -240,7 +239,6 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             }
         }
 
-
         private void updateTlsKey(DirectoryService ds) throws LdapException, LdapInvalidDnException {
             // Update TLS key for tests. Newer Java 8 releases consider RSA keys
             // with less than 1024 bits as insecure and such are disabled by default, see
@@ -248,11 +246,14 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             Entry adminEntry = ds.getAdminSession().lookup(new Dn(ServerDNConstants.ADMIN_SYSTEM_DN));
             TlsKeyGenerator.addKeyPair(adminEntry, TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN,
                     TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN, "RSA", 1024);
-            Modification mod1 = new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE,
+            Modification mod1 = new DefaultModification(
+                    ModificationOperation.REPLACE_ATTRIBUTE,
                     adminEntry.get(TlsKeyGenerator.PRIVATE_KEY_AT));
-            Modification mod2 = new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE,
+            Modification mod2 = new DefaultModification(
+                    ModificationOperation.REPLACE_ATTRIBUTE,
                     adminEntry.get(TlsKeyGenerator.PUBLIC_KEY_AT));
-            Modification mod3 = new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE,
+            Modification mod3 = new DefaultModification(
+                    ModificationOperation.REPLACE_ATTRIBUTE,
                     adminEntry.get(TlsKeyGenerator.USER_CERTIFICATE_AT));
             ds.getAdminSession().modify(adminEntry.getDn(), mod1, mod2, mod3);
         }

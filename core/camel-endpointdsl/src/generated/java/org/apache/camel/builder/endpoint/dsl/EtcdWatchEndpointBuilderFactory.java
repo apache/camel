@@ -48,10 +48,13 @@ public interface EtcdWatchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -67,10 +70,14 @@ public interface EtcdWatchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -80,10 +87,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -92,10 +102,14 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -104,10 +118,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: consumer
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder servicePath(String servicePath) {
             doSetProperty("servicePath", servicePath);
@@ -116,10 +133,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder uris(String uris) {
             doSetProperty("uris", uris);
@@ -128,10 +148,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To send an empty message in case of timeout watching for a key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyExchangeOnTimeout the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder sendEmptyExchangeOnTimeout(
                 boolean sendEmptyExchangeOnTimeout) {
@@ -141,10 +164,14 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To send an empty message in case of timeout watching for a key.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyExchangeOnTimeout the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder sendEmptyExchangeOnTimeout(
                 String sendEmptyExchangeOnTimeout) {
@@ -154,9 +181,12 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder timeout(Long timeout) {
             doSetProperty("timeout", timeout);
@@ -165,9 +195,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -176,9 +210,12 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -188,9 +225,12 @@ public interface EtcdWatchEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -201,9 +241,12 @@ public interface EtcdWatchEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -213,9 +256,12 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -238,10 +284,13 @@ public interface EtcdWatchEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -255,9 +304,12 @@ public interface EtcdWatchEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -267,9 +319,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -280,9 +336,12 @@ public interface EtcdWatchEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -292,10 +351,13 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer (advanced)
+         * 
+         * @param fromIndex the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder fromIndex(long fromIndex) {
             doSetProperty("fromIndex", fromIndex);
@@ -304,51 +366,29 @@ public interface EtcdWatchEndpointBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer (advanced)
+         * 
+         * @param fromIndex the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder fromIndex(String fromIndex) {
             doSetProperty("fromIndex", fromIndex);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdWatchEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdWatchEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -358,10 +398,14 @@ public interface EtcdWatchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdWatchEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -384,6 +428,7 @@ public interface EtcdWatchEndpointBuilderFactory {
          * The path the endpoint refers to
          * 
          * @param path path
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder etcdWatch(String path) {
             return EtcdWatchEndpointBuilderFactory.endpointBuilder("etcd-watch", path);
@@ -404,6 +449,7 @@ public interface EtcdWatchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder etcdWatch(
                 String componentName,

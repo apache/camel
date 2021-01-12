@@ -26,12 +26,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MyProcessor implements Processor {
     private static Logger logger = LoggerFactory.getLogger(MyProcessor.class);
-    
+
     @Override
     public void process(Exchange exchange) throws Exception {
         logger.info("***** Entering Processor *******");
         String name = exchange.getIn().getBody(String.class);
-        exchange.getOut().setBody("Hello " + name);
+        exchange.getMessage().setBody("Hello " + name);
         logger.info("***** Leaving Processor *******");
     }
 

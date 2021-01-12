@@ -4,8 +4,10 @@ package org.apache.camel.component.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -33,8 +35,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authUsername": target.setAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticationpreemptive":
         case "authenticationPreemptive": target.setAuthenticationPreemptive(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
@@ -98,6 +98,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyAuthHost": target.setProxyAuthHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthmethod":
         case "proxyAuthMethod": target.setProxyAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": target.setProxyAuthNtHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthpassword":
         case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthport":
@@ -126,61 +128,112 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authDomain", java.lang.String.class);
-        answer.put("authHost", java.lang.String.class);
-        answer.put("authMethod", java.lang.String.class);
-        answer.put("authMethodPriority", java.lang.String.class);
-        answer.put("authPassword", java.lang.String.class);
-        answer.put("authUsername", java.lang.String.class);
-        answer.put("authenticationPreemptive", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeEndpoint", boolean.class);
-        answer.put("chunked", boolean.class);
-        answer.put("clearExpiredCookies", boolean.class);
-        answer.put("clientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        answer.put("clientConnectionManager", org.apache.http.conn.HttpClientConnectionManager.class);
-        answer.put("connectionClose", boolean.class);
-        answer.put("connectionsPerRoute", int.class);
-        answer.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        answer.put("cookieStore", org.apache.http.client.CookieStore.class);
-        answer.put("copyHeaders", boolean.class);
-        answer.put("customHostHeader", java.lang.String.class);
-        answer.put("deleteWithBody", boolean.class);
-        answer.put("disableStreamCache", boolean.class);
-        answer.put("getWithBody", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpClient", org.apache.http.client.HttpClient.class);
-        answer.put("httpClientConfigurer", org.apache.camel.component.http.HttpClientConfigurer.class);
-        answer.put("httpClientOptions", java.util.Map.class);
-        answer.put("httpContext", org.apache.http.protocol.HttpContext.class);
-        answer.put("httpMethod", org.apache.camel.http.common.HttpMethods.class);
-        answer.put("ignoreResponseBody", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mapHttpMessageBody", boolean.class);
-        answer.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        answer.put("mapHttpMessageHeaders", boolean.class);
-        answer.put("maxTotalConnections", int.class);
-        answer.put("okStatusCodeRange", java.lang.String.class);
-        answer.put("preserveHostHeader", boolean.class);
-        answer.put("proxyAuthDomain", java.lang.String.class);
-        answer.put("proxyAuthHost", java.lang.String.class);
-        answer.put("proxyAuthMethod", java.lang.String.class);
-        answer.put("proxyAuthPassword", java.lang.String.class);
-        answer.put("proxyAuthPort", int.class);
-        answer.put("proxyAuthScheme", java.lang.String.class);
-        answer.put("proxyAuthUsername", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", int.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("throwExceptionOnFailure", boolean.class);
-        answer.put("transferException", boolean.class);
-        answer.put("useSystemProperties", boolean.class);
-        answer.put("x509HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authdomain":
+        case "authDomain": return java.lang.String.class;
+        case "authhost":
+        case "authHost": return java.lang.String.class;
+        case "authmethod":
+        case "authMethod": return java.lang.String.class;
+        case "authmethodpriority":
+        case "authMethodPriority": return java.lang.String.class;
+        case "authpassword":
+        case "authPassword": return java.lang.String.class;
+        case "authusername":
+        case "authUsername": return java.lang.String.class;
+        case "authenticationpreemptive":
+        case "authenticationPreemptive": return boolean.class;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
+        case "chunked": return boolean.class;
+        case "clearexpiredcookies":
+        case "clearExpiredCookies": return boolean.class;
+        case "clientbuilder":
+        case "clientBuilder": return org.apache.http.impl.client.HttpClientBuilder.class;
+        case "clientconnectionmanager":
+        case "clientConnectionManager": return org.apache.http.conn.HttpClientConnectionManager.class;
+        case "connectionclose":
+        case "connectionClose": return boolean.class;
+        case "connectionsperroute":
+        case "connectionsPerRoute": return int.class;
+        case "cookiehandler":
+        case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "cookiestore":
+        case "cookieStore": return org.apache.http.client.CookieStore.class;
+        case "copyheaders":
+        case "copyHeaders": return boolean.class;
+        case "customhostheader":
+        case "customHostHeader": return java.lang.String.class;
+        case "deletewithbody":
+        case "deleteWithBody": return boolean.class;
+        case "disablestreamcache":
+        case "disableStreamCache": return boolean.class;
+        case "getwithbody":
+        case "getWithBody": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpclient":
+        case "httpClient": return org.apache.http.client.HttpClient.class;
+        case "httpclientconfigurer":
+        case "httpClientConfigurer": return org.apache.camel.component.http.HttpClientConfigurer.class;
+        case "httpclientoptions":
+        case "httpClientOptions": return java.util.Map.class;
+        case "httpcontext":
+        case "httpContext": return org.apache.http.protocol.HttpContext.class;
+        case "httpmethod":
+        case "httpMethod": return org.apache.camel.http.common.HttpMethods.class;
+        case "ignoreresponsebody":
+        case "ignoreResponseBody": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": return boolean.class;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": return boolean.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return int.class;
+        case "okstatuscoderange":
+        case "okStatusCodeRange": return java.lang.String.class;
+        case "preservehostheader":
+        case "preserveHostHeader": return boolean.class;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return java.lang.String.class;
+        case "proxyauthhost":
+        case "proxyAuthHost": return java.lang.String.class;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return java.lang.String.class;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthport":
+        case "proxyAuthPort": return int.class;
+        case "proxyauthscheme":
+        case "proxyAuthScheme": return java.lang.String.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "usesystemproperties":
+        case "useSystemProperties": return boolean.class;
+        case "x509hostnameverifier":
+        case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -201,8 +254,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authUsername": return target.getAuthUsername();
         case "authenticationpreemptive":
         case "authenticationPreemptive": return target.isAuthenticationPreemptive();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "chunked": return target.isChunked();
@@ -266,6 +317,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyAuthHost": return target.getProxyAuthHost();
         case "proxyauthmethod":
         case "proxyAuthMethod": return target.getProxyAuthMethod();
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return target.getProxyAuthNtHost();
         case "proxyauthpassword":
         case "proxyAuthPassword": return target.getProxyAuthPassword();
         case "proxyauthport":
@@ -289,6 +342,15 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useSystemProperties": return target.isUseSystemProperties();
         case "x509hostnameverifier":
         case "x509HostnameVerifier": return target.getX509HostnameVerifier();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpclientoptions":
+        case "httpClientOptions": return java.lang.Object.class;
         default: return null;
         }
     }

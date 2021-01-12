@@ -77,9 +77,10 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
                 String language = when.getExpression().getLanguage();
                 long matches = filter.getFilteredCount();
 
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"predicate", "language", "matches"},
-                        new Object[]{predicate, language, matches});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "predicate", "language", "matches" },
+                        new Object[] { predicate, language, matches });
                 answer.put(data);
             }
             if (getDefinition().getOtherwise() != null) {
@@ -88,9 +89,10 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
                 String language = "";
                 long matches = processor.getNotFilteredCount();
 
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"predicate", "language", "matches"},
-                        new Object[]{predicate, language, matches});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "predicate", "language", "matches" },
+                        new Object[] { predicate, language, matches });
                 answer.put(data);
             }
 

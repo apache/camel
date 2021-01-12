@@ -44,9 +44,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * You can set a base URI which is used in the URI dereferencing.
          * Relative URIs are then concatenated with the base URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param baseUri the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder baseUri(String baseUri) {
             doSetProperty("baseUri", baseUri);
@@ -56,10 +59,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param clearHeaders the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder clearHeaders(Boolean clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -69,11 +75,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param clearHeaders the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder clearHeaders(String clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -89,10 +98,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cryptoContextProperties the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder cryptoContextProperties(
                 Map<String, Object> cryptoContextProperties) {
@@ -110,10 +122,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * javax.xml.crypto.dsig.cacheReference.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cryptoContextProperties the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder cryptoContextProperties(
                 String cryptoContextProperties) {
@@ -124,10 +139,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param disallowDoctypeDecl the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder disallowDoctypeDecl(
                 Boolean disallowDoctypeDecl) {
@@ -138,11 +156,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param disallowDoctypeDecl the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder disallowDoctypeDecl(
                 String disallowDoctypeDecl) {
@@ -152,9 +173,13 @@ public interface XmlVerifierEndpointBuilderFactory {
         /**
          * Provides the key for validating the XML signature.
          * 
-         * The option is a: <code>javax.xml.crypto.KeySelector</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.crypto.KeySelector&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keySelector the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder keySelector(Object keySelector) {
             doSetProperty("keySelector", keySelector);
@@ -164,9 +189,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Provides the key for validating the XML signature.
          * 
          * The option will be converted to a
-         * <code>javax.xml.crypto.KeySelector</code> type.
+         * &lt;code&gt;javax.xml.crypto.KeySelector&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keySelector the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder keySelector(String keySelector) {
             doSetProperty("keySelector", keySelector);
@@ -183,10 +211,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -204,10 +235,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -219,10 +254,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param omitXmlDeclaration the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder omitXmlDeclaration(
                 Boolean omitXmlDeclaration) {
@@ -234,11 +272,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param omitXmlDeclaration the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder omitXmlDeclaration(
                 String omitXmlDeclaration) {
@@ -251,9 +292,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The class of the value depends on the type of the output node search.
          * The output node search is forwarded to XmlSignature2Message.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputNodeSearch the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder outputNodeSearch(
                 Object outputNodeSearch) {
@@ -266,9 +310,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The class of the value depends on the type of the output node search.
          * The output node search is forwarded to XmlSignature2Message.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputNodeSearch the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder outputNodeSearch(
                 String outputNodeSearch) {
@@ -281,10 +329,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * setOutputNodeSearch(Object). The supported default search types you
          * can find in DefaultXmlSignature2Message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: producer
+         * 
+         * @param outputNodeSearchType the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder outputNodeSearchType(
                 String outputNodeSearchType) {
@@ -295,9 +346,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The character encoding of the resulting signed XML document. If null
          * then the encoding of the original XML document is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputXmlEncoding the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder outputXmlEncoding(
                 String outputXmlEncoding) {
@@ -314,10 +368,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param removeSignatureElements the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder removeSignatureElements(
                 Boolean removeSignatureElements) {
@@ -334,11 +391,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param removeSignatureElements the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder removeSignatureElements(
                 String removeSignatureElements) {
@@ -353,9 +413,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * be overwritten by the header
          * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param schemaResourceUri the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder schemaResourceUri(
                 String schemaResourceUri) {
@@ -365,10 +428,13 @@ public interface XmlVerifierEndpointBuilderFactory {
         /**
          * Enables secure validation. If true then secure validation is enabled.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param secureValidation the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder secureValidation(
                 Boolean secureValidation) {
@@ -378,11 +444,14 @@ public interface XmlVerifierEndpointBuilderFactory {
         /**
          * Enables secure validation. If true then secure validation is enabled.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param secureValidation the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder secureValidation(
                 String secureValidation) {
@@ -400,9 +469,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * thrown. For more detailed information, see the JavaDoc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param validationFailedHandler the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder validationFailedHandler(
                 Object validationFailedHandler) {
@@ -420,9 +492,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * thrown. For more detailed information, see the JavaDoc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param validationFailedHandler the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder validationFailedHandler(
                 String validationFailedHandler) {
@@ -454,9 +529,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Signature Case.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignature2Message</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignature2Message&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param xmlSignature2Message the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlSignature2Message(
                 Object xmlSignature2Message) {
@@ -488,9 +566,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Signature Case.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignature2Message</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignature2Message&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param xmlSignature2Message the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlSignature2Message(
                 String xmlSignature2Message) {
@@ -503,9 +584,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param xmlSignatureChecker the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlSignatureChecker(
                 Object xmlSignatureChecker) {
@@ -518,9 +602,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param xmlSignatureChecker the value to set
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlSignatureChecker(
                 String xmlSignatureChecker) {
@@ -539,41 +626,16 @@ public interface XmlVerifierEndpointBuilderFactory {
             return (XmlVerifierEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXmlVerifierEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXmlVerifierEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmlVerifierEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -584,10 +646,14 @@ public interface XmlVerifierEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmlVerifierEndpointBuilder synchronous(
                 String synchronous) {
@@ -601,9 +667,13 @@ public interface XmlVerifierEndpointBuilderFactory {
          * file and XPpointer URIs. Attention: The implementation is provider
          * dependent!.
          * 
-         * The option is a: <code>javax.xml.crypto.URIDereferencer</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriDereferencer the value to set
+         * @return the dsl builder
          */
         default AdvancedXmlVerifierEndpointBuilder uriDereferencer(
                 Object uriDereferencer) {
@@ -618,9 +688,12 @@ public interface XmlVerifierEndpointBuilderFactory {
          * dependent!.
          * 
          * The option will be converted to a
-         * <code>javax.xml.crypto.URIDereferencer</code> type.
+         * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriDereferencer the value to set
+         * @return the dsl builder
          */
         default AdvancedXmlVerifierEndpointBuilder uriDereferencer(
                 String uriDereferencer) {
@@ -645,6 +718,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * between different verify endpoints within the camel context.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlsecurityVerify(String path) {
             return XmlVerifierEndpointBuilderFactory.endpointBuilder("xmlsecurity-verify", path);
@@ -666,6 +740,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlsecurityVerify(
                 String componentName,

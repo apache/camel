@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 /**
  * Holder for queue references.
  * <p/>
- * This is used to keep track of the usages of the queues, so we know when a queue is no longer
- * in use, and can safely be discarded.
+ * This is used to keep track of the usages of the queues, so we know when a queue is no longer in use, and can safely
+ * be discarded.
  */
 public final class QueueReference {
 
@@ -87,7 +87,7 @@ public final class QueueReference {
 
     public synchronized boolean hasConsumers() {
         for (SedaEndpoint endpoint : endpoints) {
-            if (endpoint.getConsumers().size() > 0) {
+            if (!endpoint.getConsumers().isEmpty()) {
                 return true;
             }
         }

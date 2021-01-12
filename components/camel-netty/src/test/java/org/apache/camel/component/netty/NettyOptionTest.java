@@ -28,11 +28,12 @@ public class NettyOptionTest extends NettyTCPSyncTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=true&option.child.keepAlive=false")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(
+                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                            }
+                        });
             }
         };
     }

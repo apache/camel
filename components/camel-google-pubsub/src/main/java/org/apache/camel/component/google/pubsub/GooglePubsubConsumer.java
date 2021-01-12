@@ -164,7 +164,8 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         }
 
                         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new AcknowledgeSync(subscriber, subscriptionName));
+                            exchange.adapt(ExtendedExchange.class)
+                                    .addOnCompletion(new AcknowledgeSync(subscriber, subscriptionName));
                         }
 
                         try {

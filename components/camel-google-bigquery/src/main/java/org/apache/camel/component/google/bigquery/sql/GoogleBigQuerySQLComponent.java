@@ -30,7 +30,7 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
 
     @Metadata
     private String projectId;
-    @Metadata
+    @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQuerySQLComponent() {
@@ -53,6 +53,9 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
         configuration.parseRemaining(remaining);
 
         if (configuration.getConnectionFactory() == null) {
+            if (connectionFactory == null) {
+                connectionFactory = new GoogleBigQueryConnectionFactory();
+            }
             configuration.setConnectionFactory(getConnectionFactory());
         }
 
@@ -73,15 +76,11 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
     }
 
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
-        if (connectionFactory == null) {
-            connectionFactory = new GoogleBigQueryConnectionFactory();
-        }
         return connectionFactory;
     }
 
     /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If non
-     * provided the default one will be used
+     * ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used
      */
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;

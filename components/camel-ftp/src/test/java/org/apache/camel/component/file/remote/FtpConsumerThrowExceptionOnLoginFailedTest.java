@@ -33,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test for login failure due bad password and no re connect attempts
- * allowed
+ * Unit test for login failure due bad password and no re connect attempts allowed
  */
 public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSupport {
 
@@ -44,7 +43,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
     private MyPoll poll = new MyPoll();
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
+        return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremember"
                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
     }
 
@@ -60,7 +59,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
         Thread.sleep(1000);
 
         Consumer consumer = context.getRoute("foo").getConsumer();
-        assertTrue(((ServiceSupport)consumer).isStopped(), "Consumer should be stopped");
+        assertTrue(((ServiceSupport) consumer).isStopped(), "Consumer should be stopped");
     }
 
     @Override

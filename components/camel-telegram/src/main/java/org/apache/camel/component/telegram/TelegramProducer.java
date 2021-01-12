@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,9 @@ public class TelegramProducer extends DefaultAsyncProducer {
 
         // Get the chat id from headers
         if (chatId == null) {
-            chatId = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_CHAT_ID);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(TelegramConstants.TELEGRAM_CHAT_ID))) {
+                chatId = String.valueOf(exchange.getIn().getHeader(TelegramConstants.TELEGRAM_CHAT_ID));
+            }
         }
 
         // If not present in the headers, use the configured value for chat id

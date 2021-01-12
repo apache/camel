@@ -27,7 +27,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringEnricherTest extends ContextTestSupport {
 
     private MockEndpoint mock;
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -41,7 +41,7 @@ public class SpringEnricherTest extends ContextTestSupport {
         template.sendBody("direct:start", "test");
         mock.assertIsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/enricher.xml");

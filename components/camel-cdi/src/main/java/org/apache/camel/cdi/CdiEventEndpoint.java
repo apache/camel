@@ -43,28 +43,40 @@ import org.apache.camel.support.DefaultEndpoint;
 import static java.util.stream.Collectors.joining;
 
 /**
- * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events
- * can be seamlessly observed / consumed (respectively produced / fired) from Camel consumers (respectively by Camel producers).<p>
+ * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events can be seamlessly
+ * observed / consumed (respectively produced / fired) from Camel consumers (respectively by Camel producers).
+ * <p>
  *
- * The {@code CdiEventEndpoint<T>} bean can be used to observe / consume CDI events whose event type is {@code T}, for example:
- * <pre><code>
+ * The {@code CdiEventEndpoint<T>} bean can be used to observe / consume CDI events whose event type is {@code T}, for
+ * example:
+ * 
+ * <pre>
+ * <code>
  * {@literal @}Inject
  *  CdiEventEndpoint{@literal <}String{@literal >} cdiEventEndpoint;
  *
  *  from(cdiEventEndpoint).log("CDI event received: ${body}");
- * </code></pre>
+ * </code>
+ * </pre>
  *
- * Conversely, the {@code CdiEventEndpoint<T>} bean can be used to produce / fire CDI events whose event type is {@code T}, for example:
- * <pre><code>
+ * Conversely, the {@code CdiEventEndpoint<T>} bean can be used to produce / fire CDI events whose event type is
+ * {@code T}, for example:
+ * 
+ * <pre>
+ * <code>
  * {@literal @}Inject
  *  CdiEventEndpoint{@literal <}String{@literal >} cdiEventEndpoint;
  *
  *  from("direct:event").to(cdiEventEndpoint).log("CDI event sent: ${body}");
- * </code></pre>
+ * </code>
+ * </pre>
  *
  * The type variable {@code T}, respectively the qualifiers, of a particular {@code CdiEventEndpoint<T>} injection point
- * are automatically translated into the parameterized <i>event type</i>, respectively into the <i>event qualifiers</i>, e.g.:
- * <pre><code>
+ * are automatically translated into the parameterized <i>event type</i>, respectively into the <i>event qualifiers</i>,
+ * e.g.:
+ * 
+ * <pre>
+ * <code>
  * {@literal @}Inject
  * {@literal @}FooQualifier
  *  CdiEventEndpoint{@literal <}List{@literal <}String{@literal >}{@literal >} cdiEventEndpoint;
@@ -74,8 +86,10 @@ import static java.util.stream.Collectors.joining;
  *  void observeCdiEvents({@literal @}Observes {@literal @}FooQualifier List{@literal <}String{@literal >} event) {
  *      logger.info("CDI event: {}", event);
  *  }
- * </code></pre>
+ * </code>
+ * </pre>
  */
+@javax.enterprise.inject.Vetoed
 public final class CdiEventEndpoint<T> extends DefaultEndpoint {
 
     private final List<CdiEventConsumer<T>> consumers = new ArrayList<>();
@@ -95,8 +109,8 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
 
     static String eventEndpointUri(Type type, Set<Annotation> qualifiers) {
         return "cdi-event://" + authorityFromType(type) + qualifiers.stream()
-            .map(CdiSpiHelper::createAnnotationId)
-            .collect(joining("%2C", qualifiers.size() > 0 ? "?qualifiers=" : "", ""));
+                .map(CdiSpiHelper::createAnnotationId)
+                .collect(joining("%2C", qualifiers.size() > 0 ? "?qualifiers=" : "", ""));
     }
 
     private static String authorityFromType(Type type) {
@@ -105,8 +119,8 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
         }
         if (type instanceof ParameterizedType) {
             return Stream.of(((ParameterizedType) type).getActualTypeArguments())
-                .map(CdiEventEndpoint::authorityFromType)
-                .collect(joining("%2C", authorityFromType(((ParameterizedType) type).getRawType()) + "%3C", "%3E"));
+                    .map(CdiEventEndpoint::authorityFromType)
+                    .collect(joining("%2C", authorityFromType(((ParameterizedType) type).getRawType()) + "%3C", "%3E"));
         }
         if (type instanceof GenericArrayType) {
             return authorityFromType(((GenericArrayType) type).getGenericComponentType()) + "%5B%5D";
@@ -146,8 +160,9 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
         CreationalContext<AnyEvent> ctx = manager.createCreationalContext(null);
         AnyEvent instance = target.produce(ctx);
         target.inject(instance, ctx);
-        return new CdiEventProducer<>(this, instance.event
-            .select(literal, qualifiers.toArray(new Annotation[0])));
+        return new CdiEventProducer<>(
+                this, instance.event
+                        .select(literal, qualifiers.toArray(new Annotation[0])));
     }
 
     @Vetoed

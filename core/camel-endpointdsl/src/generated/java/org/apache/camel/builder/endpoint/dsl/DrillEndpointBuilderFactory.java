@@ -41,9 +41,12 @@ public interface DrillEndpointBuilderFactory {
          * Cluster ID
          * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clusterId the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder clusterId(String clusterId) {
             doSetProperty("clusterId", clusterId);
@@ -52,9 +55,12 @@ public interface DrillEndpointBuilderFactory {
         /**
          * Drill directory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param directory the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder directory(String directory) {
             doSetProperty("directory", directory);
@@ -71,10 +77,13 @@ public interface DrillEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -91,10 +100,14 @@ public interface DrillEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -105,11 +118,13 @@ public interface DrillEndpointBuilderFactory {
          * https://drill.apache.org/docs/using-the-jdbc-driver/.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.drill.DrillConnectionMode</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.drill.DrillConnectionMode&lt;/code&gt; type.
          * 
          * Default: ZK
          * Group: producer
+         * 
+         * @param mode the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder mode(DrillConnectionMode mode) {
             doSetProperty("mode", mode);
@@ -120,11 +135,13 @@ public interface DrillEndpointBuilderFactory {
          * https://drill.apache.org/docs/using-the-jdbc-driver/.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.drill.DrillConnectionMode</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.drill.DrillConnectionMode&lt;/code&gt; type.
          * 
          * Default: ZK
          * Group: producer
+         * 
+         * @param mode the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder mode(String mode) {
             doSetProperty("mode", mode);
@@ -133,10 +150,13 @@ public interface DrillEndpointBuilderFactory {
         /**
          * Port number.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2181
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder port(Integer port) {
             doSetProperty("port", port);
@@ -145,11 +165,14 @@ public interface DrillEndpointBuilderFactory {
         /**
          * Port number.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2181
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default DrillEndpointBuilder port(String port) {
             doSetProperty("port", port);
@@ -167,41 +190,16 @@ public interface DrillEndpointBuilderFactory {
             return (DrillEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDrillEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDrillEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDrillEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -211,10 +209,14 @@ public interface DrillEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDrillEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -246,6 +248,7 @@ public interface DrillEndpointBuilderFactory {
          * Host name or IP address
          * 
          * @param path host
+         * @return the dsl builder
          */
         default DrillEndpointBuilder drill(String path) {
             return DrillEndpointBuilderFactory.endpointBuilder("drill", path);
@@ -266,6 +269,7 @@ public interface DrillEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default DrillEndpointBuilder drill(String componentName, String path) {
             return DrillEndpointBuilderFactory.endpointBuilder(componentName, path);

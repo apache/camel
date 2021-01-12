@@ -63,8 +63,6 @@ public enum PaymentMethodGatewayApiMethod implements ApiMethod {
         arg("token", String.class),
         arg("request", com.braintreegateway.PaymentMethodRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private PaymentMethodGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

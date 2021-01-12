@@ -63,8 +63,9 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTest extends ContextTestSu
             public void configure() throws Exception {
                 errorHandler(new ErrorHandlerBuilderRef("myDLC"));
 
-                from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end().to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end()
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

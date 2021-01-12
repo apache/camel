@@ -85,8 +85,6 @@ public enum ConferenceParticipantApiMethod implements ApiMethod {
         arg("pathConferenceSid", String.class),
         arg("pathCallSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private ConferenceParticipantApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

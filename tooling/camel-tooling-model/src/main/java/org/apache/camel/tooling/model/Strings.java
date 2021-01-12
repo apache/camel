@@ -45,9 +45,9 @@ public final class Strings {
     /**
      * To wrap long camel cased texts by words.
      *
-     * @param option  the option which is camel cased.
+     * @param option    the option which is camel cased.
      * @param watermark a watermark to denote the size to cut after
-     * @param lineSep the new line to use when breaking into a new line
+     * @param lineSep   the new line to use when breaking into a new line
      */
     public static String wrapCamelCaseWords(String option, int watermark, String lineSep) {
         String text = option.replaceAll("(?=[A-Z][a-z])", " ");
@@ -57,10 +57,11 @@ public final class Strings {
 
     /**
      * To wrap a big line by words.
-     * @param line the big line
-     * @param wordSep the word separator
-     * @param lineSep the new line to use when breaking into a new line
-     * @param watermark a watermark to denote the size to cut after
+     * 
+     * @param line          the big line
+     * @param wordSep       the word separator
+     * @param lineSep       the new line to use when breaking into a new line
+     * @param watermark     a watermark to denote the size to cut after
      * @param wrapLongWords whether to wrap long words
      */
     public static String wrapWords(String line, String wordSep, String lineSep, int watermark, boolean wrapLongWords) {
@@ -146,7 +147,7 @@ public final class Strings {
                     }
                 }
             }
-
+            
             sb.append(line, offset, line.length());
             */
             return sb.toString();
@@ -154,12 +155,10 @@ public final class Strings {
     }
 
     /**
-     * Returns the base class name, i.e. without package and generic related
-     * information.
+     * Returns the base class name, i.e. without package and generic related information.
      *
-     * @param className The class name which base class is to be computed.
-     * @return the base class name, i.e. without package and generic related
-     *         information.
+     * @param  className The class name which base class is to be computed.
+     * @return           the base class name, i.e. without package and generic related information.
      */
     public static String getClassShortName(String className) {
         if (className != null) {

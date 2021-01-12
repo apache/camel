@@ -40,10 +40,13 @@ public interface LdapEndpointBuilderFactory {
         /**
          * The base DN for searches.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ou=system
          * Group: producer
+         * 
+         * @param base the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder base(String base) {
             doSetProperty("base", base);
@@ -60,10 +63,13 @@ public interface LdapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -80,10 +86,14 @@ public interface LdapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -96,9 +106,12 @@ public interface LdapEndpointBuilderFactory {
          * (subclass of DirContext) has to be passed in as ldapServerBean
          * (otherwise an exception is thrown).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder pageSize(Integer pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -111,10 +124,13 @@ public interface LdapEndpointBuilderFactory {
          * (subclass of DirContext) has to be passed in as ldapServerBean
          * (otherwise an exception is thrown).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -124,9 +140,12 @@ public interface LdapEndpointBuilderFactory {
          * Comma-separated list of attributes that should be set in each entry
          * of the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param returnedAttributes the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder returnedAttributes(String returnedAttributes) {
             doSetProperty("returnedAttributes", returnedAttributes);
@@ -136,10 +155,13 @@ public interface LdapEndpointBuilderFactory {
          * Specifies how deeply to search the tree of entries, starting at the
          * base DN.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: subtree
          * Group: producer
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default LdapEndpointBuilder scope(String scope) {
             doSetProperty("scope", scope);
@@ -157,41 +179,16 @@ public interface LdapEndpointBuilderFactory {
             return (LdapEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLdapEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLdapEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -201,10 +198,14 @@ public interface LdapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLdapEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -235,6 +236,7 @@ public interface LdapEndpointBuilderFactory {
          * instead.
          * 
          * @param path dirContextName
+         * @return the dsl builder
          */
         default LdapEndpointBuilder ldap(String path) {
             return LdapEndpointBuilderFactory.endpointBuilder("ldap", path);
@@ -263,6 +265,7 @@ public interface LdapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path dirContextName
+         * @return the dsl builder
          */
         default LdapEndpointBuilder ldap(String componentName, String path) {
             return LdapEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -38,6 +38,7 @@ public abstract class BaseOptionModel {
     protected boolean deprecated;
     protected String deprecationNote;
     protected boolean secret;
+    protected boolean autowired;
     protected Object defaultValue;
     protected String defaultValueNote;
     protected boolean asPredicate;
@@ -46,6 +47,7 @@ public abstract class BaseOptionModel {
     protected String configurationClass;
     protected String configurationField;
     protected String description;
+    protected String nestedType;  // optional and currently only used by configurer
 
     // todo: move this as a helper method
     protected boolean newGroup; // special for documentation rendering
@@ -178,6 +180,14 @@ public abstract class BaseOptionModel {
         this.secret = secret;
     }
 
+    public boolean isAutowired() {
+        return autowired;
+    }
+
+    public void setAutowired(boolean autowired) {
+        this.autowired = autowired;
+    }
+
     public Object getDefaultValue() {
         return defaultValue;
     }
@@ -250,6 +260,14 @@ public abstract class BaseOptionModel {
         this.newGroup = newGroup;
     }
 
+    public String getNestedType() {
+        return nestedType;
+    }
+
+    public void setNestedType(String nestedType) {
+        this.nestedType = nestedType;
+    }
+
     public String getShortGroup() {
         if (group.endsWith(" (advanced)")) {
             return group.substring(0, group.length() - 11);
@@ -282,7 +300,7 @@ public abstract class BaseOptionModel {
     }
 
     public String getShortName(int watermark) {
-        String text = Strings.wrapCamelCaseWords(name, watermark, " ");
+        String text = Strings.wrapCamelCaseWords(name, watermark, "{zwsp}");
         // ensure the option name starts with lower-case
         return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }

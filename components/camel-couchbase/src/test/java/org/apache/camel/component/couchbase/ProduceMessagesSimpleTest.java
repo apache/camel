@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.couchbase;
 
+import java.time.Duration;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class ProduceMessagesSimpleTest extends CamelTestSupport {
+public class ProduceMessagesSimpleTest extends CouchbaseIntegrationTestBase {
 
-    // Ignore test since build environment does not have any couchbase instance
-    @Disabled
     @Test
     public void testInsert() throws Exception {
+        cluster.bucket(bucketName).waitUntilReady(Duration.ofSeconds(30));
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -44,7 +43,9 @@ public class ProduceMessagesSimpleTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 // need couchbase installed on localhost
-                from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("blabla:120771")).to("couchbase:http://192.168.1.102/test?additionalHosts=localhost&username=root&password=123456").to("mock:result");
+                from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("SimpleDocument_1"))
+                        .to(getConnectionUri())
+                        .to("mock:result");
 
             }
         };

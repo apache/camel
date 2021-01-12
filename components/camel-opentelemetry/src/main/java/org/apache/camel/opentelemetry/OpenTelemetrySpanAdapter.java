@@ -19,68 +19,84 @@ package org.apache.camel.opentelemetry;
 import java.util.EnumMap;
 import java.util.Map;
 
-import io.opentelemetry.common.AttributeValue;
-import io.opentelemetry.common.Attributes;
-import io.opentelemetry.trace.attributes.SemanticAttributes;
+import io.opentelemetry.api.baggage.Baggage;
+import io.opentelemetry.api.baggage.BaggageBuilder;
+import io.opentelemetry.api.baggage.EntryMetadata;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.api.trace.attributes.SemanticAttributes;
+import io.opentelemetry.context.Context;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
-
     private static EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
 
     static {
         tagMap.put(Tag.COMPONENT, "component");
-        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_TYPE.key());
-        tagMap.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.key());
-        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_INSTANCE.key());
-        tagMap.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.key());
-        tagMap.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.key());
-        tagMap.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.key());
+        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_SYSTEM.getKey());
+        tagMap.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.getKey());
+        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_NAME.getKey());
+        tagMap.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.getKey());
+        tagMap.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.getKey());
+        tagMap.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.getKey());
         tagMap.put(Tag.MESSAGE_BUS_DESTINATION, "message_bus.destination");
     }
 
+    private Baggage baggage;
+    private io.opentelemetry.api.trace.Span span;
 
-    io.opentelemetry.trace.Span span;
-
-    OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span) {
+    OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span) {
         this.span = span;
     }
 
-    io.opentelemetry.trace.Span getOpenTelemetrySpan() {
+    OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span, Baggage baggage) {
+        this.span = span;
+        this.baggage = baggage;
+    }
+
+    io.opentelemetry.api.trace.Span getOpenTelemetrySpan() {
         return this.span;
     }
 
-    @Override public void setComponent(String component) {
+    @Override
+    public void setComponent(String component) {
         this.span.setAttribute("component", component);
     }
 
-    @Override public void setError(boolean error) {
+    @Override
+    public void setError(boolean error) {
         this.span.setAttribute("error", error);
     }
 
-    @Override public void setTag(Tag key, String value) {
+    @Override
+    public void setTag(Tag key, String value) {
         this.span.setAttribute(tagMap.get(key), value);
     }
 
-    @Override public void setTag(Tag key, Number value) {
+    @Override
+    public void setTag(Tag key, Number value) {
         this.span.setAttribute(tagMap.get(key), value.intValue());
     }
 
-    @Override public void setTag(String key, String value) {
+    @Override
+    public void setTag(String key, String value) {
         this.span.setAttribute(key, value);
     }
 
-    @Override public void setTag(String key, Number value) {
+    @Override
+    public void setTag(String key, Number value) {
         this.span.setAttribute(key, value.intValue());
     }
 
-    @Override public void setTag(String key, Boolean value) {
+    @Override
+    public void setTag(String key, Boolean value) {
         this.span.setAttribute(key, value);
     }
 
-    @Override public void log(Map<String, String> fields) {
+    @Override
+    public void log(Map<String, String> fields) {
         span.addEvent(getEventNameFromFields(fields), convertToAttributes(fields));
     }
 
@@ -94,7 +110,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     Attributes convertToAttributes(Map<String, ?> fields) {
-        Attributes.Builder attributesBuilder = Attributes.newBuilder();
+        AttributesBuilder attributesBuilder = Attributes.builder();
 
         for (Map.Entry<String, ?> entry : fields.entrySet()) {
             String key = entry.getKey();
@@ -103,18 +119,41 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
                 continue;
             }
             if (value instanceof Byte
-                || value instanceof Short
-                || value instanceof Integer
-                || value instanceof Long) {
-                attributesBuilder.setAttribute(key, AttributeValue.longAttributeValue(((Number) value).longValue()));
+                    || value instanceof Short
+                    || value instanceof Integer
+                    || value instanceof Long) {
+                attributesBuilder.put(key, ((Number) value).longValue());
             } else if (value instanceof Float || value instanceof Double) {
-                attributesBuilder.setAttribute(key, AttributeValue.doubleAttributeValue(((Number) value).doubleValue()));
+                attributesBuilder.put(key, ((Number) value).doubleValue());
             } else if (value instanceof Boolean) {
-                attributesBuilder.setAttribute(key, AttributeValue.booleanAttributeValue((Boolean) value));
+                attributesBuilder.put(key, (Boolean) value);
             } else {
-                attributesBuilder.setAttribute(key, AttributeValue.stringAttributeValue(value.toString()));
+                attributesBuilder.put(key, value.toString());
             }
         }
         return attributesBuilder.build();
+    }
+
+    public Baggage getBaggage() {
+        return this.baggage;
+    }
+
+    public void setBaggage(Baggage baggage) {
+        this.baggage = baggage;
+    }
+
+    public void setCorrelationContextItem(String key, String value) {
+        BaggageBuilder builder = Baggage.builder();
+        if (baggage != null) {
+            builder = builder.setParent(Context.current().with(baggage));
+        }
+        baggage = builder.put(key, value, EntryMetadata.EMPTY).build();
+    }
+
+    public String getContextPropagationItem(String key) {
+        if (baggage != null) {
+            return baggage.getEntryValue(key);
+        }
+        return null;
     }
 }

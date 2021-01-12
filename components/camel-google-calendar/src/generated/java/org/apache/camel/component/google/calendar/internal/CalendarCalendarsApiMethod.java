@@ -52,8 +52,6 @@ public enum CalendarCalendarsApiMethod implements ApiMethod {
         arg("calendarId", String.class),
         arg("content", com.google.api.services.calendar.model.Calendar.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CalendarCalendarsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

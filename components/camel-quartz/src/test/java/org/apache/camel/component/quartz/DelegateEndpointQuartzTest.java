@@ -70,7 +70,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+                throws Exception {
 
             String childUri = remaining;
             // we need to apply the params here

@@ -18,6 +18,7 @@ package ${package};
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,8 +29,7 @@ import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
-import ${package}.api.${name}FileHello;
-import ${package}.api.${name}JavadocHello;
+import ${package}.api.${name}Hello;
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
 import ${package}.internal.${name}Constants;
@@ -41,7 +41,7 @@ import ${package}.internal.${name}PropertiesHelper;
  * TODO: Update one line description above what the component does.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
-             consumerClass = ${name}Consumer.class, label = "custom")
+             category = {Category.API})
 public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
 
     @UriPath @Metadata(required = true)
@@ -83,11 +83,8 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     protected void afterConfigureProperties() {
         // TODO create API proxy, set connection properties, etc.
         switch (apiName) {
-            case HELLO_FILE:
-                apiProxy = new ${name}FileHello();
-                break;
-            case HELLO_JAVADOC:
-                apiProxy = new ${name}JavadocHello();
+            case HELLO:
+                apiProxy = new ${name}Hello();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid API name " + apiName);

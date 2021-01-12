@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 public class FromFtpKeepLastModifiedTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/keep?password=admin&binary=false&noop=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/keep?password=admin&binary=false&noop=true";
     }
 
     @Override

@@ -79,9 +79,9 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:select count(*) rowcount, license from projects where id=:#lowId or id=2 or id=3 group by license")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:select count(*) rowcount, license from projects where id=:#lowId or id=2 or id=3 group by license")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

@@ -34,25 +34,30 @@ public class MainSupportCommandLineTest {
 
         @Override
         protected CamelContext createCamelContext() {
-            return null;
+            return context;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return context;
         }
     }
 
     @Test
     public void testMainSupport() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[]{"-d", "1"});
+        my.run(new String[] { "-d", "1" });
     }
 
     @Test
     public void testMainSupportMaxMessages() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[]{"-d", "1", "-dm", "2"});
+        my.run(new String[] { "-d", "1", "-dm", "2" });
     }
 
     @Test
     public void testMainSupportHelp() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[]{"-h"});
+        my.run(new String[] { "-h" });
     }
 }

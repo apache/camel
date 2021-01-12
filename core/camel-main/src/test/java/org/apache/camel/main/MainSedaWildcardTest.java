@@ -24,13 +24,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MainSedaWildcardTest {
 
     @Test
     public void testSedaWildcardMain() throws Exception {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
-        main.addProperty("camel.component.seda*.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
+        main.addProperty("camel.component.seda*.defaultQueueFactory",
+                "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
         main.addProperty("camel.component.seda*.defaultQueueFactory.counter", "123");
         main.bind("seda2", new SedaComponent());
 

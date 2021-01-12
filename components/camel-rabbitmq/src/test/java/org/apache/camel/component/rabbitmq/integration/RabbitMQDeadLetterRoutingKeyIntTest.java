@@ -31,6 +31,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,15 +45,6 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIntTest.class);
 
-    private static final String CONSUMER = "rabbitmq:ex9?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest" + "&skipExchangeDeclare=false"
-                                           + "&skipQueueDeclare=false" + "&autoDelete=false" + "&durable=true" + "&autoAck=false" + "&queue=q9" + "&routingKey=rk1"
-                                           + "&deadLetterExchange=dlx" + "&deadLetterQueue=dlq" + "&deadLetterExchangeType=fanout";
-
-    private static final String CONSUMER_WITH_DEADLETTER_ROUTING_KEY = "rabbitmq:ex10?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest"
-                                                                       + "&skipExchangeDeclare=false" + "&skipQueueDeclare=false" + "&autoDelete=false&durable=true"
-                                                                       + "&autoAck=false&queue=q10" + "&routingKey=rk1" + "&deadLetterExchange=dlx" + "&deadLetterQueue=dlq"
-                                                                       + "&deadLetterExchangeType=fanout" + "&deadLetterRoutingKey=rk2";
-
     private Connection connection;
     private Channel channel;
     private Channel deadLetterChannel;
@@ -65,12 +57,27 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
+        String consumer = String.format("rabbitmq:ex9?hostname=%s&portNumber=%d&username=%s&password=%s"
+                                        + "&skipExchangeDeclare=false&skipQueueDeclare=false&autoDelete=false&durable=true&autoAck=false"
+                                        + "&queue=q9&routingKey=rk1&deadLetterExchange=dlx&deadLetterQueue=dlq&deadLetterExchangeType=fanout",
+                connectionProperties.hostname(), connectionProperties.port(), connectionProperties.username(),
+                connectionProperties.password());
+
+        String consumerWithDlqRoutingKey = String.format("rabbitmq:ex10?hostname=%s&portNumber=%d&username=%s&password=%s"
+                                                         + "&skipExchangeDeclare=false&skipQueueDeclare=false&autoDelete=false&durable=true"
+                                                         + "&autoAck=false&queue=q10&routingKey=rk1&deadLetterExchange=dlx&deadLetterQueue=dlq"
+                                                         + "&deadLetterExchangeType=fanout&deadLetterRoutingKey=rk2",
+                connectionProperties.hostname(), connectionProperties.port(), connectionProperties.username(),
+                connectionProperties.password());
+
         return new RouteBuilder() {
 
             @Override
             public void configure() {
-                from(CONSUMER).to(receivedEndpoint);
-                from(CONSUMER_WITH_DEADLETTER_ROUTING_KEY).to(receivedEndpoint);
+                from(consumer).to(receivedEndpoint);
+                from(consumerWithDlqRoutingKey).to(receivedEndpoint);
             }
         };
     }
@@ -94,7 +101,8 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
         final List<String> received = new ArrayList<>();
         final StringBuilder routingKey = new StringBuilder();
 
-        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().contentType("text/plain").contentEncoding(StandardCharsets.UTF_8.toString()).build();
+        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().contentType("text/plain")
+                .contentEncoding(StandardCharsets.UTF_8.toString()).build();
 
         receivedEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new Exception("Simulated exception");
@@ -115,7 +123,8 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
         final List<String> received = new ArrayList<>();
         StringBuilder routingKey = new StringBuilder();
 
-        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().contentType("text/plain").contentEncoding(StandardCharsets.UTF_8.toString()).build();
+        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().contentType("text/plain")
+                .contentEncoding(StandardCharsets.UTF_8.toString()).build();
 
         receivedEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new Exception("Simulated exception");

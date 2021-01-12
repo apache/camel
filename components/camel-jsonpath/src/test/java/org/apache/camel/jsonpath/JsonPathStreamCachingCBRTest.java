@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -37,29 +36,31 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
                 from("direct:start")
-                    .streamCaching()
-                    .choice()
+                        .streamCaching()
+                        .choice()
                         .when().jsonpath("$.store.book[?(@.price < 10)]")
-                            .to("mock:cheap")
+                        .to("mock:cheap")
                         .when().jsonpath("$.store.book[?(@.price < 30)]")
-                            .to("mock:average")
+                        .to("mock:average")
                         .otherwise()
-                            .to("mock:expensive");
+                        .to("mock:expensive");
 
                 from("direct:bicycle")
-                    .streamCaching()
-                    .choice()
+                        .streamCaching()
+                        .choice()
                         .when().method(new BeanPredicate())
-                            .to("mock:cheap")
+                        .to("mock:cheap")
                         .otherwise()
-                            .to("mock:expensive");
+                        .to("mock:expensive");
 
                 from("direct:bicycle2")
-                    .streamCaching()
-                    .choice()
-                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(100)))
+                        .streamCaching()
+                        .choice()
+                        .when(PredicateBuilder.isLessThan(
+                                ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"),
+                                ExpressionBuilder.constantExpression(100)))
                         .to("mock:cheap")
-                    .otherwise()
+                        .otherwise()
                         .to("mock:expensive");
             }
         };

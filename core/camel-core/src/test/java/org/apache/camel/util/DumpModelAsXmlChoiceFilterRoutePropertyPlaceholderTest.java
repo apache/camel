@@ -69,12 +69,15 @@ public class DumpModelAsXmlChoiceFilterRoutePropertyPlaceholderTest extends Cont
 
                 context.getPropertiesComponent().setInitialProperties(prop);
 
-                from("direct:start").routeId("myRoute").to("log:input").transform().header("{{duke}}").choice().when().header("{{best}}").to("mock:gold").filter()
-                    .header("{{extra}}").to("mock:extra-gold").endChoice().when().simple("${body} contains 'Camel'").to("mock:camel").otherwise().to("mock:other").end()
-                    .to("mock:result");
+                from("direct:start").routeId("myRoute").to("log:input").transform().header("{{duke}}").choice().when()
+                        .header("{{best}}").to("mock:gold").filter()
+                        .header("{{extra}}").to("mock:extra-gold").endChoice().when().simple("${body} contains 'Camel'")
+                        .to("mock:camel").otherwise().to("mock:other").end()
+                        .to("mock:result");
 
-                from("seda:a").routeId("a").setProperty("foo").constant("bar").choice().when(header("test").isNotNull()).log("not null").when(xpath("/foo/bar")).log("{{mypath}}")
-                    .end().to("mock:a");
+                from("seda:a").routeId("a").setProperty("foo").constant("bar").choice().when(header("test").isNotNull())
+                        .log("not null").when(xpath("/foo/bar")).log("{{mypath}}")
+                        .end().to("mock:a");
             }
         };
     }

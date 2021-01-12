@@ -28,7 +28,8 @@ public class SpringInstanceFactoryBeanCamelContextScanIssueTest extends SpringTe
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringInstanceFactoryBeanCamelContextScanIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/SpringInstanceFactoryBeanCamelContextScanIssueTest.xml");
     }
 
     @Test

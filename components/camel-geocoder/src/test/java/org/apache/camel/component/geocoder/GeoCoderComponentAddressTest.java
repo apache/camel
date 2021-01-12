@@ -19,7 +19,9 @@ package org.apache.camel.component.geocoder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
+@EnabledIfEnvironmentVariable(named = "CAMEL_GEOCODER_APIKEY", matches = ".+")
 public class GeoCoderComponentAddressTest extends GeoCoderApiKeyTestBase {
 
     @Test
@@ -39,7 +41,8 @@ public class GeoCoderComponentAddressTest extends GeoCoderApiKeyTestBase {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("geocoder:address: empty?apiKey=" + getApiKey()).to("log:result")
-                    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}").to("mock:result");
+                        .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
+                        .to("mock:result");
             }
         };
     }

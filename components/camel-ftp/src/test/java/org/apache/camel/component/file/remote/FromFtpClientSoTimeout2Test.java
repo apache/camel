@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpClientSoTimeout2Test extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/timeout/?password=admin&soTimeout=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/timeout/?password=admin&soTimeout=5000";
     }
 
     @Override

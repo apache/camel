@@ -38,6 +38,7 @@ import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxConnectionHelper;
 import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.box.internal.BoxPropertiesHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -48,7 +49,10 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "box", title = "Box", syntax = "box:apiName/methodName",
-    consumerPrefix = "consumer", category = {Category.CLOUD, Category.FILE, Category.API}, lenientProperties = true)
+             apiSyntax = "apiName/methodName",
+             consumerPrefix = "consumer", category = { Category.CLOUD, Category.FILE, Category.API }, lenientProperties = true)
+@Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
+                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     @UriParam
@@ -56,15 +60,13 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     // cached connection
     private BoxAPIConnection boxConnection;
-
     private Object apiProxy;
-
     private boolean boxConnectionShared;
 
     public BoxEndpoint(String uri, BoxComponent component, BoxApiName apiName, String methodName,
                        BoxConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, BoxApiCollection.getCollection().getHelper(apiName),
-                endpointConfiguration);
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -92,7 +94,6 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         final BoxConsumer consumer = new BoxConsumer(this, processor);
-        // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
     }
@@ -109,9 +110,6 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     @Override
     protected void afterConfigureProperties() {
-        // create connection eagerly, a good way to validate configuration
-        createBoxConnection();
-
     }
 
     @Override
@@ -121,6 +119,12 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
             createApiProxy(args);
         }
         return apiProxy;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        createBoxConnection();
     }
 
     private void createBoxConnection() {

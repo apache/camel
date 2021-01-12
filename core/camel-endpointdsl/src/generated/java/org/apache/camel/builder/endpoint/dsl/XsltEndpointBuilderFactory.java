@@ -44,10 +44,13 @@ public interface XsltEndpointBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -60,10 +63,14 @@ public interface XsltEndpointBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -75,10 +82,13 @@ public interface XsltEndpointBuilderFactory {
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteOutputFile the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
             doSetProperty("deleteOutputFile", deleteOutputFile);
@@ -90,10 +100,14 @@ public interface XsltEndpointBuilderFactory {
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteOutputFile the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder deleteOutputFile(String deleteOutputFile) {
             doSetProperty("deleteOutputFile", deleteOutputFile);
@@ -102,10 +116,13 @@ public interface XsltEndpointBuilderFactory {
         /**
          * Whether or not to throw an exception if the input body is null.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -114,10 +131,14 @@ public interface XsltEndpointBuilderFactory {
         /**
          * Whether or not to throw an exception if the input body is null.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder failOnNullBody(String failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -134,10 +155,13 @@ public interface XsltEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -154,10 +178,14 @@ public interface XsltEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -173,10 +201,14 @@ public interface XsltEndpointBuilderFactory {
          * an exception is thrown at runtime.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
+         * type.
          * 
          * Default: string
          * Group: producer
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder output(XsltOutput output) {
             doSetProperty("output", output);
@@ -192,10 +224,14 @@ public interface XsltEndpointBuilderFactory {
          * an exception is thrown at runtime.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
+         * type.
          * 
          * Default: string
          * Group: producer
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder output(String output) {
             doSetProperty("output", output);
@@ -205,10 +241,13 @@ public interface XsltEndpointBuilderFactory {
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param transformerCacheSize the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder transformerCacheSize(
                 int transformerCacheSize) {
@@ -219,10 +258,13 @@ public interface XsltEndpointBuilderFactory {
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param transformerCacheSize the value to set
+         * @return the dsl builder
          */
         default XsltEndpointBuilder transformerCacheSize(
                 String transformerCacheSize) {
@@ -241,40 +283,16 @@ public interface XsltEndpointBuilderFactory {
             return (XsltEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXsltEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXsltEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom org.xml.sax.EntityResolver with
          * javax.xml.transform.sax.SAXSource.
          * 
-         * The option is a: <code>org.xml.sax.EntityResolver</code> type.
+         * The option is a: &lt;code&gt;org.xml.sax.EntityResolver&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param entityResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder entityResolver(Object entityResolver) {
             doSetProperty("entityResolver", entityResolver);
@@ -285,9 +303,12 @@ public interface XsltEndpointBuilderFactory {
          * javax.xml.transform.sax.SAXSource.
          * 
          * The option will be converted to a
-         * <code>org.xml.sax.EntityResolver</code> type.
+         * &lt;code&gt;org.xml.sax.EntityResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entityResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder entityResolver(String entityResolver) {
             doSetProperty("entityResolver", entityResolver);
@@ -300,9 +321,13 @@ public interface XsltEndpointBuilderFactory {
          * store information on the Exchange as properties is not in use. So
          * only use this option for special use-cases.
          * 
-         * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.ErrorListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorListener the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder errorListener(Object errorListener) {
             doSetProperty("errorListener", errorListener);
@@ -316,9 +341,12 @@ public interface XsltEndpointBuilderFactory {
          * only use this option for special use-cases.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.ErrorListener</code> type.
+         * &lt;code&gt;javax.xml.transform.ErrorListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorListener the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder errorListener(String errorListener) {
             doSetProperty("errorListener", errorListener);
@@ -330,10 +358,12 @@ public interface XsltEndpointBuilderFactory {
          * using custom org.apache.camel.builder.xml.ResultHandler types.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xslt.ResultHandlerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHandlerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 Object resultHandlerFactory) {
@@ -346,10 +376,12 @@ public interface XsltEndpointBuilderFactory {
          * using custom org.apache.camel.builder.xml.ResultHandler types.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xslt.ResultHandlerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHandlerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
@@ -360,10 +392,13 @@ public interface XsltEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -373,10 +408,14 @@ public interface XsltEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -385,10 +424,13 @@ public interface XsltEndpointBuilderFactory {
         /**
          * To use a custom XSLT transformer factory.
          * 
-         * The option is a: <code>javax.xml.transform.TransformerFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.TransformerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
                 Object transformerFactory) {
@@ -399,9 +441,12 @@ public interface XsltEndpointBuilderFactory {
          * To use a custom XSLT transformer factory.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.TransformerFactory</code> type.
+         * &lt;code&gt;javax.xml.transform.TransformerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
                 String transformerFactory) {
@@ -412,9 +457,12 @@ public interface XsltEndpointBuilderFactory {
          * To use a custom XSLT transformer factory, specified as a FQN class
          * name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryClass the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactoryClass(
                 String transformerFactoryClass) {
@@ -426,9 +474,12 @@ public interface XsltEndpointBuilderFactory {
          * TransformerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryConfigurationStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
                 Object transformerFactoryConfigurationStrategy) {
@@ -440,9 +491,12 @@ public interface XsltEndpointBuilderFactory {
          * TransformerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryConfigurationStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder transformerFactoryConfigurationStrategy(
                 String transformerFactoryConfigurationStrategy) {
@@ -452,9 +506,13 @@ public interface XsltEndpointBuilderFactory {
         /**
          * To use a custom javax.xml.transform.URIResolver.
          * 
-         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder uriResolver(Object uriResolver) {
             doSetProperty("uriResolver", uriResolver);
@@ -464,9 +522,12 @@ public interface XsltEndpointBuilderFactory {
          * To use a custom javax.xml.transform.URIResolver.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.URIResolver</code> type.
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXsltEndpointBuilder uriResolver(String uriResolver) {
             doSetProperty("uriResolver", uriResolver);
@@ -506,6 +567,7 @@ public interface XsltEndpointBuilderFactory {
          * bean:myBean.myMethod
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XsltEndpointBuilder xslt(String path) {
             return XsltEndpointBuilderFactory.endpointBuilder("xslt", path);
@@ -532,6 +594,7 @@ public interface XsltEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XsltEndpointBuilder xslt(String componentName, String path) {
             return XsltEndpointBuilderFactory.endpointBuilder(componentName, path);

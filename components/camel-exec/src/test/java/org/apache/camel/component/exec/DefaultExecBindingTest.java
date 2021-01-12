@@ -29,22 +29,22 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultExecBindingTest extends CamelTestSupport {
-   
-    @Test     
+
+    @Test
     public void testReadInput() throws Exception {
         ExecCommand command = readInput("exec:test", Collections.EMPTY_LIST);
         assertEquals(Collections.EMPTY_LIST, command.getArgs(), "Get a wrong args.");
         List<String> args = Arrays.asList("arg1", "arg2");
         command = readInput("exec:test", args);
         assertEquals(args, command.getArgs(), "Get a wrong args.");
-        
+
         command = readInput("exec:test", "arg1 arg2");
         assertEquals(args, command.getArgs(), "Get a wrong args.");
-        
+
         command = readInput("exec:test?args=arg1 arg2", null);
         assertEquals(args, command.getArgs(), "Get a wrong args.");
     }
-    
+
     private ExecCommand readInput(String execEndpointUri, Object args) throws Exception {
         DefaultExecBinding binding = new DefaultExecBinding();
         ExecEndpoint execEndpoint = createExecEndpoint(execEndpointUri);
@@ -52,10 +52,10 @@ public class DefaultExecBindingTest extends CamelTestSupport {
         exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_ARGS, args);
         return binding.readInput(exchange, execEndpoint);
     }
-    
+
     private ExecEndpoint createExecEndpoint(String uri) throws Exception {
         Component component = context.getComponent("exec");
-        return (ExecEndpoint)component.createEndpoint(uri);
+        return (ExecEndpoint) component.createEndpoint(uri);
     }
 
 }

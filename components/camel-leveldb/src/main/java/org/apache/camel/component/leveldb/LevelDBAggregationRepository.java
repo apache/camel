@@ -31,7 +31,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.fusesource.hawtbuf.Buffer;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.WriteBatch;
 import org.slf4j.Logger;
@@ -49,12 +48,13 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private String repositoryName;
     private boolean sync;
     private boolean returnOldExchange;
-    private LevelDBCamelCodec codec = new LevelDBCamelCodec();
+    private LevelDBCamelCodec codec;
     private long recoveryInterval = 5000;
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
     private boolean allowSerializedHeaders;
+    private LevelDBSerializer serializer;
 
     /**
      * Creates an aggregation repository
@@ -73,8 +73,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     /**
-     * Creates an aggregation repository using a new {@link LevelDBFile}
-     * that persists using the provided file.
+     * Creates an aggregation repository using a new {@link LevelDBFile} that persists using the provided file.
      *
      * @param repositoryName     the repository name
      * @param persistentFileName the persistent store filename
@@ -104,7 +103,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
+            final byte[] exchangeBuffer = codec().marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             byte[] rc = null;
             if (isReturnOldExchange()) {
@@ -112,7 +111,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             }
 
             LOG.trace("Adding key index {} for repository {}", key, repositoryName);
-            levelDBFile.getDb().put(lDbKey, exchangeBuffer.toByteArray(), levelDBFile.getWriteOptions());
+            levelDBFile.getDb().put(lDbKey, exchangeBuffer, levelDBFile.getWriteOptions());
             LOG.trace("Added key index {}", key);
 
             if (rc == null) {
@@ -121,7 +120,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
             // only return old exchange if enabled
             if (isReturnOldExchange()) {
-                return codec.unmarshallExchange(camelContext, new Buffer(rc));
+                return codec().unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
@@ -140,7 +139,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             byte[] rc = levelDBFile.getDb().get(lDbKey);
 
             if (rc != null) {
-                answer = codec.unmarshallExchange(camelContext, new Buffer(rc));
+                answer = codec().unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
@@ -157,7 +156,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
             final String exchangeId = exchange.getExchangeId();
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
+            final byte[] exchangeBuffer = codec().marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             // remove the exchange
             byte[] rc = levelDBFile.getDb().get(lDbKey);
@@ -166,11 +165,11 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 WriteBatch batch = levelDBFile.getDb().createWriteBatch();
                 try {
                     batch.delete(lDbKey);
-                    LOG.trace("Removed key index {} -> {}", key, new Buffer(rc));
+                    LOG.trace("Removed key index {} -> {}", key, rc);
 
                     // add exchange to confirmed index
                     byte[] confirmedLDBKey = keyBuilder(getRepositoryNameCompleted(), exchangeId);
-                    batch.put(confirmedLDBKey, exchangeBuffer.toByteArray());
+                    batch.put(confirmedLDBKey, exchangeBuffer);
                     LOG.trace("Added confirm index {} for repository {}", exchangeId, getRepositoryNameCompleted());
 
                     levelDBFile.getDb().write(batch, levelDBFile.getWriteOptions());
@@ -194,7 +193,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         if (rc != null) {
             levelDBFile.getDb().delete(confirmedLDBKey);
-            LOG.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
+            LOG.trace("Removed confirm index {} -> {}", exchangeId, rc);
         }
     }
 
@@ -265,11 +264,12 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             IOHelper.close(it);
         }
 
-        if (answer.size() == 0) {
+        if (answer.isEmpty()) {
             LOG.trace("Scanned and found no exchange to recover.");
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
+                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).",
+                        answer.size());
             }
         }
         return answer;
@@ -286,7 +286,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             byte[] rc = levelDBFile.getDb().get(completedLDBKey);
 
             if (rc != null) {
-                answer = codec.unmarshallExchange(camelContext, new Buffer(rc));
+                answer = codec().unmarshallExchange(camelContext, rc);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
@@ -433,14 +433,18 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         int completed = size(getRepositoryNameCompleted());
 
         if (current > 0) {
-            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are {} aggregate exchanges (not completed) in repository: {}",
+                    current, getRepositoryName());
         } else {
-            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: {}",
+                    getRepositoryName());
         }
         if (completed > 0) {
-            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.warn("On startup there are {} completed exchanges to be recovered in repository: {}",
+                    completed, getRepositoryNameCompleted());
         } else {
-            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: {}",
+                    getRepositoryNameCompleted());
         }
     }
 
@@ -469,4 +473,18 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         }
     }
 
+    public LevelDBSerializer getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(LevelDBSerializer serializer) {
+        this.serializer = serializer;
+    }
+
+    public LevelDBCamelCodec codec() {
+        if (codec == null) {
+            codec = new LevelDBCamelCodec(serializer);
+        }
+        return codec;
+    }
 }

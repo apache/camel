@@ -66,13 +66,9 @@ public class XStreamConcurrencyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        marshal().xstream(PurchaseOrder.class).
-                        to("direct:marshalled");
+                from("direct:start").marshal().xstream(PurchaseOrder.class).to("direct:marshalled");
 
-                from("direct:marshalled").
-                        unmarshal().xstream(PurchaseOrder.class).
-                        to("mock:result");
+                from("direct:marshalled").unmarshal().xstream(PurchaseOrder.class).to("mock:result");
             }
         };
     }

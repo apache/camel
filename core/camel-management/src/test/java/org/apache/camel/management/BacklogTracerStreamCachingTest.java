@@ -71,7 +71,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         List<Exchange> exchanges = getMockEndpoint("mock:bar").getReceivedExchanges();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
+                new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(1, events.size());
@@ -79,8 +79,9 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("bar", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\">Bye World</body>\n"
-                + "    </message>", event1.getMessageAsXml());
+                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\">Bye World</body>\n"
+                     + "    </message>",
+                event1.getMessageAsXml());
     }
 
     @Override

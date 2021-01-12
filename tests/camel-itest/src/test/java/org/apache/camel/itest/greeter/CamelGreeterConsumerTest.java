@@ -24,10 +24,12 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -39,13 +41,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 @CamelSpringTest
 @ContextConfiguration
 public class CamelGreeterConsumerTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("CamelGreeterConsumerTest.port", Integer.toString(port));
     }
- 
+
     @Autowired
     protected CamelContext camelContext;
 
@@ -57,12 +62,12 @@ public class CamelGreeterConsumerTest {
         List<String> params = new ArrayList<>();
         params.add("Willem");
         Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
-                                                   params, CxfConstants.OPERATION_NAME, "greetMe");
+                params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue(result instanceof List, "Result is a list instance ");
-        assertEquals(((List<?>)result).get(0), "HelloWillem", "Get the wrong response");
+        assertEquals("HelloWillem", ((List<?>) result).get(0), "Get the wrong response");
         try {
             template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
-                                            params, CxfConstants.OPERATION_NAME, "pingMe");
+                    params, CxfConstants.OPERATION_NAME, "pingMe");
             fail("Expect exception here.");
         } catch (Exception ex) {
             assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception.");

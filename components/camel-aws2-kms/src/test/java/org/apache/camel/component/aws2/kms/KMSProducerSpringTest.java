@@ -50,7 +50,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListKeysResponse resultGet = (ListKeysResponse)exchange.getIn().getBody();
+        ListKeysResponse resultGet = (ListKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.keys().size());
         assertEquals("keyId", resultGet.keys().get(0).keyId());
     }
@@ -68,7 +68,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateKeyResponse resultGet = (CreateKeyResponse)exchange.getIn().getBody();
+        CreateKeyResponse resultGet = (CreateKeyResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.keyMetadata().keyId());
         assertEquals(true, resultGet.keyMetadata().enabled());
     }
@@ -119,7 +119,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ScheduleKeyDeletionResponse resultGet = (ScheduleKeyDeletionResponse)exchange.getIn().getBody();
+        ScheduleKeyDeletionResponse resultGet = (ScheduleKeyDeletionResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.keyId());
     }
 
@@ -142,7 +142,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         assertEquals("MyCamelKey", resultGet.keyMetadata().description());
         assertFalse(resultGet.keyMetadata().enabled());
     }
-    
+
     @Test
     public void kmsListKeysPojoTest() throws Exception {
 
@@ -157,7 +157,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListKeysResponse resultGet = (ListKeysResponse)exchange.getIn().getBody();
+        ListKeysResponse resultGet = (ListKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.keys().size());
         assertEquals("keyId", resultGet.keys().get(0).keyId());
     }

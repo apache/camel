@@ -79,12 +79,12 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
                 // which we then tell netty-http to lookup and use
 
                 from("netty-http:http://0.0.0.0:{{port}}/foo?bootstrapConfiguration=#myBootstrapOptions").routeId("foo")
-                    .to("mock:foo")
-                    .transform().constant("Bye World");
+                        .to("mock:foo")
+                        .transform().constant("Bye World");
 
                 from("netty-http:http://0.0.0.0:{{port}}/bar?bootstrapConfiguration=#myBootstrapOptions").routeId("bar")
-                    .to("mock:bar")
-                    .transform().constant("Bye Camel");
+                        .to("mock:bar")
+                        .transform().constant("Bye Camel");
             }
         };
     }

@@ -37,7 +37,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        ((QuickfixjEndpoint)getEndpoint()).ensureInitialized();
+        ((QuickfixjEndpoint) getEndpoint()).ensureInitialized();
         super.doStart();
     }
 

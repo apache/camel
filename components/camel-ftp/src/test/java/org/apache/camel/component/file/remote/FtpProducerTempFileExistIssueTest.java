@@ -19,29 +19,30 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tempprefix/?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tempprefix/?password=admin";
     }
 
     @Test
     public void testIllegalConfiguration() throws Exception {
-        try {
-            context.getEndpoint(getFtpUrl() + "&fileExist=Append&tempPrefix=foo").createProducer();
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());
-        }
+        String uri = getFtpUrl() + "&fileExist=Append&tempPrefix=foo";
+        Endpoint endpoint = context.getEndpoint(uri);
+
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> endpoint.createProducer());
+        assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options",
+                ex.getMessage());
     }
 
     @Test
@@ -54,7 +55,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -70,7 +71,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -81,11 +82,12 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME,
+                "hello.txt");
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -96,11 +98,12 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME,
+                "hello.txt");
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -111,17 +114,17 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        try {
-            template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("File already exist"));
-        }
+        String uri = getFtpUrl() + "&tempPrefix=foo&fileExist=Fail";
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        assertTrue(cause.getMessage().startsWith("File already exist"));
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

@@ -24,6 +24,31 @@ public class UniVocityCsvDataFormatConfigurer extends PropertyConfigurerSupport 
         case "quoteescape":
         case "quoteEscape": dataformat.setQuoteEscape(property(camelContext, java.lang.Character.class, value)); return true;
         case "delimiter": dataformat.setDelimiter(property(camelContext, java.lang.Character.class, value)); return true;
+        case "nullvalue":
+        case "nullValue": dataformat.setNullValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "skipemptylines":
+        case "skipEmptyLines": dataformat.setSkipEmptyLines(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "ignoretrailingwhitespaces":
+        case "ignoreTrailingWhitespaces": dataformat.setIgnoreTrailingWhitespaces(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "ignoreleadingwhitespaces":
+        case "ignoreLeadingWhitespaces": dataformat.setIgnoreLeadingWhitespaces(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "headersdisabled":
+        case "headersDisabled": dataformat.setHeadersDisabled(property(camelContext, boolean.class, value)); return true;
+        case "headerextractionenabled":
+        case "headerExtractionEnabled": dataformat.setHeaderExtractionEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "numberofrecordstoread":
+        case "numberOfRecordsToRead": dataformat.setNumberOfRecordsToRead(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "emptyvalue":
+        case "emptyValue": dataformat.setEmptyValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "lineseparator":
+        case "lineSeparator": dataformat.setLineSeparator(property(camelContext, java.lang.String.class, value)); return true;
+        case "normalizedlineseparator":
+        case "normalizedLineSeparator": dataformat.setNormalizedLineSeparator(property(camelContext, java.lang.Character.class, value)); return true;
+        case "comment": dataformat.setComment(property(camelContext, java.lang.Character.class, value)); return true;
+        case "lazyload":
+        case "lazyLoad": dataformat.setLazyLoad(property(camelContext, boolean.class, value)); return true;
+        case "asmap":
+        case "asMap": dataformat.setAsMap(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

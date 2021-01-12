@@ -60,7 +60,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public CamelConduit(CamelContext context, Bus b, EndpointInfo epInfo, EndpointReferenceType targetReference,
-            HeaderFilterStrategy headerFilterStrategy) {
+                        HeaderFilterStrategy headerFilterStrategy) {
         super(getTargetReference(epInfo, targetReference, b));
         String address = epInfo.getAddress();
         if (address != null) {
@@ -96,11 +96,12 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     @Override
     public void prepare(Message message) throws IOException {
         LOG.trace("CamelConduit send message");
-        CamelOutputStream os = new CamelOutputStream(this.targetCamelEndpointUri, 
-                                                     this.producer, 
-                                                     this.headerFilterStrategy, 
-                                                     this.getMessageObserver(), 
-                                                     message);
+        CamelOutputStream os = new CamelOutputStream(
+                this.targetCamelEndpointUri,
+                this.producer,
+                this.headerFilterStrategy,
+                this.getMessageObserver(),
+                message);
         message.setContent(OutputStream.class, os);
     }
 

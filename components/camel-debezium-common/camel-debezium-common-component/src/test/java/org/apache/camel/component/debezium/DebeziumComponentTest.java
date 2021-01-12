@@ -44,7 +44,8 @@ public class DebeziumComponentTest extends CamelTestSupport {
 
         component.setConfiguration(configuration);
 
-        final DebeziumTestEndpoint endpoint = (DebeziumTestEndpoint) component.createEndpoint("debezium-dummy:test_name?additionalProperties.extra.1=123&additionalProperties.extra.2=test");
+        final DebeziumTestEndpoint endpoint = (DebeziumTestEndpoint) component
+                .createEndpoint("debezium-dummy:test_name?additionalProperties.extra.1=123&additionalProperties.extra.2=test");
 
         assertEquals("test_name", endpoint.getConfiguration().getName());
         assertEquals("test_conf", endpoint.getConfiguration().getTopicConfig());

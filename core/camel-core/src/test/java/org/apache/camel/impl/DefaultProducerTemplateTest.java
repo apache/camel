@@ -187,26 +187,26 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     public void testRequestBody() throws Exception {
         // with endpoint as string uri
         Integer out = template.requestBody("direct:inout", "Hello", Integer.class);
-        assertEquals(new Integer(123), (Object) out);
+        assertEquals(Integer.valueOf(123), (Object) out);
 
         out = template.requestBodyAndHeader("direct:inout", "Hello", "foo", "bar", Integer.class);
-        assertEquals(new Integer(123), (Object) out);
+        assertEquals(Integer.valueOf(123), (Object) out);
 
         Map<String, Object> headers = new HashMap<>();
         out = template.requestBodyAndHeaders("direct:inout", "Hello", headers, Integer.class);
-        assertEquals(new Integer(123), (Object) out);
+        assertEquals(Integer.valueOf(123), (Object) out);
 
         // with endpoint object
         Endpoint endpoint = context.getEndpoint("direct:inout");
         out = template.requestBody(endpoint, "Hello", Integer.class);
-        assertEquals(new Integer(123), (Object) out);
+        assertEquals(Integer.valueOf(123), (Object) out);
 
         out = template.requestBodyAndHeader(endpoint, "Hello", "foo", "bar", Integer.class);
-        assertEquals(new Integer(123), (Object) out);
+        assertEquals(Integer.valueOf(123), (Object) out);
 
         headers = new HashMap<>();
         out = template.requestBodyAndHeaders(endpoint, "Hello", headers, Integer.class);
-        assertEquals(new Integer(123), (Object) out);
+        assertEquals(Integer.valueOf(123), (Object) out);
     }
 
     @Test
@@ -265,7 +265,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                 from("direct:out").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye Bye World");
+                        exchange.getMessage().setBody("Bye Bye World");
                     }
                 }).to("mock:result");
 

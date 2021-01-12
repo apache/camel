@@ -67,7 +67,8 @@ public class CsvUnmarshalTabDelimiterSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalTabDelimiterSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalTabDelimiterSpringTest-context.xml");
     }
 
 }

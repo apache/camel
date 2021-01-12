@@ -40,15 +40,14 @@ public class BindyMultiBytesTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-
     // *************************************************************************
     // TESTS
     // *************************************************************************
 
     /**
-     * Let's assume we want to read the content of a 10 bytes record from an UTF-8 encoded file.
-     * test string takes 10 bytes with 9 characters (2 char = 3 bytes content + padding).
-     * I assume to be able to read 9 char string from this 10 bytes fixed length record with bindy.
+     * Let's assume we want to read the content of a 10 bytes record from an UTF-8 encoded file. test string takes 10
+     * bytes with 9 characters (2 char = 3 bytes content + padding). I assume to be able to read 9 char string from this
+     * 10 bytes fixed length record with bindy.
      */
     @Test
     public void testMultiBytes() throws Exception {

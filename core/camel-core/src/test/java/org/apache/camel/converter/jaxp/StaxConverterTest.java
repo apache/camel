@@ -45,19 +45,22 @@ public class StaxConverterTest extends ContextTestSupport {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private static final String TEST_XML = "<test>Test Message with umlaut \u00E4\u00F6\u00FC</test>"; // umlauts
-                                                                                                       // have
-                                                                                                       // different
-                                                                                                       // encoding
-                                                                                                       // in
-                                                                                                       // UTF-8
-                                                                                                       // and
-                                                                                                       // ISO-8859-1
-                                                                                                       // (Latin1)
+                                                                                                      // have
+                                                                                                      // different
+                                                                                                      // encoding
+                                                                                                      // in
+                                                                                                      // UTF-8
+                                                                                                      // and
+                                                                                                      // ISO-8859-1
+                                                                                                      // (Latin1)
 
-    private static final String TEST_XML_WITH_XML_HEADER_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + TEST_XML;
+    private static final String TEST_XML_WITH_XML_HEADER_ISO_8859_1
+            = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" + TEST_XML;
 
-    private static final ByteArrayInputStream TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM = new ByteArrayInputStream(TEST_XML_WITH_XML_HEADER_ISO_8859_1
-        .getBytes(ISO_8859_1));
+    private static final ByteArrayInputStream TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM
+            = new ByteArrayInputStream(
+                    TEST_XML_WITH_XML_HEADER_ISO_8859_1
+                            .getBytes(ISO_8859_1));
 
     private static final String TEST_XML_WITH_XML_HEADER = "<?xml version=\"1.0\"?>" + TEST_XML;
 
@@ -86,7 +89,8 @@ public class StaxConverterTest extends ContextTestSupport {
         ByteArrayOutputStream output = null;
         try {
             // enter text encoded with Latin1
-            reader = context.getTypeConverter().mandatoryConvertTo(XMLEventReader.class, TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
+            reader = context.getTypeConverter().mandatoryConvertTo(XMLEventReader.class,
+                    TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
 
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
@@ -124,7 +128,8 @@ public class StaxConverterTest extends ContextTestSupport {
         ByteArrayOutputStream output = null;
         try {
             // enter text encoded with Latin1
-            reader = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
+            reader = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class,
+                    TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM);
 
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding

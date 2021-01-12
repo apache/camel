@@ -61,7 +61,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
         IOHelper.close(table);
     }
 
-
     @Test
     public void testPutAndGet() throws Exception {
         testPut();
@@ -305,8 +304,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
-     * to define the routes for testing
+     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder} to define
+     * the routes for testing
      */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -316,7 +315,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
                 from("direct:start")
                         .to("hbase://" + PERSON_TABLE);
                 from("direct:start-with-model")
-                        .to("hbase://" + PERSON_TABLE + "?row.family=info&row.qualifier=firstName&row.family2=birthdate&row.qualifier2=year");
+                        .to("hbase://" + PERSON_TABLE
+                            + "?row.family=info&row.qualifier=firstName&row.family2=birthdate&row.qualifier2=year");
                 from("direct:scan")
                         .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN);
                 from("direct:maxScan")

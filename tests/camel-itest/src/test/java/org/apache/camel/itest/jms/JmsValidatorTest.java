@@ -16,19 +16,18 @@
  */
 package org.apache.camel.itest.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class JmsValidatorTest extends CamelTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Test
     void testJmsValidator() throws Exception {
@@ -57,8 +56,8 @@ public class JmsValidatorTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
 
         registry.bind("jms", amq);
@@ -70,15 +69,15 @@ public class JmsValidatorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jms:queue:inbox")
-                    .convertBodyTo(String.class)
-                    .doTry()
+                        .convertBodyTo(String.class)
+                        .doTry()
                         .to("validator:file:src/test/resources/myschema.xsd")
                         .to("jms:queue:valid")
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .to("jms:queue:invalid")
-                    .doFinally()
+                        .doFinally()
                         .to("jms:queue:finally")
-                    .end();
+                        .end();
 
                 from("jms:queue:valid").to("mock:valid");
                 from("jms:queue:invalid").to("mock:invalid");

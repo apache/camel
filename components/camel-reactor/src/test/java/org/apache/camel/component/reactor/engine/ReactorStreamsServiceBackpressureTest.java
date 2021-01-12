@@ -41,9 +41,9 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -52,10 +52,10 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         CountDownLatch latch = new CountDownLatch(1);
 
         Flux.range(0, 50)
-            .zipWith(integers, (l, i) -> i)
-            .timeout(Duration.ofMillis(2000), Flux.empty())
-            .doOnComplete(latch::countDown)
-            .subscribe(queue::add);
+                .zipWith(integers, (l, i) -> i)
+                .timeout(Duration.ofMillis(2000), Flux.empty())
+                .doOnComplete(latch::countDown)
+                .subscribe(queue::add);
 
         context.start();
 
@@ -68,7 +68,6 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         }
     }
 
-
     @Test
     public void testDropStrategy() throws Exception {
         getReactiveStreamsComponent().setBackpressureStrategy(ReactiveStreamsBackpressureStrategy.OLDEST);
@@ -77,9 +76,9 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -124,9 +123,9 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 

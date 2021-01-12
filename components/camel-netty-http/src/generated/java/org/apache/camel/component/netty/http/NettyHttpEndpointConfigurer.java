@@ -4,8 +4,10 @@ package org.apache.camel.component.netty.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.netty.NettyEndpointConfigurer;
 
@@ -70,33 +72,56 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("bridgeEndpoint", boolean.class);
-        answer.put("chunkedMaxContentLength", int.class);
-        answer.put("compression", boolean.class);
-        answer.put("configuration", org.apache.camel.component.netty.http.NettyHttpConfiguration.class);
-        answer.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        answer.put("disableStreamCache", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpMethodRestrict", java.lang.String.class);
-        answer.put("logWarnOnBadRequest", boolean.class);
-        answer.put("mapHeaders", boolean.class);
-        answer.put("matchOnUriPrefix", boolean.class);
-        answer.put("maxHeaderSize", int.class);
-        answer.put("muteException", boolean.class);
-        answer.put("nettyHttpBinding", org.apache.camel.component.netty.http.NettyHttpBinding.class);
-        answer.put("nettySharedHttpServer", org.apache.camel.component.netty.http.NettySharedHttpServer.class);
-        answer.put("okStatusCodeRange", java.lang.String.class);
-        answer.put("securityConfiguration", org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class);
-        answer.put("securityOptions", java.util.Map.class);
-        answer.put("send503whenSuspended", boolean.class);
-        answer.put("throwExceptionOnFailure", boolean.class);
-        answer.put("traceEnabled", boolean.class);
-        answer.put("transferException", boolean.class);
-        answer.put("urlDecodeHeaders", boolean.class);
-        answer.put("useRelativePath", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
+        case "chunkedmaxcontentlength":
+        case "chunkedMaxContentLength": return int.class;
+        case "compression": return boolean.class;
+        case "configuration": return org.apache.camel.component.netty.http.NettyHttpConfiguration.class;
+        case "cookiehandler":
+        case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "disablestreamcache":
+        case "disableStreamCache": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "logwarnonbadrequest":
+        case "logWarnOnBadRequest": return boolean.class;
+        case "mapheaders":
+        case "mapHeaders": return boolean.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "maxheadersize":
+        case "maxHeaderSize": return int.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "nettyhttpbinding":
+        case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
+        case "nettysharedhttpserver":
+        case "nettySharedHttpServer": return org.apache.camel.component.netty.http.NettySharedHttpServer.class;
+        case "okstatuscoderange":
+        case "okStatusCodeRange": return java.lang.String.class;
+        case "securityconfiguration":
+        case "securityConfiguration": return org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class;
+        case "securityoptions":
+        case "securityOptions": return java.util.Map.class;
+        case "send503whensuspended":
+        case "send503whenSuspended": return boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "urldecodeheaders":
+        case "urlDecodeHeaders": return boolean.class;
+        case "userelativepath":
+        case "useRelativePath": return boolean.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override
@@ -150,6 +175,15 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "userelativepath":
         case "useRelativePath": return target.getConfiguration().isUseRelativePath();
         default: return super.getOptionValue(obj, name, ignoreCase);
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "securityoptions":
+        case "securityOptions": return java.lang.Object.class;
+        default: return super.getCollectionValueType(target, name, ignoreCase);
         }
     }
 }

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to an animated GIF file stored on the Telegram servers.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcachedgif">
- * https://core.telegram.org/bots/api#inlinequeryresultcachedgif</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcachedgif</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultCachedGif extends InlineQueryResult {

@@ -50,8 +50,8 @@ public class CMProducer extends DefaultProducer {
     }
 
     /**
-     * Producer is a exchange processor. This process is built in several steps. 1. Validate message receive from client 2. Send validated message to CM endpoints. 3. Process response from CM
-     * endpoints.
+     * Producer is a exchange processor. This process is built in several steps. 1. Validate message receive from client
+     * 2. Send validated message to CM endpoints. 3. Process response from CM endpoints.
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
@@ -63,7 +63,7 @@ public class CMProducer extends DefaultProducer {
         // Validates Payload - SMSMessage
         LOG.trace("Validating SMSMessage instance provided: {}", smsMessage);
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator().validate(smsMessage);
-        if (constraintViolations.size() > 0) {
+        if (!constraintViolations.isEmpty()) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<SMSMessage> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
@@ -115,7 +115,8 @@ public class CMProducer extends DefaultProducer {
                 HttpClientBuilder.create().build().execute(new HttpHead(getEndpoint().getCMUrl()));
                 LOG.debug("Connection to {}: OK", getEndpoint().getCMUrl());
             } catch (final Exception e) {
-                throw new HostUnavailableException(String.format("Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()), e);
+                throw new HostUnavailableException(
+                        String.format("Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()), e);
             }
         }
 

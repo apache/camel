@@ -75,7 +75,7 @@ input message and return as response; its the aggregate method with 3 exchange p
 
 The mutlicast EIP will by default continue to process
 the entire exchange even in case one of the
-multicasted messages will thrown an exception during routing. 
+multicasted messages will throw an exception during routing. 
 For example if you want to multicast to 3 destinations and the 2nd
 destination fails by an exception. What Camel does by default is to
 process the remainder destinations. You have the chance to remedy or

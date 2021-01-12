@@ -39,6 +39,8 @@ public interface BoxComponentBuilderFactory {
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-box
+     * 
+     * @return the dsl builder
      */
     static BoxComponentBuilder box() {
         return new BoxComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * Box application client ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -63,9 +68,12 @@ public interface BoxComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.box.BoxConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.box.BoxConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder configuration(
                 org.apache.camel.component.box.BoxConfiguration configuration) {
@@ -75,9 +83,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * The enterprise ID to use for an App Enterprise.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param enterpriseId the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder enterpriseId(java.lang.String enterpriseId) {
             doSetProperty("enterpriseId", enterpriseId);
@@ -86,9 +97,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * The user ID to use for an App User.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder userId(java.lang.String userId) {
             doSetProperty("userId", userId);
@@ -103,10 +117,13 @@ public interface BoxComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -124,36 +141,48 @@ public interface BoxComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default BoxComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default BoxComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Custom HTTP params for settings like proxy host.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpParams the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder httpParams(
                 java.util.Map<java.lang.String, java.lang.Object> httpParams) {
@@ -165,10 +194,13 @@ public interface BoxComponentBuilderFactory {
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: APP_USER_AUTHENTICATION
          * Group: authentication
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder authenticationType(
                 java.lang.String authenticationType) {
@@ -178,9 +210,13 @@ public interface BoxComponentBuilderFactory {
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
-         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.IAccessTokenCache&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenCache the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder accessTokenCache(
                 com.box.sdk.IAccessTokenCache accessTokenCache) {
@@ -190,9 +226,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * Box application client secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder clientSecret(java.lang.String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -202,10 +241,14 @@ public interface BoxComponentBuilderFactory {
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
          * 
-         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * The option is a:
+         * &lt;code&gt;com.box.sdk.EncryptionAlgorithm&lt;/code&gt; type.
          * 
          * Default: RSA_SHA_256
          * Group: security
+         * 
+         * @param encryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder encryptionAlgorithm(
                 com.box.sdk.EncryptionAlgorithm encryptionAlgorithm) {
@@ -215,10 +258,13 @@ public interface BoxComponentBuilderFactory {
         /**
          * The maximum number of access tokens in cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: security
+         * 
+         * @param maxCacheEntries the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder maxCacheEntries(int maxCacheEntries) {
             doSetProperty("maxCacheEntries", maxCacheEntries);
@@ -227,9 +273,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * The private key for generating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyFile the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder privateKeyFile(
                 java.lang.String privateKeyFile) {
@@ -239,9 +288,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * The password for the private key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyPassword the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder privateKeyPassword(
                 java.lang.String privateKeyPassword) {
@@ -251,9 +303,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * The ID for public key for validating the JWT signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publicKeyId the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder publicKeyId(java.lang.String publicKeyId) {
             doSetProperty("publicKeyId", publicKeyId);
@@ -263,9 +318,12 @@ public interface BoxComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -275,9 +333,12 @@ public interface BoxComponentBuilderFactory {
         /**
          * Box user name, MUST be provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);
@@ -287,9 +348,12 @@ public interface BoxComponentBuilderFactory {
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userPassword the value to set
+         * @return the dsl builder
          */
         default BoxComponentBuilder userPassword(java.lang.String userPassword) {
             doSetProperty("userPassword", userPassword);
@@ -325,7 +389,7 @@ public interface BoxComponentBuilderFactory {
             case "userId": getOrCreateConfiguration((BoxComponent) component).setUserId((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((BoxComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BoxComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((BoxComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((BoxComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpParams": getOrCreateConfiguration((BoxComponent) component).setHttpParams((java.util.Map) value); return true;
             case "authenticationType": getOrCreateConfiguration((BoxComponent) component).setAuthenticationType((java.lang.String) value); return true;
             case "accessTokenCache": getOrCreateConfiguration((BoxComponent) component).setAccessTokenCache((com.box.sdk.IAccessTokenCache) value); return true;

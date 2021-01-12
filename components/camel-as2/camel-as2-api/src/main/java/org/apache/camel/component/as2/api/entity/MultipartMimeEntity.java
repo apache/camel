@@ -55,7 +55,7 @@ public abstract class MultipartMimeEntity extends MimeEntity {
 
     protected MultipartMimeEntity() {
     }
-    
+
     public String getBoundary() {
         return boundary;
     }

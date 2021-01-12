@@ -26,9 +26,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,9 +47,6 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
 
     protected Channel channel;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&routingKey=" + ROUTING_KEY)
-    private Endpoint from;
-
     private Connection connection;
 
     @BeforeEach
@@ -61,6 +57,8 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
         context().setTracing(true);
         return new RouteBuilder() {
 
@@ -68,7 +66,9 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
             public void configure() throws Exception {
                 log.info("Building routes...");
 
-                from(from).log(body().toString()).setBody(simple(REPLY));
+                fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&routingKey=%s", connectionProperties.port(),
+                        EXCHANGE, connectionProperties.username(), connectionProperties.password(), ROUTING_KEY)
+                                .log(body().toString()).setBody(simple(REPLY));
             }
         };
     }
@@ -104,7 +104,8 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+                throws IOException {
             received.add(new String(body));
         }
     }

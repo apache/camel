@@ -28,8 +28,8 @@ public final class JavadocHelper {
     /**
      * Sanitizes the javadoc to removed invalid characters so it can be used as json description
      *
-     * @param javadoc  the javadoc
-     * @return the text that is valid as json
+     * @param  javadoc the javadoc
+     * @return         the text that is valid as json
      */
     public static String sanitizeDescription(String javadoc, boolean summary) {
         if (isNullOrEmpty(javadoc)) {
@@ -89,9 +89,16 @@ public final class JavadocHelper {
         String s = sb.toString();
         // remove all XML tags
         s = s.replaceAll("<.*?>", "");
+        // remove {@link inlined javadoc links which is special handled
+        s = s.replaceAll("\\{@link\\s\\w+\\s(\\w+)}", "$1");
+        s = s.replaceAll("\\{@link\\s([\\w]+)}", "$1");
+        // also remove the commonly mistake to do with @{link
+        s = s.replaceAll("@\\{link\\s\\w+\\s(\\w+)}", "$1");
+        s = s.replaceAll("@\\{link\\s([\\w]+)}", "$1");
+
         // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
         // use #? to remove leading # in case its a local reference
-        s = s.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
+        s = s.replaceAll("\\{@\\w+\\s#?([\\w.#(\\d,)]+)}", "$1");
 
         // create a new line
         StringBuilder cb = new StringBuilder();
@@ -111,4 +118,23 @@ public final class JavadocHelper {
         s = s.replaceAll("\\\\(http:|https:)", "$1");
         return s.trim();
     }
+
+    /**
+     * Encodes the text into safe XML by replacing < > and & with XML tokens
+     *
+     * @param  text the text
+     * @return      the encoded text
+     */
+    public static String xmlEncode(String text) {
+        if (text == null) {
+            return "";
+        }
+        // must replace amp first, so we dont replace &lt; to amp later
+        text = text.replace("&", "&amp;");
+        text = text.replace("\"", "&quot;");
+        text = text.replace("<", "&lt;");
+        text = text.replace(">", "&gt;");
+        return text;
+    }
+
 }

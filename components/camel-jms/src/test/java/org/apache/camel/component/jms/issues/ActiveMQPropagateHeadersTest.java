@@ -59,7 +59,7 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);        
+        String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
         assertEquals(replyQueue.toString(), replyTo, "ReplyTo");
     }
 
@@ -80,8 +80,8 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // must set option to preserve message QoS as we send an InOnly but put a JMSReplyTo
-// that does not work well on the consumer side, as it would assume it should send a reply
-// but we do not expect a reply as we are InOnly.
+                // that does not work well on the consumer side, as it would assume it should send a reply
+                // but we do not expect a reply as we are InOnly.
                 from("activemq:test.a").process(exchange -> {
                     // set the JMS headers
                     Message in = exchange.getIn();

@@ -20,25 +20,23 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirTransactionApiMethod implements ApiMethod {
 
-    WITHBUNDLE(
+    WITH_BUNDLE(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "withBundle",
         arg("bundle", org.hl7.fhir.instance.model.api.IBaseBundle.class),
         arg("extraParameters", java.util.Map.class)),
 
-    WITHBUNDLE_1(
+    WITH_BUNDLE_1(
         String.class,
         "withBundle",
         arg("stringBundle", String.class),
         arg("extraParameters", java.util.Map.class)),
 
-    WITHRESOURCES(
+    WITH_RESOURCES(
         java.util.List.class,
         "withResources",
         arg("resources", java.util.List.class),
         arg("extraParameters", java.util.Map.class));
-
-    
 
     private final ApiMethod apiMethod;
 

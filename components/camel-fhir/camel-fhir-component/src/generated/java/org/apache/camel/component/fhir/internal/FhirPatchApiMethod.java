@@ -20,7 +20,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirPatchApiMethod implements ApiMethod {
 
-    PATCHBYID(
+    PATCH_BY_ID(
         ca.uhn.fhir.rest.api.MethodOutcome.class,
         "patchById",
         arg("patchBody", String.class),
@@ -28,7 +28,7 @@ public enum FhirPatchApiMethod implements ApiMethod {
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class)),
 
-    PATCHBYID_1(
+    PATCH_BY_ID_1(
         ca.uhn.fhir.rest.api.MethodOutcome.class,
         "patchById",
         arg("patchBody", String.class),
@@ -36,15 +36,13 @@ public enum FhirPatchApiMethod implements ApiMethod {
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class)),
 
-    PATCHBYURL(
+    PATCH_BY_URL(
         ca.uhn.fhir.rest.api.MethodOutcome.class,
         "patchByUrl",
         arg("patchBody", String.class),
         arg("url", String.class),
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class));
-
-    
 
     private final ApiMethod apiMethod;
 

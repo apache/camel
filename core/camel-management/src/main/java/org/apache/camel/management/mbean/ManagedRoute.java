@@ -84,7 +84,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        boolean enabled
+                = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
@@ -124,9 +125,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
                 CompositeData data = new CompositeDataSupport(
                         ct,
-                        new String[]{"key", "value"},
-                        new Object[]{key, val}
-                );
+                        new String[] { "key", "value" },
+                        new Object[] { key, val });
 
                 answer.put(data);
             }
@@ -379,8 +379,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (ObjectHelper.isEmpty(def.getId())) {
             def.setId(getRouteId());
         } else if (!def.getId().equals(getRouteId())) {
-            throw new IllegalArgumentException("Cannot update route from XML as routeIds does not match. routeId: "
-                    + getRouteId() + ", routeId from XML: " + def.getId());
+            throw new IllegalArgumentException(
+                    "Cannot update route from XML as routeIds does not match. routeId: "
+                                               + getRouteId() + ", routeId from XML: " + def.getId());
         }
 
         LOG.debug("Updating route: {} from xml: {}", def.getId(), xml);
@@ -413,11 +414,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                ObjectName query = ObjectName.getInstance(
+                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<>();
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
+                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
+                            ManagedProcessorMBean.class);
 
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {
@@ -438,7 +441,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
                 // and now add the sorted list of processors to the xml output
                 for (ManagedProcessorMBean processor : mps) {
-                    sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                    sb.append("    <processorStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"",
+                            processor.getProcessorId(), processor.getIndex(), processor.getState()));
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
                     if (accTime != null) {
@@ -459,7 +463,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId())).append(String.format(" state=\"%s\"", getState()));
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
+                .append(String.format(" state=\"%s\"", getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
@@ -495,11 +500,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (server != null) {
             // get all the processor mbeans and sort them accordingly to their index
             String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
             Set<ObjectName> names = server.queryNames(query, null);
             List<ManagedStepMBean> mps = new ArrayList<>();
             for (ObjectName on : names) {
-                ManagedStepMBean step = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
+                ManagedStepMBean step
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
 
                 // the step must belong to this route
                 if (getRouteId().equals(step.getRouteId())) {
@@ -510,7 +517,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
             // and now add the sorted list of steps to the xml output
             for (ManagedStepMBean step : mps) {
-                sb.append("    <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", step.getProcessorId(), step.getIndex(), step.getState()));
+                sb.append("    <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", step.getProcessorId(),
+                        step.getIndex(), step.getState()));
                 // use substring as we only want the attributes
                 sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
             }
@@ -518,7 +526,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         sb.append("  </stepStats>\n");
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId())).append(String.format(" state=\"%s\"", getState()));
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
+                .append(String.format(" state=\"%s\"", getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
@@ -548,7 +557,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+                ObjectName query = ObjectName.getInstance(
+                        jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 QueryExp queryExp = Query.match(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
                 Set<ObjectName> names = server.queryNames(query, queryExp);
                 for (ObjectName name : names) {
@@ -608,13 +618,20 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 public Phase getPhase() {
                     if (error.getPhase() != null) {
                         switch (error.getPhase()) {
-                            case START: return Phase.START;
-                            case STOP: return Phase.STOP;
-                            case SUSPEND: return Phase.SUSPEND;
-                            case RESUME: return Phase.RESUME;
-                            case SHUTDOWN: return Phase.SHUTDOWN;
-                            case REMOVE: return Phase.REMOVE;
-                            default: throw new IllegalStateException();
+                            case START:
+                                return Phase.START;
+                            case STOP:
+                                return Phase.STOP;
+                            case SUSPEND:
+                                return Phase.SUSPEND;
+                            case RESUME:
+                                return Phase.RESUME;
+                            case SHUTDOWN:
+                                return Phase.SHUTDOWN;
+                            case REMOVE:
+                                return Phase.REMOVE;
+                            default:
+                                throw new IllegalStateException();
                         }
                     }
                     return null;

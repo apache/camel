@@ -58,18 +58,18 @@ public class NettyHttpHandle404Test extends BaseNettyTest {
                 // use this sub route as indirection to handle the HttpOperationFailedException
                 // and set the data back as data on the exchange to not cause the exception to be thrown
                 from("direct:tohttp")
-                    .doTry()
+                        .doTry()
                         .to(getProducerUrl())
-                    .doCatch(NettyHttpOperationFailedException.class)
+                        .doCatch(NettyHttpOperationFailedException.class)
                         .process(exchange -> {
                             // copy the caused exception values to the exchange as we want the response in the regular exchange
                             // instead as an exception that will get thrown and thus the route breaks
-                            NettyHttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, NettyHttpOperationFailedException.class);
+                            NettyHttpOperationFailedException cause
+                                    = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, NettyHttpOperationFailedException.class);
                             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
                             exchange.getMessage().setBody(cause.getContentAsString());
                         })
                         .end();
-
 
                 // this is our jetty server where we simulate the 404
                 from("netty-http:http://localhost:{{port}}/myserver")

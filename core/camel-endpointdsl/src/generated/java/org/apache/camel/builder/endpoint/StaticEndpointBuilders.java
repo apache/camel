@@ -39,12 +39,14 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      * 
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
             String path) {
@@ -64,7 +66,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -72,6 +75,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
             String componentName,
@@ -92,6 +96,7 @@ public class StaticEndpointBuilders {
      * The URI to use such as http://hostname:port/path
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.AhcEndpointBuilder ahc(
             String path) {
@@ -113,6 +118,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory.AhcEndpointBuilder ahc(
             String componentName,
@@ -133,6 +139,7 @@ public class StaticEndpointBuilders {
      * The URI to use such as http://hostname:port/path
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWs(
             String path) {
@@ -154,6 +161,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WsEndpointBuilderFactory.WsEndpointBuilder ahcWs(
             String componentName,
@@ -173,12 +181,14 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      * 
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.AMQPEndpointBuilder amqp(
             String path) {
@@ -197,7 +207,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -205,6 +216,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory.AMQPEndpointBuilder amqp(
             String componentName,
@@ -225,6 +237,7 @@ public class StaticEndpointBuilders {
      * Name of the endpoint
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
             String path) {
@@ -246,6 +259,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory.ApnsEndpointBuilder apns(
             String componentName,
@@ -254,10 +268,11 @@ public class StaticEndpointBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb documents, collections and graphs.
+     * Perform operations on ArangoDb when used as a Document Database, or as a
+     * Graph Database
      * 
      * Category: database,nosql
-     * Since: 3.5.0-SNAPSHOT
+     * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 
      * Syntax: <code>arangodb:database</code>
@@ -266,6 +281,7 @@ public class StaticEndpointBuilders {
      * database name
      * 
      * @param path database
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
             String path) {
@@ -273,10 +289,11 @@ public class StaticEndpointBuilders {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb documents, collections and graphs.
+     * Perform operations on ArangoDb when used as a Document Database, or as a
+     * Graph Database
      * 
      * Category: database,nosql
-     * Since: 3.5.0-SNAPSHOT
+     * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
      * 
      * Syntax: <code>arangodb:database</code>
@@ -287,6 +304,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path database
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(
             String componentName,
@@ -305,12 +323,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: CLIENT, SERVER
+     * There are 2 enums and the value can be one of: CLIENT, SERVER
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2EndpointBuilder as2(
             String path) {
@@ -328,7 +347,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: CLIENT, SERVER
+     * There are 2 enums and the value can be one of: CLIENT, SERVER
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -336,6 +355,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory.AS2EndpointBuilder as2(
             String componentName,
@@ -356,6 +376,7 @@ public class StaticEndpointBuilders {
      * Name of component
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskEndpointBuilder asterisk(
             String path) {
@@ -377,6 +398,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.AsteriskEndpointBuilder asterisk(
             String componentName,
@@ -384,8 +406,59 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.AsteriskEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AtlasMap (camel-atlasmap)
+     * Transforms the message using an AtlasMap transformation.
+     * 
+     * Category: transformation
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-atlasmap
+     * 
+     * Syntax: <code>atlasmap:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * 
+     * @param path resourceUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.AtlasMapEndpointBuilder atlasmap(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.endpointBuilder("atlasmap", path);
+    }
+    /**
+     * AtlasMap (camel-atlasmap)
+     * Transforms the message using an AtlasMap transformation.
+     * 
+     * Category: transformation
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-atlasmap
+     * 
+     * Syntax: <code>atlasmap:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path resourceUri
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.AtlasMapEndpointBuilder atlasmap(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.AtlasMapEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Atmos (camel-atmos)
-     * Integract with EMC's ViPR object data services using the Atmos Client.
+     * Integrate with EMC's ViPR object data services using the Atmos Client.
      * 
      * Category: cloud,file
      * Since: 2.15
@@ -398,9 +471,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to perform
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param path name/operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory.AtmosEndpointBuilder atmos(
             String path) {
@@ -408,7 +483,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Atmos (camel-atmos)
-     * Integract with EMC's ViPR object data services using the Atmos Client.
+     * Integrate with EMC's ViPR object data services using the Atmos Client.
      * 
      * Category: cloud,file
      * Since: 2.15
@@ -421,11 +496,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to perform
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name/operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtmosEndpointBuilderFactory.AtmosEndpointBuilder atmos(
             String componentName,
@@ -446,6 +523,7 @@ public class StaticEndpointBuilders {
      * Name of websocket endpoint
      * 
      * @param path servicePath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
             String path) {
@@ -467,6 +545,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path servicePath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
             String componentName,
@@ -487,6 +566,7 @@ public class StaticEndpointBuilders {
      * The URI to the feed to poll.
      * 
      * @param path feedUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.AtomEndpointBuilder atom(
             String path) {
@@ -508,6 +588,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path feedUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.AtomEndpointBuilder atom(
             String componentName,
@@ -528,6 +609,7 @@ public class StaticEndpointBuilders {
      * The distributed resource name
      * 
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
             String path) {
@@ -549,6 +631,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixMapEndpointBuilderFactory.AtomixMapEndpointBuilder atomixMap(
             String componentName,
@@ -569,6 +652,7 @@ public class StaticEndpointBuilders {
      * The distributed resource name
      * 
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
             String path) {
@@ -590,6 +674,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixMessagingEndpointBuilderFactory.AtomixMessagingEndpointBuilder atomixMessaging(
             String componentName,
@@ -610,6 +695,7 @@ public class StaticEndpointBuilders {
      * The distributed resource name
      * 
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
             String path) {
@@ -631,6 +717,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixMultiMapEndpointBuilderFactory.AtomixMultiMapEndpointBuilder atomixMultimap(
             String componentName,
@@ -651,6 +738,7 @@ public class StaticEndpointBuilders {
      * The distributed resource name
      * 
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
             String path) {
@@ -672,6 +760,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixQueueEndpointBuilderFactory.AtomixQueueEndpointBuilder atomixQueue(
             String componentName,
@@ -692,6 +781,7 @@ public class StaticEndpointBuilders {
      * The distributed resource name
      * 
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
             String path) {
@@ -713,6 +803,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixSetEndpointBuilderFactory.AtomixSetEndpointBuilder atomixSet(
             String componentName,
@@ -733,6 +824,7 @@ public class StaticEndpointBuilders {
      * The distributed resource name
      * 
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
             String path) {
@@ -754,6 +846,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AtomixValueEndpointBuilderFactory.AtomixValueEndpointBuilder atomixValue(
             String componentName,
@@ -772,7 +865,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
-     * The value can be one of: http, netty
+     * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
      * Port number to use
@@ -784,6 +877,7 @@ public class StaticEndpointBuilders {
      * The name of the message to send.
      * 
      * @param path transport:host:port/messageName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.AvroEndpointBuilder avro(
             String path) {
@@ -801,7 +895,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
-     * The value can be one of: http, netty
+     * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
      * Port number to use
@@ -815,6 +909,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path transport:host:port/messageName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.AvroEndpointBuilder avro(
             String componentName,
@@ -835,6 +930,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(
             String path) {
@@ -856,6 +952,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(
             String componentName,
@@ -876,6 +973,7 @@ public class StaticEndpointBuilders {
      * The metric namespace
      * 
      * @param path namespace
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
             String path) {
@@ -897,6 +995,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path namespace
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(
             String componentName,
@@ -918,6 +1017,7 @@ public class StaticEndpointBuilders {
      * The name of the table currently worked with.
      * 
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.Ddb2EndpointBuilder aws2Ddb(
             String path) {
@@ -940,6 +1040,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Ddb2EndpointBuilderFactory.Ddb2EndpointBuilder aws2Ddb(
             String componentName,
@@ -961,6 +1062,7 @@ public class StaticEndpointBuilders {
      * Name of the dynamodb table
      * 
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
             String path) {
@@ -983,6 +1085,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(
             String componentName,
@@ -1003,6 +1106,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
             String path) {
@@ -1024,6 +1128,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(
             String componentName,
@@ -1044,6 +1149,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.ECS2EndpointBuilder aws2Ecs(
             String path) {
@@ -1065,6 +1171,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ECS2EndpointBuilderFactory.ECS2EndpointBuilder aws2Ecs(
             String componentName,
@@ -1085,6 +1192,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.EKS2EndpointBuilder aws2Eks(
             String path) {
@@ -1106,11 +1214,55 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.EKS2EndpointBuilder aws2Eks(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
+     * 
+     * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
+     * 
+     * Path parameter: eventbusNameOrArn (required)
+     * Event bus name or ARN
+     * 
+     * @param path //eventbusNameOrArn
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.endpointBuilder("aws2-eventbridge", path);
+    }
+    /**
+     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
+     * 
+     * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
+     * 
+     * Path parameter: eventbusNameOrArn (required)
+     * Event bus name or ARN
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path //eventbusNameOrArn
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
@@ -1126,6 +1278,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String path) {
@@ -1147,6 +1300,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(
             String componentName,
@@ -1168,6 +1322,7 @@ public class StaticEndpointBuilders {
      * Name of the stream
      * 
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
             String path) {
@@ -1190,6 +1345,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(
             String componentName,
@@ -1210,6 +1366,7 @@ public class StaticEndpointBuilders {
      * Name of the stream
      * 
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
             String path) {
@@ -1231,6 +1388,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
             String componentName,
@@ -1251,6 +1409,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
             String path) {
@@ -1272,6 +1431,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(
             String componentName,
@@ -1292,6 +1452,7 @@ public class StaticEndpointBuilders {
      * Name of the Lambda function.
      * 
      * @param path function
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String path) {
@@ -1313,6 +1474,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path function
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(
             String componentName,
@@ -1333,6 +1495,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
             String path) {
@@ -1354,6 +1517,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(
             String componentName,
@@ -1374,6 +1538,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.MSK2EndpointBuilder aws2Msk(
             String path) {
@@ -1395,6 +1560,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MSK2EndpointBuilderFactory.MSK2EndpointBuilder aws2Msk(
             String componentName,
@@ -1416,6 +1582,7 @@ public class StaticEndpointBuilders {
      * Bucket name or ARN
      * 
      * @param path //bucketNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
             String path) {
@@ -1438,6 +1605,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path //bucketNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(
             String componentName,
@@ -1458,6 +1626,7 @@ public class StaticEndpointBuilders {
      * The sender's email address.
      * 
      * @param path from
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.Ses2EndpointBuilder aws2Ses(
             String path) {
@@ -1479,6 +1648,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path from
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.Ses2EndpointBuilder aws2Ses(
             String componentName,
@@ -1500,6 +1670,7 @@ public class StaticEndpointBuilders {
      * Topic name or ARN
      * 
      * @param path topicNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
             String path) {
@@ -1522,6 +1693,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topicNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(
             String componentName,
@@ -1543,6 +1715,7 @@ public class StaticEndpointBuilders {
      * Queue name or ARN
      * 
      * @param path queueNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
             String path) {
@@ -1565,11 +1738,55 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path queueNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * Manage AWS STS cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-aws2-sts
+     * 
+     * Syntax: <code>aws2-sts:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.STS2EndpointBuilder aws2Sts(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder("aws2-sts", path);
+    }
+    /**
+     * AWS 2 Security Token Service (STS) (camel-aws2-sts)
+     * Manage AWS STS cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-aws2-sts
+     * 
+     * Syntax: <code>aws2-sts:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.STS2EndpointBuilder aws2Sts(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AWS 2 Translate (camel-aws2-translate)
@@ -1585,6 +1802,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
             String path) {
@@ -1606,6 +1824,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(
             String componentName,
@@ -1626,6 +1845,7 @@ public class StaticEndpointBuilders {
      * The metric namespace
      * 
      * @param path namespace
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.CwEndpointBuilder awsCw(
             String path) {
@@ -1647,6 +1867,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path namespace
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CwEndpointBuilderFactory.CwEndpointBuilder awsCw(
             String componentName,
@@ -1667,6 +1888,7 @@ public class StaticEndpointBuilders {
      * The name of the table currently worked with.
      * 
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
             String path) {
@@ -1688,6 +1910,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DdbEndpointBuilderFactory.DdbEndpointBuilder awsDdb(
             String componentName,
@@ -1708,6 +1931,7 @@ public class StaticEndpointBuilders {
      * Name of the dynamodb table
      * 
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.DdbStreamEndpointBuilder awsDdbstream(
             String path) {
@@ -1729,6 +1953,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DdbStreamEndpointBuilderFactory.DdbStreamEndpointBuilder awsDdbstream(
             String componentName,
@@ -1749,6 +1974,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.EC2EndpointBuilder awsEc2(
             String path) {
@@ -1770,6 +1996,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EC2EndpointBuilderFactory.EC2EndpointBuilder awsEc2(
             String componentName,
@@ -1790,6 +2017,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
             String path) {
@@ -1811,6 +2039,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ECSEndpointBuilderFactory.ECSEndpointBuilder awsEcs(
             String componentName,
@@ -1831,6 +2060,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EKSEndpointBuilderFactory.EKSEndpointBuilder awsEks(
             String path) {
@@ -1852,6 +2082,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EKSEndpointBuilderFactory.EKSEndpointBuilder awsEks(
             String componentName,
@@ -1872,6 +2103,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
             String path) {
@@ -1893,6 +2125,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMEndpointBuilder awsIam(
             String componentName,
@@ -1913,6 +2146,7 @@ public class StaticEndpointBuilders {
      * Name of the stream
      * 
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.KinesisEndpointBuilder awsKinesis(
             String path) {
@@ -1934,6 +2168,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KinesisEndpointBuilderFactory.KinesisEndpointBuilder awsKinesis(
             String componentName,
@@ -1954,6 +2189,7 @@ public class StaticEndpointBuilders {
      * Name of the stream
      * 
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
             String path) {
@@ -1975,6 +2211,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path streamName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory.KinesisFirehoseEndpointBuilder awsKinesisFirehose(
             String componentName,
@@ -1995,6 +2232,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
             String path) {
@@ -2016,6 +2254,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KMSEndpointBuilderFactory.KMSEndpointBuilder awsKms(
             String componentName,
@@ -2036,6 +2275,7 @@ public class StaticEndpointBuilders {
      * Name of the Lambda function.
      * 
      * @param path function
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
             String path) {
@@ -2057,6 +2297,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path function
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LambdaEndpointBuilderFactory.LambdaEndpointBuilder awsLambda(
             String componentName,
@@ -2077,6 +2318,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
             String path) {
@@ -2098,6 +2340,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MQEndpointBuilderFactory.MQEndpointBuilder awsMq(
             String componentName,
@@ -2118,6 +2361,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
             String path) {
@@ -2139,6 +2383,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MSKEndpointBuilderFactory.MSKEndpointBuilder awsMsk(
             String componentName,
@@ -2159,6 +2404,7 @@ public class StaticEndpointBuilders {
      * Bucket name or ARN
      * 
      * @param path //bucketNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
             String path) {
@@ -2180,6 +2426,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path //bucketNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory.S3EndpointBuilder awsS3(
             String componentName,
@@ -2200,6 +2447,7 @@ public class StaticEndpointBuilders {
      * The name of the domain currently worked with.
      * 
      * @param path domainName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbEndpointBuilder awsSdb(
             String path) {
@@ -2221,6 +2469,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path domainName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SdbEndpointBuilderFactory.SdbEndpointBuilder awsSdb(
             String componentName,
@@ -2241,6 +2490,7 @@ public class StaticEndpointBuilders {
      * The sender's email address.
      * 
      * @param path from
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
             String path) {
@@ -2262,6 +2512,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path from
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SesEndpointBuilderFactory.SesEndpointBuilder awsSes(
             String componentName,
@@ -2282,6 +2533,7 @@ public class StaticEndpointBuilders {
      * Topic name or ARN
      * 
      * @param path topicNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
             String path) {
@@ -2303,6 +2555,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topicNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SnsEndpointBuilderFactory.SnsEndpointBuilder awsSns(
             String componentName,
@@ -2323,6 +2576,7 @@ public class StaticEndpointBuilders {
      * Queue name or ARN
      * 
      * @param path queueNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
             String path) {
@@ -2344,6 +2598,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path queueNameOrArn
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory.SqsEndpointBuilder awsSqs(
             String componentName,
@@ -2362,9 +2617,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Activity or workflow
-     * The value can be one of: activity, workflow
+     * There are 2 enums and the value can be one of: activity, workflow
      * 
      * @param path type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFEndpointBuilder awsSwf(
             String path) {
@@ -2382,11 +2638,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Activity or workflow
-     * The value can be one of: activity, workflow
+     * There are 2 enums and the value can be one of: activity, workflow
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SWFEndpointBuilderFactory.SWFEndpointBuilder awsSwf(
             String componentName,
@@ -2407,6 +2664,7 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
             String path) {
@@ -2428,6 +2686,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TranslateEndpointBuilderFactory.TranslateEndpointBuilder awsTranslate(
             String componentName,
@@ -2448,6 +2707,7 @@ public class StaticEndpointBuilders {
      * Container or Blob compact Uri
      * 
      * @param path containerOrBlobUri
+     * @return the dsl builder
      */
     @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
@@ -2470,12 +2730,68 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path containerOrBlobUri
+     * @return the dsl builder
      */
     @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.BlobServiceEndpointBuilder azureBlob(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.BlobServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
+     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
+     * that can ingest millions of events per second and stream them to multiple
+     * consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
+     * 
+     * Path parameter: namespace
+     * EventHubs namespace created in Azure Portal
+     * 
+     * Path parameter: eventHubName
+     * EventHubs name under a specific namcespace
+     * 
+     * @param path namespace/eventHubName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder("azure-eventhubs", path);
+    }
+    /**
+     * Azure Event Hubs (camel-azure-eventhubs)
+     * The azure-eventhubs component that integrates Azure Event Hubs using AMQP
+     * protocol. Azure EventHubs is a highly scalable publish-subscribe service
+     * that can ingest millions of events per second and stream them to multiple
+     * consumers.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
+     * 
+     * Path parameter: namespace
+     * EventHubs namespace created in Azure Portal
+     * 
+     * Path parameter: eventHubName
+     * EventHubs name under a specific namcespace
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path namespace/eventHubName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Azure Storage Queue Service (Deprecated) (camel-azure)
@@ -2491,6 +2807,7 @@ public class StaticEndpointBuilders {
      * Container Queue compact Uri
      * 
      * @param path containerAndQueueUri
+     * @return the dsl builder
      */
     @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
@@ -2513,6 +2830,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path containerAndQueueUri
+     * @return the dsl builder
      */
     @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.QueueServiceEndpointBuilderFactory.QueueServiceEndpointBuilder azureQueue(
@@ -2528,7 +2846,7 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
      * 
-     * Syntax: <code>azure-storage-blob:containerName</code>
+     * Syntax: <code>azure-storage-blob:accountName/containerName</code>
      * 
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure blob services
@@ -2536,7 +2854,8 @@ public class StaticEndpointBuilders {
      * Path parameter: containerName
      * The blob container name
      * 
-     * @param path containerName
+     * @param path accountName/containerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
             String path) {
@@ -2550,7 +2869,7 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
      * 
-     * Syntax: <code>azure-storage-blob:containerName</code>
+     * Syntax: <code>azure-storage-blob:accountName/containerName</code>
      * 
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure blob services
@@ -2560,7 +2879,8 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path containerName
+     * @param path accountName/containerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
             String componentName,
@@ -2576,7 +2896,7 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-queue
      * 
-     * Syntax: <code>azure-storage-queue:queueName</code>
+     * Syntax: <code>azure-storage-queue:accountName/queueName</code>
      * 
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure queue
@@ -2585,7 +2905,8 @@ public class StaticEndpointBuilders {
      * Path parameter: queueName
      * The queue resource name
      * 
-     * @param path queueName
+     * @param path accountName/queueName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
             String path) {
@@ -2600,7 +2921,7 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-queue
      * 
-     * Syntax: <code>azure-storage-queue:queueName</code>
+     * Syntax: <code>azure-storage-queue:accountName/queueName</code>
      * 
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure queue
@@ -2611,7 +2932,8 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path queueName
+     * @param path accountName/queueName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(
             String componentName,
@@ -2632,6 +2954,7 @@ public class StaticEndpointBuilders {
      * Sets the name of the bean to invoke
      * 
      * @param path beanName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.BeanEndpointBuilder bean(
             String path) {
@@ -2653,6 +2976,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.BeanEndpointBuilder bean(
             String componentName,
@@ -2673,6 +2997,7 @@ public class StaticEndpointBuilders {
      * Connection settings host:port/tube
      * 
      * @param path connectionSettings
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
             String path) {
@@ -2694,6 +3019,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionSettings
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BeanstalkEndpointBuilderFactory.BeanstalkEndpointBuilder beanstalk(
             String componentName,
@@ -2714,6 +3040,7 @@ public class StaticEndpointBuilders {
      * Where label is an arbitrary text value describing the endpoint
      * 
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(
             String path) {
@@ -2735,6 +3062,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(
             String componentName,
@@ -2753,9 +3081,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use
-     * The value can be one of: startCase
+     * There are 1 enums and the value can be one of: startCase
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory.BonitaEndpointBuilder bonita(
             String path) {
@@ -2773,11 +3102,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use
-     * The value can be one of: startCase
+     * There are 1 enums and the value can be one of: startCase
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BonitaEndpointBuilderFactory.BonitaEndpointBuilder bonita(
             String componentName,
@@ -2797,13 +3127,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-     * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+     * There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS,
+     * EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
             String path) {
@@ -2822,8 +3153,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-     * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+     * There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS,
+     * EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2831,6 +3162,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BoxEndpointBuilderFactory.BoxEndpointBuilder box(
             String componentName,
@@ -2849,15 +3181,24 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-     * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-     * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-     * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION
+     * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+     * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
+     * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
+     * PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
+     * WEBHOOK_NOTIFICATION
      * 
-     * Path parameter: methodName
+     * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
+     * There are 31 enums and the value can be one of: accept, addFileEvidence,
+     * addTextEvidence, cancel, cancelRelease, cloneTransaction, create,
+     * createForCurrency, credit, delete, fetchMerchantAccounts, finalize, find,
+     * generate, grant, holdInEscrow, parse, refund, releaseFromEscrow,
+     * removeEvidence, retryCharge, revoke, sale, search,
+     * submitForPartialSettlement, submitForSettlement, transactionLevelFees,
+     * update, updateDetails, verify, voidTransaction
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
             String path) {
@@ -2875,17 +3216,26 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-     * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-     * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-     * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION
+     * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+     * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
+     * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
+     * PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
+     * WEBHOOK_NOTIFICATION
      * 
-     * Path parameter: methodName
+     * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
+     * There are 31 enums and the value can be one of: accept, addFileEvidence,
+     * addTextEvidence, cancel, cancelRelease, cloneTransaction, create,
+     * createForCurrency, credit, delete, fetchMerchantAccounts, finalize, find,
+     * generate, grant, holdInEscrow, parse, refund, releaseFromEscrow,
+     * removeEvidence, retryCharge, revoke, sale, search,
+     * submitForPartialSettlement, submitForSettlement, transactionLevelFees,
+     * update, updateDetails, verify, voidTransaction
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
             String componentName,
@@ -2906,6 +3256,7 @@ public class StaticEndpointBuilders {
      * A name which can be any string to uniquely identify the endpoint
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.BrowseEndpointBuilder browse(
             String path) {
@@ -2927,6 +3278,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.BrowseEndpointBuilder browse(
             String componentName,
@@ -2947,6 +3299,7 @@ public class StaticEndpointBuilders {
      * the cache name
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(
             String path) {
@@ -2968,6 +3321,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(
             String componentName,
@@ -2989,6 +3343,7 @@ public class StaticEndpointBuilders {
      * the cache name
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
             String path) {
@@ -3011,6 +3366,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
             String componentName,
@@ -3038,6 +3394,7 @@ public class StaticEndpointBuilders {
      * Name of the Bot in CS to converse with
      * 
      * @param path host:port/botName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(
             String path) {
@@ -3066,6 +3423,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/botName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(
             String componentName,
@@ -3090,6 +3448,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(
             String path) {
@@ -3115,6 +3474,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(
             String componentName,
@@ -3135,6 +3495,7 @@ public class StaticEndpointBuilders {
      * Sets the name of the bean to invoke
      * 
      * @param path beanName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.ClassEndpointBuilder clas(
             String path) {
@@ -3156,6 +3517,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.ClassEndpointBuilder clas(
             String componentName,
@@ -3176,6 +3538,7 @@ public class StaticEndpointBuilders {
      * URL to the cmis repository
      * 
      * @param path cmsUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
             String path) {
@@ -3197,6 +3560,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cmsUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
             String componentName,
@@ -3217,6 +3581,7 @@ public class StaticEndpointBuilders {
      * SMS Provider HOST with scheme
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
             String path) {
@@ -3238,6 +3603,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMEndpointBuilder cmSms(
             String componentName,
@@ -3258,6 +3624,7 @@ public class StaticEndpointBuilders {
      * The URI for the CoAP endpoint
      * 
      * @param path uri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coap(
             String path) {
@@ -3279,6 +3646,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path uri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CoAPEndpointBuilderFactory.CoAPEndpointBuilder coap(
             String componentName,
@@ -3307,6 +3675,7 @@ public class StaticEndpointBuilders {
      * endpoints.
      * 
      * @param path host:port/channelName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(
             String path) {
@@ -3336,6 +3705,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/channelName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(
             String componentName,
@@ -3356,6 +3726,7 @@ public class StaticEndpointBuilders {
      * The API endpoint
      * 
      * @param path apiEndpoint
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory.ConsulEndpointBuilder consul(
             String path) {
@@ -3377,6 +3748,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiEndpoint
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ConsulEndpointBuilderFactory.ConsulEndpointBuilder consul(
             String componentName,
@@ -3395,17 +3767,18 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * Command can be either route or language
-     * The value can be one of: route, language
+     * There are 2 enums and the value can be one of: route, language
      * 
      * Path parameter: language
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * The value can be one of: bean, constant, el, exchangeProperty, file,
-     * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-     * tokenize, xpath, xquery, xtokenize
+     * There are 19 enums and the value can be one of: bean, constant, el,
+     * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
+     * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * @param path command:language
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(
             String path) {
@@ -3423,19 +3796,20 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * Command can be either route or language
-     * The value can be one of: route, language
+     * There are 2 enums and the value can be one of: route, language
      * 
      * Path parameter: language
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * The value can be one of: bean, constant, el, exchangeProperty, file,
-     * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-     * tokenize, xpath, xquery, xtokenize
+     * There are 19 enums and the value can be one of: bean, constant, el,
+     * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
+     * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path command:language
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(
             String componentName,
@@ -3457,6 +3831,7 @@ public class StaticEndpointBuilders {
      * The url for the corda node
      * 
      * @param path node
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
             String path) {
@@ -3479,6 +3854,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path node
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CordaEndpointBuilderFactory.CordaEndpointBuilder corda(
             String componentName,
@@ -3507,6 +3883,7 @@ public class StaticEndpointBuilders {
      * Default value: 8091
      * 
      * @param path protocol:hostname:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
             String path) {
@@ -3536,6 +3913,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:hostname:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(
             String componentName,
@@ -3556,7 +3934,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance
@@ -3569,6 +3947,7 @@ public class StaticEndpointBuilders {
      * Name of the database to use
      * 
      * @param path protocol:hostname:port/database
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory.CouchDbEndpointBuilder couchdb(
             String path) {
@@ -3588,7 +3967,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance
@@ -3603,6 +3982,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:hostname:port/database
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CouchDbEndpointBuilderFactory.CouchDbEndpointBuilder couchdb(
             String componentName,
@@ -3612,6 +3992,7 @@ public class StaticEndpointBuilders {
     /**
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,nosql
      * Since: 2.15
@@ -3633,6 +4014,7 @@ public class StaticEndpointBuilders {
      * Keyspace to use
      * 
      * @param path beanRef:hosts:port/keyspace
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
             String path) {
@@ -3641,6 +4023,7 @@ public class StaticEndpointBuilders {
     /**
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,nosql
      * Since: 2.15
@@ -3664,6 +4047,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanRef:hosts:port/keyspace
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(
             String componentName,
@@ -3685,6 +4069,7 @@ public class StaticEndpointBuilders {
      * The name of the cron trigger
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory.CronEndpointBuilder cron(
             String path) {
@@ -3707,6 +4092,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CronEndpointBuilderFactory.CronEndpointBuilder cron(
             String componentName,
@@ -3727,12 +4113,13 @@ public class StaticEndpointBuilders {
      * Path parameter: cryptoOperation (required)
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.
-     * The value can be one of: sign, verify
+     * There are 2 enums and the value can be one of: sign, verify
      * 
      * Path parameter: name (required)
      * The logical name of this operation.
      * 
      * @param path cryptoOperation:name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(
             String path) {
@@ -3752,7 +4139,7 @@ public class StaticEndpointBuilders {
      * Path parameter: cryptoOperation (required)
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.
-     * The value can be one of: sign, verify
+     * There are 2 enums and the value can be one of: sign, verify
      * 
      * Path parameter: name (required)
      * The logical name of this operation.
@@ -3760,6 +4147,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cryptoOperation:name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(
             String componentName,
@@ -3780,7 +4168,8 @@ public class StaticEndpointBuilders {
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
      * Possible values: sign, verify, encrypt, or decrypt.
-     * The value can be one of: sign, verify, encrypt, decrypt
+     * There are 4 enums and the value can be one of: sign, verify, encrypt,
+     * decrypt
      * 
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
@@ -3788,6 +4177,7 @@ public class StaticEndpointBuilders {
      * context.
      * 
      * @param path cryptoOperation:name
+     * @return the dsl builder
      */
     @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.CryptoCmsEndpointBuilder cryptoCms(
@@ -3808,7 +4198,8 @@ public class StaticEndpointBuilders {
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
      * Possible values: sign, verify, encrypt, or decrypt.
-     * The value can be one of: sign, verify, encrypt, decrypt
+     * There are 4 enums and the value can be one of: sign, verify, encrypt,
+     * decrypt
      * 
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
@@ -3818,6 +4209,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cryptoOperation:name
+     * @return the dsl builder
      */
     @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.CryptoCmsEndpointBuilder cryptoCms(
@@ -3843,6 +4235,7 @@ public class StaticEndpointBuilders {
      * The service publish address.
      * 
      * @param path beanId:address
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
             String path) {
@@ -3868,6 +4261,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanId:address
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(
             String componentName,
@@ -3893,6 +4287,7 @@ public class StaticEndpointBuilders {
      * The service publish address.
      * 
      * @param path beanId:address
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.CxfRsEndpointBuilder cxfrs(
             String path) {
@@ -3919,6 +4314,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanId:address
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.CxfRsEndpointBuilder cxfrs(
             String componentName,
@@ -3940,9 +4336,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
-     * The value can be one of: marshal, unmarshal
+     * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param path name:operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(
             String path) {
@@ -3963,11 +4360,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
-     * The value can be one of: marshal, unmarshal
+     * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name:operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(
             String componentName,
@@ -3976,7 +4374,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Dataset (camel-dataset)
-     * Provide data for load & soak testing of your Camel application.
+     * Provide data for load and soak testing of your Camel application.
      * 
      * Category: core,testing
      * Since: 1.3
@@ -3988,6 +4386,7 @@ public class StaticEndpointBuilders {
      * Name of DataSet to lookup in the registry
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.DataSetEndpointBuilder dataset(
             String path) {
@@ -3995,7 +4394,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Dataset (camel-dataset)
-     * Provide data for load & soak testing of your Camel application.
+     * Provide data for load and soak testing of your Camel application.
      * 
      * Category: core,testing
      * Since: 1.3
@@ -4009,6 +4408,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DataSetEndpointBuilderFactory.DataSetEndpointBuilder dataset(
             String componentName,
@@ -4031,6 +4431,7 @@ public class StaticEndpointBuilders {
      * used for testing
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(
             String path) {
@@ -4054,6 +4455,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(
             String componentName,
@@ -4075,6 +4477,7 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(
             String path) {
@@ -4097,6 +4500,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(
             String componentName,
@@ -4118,6 +4522,7 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(
             String path) {
@@ -4140,6 +4545,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(
             String componentName,
@@ -4161,6 +4567,7 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(
             String path) {
@@ -4183,6 +4590,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(
             String componentName,
@@ -4204,6 +4612,7 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(
             String path) {
@@ -4226,6 +4635,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(
             String componentName,
@@ -4244,14 +4654,16 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation
      * The operation to perform to the given resource.
-     * The value can be one of: create, update, delete, list, ownList, get,
-     * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-     * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-     * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-     * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
-     * transfer, convert, attach, detach, assign, unassign, tag, untag
+     * There are 36 enums and the value can be one of: create, update, delete,
+     * list, ownList, get, listBackups, listActions, listNeighbors,
+     * listSnapshots, listKernels, listAllNeighbors, enableBackups,
+     * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore,
+     * resetPassword, resize, rebuild, rename, changeKernel, enableIpv6,
+     * enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach,
+     * assign, unassign, tag, untag
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(
             String path) {
@@ -4269,16 +4681,18 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation
      * The operation to perform to the given resource.
-     * The value can be one of: create, update, delete, list, ownList, get,
-     * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-     * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-     * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-     * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
-     * transfer, convert, attach, detach, assign, unassign, tag, untag
+     * There are 36 enums and the value can be one of: create, update, delete,
+     * list, ownList, get, listBackups, listActions, listNeighbors,
+     * listSnapshots, listKernels, listAllNeighbors, enableBackups,
+     * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore,
+     * resetPassword, resize, rebuild, rename, changeKernel, enableIpv6,
+     * enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach,
+     * assign, unassign, tag, untag
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(
             String componentName,
@@ -4299,6 +4713,7 @@ public class StaticEndpointBuilders {
      * Name of direct endpoint
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.DirectEndpointBuilder direct(
             String path) {
@@ -4320,6 +4735,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.DirectEndpointBuilder direct(
             String componentName,
@@ -4341,6 +4757,7 @@ public class StaticEndpointBuilders {
      * Name of direct-vm endpoint
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
             String path) {
@@ -4363,6 +4780,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
             String componentName,
@@ -4383,6 +4801,7 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(
             String path) {
@@ -4404,6 +4823,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(
             String componentName,
@@ -4424,6 +4844,7 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(
             String path) {
@@ -4445,6 +4866,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(
             String componentName,
@@ -4466,6 +4888,7 @@ public class StaticEndpointBuilders {
      * Application name
      * 
      * @param path application
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.DJLEndpointBuilder djl(
             String path) {
@@ -4488,6 +4911,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path application
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.DJLEndpointBuilder djl(
             String componentName,
@@ -4506,9 +4930,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * The value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param path dnsType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
             String path) {
@@ -4526,11 +4951,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * The value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dnsType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DnsEndpointBuilderFactory.DnsEndpointBuilder dns(
             String componentName,
@@ -4549,9 +4975,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Which operation to use
-     * The value can be one of: events, stats, auth, info, ping, version,
-     * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-     * imagepushimageremove, imagesearch, imagetag, containerattach,
+     * There are 31 enums and the value can be one of: events, stats, auth,
+     * info, ping, version, imagebuild, imagecreate, imageinspect, imagelist,
+     * imagepull, imagepushimageremove, imagesearch, imagetag, containerattach,
      * containercommit, containercopyfile, containercreate,
      * containerdiffinspectcontainer, containerkill, containerlist,
      * containerlog, containerpause, containerrestart, containerremove,
@@ -4559,6 +4985,7 @@ public class StaticEndpointBuilders {
      * containerwait, execcreate, execstart
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String path) {
@@ -4576,9 +5003,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Which operation to use
-     * The value can be one of: events, stats, auth, info, ping, version,
-     * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-     * imagepushimageremove, imagesearch, imagetag, containerattach,
+     * There are 31 enums and the value can be one of: events, stats, auth,
+     * info, ping, version, imagebuild, imagecreate, imageinspect, imagelist,
+     * imagepull, imagepushimageremove, imagesearch, imagetag, containerattach,
      * containercommit, containercopyfile, containercreate,
      * containerdiffinspectcontainer, containerkill, containerlist,
      * containerlog, containerpause, containerrestart, containerremove,
@@ -4588,6 +5015,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.DockerEndpointBuilder docker(
             String componentName,
@@ -4608,6 +5036,7 @@ public class StaticEndpointBuilders {
      * A human readable name of the mapping.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.DozerEndpointBuilder dozer(
             String path) {
@@ -4629,6 +5058,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.DozerEndpointBuilder dozer(
             String componentName,
@@ -4649,6 +5079,7 @@ public class StaticEndpointBuilders {
      * Host name or IP address
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.DrillEndpointBuilder drill(
             String path) {
@@ -4670,6 +5101,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DrillEndpointBuilderFactory.DrillEndpointBuilder drill(
             String componentName,
@@ -4690,9 +5122,11 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.DropboxEndpointBuilder dropbox(
             String path) {
@@ -4712,11 +5146,13 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.DropboxEndpointBuilderFactory.DropboxEndpointBuilder dropbox(
             String componentName,
@@ -4737,6 +5173,7 @@ public class StaticEndpointBuilders {
      * the cache name
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.EhcacheEndpointBuilder ehcache(
             String path) {
@@ -4758,6 +5195,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.EhcacheEndpointBuilder ehcache(
             String componentName,
@@ -4778,6 +5216,7 @@ public class StaticEndpointBuilders {
      * Name of the cluster
      * 
      * @param path clusterName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
             String path) {
@@ -4799,6 +5238,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
             String componentName,
@@ -4826,6 +5266,7 @@ public class StaticEndpointBuilders {
      * not have to configure this on the endpoint.
      * 
      * @param path elsqlName:resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
             String path) {
@@ -4854,6 +5295,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path elsqlName:resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ElsqlEndpointBuilderFactory.ElsqlEndpointBuilder elsql(
             String componentName,
@@ -4874,6 +5316,7 @@ public class StaticEndpointBuilders {
      * The path the endpoint refers to
      * 
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysEndpointBuilder etcdKeys(
             String path) {
@@ -4895,6 +5338,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EtcdKeysEndpointBuilderFactory.EtcdKeysEndpointBuilder etcdKeys(
             String componentName,
@@ -4915,6 +5359,7 @@ public class StaticEndpointBuilders {
      * The path the endpoint refers to
      * 
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsEndpointBuilder etcdStats(
             String path) {
@@ -4936,6 +5381,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EtcdStatsEndpointBuilderFactory.EtcdStatsEndpointBuilder etcdStats(
             String componentName,
@@ -4956,6 +5402,7 @@ public class StaticEndpointBuilders {
      * The path the endpoint refers to
      * 
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchEndpointBuilder etcdWatch(
             String path) {
@@ -4977,6 +5424,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EtcdWatchEndpointBuilderFactory.EtcdWatchEndpointBuilder etcdWatch(
             String componentName,
@@ -4998,6 +5446,7 @@ public class StaticEndpointBuilders {
      * null.
      * 
      * @param path executable
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.ExecEndpointBuilder exec(
             String path) {
@@ -5020,6 +5469,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path executable
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ExecEndpointBuilderFactory.ExecEndpointBuilder exec(
             String componentName,
@@ -5040,6 +5490,7 @@ public class StaticEndpointBuilders {
      * What operation to perform
      * 
      * @param path methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookEndpointBuilder facebook(
             String path) {
@@ -5061,6 +5512,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FacebookEndpointBuilderFactory.FacebookEndpointBuilder facebook(
             String componentName,
@@ -5080,13 +5532,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: capabilities, create, delete, history,
-     * load-page, meta, patch, read, search, transaction, update, validate
+     * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
+     * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
+     * TRANSACTION, UPDATE, VALIDATE
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.FhirEndpointBuilder fhir(
             String path) {
@@ -5105,8 +5559,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: capabilities, create, delete, history,
-     * load-page, meta, patch, read, search, transaction, update, validate
+     * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
+     * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
+     * TRANSACTION, UPDATE, VALIDATE
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5114,6 +5569,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FhirEndpointBuilderFactory.FhirEndpointBuilder fhir(
             String componentName,
@@ -5134,6 +5590,7 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param path directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileEndpointBuilder file(
             String path) {
@@ -5155,6 +5612,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileEndpointBuilder file(
             String componentName,
@@ -5176,6 +5634,7 @@ public class StaticEndpointBuilders {
      * Path of directory to consume events from.
      * 
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
             String path) {
@@ -5198,6 +5657,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(
             String componentName,
@@ -5217,12 +5677,13 @@ public class StaticEndpointBuilders {
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
-     * The value can be one of: fixed, delim
+     * There are 2 enums and the value can be one of: fixed, delim
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
      * 
      * @param path type:resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.FlatpackEndpointBuilder flatpack(
             String path) {
@@ -5241,7 +5702,7 @@ public class StaticEndpointBuilders {
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
-     * The value can be one of: fixed, delim
+     * There are 2 enums and the value can be one of: fixed, delim
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
@@ -5249,6 +5710,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type:resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FlatpackEndpointBuilderFactory.FlatpackEndpointBuilder flatpack(
             String componentName,
@@ -5267,9 +5729,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
-     * The value can be one of: dataset, datastream
+     * There are 2 enums and the value can be one of: dataset, datastream
      * 
      * @param path endpointType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
             String path) {
@@ -5287,11 +5750,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
-     * The value can be one of: dataset, datastream
+     * There are 2 enums and the value can be one of: dataset, datastream
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(
             String componentName,
@@ -5312,9 +5776,11 @@ public class StaticEndpointBuilders {
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
-     * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
+     * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
+     * svg, xml, mif, rtf, txt
      * 
      * @param path outputType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.FopEndpointBuilder fop(
             String path) {
@@ -5334,11 +5800,13 @@ public class StaticEndpointBuilders {
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
-     * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
+     * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
+     * svg, xml, mif, rtf, txt
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path outputType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FopEndpointBuilderFactory.FopEndpointBuilder fop(
             String componentName,
@@ -5363,6 +5831,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(
             String path) {
@@ -5388,6 +5857,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(
             String componentName,
@@ -5414,6 +5884,7 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.FtpEndpointBuilder ftp(
             String path) {
@@ -5441,6 +5912,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.FtpEndpointBuilder ftp(
             String componentName,
@@ -5468,6 +5940,7 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.FtpsEndpointBuilder ftps(
             String path) {
@@ -5496,6 +5969,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.FtpsEndpointBuilder ftps(
             String componentName,
@@ -5521,6 +5995,7 @@ public class StaticEndpointBuilders {
      * Default value: 8649
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
             String path) {
@@ -5547,6 +6022,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GangliaEndpointBuilderFactory.GangliaEndpointBuilder ganglia(
             String componentName,
@@ -5571,6 +6047,7 @@ public class StaticEndpointBuilders {
      * The geo latitude and longitude which should be prefixed with latlng:
      * 
      * @param path address:latlng
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderEndpointBuilder geocoder(
             String path) {
@@ -5596,6 +6073,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path address:latlng
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderEndpointBuilder geocoder(
             String componentName,
@@ -5616,6 +6094,7 @@ public class StaticEndpointBuilders {
      * Local repository path
      * 
      * @param path localPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitEndpointBuilder git(
             String path) {
@@ -5637,6 +6116,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path localPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitEndpointBuilder git(
             String componentName,
@@ -5655,14 +6135,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT,
-     * PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE,
-     * CREATEISSUE
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
      * 
      * Path parameter: branchName
      * Name of branch
      * 
      * @param path type/branchName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(
             String path) {
@@ -5680,9 +6161,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT,
-     * PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE,
-     * CREATEISSUE
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
      * 
      * Path parameter: branchName
      * Name of branch
@@ -5690,6 +6171,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type/branchName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(
             String componentName,
@@ -5716,6 +6198,7 @@ public class StaticEndpointBuilders {
      * BigQuery table id
      * 
      * @param path projectId:datasetId:tableId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(
             String path) {
@@ -5743,6 +6226,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:datasetId:tableId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(
             String componentName,
@@ -5766,6 +6250,7 @@ public class StaticEndpointBuilders {
      * Google Cloud Project Id
      * 
      * @param path projectId:query
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
             String path) {
@@ -5790,6 +6275,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:query
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
             String componentName,
@@ -5808,15 +6294,17 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-     * FREEBUSY, EVENTS, SETTINGS
+     * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+     * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: calendarImport, clear, delete, get, insert,
-     * instances, list, move, patch, query, quickAdd, stop, update, watch
+     * There are 14 enums and the value can be one of: calendarImport, clear,
+     * delete, get, insert, instances, list, move, patch, query, quickAdd, stop,
+     * update, watch
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(
             String path) {
@@ -5834,17 +6322,19 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-     * FREEBUSY, EVENTS, SETTINGS
+     * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+     * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: calendarImport, clear, delete, get, insert,
-     * instances, list, move, patch, query, quickAdd, stop, update, watch
+     * There are 14 enums and the value can be one of: calendarImport, clear,
+     * delete, get, insert, instances, list, move, patch, query, quickAdd, stop,
+     * update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(
             String componentName,
@@ -5861,10 +6351,11 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-calendar-stream:index</code>
      * 
-     * Path parameter: index
+     * Path parameter: index (required)
      * Specifies an index for the endpoint
      * 
      * @param path index
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(
             String path) {
@@ -5880,12 +6371,13 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-calendar-stream:index</code>
      * 
-     * Path parameter: index
+     * Path parameter: index (required)
      * Specifies an index for the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path index
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(
             String componentName,
@@ -5904,17 +6396,19 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: drive-about, drive-apps, drive-changes,
-     * drive-channels, drive-children, drive-comments, drive-files,
-     * drive-parents, drive-permissions, drive-properties, drive-realtime,
-     * drive-replies, drive-revisions
+     * There are 13 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
+     * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS,
+     * DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES,
+     * DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
-     * patch, stop, touch, trash, untrash, update, watch
+     * There are 13 enums and the value can be one of: copy, delete, get,
+     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
+     * watch
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(
             String path) {
@@ -5932,19 +6426,21 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: drive-about, drive-apps, drive-changes,
-     * drive-channels, drive-children, drive-comments, drive-files,
-     * drive-parents, drive-permissions, drive-properties, drive-realtime,
-     * drive-replies, drive-revisions
+     * There are 13 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
+     * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS,
+     * DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES,
+     * DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
-     * patch, stop, touch, trash, untrash, update, watch
+     * There are 13 enums and the value can be one of: copy, delete, get,
+     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
+     * watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(
             String componentName,
@@ -5963,16 +6459,17 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY,
-     * DRAFTS, USERS
+     * There are 7 enums and the value can be one of: THREADS, MESSAGES,
+     * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: attachments, create, delete, get, getProfile,
-     * gmailImport, insert, list, modify, patch, send, stop, trash, untrash,
-     * update, watch
+     * There are 16 enums and the value can be one of: attachments, create,
+     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
+     * stop, trash, untrash, update, watch
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(
             String path) {
@@ -5990,18 +6487,19 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY,
-     * DRAFTS, USERS
+     * There are 7 enums and the value can be one of: THREADS, MESSAGES,
+     * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: attachments, create, delete, get, getProfile,
-     * gmailImport, insert, list, modify, patch, send, stop, trash, untrash,
-     * update, watch
+     * There are 16 enums and the value can be one of: attachments, create,
+     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
+     * stop, trash, untrash, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(
             String componentName,
@@ -6012,16 +6510,17 @@ public class StaticEndpointBuilders {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: api,cloud,mail
+     * Category: cloud,api,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
      * Syntax: <code>google-mail-stream:index</code>
      * 
-     * Path parameter: index
-     * Specifies an index for the endpoint
+     * Path parameter: index (required)
+     * Currently not in use
      * 
      * @param path index
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(
             String path) {
@@ -6031,18 +6530,19 @@ public class StaticEndpointBuilders {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: api,cloud,mail
+     * Category: cloud,api,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
      * Syntax: <code>google-mail-stream:index</code>
      * 
-     * Path parameter: index
-     * Specifies an index for the endpoint
+     * Path parameter: index (required)
+     * Currently not in use
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path index
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(
             String componentName,
@@ -6066,6 +6566,7 @@ public class StaticEndpointBuilders {
      * Destination Name
      * 
      * @param path projectId:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(
             String path) {
@@ -6090,6 +6591,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(
             String componentName,
@@ -6108,13 +6610,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: SPREADSHEETS, DATA
+     * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, get, update, append, batchUpdate, clear
+     * There are 6 enums and the value can be one of: create, get, update,
+     * append, batchUpdate, clear
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(
             String path) {
@@ -6132,15 +6636,17 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: SPREADSHEETS, DATA
+     * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, get, update, append, batchUpdate, clear
+     * There are 6 enums and the value can be one of: create, get, update,
+     * append, batchUpdate, clear
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(
             String componentName,
@@ -6157,10 +6663,11 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-sheets-stream:apiName</code>
      * 
-     * Path parameter: apiName
+     * Path parameter: apiName (required)
      * Sets the apiName.
      * 
      * @param path apiName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
             String path) {
@@ -6176,12 +6683,13 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-sheets-stream:apiName</code>
      * 
-     * Path parameter: apiName
+     * Path parameter: apiName (required)
      * Sets the apiName.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
             String componentName,
@@ -6202,6 +6710,7 @@ public class StaticEndpointBuilders {
      * Instance name
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
             String path) {
@@ -6223,6 +6732,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
             String componentName,
@@ -6244,6 +6754,7 @@ public class StaticEndpointBuilders {
      * Maven coordinates to use as default to grab if the message body is empty.
      * 
      * @param path defaultCoordinates
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(
             String path) {
@@ -6266,6 +6777,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path defaultCoordinates
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(
             String componentName,
@@ -6286,6 +6798,7 @@ public class StaticEndpointBuilders {
      * The GraphQL server URI.
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory.GraphqlEndpointBuilder graphql(
             String path) {
@@ -6307,6 +6820,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory.GraphqlEndpointBuilder graphql(
             String componentName,
@@ -6335,6 +6849,7 @@ public class StaticEndpointBuilders {
      * (package dot service definition name)
      * 
      * @param path host:port/service
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(
             String path) {
@@ -6364,6 +6879,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/service
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(
             String componentName,
@@ -6384,6 +6900,7 @@ public class StaticEndpointBuilders {
      * To lookup the Guava EventBus from the registry with the given name
      * 
      * @param path eventBusRef
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(
             String path) {
@@ -6405,6 +6922,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path eventBusRef
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(
             String componentName,
@@ -6426,6 +6944,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
             String path) {
@@ -6448,6 +6967,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
             String componentName,
@@ -6468,6 +6988,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(
             String path) {
@@ -6489,6 +7010,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(
             String componentName,
@@ -6509,6 +7031,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(
             String path) {
@@ -6530,6 +7053,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(
             String componentName,
@@ -6550,6 +7074,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(
             String path) {
@@ -6571,6 +7096,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(
             String componentName,
@@ -6591,6 +7117,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(
             String path) {
@@ -6612,6 +7139,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(
             String componentName,
@@ -6632,6 +7160,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(
             String path) {
@@ -6653,6 +7182,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(
             String componentName,
@@ -6673,6 +7203,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
             String path) {
@@ -6694,6 +7225,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
             String componentName,
@@ -6714,6 +7246,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
             String path) {
@@ -6735,6 +7268,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
             String componentName,
@@ -6756,6 +7290,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(
             String path) {
@@ -6778,6 +7313,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(
             String componentName,
@@ -6798,6 +7334,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(
             String path) {
@@ -6819,6 +7356,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(
             String componentName,
@@ -6839,6 +7377,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(
             String path) {
@@ -6860,6 +7399,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(
             String componentName,
@@ -6880,6 +7420,7 @@ public class StaticEndpointBuilders {
      * The name of the table
      * 
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
             String path) {
@@ -6901,6 +7442,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
             String componentName,
@@ -6928,6 +7470,7 @@ public class StaticEndpointBuilders {
      * The directory path to use
      * 
      * @param path hostName:port/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
             String path) {
@@ -6956,66 +7499,12 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostName:port/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.HdfsEndpointBuilder hdfs(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.HdfsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Hipchat (camel-hipchat)
-     * Send and receive messages to/from Hipchat service.
-     * 
-     * Category: api,chat,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-hipchat
-     * 
-     * Syntax: <code>hipchat:protocol:host:port</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol for the hipchat server, such as http.
-     * 
-     * Path parameter: host (required)
-     * The host for the hipchat server, such as api.hipchat.com
-     * 
-     * Path parameter: port
-     * The port for the hipchat server. Is by default 80.
-     * Default value: 80
-     * 
-     * @param path protocol:host:port
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.HipchatEndpointBuilder hipchat(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.endpointBuilder("hipchat", path);
-    }
-    /**
-     * Hipchat (camel-hipchat)
-     * Send and receive messages to/from Hipchat service.
-     * 
-     * Category: api,chat,cloud
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-hipchat
-     * 
-     * Syntax: <code>hipchat:protocol:host:port</code>
-     * 
-     * Path parameter: protocol (required)
-     * The protocol for the hipchat server, such as http.
-     * 
-     * Path parameter: host (required)
-     * The host for the hipchat server, such as api.hipchat.com
-     * 
-     * Path parameter: port
-     * The port for the hipchat server. Is by default 80.
-     * Default value: 80
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path protocol:host:port
-     */
-    public static org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.HipchatEndpointBuilder hipchat(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HipchatEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * HTTP (camel-http)
@@ -7031,6 +7520,7 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to call.
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
             String path) {
@@ -7052,6 +7542,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpEndpointBuilder http(
             String componentName,
@@ -7073,6 +7564,7 @@ public class StaticEndpointBuilders {
      * The object information address
      * 
      * @param path uriPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(
             String path) {
@@ -7095,6 +7587,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path uriPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(
             String componentName,
@@ -7116,6 +7609,7 @@ public class StaticEndpointBuilders {
      * The object information address
      * 
      * @param path uriPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(
             String path) {
@@ -7138,6 +7632,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path uriPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(
             String componentName,
@@ -7159,6 +7654,7 @@ public class StaticEndpointBuilders {
      * The cache name.
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(
             String path) {
@@ -7181,6 +7677,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(
             String componentName,
@@ -7201,6 +7698,7 @@ public class StaticEndpointBuilders {
      * The endpoint ID (not used).
      * 
      * @param path endpointId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(
             String path) {
@@ -7222,6 +7720,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(
             String componentName,
@@ -7242,6 +7741,7 @@ public class StaticEndpointBuilders {
      * The endpoint ID (not used).
      * 
      * @param path endpointId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(
             String path) {
@@ -7263,6 +7763,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(
             String componentName,
@@ -7283,6 +7784,7 @@ public class StaticEndpointBuilders {
      * The sequence name.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(
             String path) {
@@ -7304,6 +7806,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(
             String componentName,
@@ -7324,6 +7827,7 @@ public class StaticEndpointBuilders {
      * The topic name.
      * 
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(
             String path) {
@@ -7345,6 +7849,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(
             String componentName,
@@ -7365,6 +7870,7 @@ public class StaticEndpointBuilders {
      * The queue name.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(
             String path) {
@@ -7386,6 +7892,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(
             String componentName,
@@ -7406,6 +7913,7 @@ public class StaticEndpointBuilders {
      * The set name.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(
             String path) {
@@ -7427,6 +7935,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(
             String componentName,
@@ -7450,6 +7959,7 @@ public class StaticEndpointBuilders {
      * The port number of the mail server
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imap(
             String path) {
@@ -7474,6 +7984,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MailEndpointBuilderFactory.MailEndpointBuilder imap(
             String componentName,
@@ -7497,6 +8008,7 @@ public class StaticEndpointBuilders {
      * default cache manager name.
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.InfinispanEndpointBuilder infinispan(
             String path) {
@@ -7521,6 +8033,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.InfinispanEndpointBuilder infinispan(
             String componentName,
@@ -7541,6 +8054,7 @@ public class StaticEndpointBuilders {
      * Connection to the influx database, of class InfluxDB.class
      * 
      * @param path connectionBean
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.InfluxDbEndpointBuilder influxdb(
             String path) {
@@ -7562,6 +8076,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.InfluxDbEndpointBuilder influxdb(
             String componentName,
@@ -7582,6 +8097,7 @@ public class StaticEndpointBuilders {
      * Component name
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.IOTAEndpointBuilder iota(
             String path) {
@@ -7603,6 +8119,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.IOTAEndpointBuilder iota(
             String componentName,
@@ -7621,9 +8138,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: ipfsCmd (required)
      * The ipfs command
-     * The value can be one of: add, cat, get, version
+     * There are 4 enums and the value can be one of: add, cat, get, version
      * 
      * @param path ipfsCmd
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.IPFSEndpointBuilder ipfs(
             String path) {
@@ -7641,11 +8159,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: ipfsCmd (required)
      * The ipfs command
-     * The value can be one of: add, cat, get, version
+     * There are 4 enums and the value can be one of: add, cat, get, version
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path ipfsCmd
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IPFSEndpointBuilderFactory.IPFSEndpointBuilder ipfs(
             String componentName,
@@ -7670,6 +8189,7 @@ public class StaticEndpointBuilders {
      * default port of either 6667, 6668 or 6669 is used.
      * 
      * @param path hostname:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory.IrcEndpointBuilder irc(
             String path) {
@@ -7695,6 +8215,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostname:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory.IrcEndpointBuilder irc(
             String componentName,
@@ -7716,6 +8237,7 @@ public class StaticEndpointBuilders {
      * The name of the IronMQ queue
      * 
      * @param path queueName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(
             String path) {
@@ -7738,6 +8260,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path queueName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(
             String componentName,
@@ -7761,6 +8284,7 @@ public class StaticEndpointBuilders {
      * Sets the event listener type to attach to
      * 
      * @param path connectionURL
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.JBPMEndpointBuilder jbpm(
             String path) {
@@ -7785,6 +8309,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionURL
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.JBPMEndpointBuilder jbpm(
             String componentName,
@@ -7805,6 +8330,7 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.JCacheEndpointBuilder jcache(
             String path) {
@@ -7826,6 +8352,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.JCacheEndpointBuilder jcache(
             String componentName,
@@ -7834,7 +8361,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JClouds (camel-jclouds)
-     * Interact with jclouds compute & blobstore service.
+     * Interact with jclouds compute and blobstore service.
      * 
      * Category: api,cloud,compute
      * Since: 2.9
@@ -7844,13 +8371,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * What command to execute such as blobstore or compute.
-     * The value can be one of: blobstore, compute
+     * There are 2 enums and the value can be one of: blobstore, compute
      * 
      * Path parameter: providerId (required)
      * The name of the cloud provider that provides the target service (e.g.
      * aws-s3 or aws_ec2).
      * 
      * @param path command:providerId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.JcloudsEndpointBuilder jclouds(
             String path) {
@@ -7858,7 +8386,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JClouds (camel-jclouds)
-     * Interact with jclouds compute & blobstore service.
+     * Interact with jclouds compute and blobstore service.
      * 
      * Category: api,cloud,compute
      * Since: 2.9
@@ -7868,7 +8396,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * What command to execute such as blobstore or compute.
-     * The value can be one of: blobstore, compute
+     * There are 2 enums and the value can be one of: blobstore, compute
      * 
      * Path parameter: providerId (required)
      * The name of the cloud provider that provides the target service (e.g.
@@ -7877,6 +8405,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path command:providerId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.JcloudsEndpointBuilder jclouds(
             String componentName,
@@ -7901,6 +8430,7 @@ public class StaticEndpointBuilders {
      * Get the base node when accessing the repository
      * 
      * @param path host/base
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
             String path) {
@@ -7926,6 +8456,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host/base
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(
             String componentName,
@@ -7949,6 +8480,7 @@ public class StaticEndpointBuilders {
      * found, then this DataSource will be used.
      * 
      * @param path dataSourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory.JdbcEndpointBuilder jdbc(
             String path) {
@@ -7973,6 +8505,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dataSourceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory.JdbcEndpointBuilder jdbc(
             String componentName,
@@ -7993,6 +8526,7 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to call.
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
             String path) {
@@ -8014,6 +8548,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
             String componentName,
@@ -8034,6 +8569,7 @@ public class StaticEndpointBuilders {
      * The name of the JGroups cluster the component should connect to.
      * 
      * @param path clusterName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory.JGroupsEndpointBuilder jgroups(
             String path) {
@@ -8055,6 +8591,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory.JGroupsEndpointBuilder jgroups(
             String componentName,
@@ -8075,6 +8612,7 @@ public class StaticEndpointBuilders {
      * The name of the JGroupsraft cluster the component should connect to.
      * 
      * @param path clusterName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(
             String path) {
@@ -8096,6 +8634,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(
             String componentName,
@@ -8119,6 +8658,7 @@ public class StaticEndpointBuilders {
      * validate against.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
             String path) {
@@ -8143,6 +8683,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JingEndpointBuilderFactory.JingEndpointBuilder jing(
             String componentName,
@@ -8163,11 +8704,13 @@ public class StaticEndpointBuilders {
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
-     * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
-     * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+     * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
+     * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
+     * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
+     * FETCHCOMMENTS
      * 
      * @param path type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JiraEndpointBuilderFactory.JiraEndpointBuilder jira(
             String path) {
@@ -8187,13 +8730,15 @@ public class StaticEndpointBuilders {
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
-     * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
-     * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+     * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
+     * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
+     * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
+     * FETCHCOMMENTS
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JiraEndpointBuilderFactory.JiraEndpointBuilder jira(
             String componentName,
@@ -8213,12 +8758,14 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      * 
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JmsEndpointBuilderFactory.JmsEndpointBuilder jms(
             String path) {
@@ -8237,7 +8784,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -8245,6 +8793,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JmsEndpointBuilderFactory.JmsEndpointBuilder jms(
             String componentName,
@@ -8266,6 +8815,7 @@ public class StaticEndpointBuilders {
      * local JVM.
      * 
      * @param path serverURL
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory.JMXEndpointBuilder jmx(
             String path) {
@@ -8288,6 +8838,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path serverURL
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory.JMXEndpointBuilder jmx(
             String componentName,
@@ -8312,6 +8863,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.JoltEndpointBuilder jolt(
             String path) {
@@ -8337,6 +8889,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JoltEndpointBuilderFactory.JoltEndpointBuilder jolt(
             String componentName,
@@ -8357,6 +8910,7 @@ public class StaticEndpointBuilders {
      * JOOQ entity class
      * 
      * @param path entityType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.JooqEndpointBuilder jooq(
             String path) {
@@ -8378,6 +8932,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path entityType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JooqEndpointBuilderFactory.JooqEndpointBuilder jooq(
             String componentName,
@@ -8399,6 +8954,7 @@ public class StaticEndpointBuilders {
      * Entity class name
      * 
      * @param path entityType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
             String path) {
@@ -8421,6 +8977,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path entityType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(
             String componentName,
@@ -8445,6 +9002,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
             String path) {
@@ -8470,6 +9028,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(
             String componentName,
@@ -8477,8 +9036,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
@@ -8494,14 +9053,15 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder("jsonata", path);
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
@@ -8519,6 +9079,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(
             String componentName,
@@ -8543,6 +9104,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(
             String path) {
@@ -8568,6 +9130,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(
             String componentName,
@@ -8601,9 +9164,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Whether to work with data queues or remote program call
-     * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+     * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
      * @param path userID:password/systemName/objectPath.type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
             String path) {
@@ -8636,11 +9200,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Whether to work with data queues or remote program call
-     * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+     * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path userID:password/systemName/objectPath.type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(
             String componentName,
@@ -8662,6 +9227,7 @@ public class StaticEndpointBuilders {
      * multiple topics. A producer can only send a message to a single topic.
      * 
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.KafkaEndpointBuilder kafka(
             String path) {
@@ -8684,6 +9250,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.KafkaEndpointBuilder kafka(
             String componentName,
@@ -8705,6 +9272,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
             String path) {
@@ -8727,11 +9295,57 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Kubernetes Custom Resources (camel-kubernetes)
+     * Perform operations on Kubernetes Custom Resources and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.endpointBuilder("kubernetes-custom-resources", path);
+    }
+    /**
+     * Kubernetes Custom Resources (camel-kubernetes)
+     * Perform operations on Kubernetes Custom Resources and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Kubernetes Deployments (camel-kubernetes)
@@ -8748,6 +9362,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
             String path) {
@@ -8770,6 +9385,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
             String componentName,
@@ -8791,6 +9407,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(
             String path) {
@@ -8813,6 +9430,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(
             String componentName,
@@ -8833,6 +9451,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(
             String path) {
@@ -8854,6 +9473,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(
             String componentName,
@@ -8875,6 +9495,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
             String path) {
@@ -8897,6 +9518,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
             String componentName,
@@ -8917,6 +9539,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(
             String path) {
@@ -8938,6 +9561,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(
             String componentName,
@@ -8959,6 +9583,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
             String path) {
@@ -8981,6 +9606,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
             String componentName,
@@ -9002,6 +9628,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
             String path) {
@@ -9024,6 +9651,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
             String componentName,
@@ -9044,6 +9672,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(
             String path) {
@@ -9065,6 +9694,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(
             String componentName,
@@ -9086,6 +9716,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
             String path) {
@@ -9108,6 +9739,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
             String componentName,
@@ -9128,6 +9760,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
             String path) {
@@ -9149,6 +9782,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
             String componentName,
@@ -9169,6 +9803,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(
             String path) {
@@ -9190,6 +9825,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(
             String componentName,
@@ -9210,6 +9846,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String path) {
@@ -9231,6 +9868,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String componentName,
@@ -9252,6 +9890,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(
             String path) {
@@ -9274,6 +9913,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(
             String componentName,
@@ -9301,6 +9941,7 @@ public class StaticEndpointBuilders {
      * Table to connect to
      * 
      * @param path host:port/tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.KuduEndpointBuilder kudu(
             String path) {
@@ -9329,6 +9970,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/tableName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KuduEndpointBuilderFactory.KuduEndpointBuilder kudu(
             String componentName,
@@ -9347,15 +9989,16 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * The value can be one of: bean, constant, exchangeProperty, file, groovy,
-     * header, javascript, jsonpath, mvel, ognl, , ref, simple, spel, sql,
-     * terser, tokenize, xpath, xquery, xtokenize
+     * There are 20 enums and the value can be one of: bean, constant,
+     * exchangeProperty, file, groovy, header, javascript, jsonpath, mvel, ognl,
+     * , ref, simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
      * 
      * @param path languageName:resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.LanguageEndpointBuilder language(
             String path) {
@@ -9373,9 +10016,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * The value can be one of: bean, constant, exchangeProperty, file, groovy,
-     * header, javascript, jsonpath, mvel, ognl, , ref, simple, spel, sql,
-     * terser, tokenize, xpath, xquery, xtokenize
+     * There are 20 enums and the value can be one of: bean, constant,
+     * exchangeProperty, file, groovy, header, javascript, jsonpath, mvel, ognl,
+     * , ref, simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -9384,6 +10027,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path languageName:resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LanguageEndpointBuilderFactory.LanguageEndpointBuilder language(
             String componentName,
@@ -9411,6 +10055,7 @@ public class StaticEndpointBuilders {
      * situations it can be better to use java.util.Hashtable or Map instead.
      * 
      * @param path dirContextName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.LdapEndpointBuilder ldap(
             String path) {
@@ -9439,6 +10084,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dirContextName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LdapEndpointBuilderFactory.LdapEndpointBuilder ldap(
             String componentName,
@@ -9461,6 +10107,7 @@ public class StaticEndpointBuilders {
      * using a connection that has timed out.
      * 
      * @param path ldapConnectionName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.LdifEndpointBuilder ldif(
             String path) {
@@ -9484,6 +10131,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path ldapConnectionName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LdifEndpointBuilderFactory.LdifEndpointBuilder ldif(
             String componentName,
@@ -9504,6 +10152,7 @@ public class StaticEndpointBuilders {
      * Name of the logging category to use
      * 
      * @param path loggerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.LogEndpointBuilder log(
             String path) {
@@ -9525,6 +10174,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path loggerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.LogEndpointBuilder log(
             String componentName,
@@ -9551,6 +10201,7 @@ public class StaticEndpointBuilders {
      * Name of the printer
      * 
      * @param path hostname:port/printername
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.PrinterEndpointBuilder lpr(
             String path) {
@@ -9578,6 +10229,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostname:port/printername
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.PrinterEndpointBuilder lpr(
             String componentName,
@@ -9599,9 +10251,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to do such as insert or query.
-     * The value can be one of: insert, query
+     * There are 2 enums and the value can be one of: insert, query
      * 
      * @param path host:operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
             String path) {
@@ -9622,11 +10275,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to do such as insert or query.
-     * The value can be one of: insert, query
+     * There are 2 enums and the value can be one of: insert, query
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(
             String componentName,
@@ -9651,6 +10305,7 @@ public class StaticEndpointBuilders {
      * Default value: 5044
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(
             String path) {
@@ -9676,6 +10331,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(
             String componentName,
@@ -9700,6 +10356,7 @@ public class StaticEndpointBuilders {
      * The endpoint uri to use in master/slave mode
      * 
      * @param path namespace:delegateUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory.MasterEndpointBuilder master(
             String path) {
@@ -9725,6 +10382,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path namespace:delegateUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MasterEndpointBuilderFactory.MasterEndpointBuilder master(
             String componentName,
@@ -9744,12 +10402,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: gauge, counter, histogram, meter, timer
+     * There are 5 enums and the value can be one of: gauge, counter, histogram,
+     * meter, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
      * 
      * @param path metricsType:metricsName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.MetricsEndpointBuilder metrics(
             String path) {
@@ -9768,7 +10428,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: gauge, counter, histogram, meter, timer
+     * There are 5 enums and the value can be one of: gauge, counter, histogram,
+     * meter, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9776,6 +10437,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path metricsType:metricsName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MetricsEndpointBuilderFactory.MetricsEndpointBuilder metrics(
             String componentName,
@@ -9795,8 +10457,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-     * DISTRIBUTION_SUMMARY, OTHER
+     * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+     * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9805,6 +10467,7 @@ public class StaticEndpointBuilders {
      * Tags of metrics
      * 
      * @param path metricsType:metricsName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(
             String path) {
@@ -9823,8 +10486,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-     * DISTRIBUTION_SUMMARY, OTHER
+     * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+     * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9835,6 +10498,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path metricsType:metricsName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(
             String componentName,
@@ -9853,13 +10517,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricType (required)
      * Metric type
-     * The value can be one of: concurrent gauge, counter, gauge, meter,
-     * histogram, timer, simple timer, invalid
+     * There are 8 enums and the value can be one of: concurrent gauge, counter,
+     * gauge, meter, histogram, timer, simple timer, invalid
      * 
      * Path parameter: metricName (required)
      * Metric name
      * 
      * @param path metricType:metricName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
             String path) {
@@ -9877,8 +10542,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricType (required)
      * Metric type
-     * The value can be one of: concurrent gauge, counter, gauge, meter,
-     * histogram, timer, simple timer, invalid
+     * There are 8 enums and the value can be one of: concurrent gauge, counter,
+     * gauge, meter, histogram, timer, simple timer, invalid
      * 
      * Path parameter: metricName (required)
      * Metric name
@@ -9886,6 +10551,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path metricType:metricName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
             String componentName,
@@ -9907,6 +10573,7 @@ public class StaticEndpointBuilders {
      * The OPC UA server endpoint
      * 
      * @param path endpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(
             String path) {
@@ -9929,6 +10596,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(
             String componentName,
@@ -9949,6 +10617,7 @@ public class StaticEndpointBuilders {
      * ID of the item
      * 
      * @param path itemId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(
             String path) {
@@ -9970,6 +10639,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path itemId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(
             String componentName,
@@ -9997,6 +10667,7 @@ public class StaticEndpointBuilders {
      * Port number
      * 
      * @param path protocol:host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.MinaEndpointBuilder mina(
             String path) {
@@ -10025,11 +10696,55 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.MinaEndpointBuilder mina(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Minio (camel-minio)
+     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * 
+     * Category: cloud,file
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * Syntax: <code>minio:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder("minio", path);
+    }
+    /**
+     * Minio (camel-minio)
+     * Store and retrieve objects from Minio Storage Service using Minio SDK.
+     * 
+     * Category: cloud,file
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * Syntax: <code>minio:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioEndpointBuilder minio(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * MLLP (camel-mllp)
@@ -10049,6 +10764,7 @@ public class StaticEndpointBuilders {
      * Port number for the TCP connection
      * 
      * @param path hostname:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.MllpEndpointBuilder mllp(
             String path) {
@@ -10074,6 +10790,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostname:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.MllpEndpointBuilder mllp(
             String componentName,
@@ -10094,6 +10811,7 @@ public class StaticEndpointBuilders {
      * Name of mock endpoint
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.MockEndpointBuilder mock(
             String path) {
@@ -10115,6 +10833,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.MockEndpointBuilder mock(
             String componentName,
@@ -10136,6 +10855,7 @@ public class StaticEndpointBuilders {
      * to a database.
      * 
      * @param path connectionBean
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.MongoDbEndpointBuilder mongodb(
             String path) {
@@ -10158,6 +10878,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MongoDbEndpointBuilderFactory.MongoDbEndpointBuilder mongodb(
             String componentName,
@@ -10178,6 +10899,7 @@ public class StaticEndpointBuilders {
      * Name of com.mongodb.client.MongoClient to use.
      * 
      * @param path connectionBean
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(
             String path) {
@@ -10199,6 +10921,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(
             String componentName,
@@ -10221,6 +10944,7 @@ public class StaticEndpointBuilders {
      * file system which contains the XSD to validate against.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
             String path) {
@@ -10244,6 +10968,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MsvEndpointBuilderFactory.MsvEndpointBuilder msv(
             String componentName,
@@ -10268,6 +10993,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.MustacheEndpointBuilder mustache(
             String path) {
@@ -10293,6 +11019,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MustacheEndpointBuilderFactory.MustacheEndpointBuilder mustache(
             String componentName,
@@ -10317,6 +11044,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.MvelEndpointBuilder mvel(
             String path) {
@@ -10342,6 +11070,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MvelEndpointBuilderFactory.MvelEndpointBuilder mvel(
             String componentName,
@@ -10364,6 +11093,7 @@ public class StaticEndpointBuilders {
      * query, insert, update or delete operation you wish to evaluate.
      * 
      * @param path statement
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.MyBatisEndpointBuilder mybatis(
             String path) {
@@ -10387,6 +11117,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path statement
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MyBatisEndpointBuilderFactory.MyBatisEndpointBuilder mybatis(
             String componentName,
@@ -10412,6 +11143,7 @@ public class StaticEndpointBuilders {
      * Name of the method on the bean that has the SQL query to be executed.
      * 
      * @param path beanName:methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(
             String path) {
@@ -10438,6 +11170,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanName:methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(
             String componentName,
@@ -10461,6 +11194,7 @@ public class StaticEndpointBuilders {
      * The port number of the host.
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
             String path) {
@@ -10485,6 +11219,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NagiosEndpointBuilderFactory.NagiosEndpointBuilder nagios(
             String componentName,
@@ -10505,6 +11240,7 @@ public class StaticEndpointBuilders {
      * The name of topic we want to use
      * 
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.NatsEndpointBuilder nats(
             String path) {
@@ -10526,6 +11262,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NatsEndpointBuilderFactory.NatsEndpointBuilder nats(
             String componentName,
@@ -10544,7 +11281,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
-     * The value can be one of: tcp, udp
+     * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
@@ -10554,6 +11291,7 @@ public class StaticEndpointBuilders {
      * The host port number
      * 
      * @param path protocol:host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
             String path) {
@@ -10571,7 +11309,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
-     * The value can be one of: tcp, udp
+     * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
@@ -10583,6 +11321,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory.NettyEndpointBuilder netty(
             String componentName,
@@ -10602,7 +11341,7 @@ public class StaticEndpointBuilders {
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
      * only option.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
@@ -10615,6 +11354,7 @@ public class StaticEndpointBuilders {
      * Resource path
      * 
      * @param path protocol:host:port/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
             String path) {
@@ -10633,7 +11373,7 @@ public class StaticEndpointBuilders {
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
      * only option.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
@@ -10648,6 +11388,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:host:port/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(
             String componentName,
@@ -10668,6 +11409,7 @@ public class StaticEndpointBuilders {
      * Path to database file. Will be created if not exists.
      * 
      * @param path database
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(
             String path) {
@@ -10689,6 +11431,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path database
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(
             String componentName,
@@ -10710,6 +11453,7 @@ public class StaticEndpointBuilders {
      * The NSQ topic
      * 
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
             String path) {
@@ -10732,11 +11476,57 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.NsqEndpointBuilder nsq(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.NsqEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OAI-PMH (camel-oaipmh)
+     * Harvest metadata using OAI-PMH protocol
+     * 
+     * Category: endpoint,webservice,batch
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-oaipmh
+     * 
+     * Syntax: <code>oaipmh:baseUrl</code>
+     * 
+     * Path parameter: baseUrl (required)
+     * Base URL of the repository to which the request is made through the
+     * OAI-PMH protocol
+     * 
+     * @param path baseUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.endpointBuilder("oaipmh", path);
+    }
+    /**
+     * OAI-PMH (camel-oaipmh)
+     * Harvest metadata using OAI-PMH protocol
+     * 
+     * Category: endpoint,webservice,batch
+     * Since: 3.5
+     * Maven coordinates: org.apache.camel:camel-oaipmh
+     * 
+     * Syntax: <code>oaipmh:baseUrl</code>
+     * 
+     * Path parameter: baseUrl (required)
+     * Base URL of the repository to which the request is made through the
+     * OAI-PMH protocol
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path baseUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Olingo2 (camel-olingo2)
@@ -10750,12 +11540,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(
             String path) {
@@ -10773,7 +11564,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10781,6 +11572,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(
             String componentName,
@@ -10799,12 +11591,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
             String path) {
@@ -10822,7 +11615,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10830,6 +11623,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(
             String componentName,
@@ -10850,6 +11644,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String path) {
@@ -10871,6 +11666,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String componentName,
@@ -10891,6 +11687,7 @@ public class StaticEndpointBuilders {
      * Kubernetes Master url
      * 
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(
             String path) {
@@ -10912,6 +11709,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(
             String componentName,
@@ -10932,6 +11730,7 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(
             String path) {
@@ -10953,6 +11752,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(
             String componentName,
@@ -10973,6 +11773,7 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(
             String path) {
@@ -10994,6 +11795,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(
             String componentName,
@@ -11015,6 +11817,7 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(
             String path) {
@@ -11037,6 +11840,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(
             String componentName,
@@ -11057,6 +11861,7 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(
             String path) {
@@ -11078,6 +11883,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(
             String componentName,
@@ -11098,6 +11904,7 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(
             String path) {
@@ -11119,6 +11926,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(
             String componentName,
@@ -11139,6 +11947,7 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(
             String path) {
@@ -11160,6 +11969,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(
             String componentName,
@@ -11177,9 +11987,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>optaplanner:configFile</code>
      * 
      * Path parameter: configFile (required)
-     * Specifies the location to the solver file
+     * Specifies the location to the solver file. If useSolverManager=FALSE,
+     * Camel uses this file and create the Solver. If useSolverManager=TRUE and
+     * SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER}
+     * : this file is ignored by Camel usage of SolverManager. SolverManager can
+     * be injected by DI in Quarkus or Spring.
      * 
      * @param path configFile
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
             String path) {
@@ -11196,11 +12011,16 @@ public class StaticEndpointBuilders {
      * Syntax: <code>optaplanner:configFile</code>
      * 
      * Path parameter: configFile (required)
-     * Specifies the location to the solver file
+     * Specifies the location to the solver file. If useSolverManager=FALSE,
+     * Camel uses this file and create the Solver. If useSolverManager=TRUE and
+     * SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER}
+     * : this file is ignored by Camel usage of SolverManager. SolverManager can
+     * be injected by DI in Quarkus or Spring.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path configFile
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
             String componentName,
@@ -11221,6 +12041,7 @@ public class StaticEndpointBuilders {
      * Name of the topic
      * 
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.PahoEndpointBuilder paho(
             String path) {
@@ -11242,6 +12063,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PahoEndpointBuilderFactory.PahoEndpointBuilder paho(
             String componentName,
@@ -11260,9 +12082,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: create, append, extractText
+     * There are 3 enums and the value can be one of: create, append,
+     * extractText
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.PdfEndpointBuilder pdf(
             String path) {
@@ -11280,11 +12104,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: create, append, extractText
+     * There are 3 enums and the value can be one of: create, append,
+     * extractText
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PdfEndpointBuilderFactory.PdfEndpointBuilder pdf(
             String componentName,
@@ -11310,12 +12136,15 @@ public class StaticEndpointBuilders {
      * Default value: 5432
      * 
      * Path parameter: database (required)
-     * The database name
+     * The database name. The database name can take any characters because it
+     * is sent as a quoted identifier. It is part of the endpoint URI, so
+     * diacritical marks and non-Latin letters have to be URL encoded.
      * 
      * Path parameter: channel (required)
      * The channel name
      * 
      * @param path host:port/database/channel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(
             String path) {
@@ -11340,7 +12169,9 @@ public class StaticEndpointBuilders {
      * Default value: 5432
      * 
      * Path parameter: database (required)
-     * The database name
+     * The database name. The database name can take any characters because it
+     * is sent as a quoted identifier. It is part of the endpoint URI, so
+     * diacritical marks and non-Latin letters have to be URL encoded.
      * 
      * Path parameter: channel (required)
      * The channel name
@@ -11348,6 +12179,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/database/channel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(
             String componentName,
@@ -11384,6 +12216,7 @@ public class StaticEndpointBuilders {
      * Output plugin name
      * 
      * @param path host:port/database/slot:outputPlugin
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(
             String path) {
@@ -11421,6 +12254,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/database/slot:outputPlugin
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(
             String componentName,
@@ -11442,6 +12276,7 @@ public class StaticEndpointBuilders {
      * The path under which this endpoint serves the HTTP requests
      * 
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(
             String path) {
@@ -11464,6 +12299,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(
             String componentName,
@@ -11485,6 +12321,7 @@ public class StaticEndpointBuilders {
      * The channel used for subscribing/publishing events
      * 
      * @param path channel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.PubNubEndpointBuilder pubnub(
             String path) {
@@ -11507,6 +12344,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path channel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.PubNubEndpointBuilder pubnub(
             String componentName,
@@ -11525,7 +12363,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
-     * The value can be one of: persistent, non-persistent
+     * There are 2 enums and the value can be one of: persistent, non-persistent
      * 
      * Path parameter: tenant (required)
      * The tenant
@@ -11537,6 +12375,7 @@ public class StaticEndpointBuilders {
      * The topic
      * 
      * @param path persistence://tenant/namespace/topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.PulsarEndpointBuilder pulsar(
             String path) {
@@ -11554,7 +12393,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
-     * The value can be one of: persistent, non-persistent
+     * There are 2 enums and the value can be one of: persistent, non-persistent
      * 
      * Path parameter: tenant (required)
      * The tenant
@@ -11568,6 +12407,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path persistence://tenant/namespace/topic
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.PulsarEndpointBuilder pulsar(
             String componentName,
@@ -11594,6 +12434,7 @@ public class StaticEndpointBuilders {
      * name should be unique.
      * 
      * @param path groupName/triggerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.QuartzEndpointBuilder quartz(
             String path) {
@@ -11621,6 +12462,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path groupName/triggerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.QuartzEndpointBuilderFactory.QuartzEndpointBuilder quartz(
             String componentName,
@@ -11639,10 +12481,15 @@ public class StaticEndpointBuilders {
      * Syntax: <code>quickfix:configurationName</code>
      * 
      * Path parameter: configurationName (required)
-     * The configFile is the name of the QuickFIX/J configuration to use for the
-     * FIX engine (located as a resource found in your classpath).
+     * Path to the quickfix configuration file. You can prefix with: classpath,
+     * file, http, ref, or bean. classpath, file and http loads the
+     * configuration file using these protocols (classpath is default). ref will
+     * lookup the configuration file in the registry. bean will call a method on
+     * a bean to be used as the configuration. For bean you can specify the
+     * method name after dot, eg bean:myBean.myMethod
      * 
      * @param path configurationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.QuickfixjEndpointBuilder quickfix(
             String path) {
@@ -11660,12 +12507,17 @@ public class StaticEndpointBuilders {
      * Syntax: <code>quickfix:configurationName</code>
      * 
      * Path parameter: configurationName (required)
-     * The configFile is the name of the QuickFIX/J configuration to use for the
-     * FIX engine (located as a resource found in your classpath).
+     * Path to the quickfix configuration file. You can prefix with: classpath,
+     * file, http, ref, or bean. classpath, file and http loads the
+     * configuration file using these protocols (classpath is default). ref will
+     * lookup the configuration file in the registry. bean will call a method on
+     * a bean to be used as the configuration. For bean you can specify the
+     * method name after dot, eg bean:myBean.myMethod
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path configurationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.QuickfixjEndpointBuilder quickfix(
             String componentName,
@@ -11688,6 +12540,7 @@ public class StaticEndpointBuilders {
      * the exchange the queue will be bound to.
      * 
      * @param path exchangeName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
             String path) {
@@ -11711,6 +12564,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path exchangeName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
             String componentName,
@@ -11732,6 +12586,7 @@ public class StaticEndpointBuilders {
      * Name of the stream channel used by the endpoint to exchange messages.
      * 
      * @param path stream
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
             String path) {
@@ -11754,6 +12609,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path stream
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
             String componentName,
@@ -11775,6 +12631,7 @@ public class StaticEndpointBuilders {
      * Name of endpoint to lookup in the registry.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory.RefEndpointBuilder ref(
             String path) {
@@ -11797,6 +12654,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RefEndpointBuilderFactory.RefEndpointBuilder ref(
             String componentName,
@@ -11822,6 +12680,7 @@ public class StaticEndpointBuilders {
      * services within CamelContext's which name matches the pattern.
      * 
      * @param path path/contextIdPattern
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(
             String path) {
@@ -11848,6 +12707,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path/contextIdPattern
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(
             String componentName,
@@ -11868,6 +12728,7 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to call.
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String path) {
@@ -11889,6 +12750,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
             String componentName,
@@ -11907,8 +12769,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: method (required)
      * HTTP method to use.
-     * The value can be one of: get, post, put, delete, patch, head, trace,
-     * connect, options
+     * There are 9 enums and the value can be one of: get, post, put, delete,
+     * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
      * The base path
@@ -11917,6 +12779,7 @@ public class StaticEndpointBuilders {
      * The uri template
      * 
      * @param path method:path:uriTemplate
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.RestEndpointBuilder restEndpoint(
             String path) {
@@ -11934,8 +12797,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: method (required)
      * HTTP method to use.
-     * The value can be one of: get, post, put, delete, patch, head, trace,
-     * connect, options
+     * There are 9 enums and the value can be one of: get, post, put, delete,
+     * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
      * The base path
@@ -11946,6 +12809,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path method:path:uriTemplate
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.RestEndpointBuilder restEndpoint(
             String componentName,
@@ -11984,6 +12848,7 @@ public class StaticEndpointBuilders {
      * ID of the operation from the OpenApi specification.
      * 
      * @param path specificationUri#operationId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(
             String path) {
@@ -12023,6 +12888,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path specificationUri#operationId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(
             String componentName,
@@ -12062,6 +12928,7 @@ public class StaticEndpointBuilders {
      * ID of the operation from the Swagger specification.
      * 
      * @param path specificationUri#operationId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.RestSwaggerEndpointBuilder restSwagger(
             String path) {
@@ -12102,6 +12969,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path specificationUri#operationId
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.RestSwaggerEndpointBuilder restSwagger(
             String componentName,
@@ -12126,6 +12994,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(
             String path) {
@@ -12151,6 +13020,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(
             String componentName,
@@ -12171,6 +13041,7 @@ public class StaticEndpointBuilders {
      * The URI to the feed to poll.
      * 
      * @param path feedUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
             String path) {
@@ -12192,6 +13063,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path feedUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssEndpointBuilder rss(
             String componentName,
@@ -12210,9 +13082,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
-     * The value can be one of: COMPLETE, COMPENSATE
+     * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param path action
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.SagaEndpointBuilder saga(
             String path) {
@@ -12230,11 +13103,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
-     * The value can be one of: COMPLETE, COMPENSATE
+     * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path action
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SagaEndpointBuilderFactory.SagaEndpointBuilder saga(
             String componentName,
@@ -12253,13 +13127,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * The value can be one of: getVersions, getResources, getGlobalObjects,
-     * getBasicInfo, getDescription, getSObject, createSObject, updateSObject,
-     * deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId,
-     * getBlobField, query, queryMore, queryAll, search, apexCall, recent,
-     * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
-     * getAllBatches, getRequest, getResults, createBatchQuery,
-     * getQueryResultIds, getQueryResult, getRecentReports,
+     * There are 43 enums and the value can be one of: getVersions,
+     * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
+     * createSObject, updateSObject, deleteSObject, getSObjectWithId,
+     * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
+     * queryAll, search, apexCall, recent, createJob, getJob, closeJob,
+     * abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults,
+     * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
      * getReportDescription, executeSyncReport, executeAsyncReport,
      * getReportInstances, getReportResults, limits, approval, approvals,
      * composite-tree, composite-batch, composite
@@ -12268,6 +13142,7 @@ public class StaticEndpointBuilders {
      * The name of the topic/channel to use
      * 
      * @param path operationName:topicName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(
             String path) {
@@ -12285,13 +13160,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * The value can be one of: getVersions, getResources, getGlobalObjects,
-     * getBasicInfo, getDescription, getSObject, createSObject, updateSObject,
-     * deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId,
-     * getBlobField, query, queryMore, queryAll, search, apexCall, recent,
-     * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
-     * getAllBatches, getRequest, getResults, createBatchQuery,
-     * getQueryResultIds, getQueryResult, getRecentReports,
+     * There are 43 enums and the value can be one of: getVersions,
+     * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
+     * createSObject, updateSObject, deleteSObject, getSObjectWithId,
+     * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
+     * queryAll, search, apexCall, recent, createJob, getJob, closeJob,
+     * abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults,
+     * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
      * getReportDescription, executeSyncReport, executeAsyncReport,
      * getReportInstances, getReportResults, limits, approval, approvals,
      * composite-tree, composite-batch, composite
@@ -12302,6 +13177,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operationName:topicName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(
             String componentName,
@@ -12322,6 +13198,7 @@ public class StaticEndpointBuilders {
      * Url to the SAP net-weaver gateway server.
      * 
      * @param path url
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(
             String path) {
@@ -12343,6 +13220,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path url
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(
             String componentName,
@@ -12364,6 +13242,7 @@ public class StaticEndpointBuilders {
      * The name of the scheduler
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(
             String path) {
@@ -12386,6 +13265,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(
             String componentName,
@@ -12407,6 +13287,7 @@ public class StaticEndpointBuilders {
      * location in the file system.
      * 
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(
             String path) {
@@ -12429,6 +13310,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(
             String componentName,
@@ -12455,6 +13337,7 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.ScpEndpointBuilder scp(
             String path) {
@@ -12482,6 +13365,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory.ScpEndpointBuilder scp(
             String componentName,
@@ -12503,6 +13387,7 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.SedaEndpointBuilder seda(
             String path) {
@@ -12525,6 +13410,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.SedaEndpointBuilder seda(
             String componentName,
@@ -12546,6 +13432,7 @@ public class StaticEndpointBuilders {
      * The endpoint uri to expose as service
      * 
      * @param path delegateUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(
             String path) {
@@ -12568,6 +13455,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path delegateUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(
             String componentName,
@@ -12588,6 +13476,7 @@ public class StaticEndpointBuilders {
      * The ServiceNow instance name
      * 
      * @param path instanceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(
             String path) {
@@ -12609,6 +13498,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path instanceName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(
             String componentName,
@@ -12629,6 +13519,7 @@ public class StaticEndpointBuilders {
      * The context-path to use
      * 
      * @param path contextPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.ServletEndpointBuilder servlet(
             String path) {
@@ -12650,6 +13541,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path contextPath
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.ServletEndpointBuilder servlet(
             String componentName,
@@ -12676,6 +13568,7 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(
             String path) {
@@ -12703,6 +13596,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(
             String componentName,
@@ -12725,6 +13619,7 @@ public class StaticEndpointBuilders {
      * included such as: john:secretmyserver:9999)
      * 
      * @param path uri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
             String path) {
@@ -12748,6 +13643,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path uri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SipEndpointBuilderFactory.SipEndpointBuilder sip(
             String componentName,
@@ -12768,13 +13664,14 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
      * 
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.SjmsEndpointBuilder sjms(
             String path) {
@@ -12794,7 +13691,7 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
@@ -12803,6 +13700,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SjmsEndpointBuilderFactory.SjmsEndpointBuilder sjms(
             String componentName,
@@ -12823,13 +13721,14 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
      * 
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
             String path) {
@@ -12849,7 +13748,7 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
@@ -12858,56 +13757,12 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     * 
-     * @param path destinationName
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder("sjms-batch", path);
-    }
-    /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destinationName
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Slack (camel-slack)
@@ -12924,6 +13779,7 @@ public class StaticEndpointBuilders {
      * message directly to an user.
      * 
      * @param path channel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.SlackEndpointBuilder slack(
             String path) {
@@ -12946,6 +13802,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path channel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SlackEndpointBuilderFactory.SlackEndpointBuilder slack(
             String componentName,
@@ -12972,6 +13829,7 @@ public class StaticEndpointBuilders {
      * Default value: 2775
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.SmppEndpointBuilder smpp(
             String path) {
@@ -12999,6 +13857,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SmppEndpointBuilderFactory.SmppEndpointBuilder smpp(
             String componentName,
@@ -13023,6 +13882,7 @@ public class StaticEndpointBuilders {
      * Port number of the SNMP enabled device
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(
             String path) {
@@ -13048,6 +13908,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(
             String componentName,
@@ -13068,6 +13929,7 @@ public class StaticEndpointBuilders {
      * Hostname and port for the solr server
      * 
      * @param path url
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
             String path) {
@@ -13089,6 +13951,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path url
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
             String componentName,
@@ -13107,10 +13970,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * The action to do.
-     * The value can be one of: sendMessage, getMessage, uploadFile,
-     * downloadFile
+     * There are 4 enums and the value can be one of: sendMessage, getMessage,
+     * uploadFile, downloadFile
      * 
      * @param path action
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
             String path) {
@@ -13128,12 +13992,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * The action to do.
-     * The value can be one of: sendMessage, getMessage, uploadFile,
-     * downloadFile
+     * There are 4 enums and the value can be one of: sendMessage, getMessage,
+     * uploadFile, downloadFile
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path action
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SoroushBotEndpointBuilderFactory.SoroushBotEndpointBuilder soroush(
             String componentName,
@@ -13152,9 +14017,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (rdd, dataframe, hive).
-     * The value can be one of: rdd, dataframe, hive
+     * There are 3 enums and the value can be one of: rdd, dataframe, hive
      * 
      * @param path endpointType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
             String path) {
@@ -13172,11 +14038,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (rdd, dataframe, hive).
-     * The value can be one of: rdd, dataframe, hive
+     * There are 3 enums and the value can be one of: rdd, dataframe, hive
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
             String componentName,
@@ -13197,6 +14064,7 @@ public class StaticEndpointBuilders {
      * Name has no purpose
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(
             String path) {
@@ -13218,6 +14086,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(
             String componentName,
@@ -13242,6 +14111,7 @@ public class StaticEndpointBuilders {
      * Splunk authorization token
      * 
      * @param path splunkURL/token
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(
             String path) {
@@ -13267,6 +14137,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path splunkURL/token
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(
             String componentName,
@@ -13287,6 +14158,7 @@ public class StaticEndpointBuilders {
      * The name of the Spring Batch job located in the registry.
      * 
      * @param path jobName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
             String path) {
@@ -13308,6 +14180,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path jobName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(
             String componentName,
@@ -13328,6 +14201,7 @@ public class StaticEndpointBuilders {
      * Name of endpoint
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.EventEndpointBuilder springEvent(
             String path) {
@@ -13349,6 +14223,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.EventEndpointBuilder springEvent(
             String componentName,
@@ -13372,6 +14247,7 @@ public class StaticEndpointBuilders {
      * Integration provider.
      * 
      * @param path defaultChannel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
             String path) {
@@ -13396,6 +14272,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path defaultChannel
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
             String componentName,
@@ -13416,6 +14293,7 @@ public class StaticEndpointBuilders {
      * Name of the Spring LDAP Template bean
      * 
      * @param path templateName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(
             String path) {
@@ -13437,11 +14315,61 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path templateName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * Syntax: <code>spring-rabbitmq:exchangeName</code>
+     * 
+     * Path parameter: exchangeName (required)
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to. Note: to use default exchange
+     * then do not use empty name, but use default instead.
+     * 
+     * @param path exchangeName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder springRabbitmq(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("spring-rabbitmq", path);
+    }
+    /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * Syntax: <code>spring-rabbitmq:exchangeName</code>
+     * 
+     * Path parameter: exchangeName (required)
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to. Note: to use default exchange
+     * then do not use empty name, but use default instead.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path exchangeName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder springRabbitmq(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Spring Redis (camel-spring-redis)
@@ -13460,6 +14388,7 @@ public class StaticEndpointBuilders {
      * Redis server port number
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory.RedisEndpointBuilder springRedis(
             String path) {
@@ -13484,6 +14413,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.RedisEndpointBuilderFactory.RedisEndpointBuilder springRedis(
             String componentName,
@@ -13513,8 +14443,8 @@ public class StaticEndpointBuilders {
      * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
      * in order to integrate with existing (legacy) endpoint mappings like
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
-     * The value can be one of: ROOT_QNAME, ACTION, TO, SOAP_ACTION,
-     * XPATHRESULT, URI, URI_PATH, BEANNAME
+     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
+     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
      * 
      * Path parameter: lookupKey
      * Endpoint mapping key if endpoint mapping is used
@@ -13527,6 +14457,7 @@ public class StaticEndpointBuilders {
      * option is required to be configured.
      * 
      * @param path type:lookupKey:webServiceEndpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(
             String path) {
@@ -13555,8 +14486,8 @@ public class StaticEndpointBuilders {
      * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
      * in order to integrate with existing (legacy) endpoint mappings like
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
-     * The value can be one of: ROOT_QNAME, ACTION, TO, SOAP_ACTION,
-     * XPATHRESULT, URI, URI_PATH, BEANNAME
+     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
+     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
      * 
      * Path parameter: lookupKey
      * Endpoint mapping key if endpoint mapping is used
@@ -13571,6 +14502,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type:lookupKey:webServiceEndpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(
             String componentName,
@@ -13592,6 +14524,7 @@ public class StaticEndpointBuilders {
      * file: or classpath: as prefix and specify the location of the file.
      * 
      * @param path query
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.SqlEndpointBuilder sql(
             String path) {
@@ -13614,6 +14547,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path query
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SqlEndpointBuilderFactory.SqlEndpointBuilder sql(
             String componentName,
@@ -13634,6 +14568,7 @@ public class StaticEndpointBuilders {
      * Sets the StoredProcedure template to perform
      * 
      * @param path template
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(
             String path) {
@@ -13655,6 +14590,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path template
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(
             String componentName,
@@ -13679,6 +14615,7 @@ public class StaticEndpointBuilders {
      * Default value: 22
      * 
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.SshEndpointBuilder ssh(
             String path) {
@@ -13704,6 +14641,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory.SshEndpointBuilder ssh(
             String componentName,
@@ -13724,6 +14662,7 @@ public class StaticEndpointBuilders {
      * The FQN class name for the ContentHandler implementation to use.
      * 
      * @param path contentHandlerClass
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.StAXEndpointBuilder stax(
             String path) {
@@ -13745,6 +14684,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path contentHandlerClass
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.StAXEndpointBuilder stax(
             String componentName,
@@ -13766,6 +14706,7 @@ public class StaticEndpointBuilders {
      * Name of the queue
      * 
      * @param path destination
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
             String path) {
@@ -13788,6 +14729,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destination
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
             String componentName,
@@ -13806,9 +14748,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in or System.out.
-     * The value can be one of: in, out, err, header, file
+     * There are 5 enums and the value can be one of: in, out, err, header, file
      * 
      * @param path kind
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.StreamEndpointBuilder stream(
             String path) {
@@ -13826,11 +14769,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in or System.out.
-     * The value can be one of: in, out, err, header, file
+     * There are 5 enums and the value can be one of: in, out, err, header, file
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path kind
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.StreamEndpointBuilder stream(
             String componentName,
@@ -13855,6 +14799,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(
             String path) {
@@ -13880,6 +14825,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(
             String componentName,
@@ -13900,6 +14846,7 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.StubEndpointBuilder stub(
             String path) {
@@ -13921,6 +14868,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory.StubEndpointBuilder stub(
             String componentName,
@@ -13939,9 +14887,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
-     * The value can be one of: bots
+     * There are 1 enums and the value can be one of: bots
      * 
      * @param path type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.TelegramEndpointBuilder telegram(
             String path) {
@@ -13959,11 +14908,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
-     * The value can be one of: bots
+     * There are 1 enums and the value can be one of: bots
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TelegramEndpointBuilderFactory.TelegramEndpointBuilder telegram(
             String componentName,
@@ -13994,6 +14944,7 @@ public class StaticEndpointBuilders {
      * service definition name)
      * 
      * @param path host:port/service
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.ThriftEndpointBuilder thrift(
             String path) {
@@ -14025,6 +14976,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/service
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ThriftEndpointBuilderFactory.ThriftEndpointBuilder thrift(
             String componentName,
@@ -14043,9 +14995,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: parse, detect
+     * There are 2 enums and the value can be one of: parse, detect
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.TikaEndpointBuilder tika(
             String path) {
@@ -14063,11 +15016,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: parse, detect
+     * There are 2 enums and the value can be one of: parse, detect
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory.TikaEndpointBuilder tika(
             String componentName,
@@ -14088,6 +15042,7 @@ public class StaticEndpointBuilders {
      * The name of the timer
      * 
      * @param path timerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.TimerEndpointBuilder timer(
             String path) {
@@ -14109,6 +15064,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path timerName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory.TimerEndpointBuilder timer(
             String componentName,
@@ -14127,11 +15083,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACCOUNT, ADDRESS, APPLICATION,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE, CONNECT_APP,
-     * INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY, NEW_SIGNING_KEY,
-     * NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING, SHORT_CODE,
-     * SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
+     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
+     * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
+     * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
+     * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
      * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
@@ -14150,9 +15106,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, delete, fetch, read, update
+     * There are 5 enums and the value can be one of: create, delete, fetch,
+     * read, update
      * 
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.TwilioEndpointBuilder twilio(
             String path) {
@@ -14170,11 +15128,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACCOUNT, ADDRESS, APPLICATION,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE, CONNECT_APP,
-     * INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY, NEW_SIGNING_KEY,
-     * NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING, SHORT_CODE,
-     * SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
+     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
+     * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
+     * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
+     * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
      * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
      * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
@@ -14193,11 +15151,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, delete, fetch, read, update
+     * There are 5 enums and the value can be one of: create, delete, fetch,
+     * read, update
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory.TwilioEndpointBuilder twilio(
             String componentName,
@@ -14219,6 +15179,7 @@ public class StaticEndpointBuilders {
      * consumer.
      * 
      * @param path user
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(
             String path) {
@@ -14241,6 +15202,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path user
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(
             String componentName,
@@ -14262,6 +15224,7 @@ public class StaticEndpointBuilders {
      * results.
      * 
      * @param path keywords
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(
             String path) {
@@ -14284,6 +15247,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path keywords
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(
             String componentName,
@@ -14302,10 +15266,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-     * UNKNOWN
+     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+     * MENTIONS, RETWEETSOFME, UNKNOWN
      * 
      * @param path timelineType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(
             String path) {
@@ -14323,12 +15288,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-     * UNKNOWN
+     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+     * MENTIONS, RETWEETSOFME, UNKNOWN
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path timelineType
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(
             String componentName,
@@ -14350,6 +15316,7 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to use.
      * 
      * @param path httpURI
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
             String path) {
@@ -14372,6 +15339,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpURI
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(
             String componentName,
@@ -14394,6 +15362,7 @@ public class StaticEndpointBuilders {
      * file system which contains the XSD to validate against.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(
             String path) {
@@ -14417,6 +15386,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(
             String componentName,
@@ -14441,6 +15411,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.VelocityEndpointBuilder velocity(
             String path) {
@@ -14466,6 +15437,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.VelocityEndpointBuilder velocity(
             String componentName,
@@ -14486,6 +15458,7 @@ public class StaticEndpointBuilders {
      * Sets the event bus address used to communicate
      * 
      * @param path address
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.VertxEndpointBuilder vertx(
             String path) {
@@ -14507,6 +15480,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path address
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.VertxEndpointBuilder vertx(
             String componentName,
@@ -14515,7 +15489,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x HTTP Client (camel-vertx-http)
-     * Camel HTTP client support with Vert.x
+     * Send requests to external HTTP servers using Vert.x
      * 
      * Category: http
      * Since: 3.5
@@ -14527,6 +15501,7 @@ public class StaticEndpointBuilders {
      * The HTTP URI to connect to
      * 
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(
             String path) {
@@ -14534,7 +15509,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x HTTP Client (camel-vertx-http)
-     * Camel HTTP client support with Vert.x
+     * Send requests to external HTTP servers using Vert.x
      * 
      * Category: http
      * Since: 3.5
@@ -14548,6 +15523,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(
             String componentName,
@@ -14555,8 +15531,56 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Vert.x Kafka (camel-vertx-kafka)
+     * Sent and receive messages to/from an Apache Kafka broker using vert.x
+     * Kafka client
+     * 
+     * Category: messaging
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-vertx-kafka
+     * 
+     * Syntax: <code>vertx-kafka:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to use. On the consumer you can use comma to separate
+     * multiple topics. A producer can only send a message to a single topic.
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.endpointBuilder("vertx-kafka", path);
+    }
+    /**
+     * Vert.x Kafka (camel-vertx-kafka)
+     * Sent and receive messages to/from an Apache Kafka broker using vert.x
+     * Kafka client
+     * 
+     * Category: messaging
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-vertx-kafka
+     * 
+     * Syntax: <code>vertx-kafka:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to use. On the consumer you can use comma to separate
+     * multiple topics. A producer can only send a message to a single topic.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Camel WebSocket support with Vert.x
+     * Expose WebSocket endpoints and connect to remote WebSocket servers using
+     * Vert.x
      * 
      * Category: websocket
      * Since: 3.5
@@ -14580,6 +15604,7 @@ public class StaticEndpointBuilders {
      * Default value: /
      * 
      * @param path host:port/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
             String path) {
@@ -14587,7 +15612,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Camel WebSocket support with Vert.x
+     * Expose WebSocket endpoints and connect to remote WebSocket servers using
+     * Vert.x
      * 
      * Category: websocket
      * Since: 3.5
@@ -14613,6 +15639,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
             String componentName,
@@ -14633,6 +15660,7 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
             String path) {
@@ -14654,6 +15682,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
             String componentName,
@@ -14674,6 +15703,7 @@ public class StaticEndpointBuilders {
      * The name value is not used.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
             String path) {
@@ -14695,6 +15725,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(
             String componentName,
@@ -14715,6 +15746,7 @@ public class StaticEndpointBuilders {
      * Sets the node address used to communicate
      * 
      * @param path nodeAddress
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
             String path) {
@@ -14736,6 +15768,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path nodeAddress
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(
             String componentName,
@@ -14757,6 +15790,7 @@ public class StaticEndpointBuilders {
      * The delegate uri. Must belong to a component that supports webhooks.
      * 
      * @param path endpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.WebhookEndpointBuilder webhook(
             String path) {
@@ -14779,6 +15813,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.WebhookEndpointBuilder webhook(
             String componentName,
@@ -14809,6 +15844,7 @@ public class StaticEndpointBuilders {
      * Name of the websocket channel to use
      * 
      * @param path host:port/resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketEndpointBuilder websocket(
             String path) {
@@ -14840,6 +15876,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketEndpointBuilder websocket(
             String componentName,
@@ -14862,6 +15899,7 @@ public class StaticEndpointBuilders {
      * connection is established to the corresponding server
      * 
      * @param path uri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
             String path) {
@@ -14885,6 +15923,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path uri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
             String componentName,
@@ -14903,9 +15942,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * The command to use.
-     * The value can be one of: filter, model, read, write, push, pop, version
+     * There are 7 enums and the value can be one of: filter, model, read,
+     * write, push, pop, version
      * 
      * @param path command
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
             String path) {
@@ -14923,11 +15964,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * The command to use.
-     * The value can be one of: filter, model, read, write, push, pop, version
+     * There are 7 enums and the value can be one of: filter, model, read,
+     * write, push, pop, version
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path command
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.WekaEndpointBuilder weka(
             String componentName,
@@ -14946,14 +15989,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The endpoint operation.
-     * The value can be one of: post, user
+     * There are 2 enums and the value can be one of: post, user
      * 
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
-     * The value can be one of: delete
+     * There are 1 enums and the value can be one of: delete
      * 
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(
             String path) {
@@ -14971,16 +16015,17 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The endpoint operation.
-     * The value can be one of: post, user
+     * There are 2 enums and the value can be one of: post, user
      * 
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
-     * The value can be one of: delete
+     * There are 1 enums and the value can be one of: delete
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(
             String componentName,
@@ -14999,12 +16044,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
-     * The value can be one of: report, commonAPI
+     * There are 2 enums and the value can be one of: report, commonAPI
      * 
      * Path parameter: path (required)
      * The API path to access an entity structure.
      * 
      * @param path entity:path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.WorkdayEndpointBuilder workday(
             String path) {
@@ -15022,7 +16068,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
-     * The value can be one of: report, commonAPI
+     * There are 2 enums and the value can be one of: report, commonAPI
      * 
      * Path parameter: path (required)
      * The API path to access an entity structure.
@@ -15030,6 +16076,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path entity:path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WorkdayEndpointBuilderFactory.WorkdayEndpointBuilder workday(
             String componentName,
@@ -15050,6 +16097,7 @@ public class StaticEndpointBuilders {
      * The exchange to connect to
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.XChangeEndpointBuilder xchange(
             String path) {
@@ -15071,6 +16119,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XChangeEndpointBuilderFactory.XChangeEndpointBuilder xchange(
             String componentName,
@@ -15096,6 +16145,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.XJEndpointBuilder xj(
             String path) {
@@ -15122,6 +16172,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XJEndpointBuilderFactory.XJEndpointBuilder xj(
             String componentName,
@@ -15143,6 +16194,7 @@ public class StaticEndpointBuilders {
      * different signer endpoints within the camel context.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(
             String path) {
@@ -15165,6 +16217,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(
             String componentName,
@@ -15186,6 +16239,7 @@ public class StaticEndpointBuilders {
      * different verify endpoints within the camel context.
      * 
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(
             String path) {
@@ -15208,6 +16262,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(
             String componentName,
@@ -15235,6 +16290,7 @@ public class StaticEndpointBuilders {
      * precedence over participant.
      * 
      * @param path host:port/participant
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.XmppEndpointBuilder xmpp(
             String path) {
@@ -15263,6 +16319,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/participant
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XmppEndpointBuilderFactory.XmppEndpointBuilder xmpp(
             String componentName,
@@ -15283,6 +16340,7 @@ public class StaticEndpointBuilders {
      * The name of the template to load from classpath or file system
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XQueryEndpointBuilderFactory.XQueryEndpointBuilder xquery(
             String path) {
@@ -15304,6 +16362,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XQueryEndpointBuilderFactory.XQueryEndpointBuilder xquery(
             String componentName,
@@ -15329,6 +16388,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.XsltEndpointBuilder xslt(
             String path) {
@@ -15355,6 +16415,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XsltEndpointBuilderFactory.XsltEndpointBuilder xslt(
             String componentName,
@@ -15380,6 +16441,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod
      * 
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(
             String path) {
@@ -15406,6 +16468,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(
             String componentName,
@@ -15424,10 +16487,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: function (required)
      * The function to use
-     * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-     * PRIVATE, RECEIVED, USERS, CURRENT
+     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
+     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
      * 
      * @param path function
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
             String path) {
@@ -15445,12 +16509,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: function (required)
      * The function to use
-     * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-     * PRIVATE, RECEIVED, USERS, CURRENT
+     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
+     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path function
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.YammerEndpointBuilderFactory.YammerEndpointBuilder yammer(
             String componentName,
@@ -15469,8 +16534,133 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
+     * There are 342 enums and the value can be one of:
+     * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
+     * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
+     * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
+     * CREATE_CATEGORY, CREATE_CATEGORY_TRANSLATION, CREATE_COMMENT,
+     * CREATE_DYNAMIC_CONTENT_ITEM, CREATE_DYNAMIC_CONTENT_ITEM_VARIANT,
+     * CREATE_FORUM, CREATE_GROUP, CREATE_GROUP_MEMBERSHIP,
+     * CREATE_GROUP_MEMBERSHIP_1, CREATE_MACRO, CREATE_OR_UPDATE_USER,
+     * CREATE_OR_UPDATE_USERS, CREATE_OR_UPDATE_USERS_1,
+     * CREATE_OR_UPDATE_USERS_ASYNC, CREATE_ORGANIZATION,
+     * CREATE_ORGANIZATION_MEMBERSHIP, CREATE_ORGANIZATION_MEMBERSHIP_1,
+     * CREATE_ORGANIZATION_MEMBERSHIPS, CREATE_ORGANIZATION_MEMBERSHIPS_1,
+     * CREATE_ORGANIZATION_MEMBERSHIPS_ASYNC, CREATE_ORGANIZATIONS,
+     * CREATE_ORGANIZATIONS_1, CREATE_ORGANIZATIONS_ASYNC,
+     * CREATE_PERMISSION_GROUP, CREATE_REQUEST, CREATE_SATISFACTION_RATING,
+     * CREATE_SATISFACTION_RATING_1, CREATE_SECTION, CREATE_SECTION_TRANSLATION,
+     * CREATE_TARGET, CREATE_TICKET, CREATE_TICKET_ASYNC, CREATE_TICKET_FIELD,
+     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKETS,
+     * CREATE_TICKETS_1, CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER,
+     * CREATE_UPLOAD, CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
+     * CREATE_UPLOAD_ARTICLE_1, CREATE_USER, CREATE_USER_IDENTITY,
+     * CREATE_USER_IDENTITY_1, CREATE_USER_SEGMENT, CREATE_USERS,
+     * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,
+     * DELETE_ARTICLE_ATTACHMENT, DELETE_ARTICLE_ATTACHMENT_1,
+     * DELETE_ATTACHMENT, DELETE_ATTACHMENT_1, DELETE_AUTOMATION,
+     * DELETE_CATEGORY, DELETE_DYNAMIC_CONTENT_ITEM,
+     * DELETE_DYNAMIC_CONTENT_ITEM_VARIANT, DELETE_FORUM, DELETE_GROUP,
+     * DELETE_GROUP_1, DELETE_GROUP_MEMBERSHIP, DELETE_GROUP_MEMBERSHIP_1,
+     * DELETE_GROUP_MEMBERSHIP_2, DELETE_GROUP_MEMBERSHIP_3,
+     * DELETE_ORGANIZATION, DELETE_ORGANIZATION_1,
+     * DELETE_ORGANIZATION_MEMBERSHIP, DELETE_ORGANIZATION_MEMBERSHIP_1,
+     * DELETE_ORGANIZATION_MEMBERSHIP_2, DELETE_ORGANIZATION_MEMBERSHIPS,
+     * DELETE_PERMISSION_GROUP, DELETE_PERMISSION_GROUP_1, DELETE_SECTION,
+     * DELETE_SUSPENDED_TICKET, DELETE_SUSPENDED_TICKET_1, DELETE_TARGET,
+     * DELETE_TICKET, DELETE_TICKET_1, DELETE_TICKET_FIELD,
+     * DELETE_TICKET_FIELD_1, DELETE_TICKETS, DELETE_TOPIC, DELETE_TRANSLATION,
+     * DELETE_TRANSLATION_1, DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1,
+     * DELETE_USER, DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
+     * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
+     * GET_ARTICLE, GET_ARTICLE_FROM_SEARCH, GET_ARTICLE_FROM_SEARCH_1,
+     * GET_ARTICLE_SUBSCRIPTIONS, GET_ARTICLE_SUBSCRIPTIONS_1,
+     * GET_ARTICLE_TRANSLATIONS, GET_ARTICLES, GET_ARTICLES_1, GET_ARTICLES_2,
+     * GET_ARTICLES_3, GET_ARTICLES_FROM_ALL_LABELS,
+     * GET_ARTICLES_FROM_ANY_LABELS, GET_ARTICLES_FROM_PAGE,
+     * GET_ARTICLES_INCREMENTALLY, GET_ASSIGNABLE_GROUP_MEMBERSHIPS,
+     * GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1, GET_ASSIGNABLE_GROUPS,
+     * GET_ATTACHMENT, GET_ATTACHMENT_1, GET_ATTACHMENTS_FROM_ARTICLE,
+     * GET_AUTHENTICATED_USER, GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION,
+     * GET_AUTOMATIONS, GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES,
+     * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS,
+     * GET_COMPLIANCE_DELETION_STATUSES, GET_CURRENT_USER,
+     * GET_CUSTOM_AGENT_ROLES, GET_DELETED_TICKETS, GET_DELETED_TICKETS_1,
+     * GET_DYNAMIC_CONTENT_ITEM, GET_DYNAMIC_CONTENT_ITEM_VARIANT,
+     * GET_DYNAMIC_CONTENT_ITEM_VARIANTS, GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM,
+     * GET_FORUMS, GET_FORUMS_1, GET_GROUP, GET_GROUP_MEMBERSHIP,
+     * GET_GROUP_MEMBERSHIP_1, GET_GROUP_MEMBERSHIP_BY_USER,
+     * GET_GROUP_MEMBERSHIPS, GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION,
+     * GET_GROUP_USERS, GET_GROUPS, GET_HELP_CENTER_LOCALES,
+     * GET_HOLIDAYS_FOR_SCHEDULE, GET_HOLIDAYS_FOR_SCHEDULE_1,
+     * GET_INCREMENTAL_TICKETS_RESULT, GET_JOB_STATUS, GET_JOB_STATUS_ASYNC,
+     * GET_JOB_STATUSES, GET_JOB_STATUSES_ASYNC, GET_MACRO, GET_MACROS,
+     * GET_OPEN_REQUESTS, GET_ORGANIZATION, GET_ORGANIZATION_FIELDS,
+     * GET_ORGANIZATION_MEMBERSHIP, GET_ORGANIZATION_MEMBERSHIP_BY_USER,
+     * GET_ORGANIZATION_MEMBERSHIP_FOR_USER, GET_ORGANIZATION_MEMBERSHIPS,
+     * GET_ORGANIZATION_MEMBERSHIPS_FOR_ORG,
+     * GET_ORGANIZATION_MEMBERSHIPS_FOR_USER, GET_ORGANIZATION_TICKETS,
+     * GET_ORGANIZATION_USERS, GET_ORGANIZATIONS,
+     * GET_ORGANIZATIONS_INCREMENTALLY, GET_PERMISSION_GROUP,
+     * GET_PERMISSION_GROUPS, GET_RECENT_TICKETS, GET_REQUEST,
+     * GET_REQUEST_COMMENT, GET_REQUEST_COMMENT_1, GET_REQUEST_COMMENT_2,
+     * GET_REQUEST_COMMENTS, GET_REQUEST_COMMENTS_1, GET_REQUESTS,
+     * GET_SATISFACTION_RATING, GET_SATISFACTION_RATINGS, GET_SCHEDULE,
+     * GET_SCHEDULE_1, GET_SCHEDULES, GET_SEARCH_RESULTS, GET_SEARCH_RESULTS_1,
+     * GET_SEARCH_RESULTS_2, GET_SEARCH_RESULTS_3, GET_SEARCH_RESULTS_4,
+     * GET_SECTION, GET_SECTION_SUBSCRIPTIONS, GET_SECTION_SUBSCRIPTIONS_1,
+     * GET_SECTION_TRANSLATIONS, GET_SECTIONS, GET_SECTIONS_1, GET_SECTIONS_2,
+     * GET_SOLVED_REQUESTS, GET_SUSPENDED_TICKETS, GET_TARGET, GET_TARGETS,
+     * GET_TICKET, GET_TICKET_AUDIT, GET_TICKET_AUDIT_1, GET_TICKET_AUDIT_2,
+     * GET_TICKET_AUDITS, GET_TICKET_AUDITS_1, GET_TICKET_COLLABORATORS,
+     * GET_TICKET_COMMENTS, GET_TICKET_COMMENTS_1, GET_TICKET_FIELD,
+     * GET_TICKET_FIELDS, GET_TICKET_FORM, GET_TICKET_FORMS,
+     * GET_TICKET_INCIDENTS, GET_TICKET_METRIC, GET_TICKET_METRIC_BY_TICKET,
+     * GET_TICKET_METRICS, GET_TICKETS, GET_TICKETS_1,
+     * GET_TICKETS_BY_EXTERNAL_ID, GET_TICKETS_BY_EXTERNAL_ID_1,
+     * GET_TICKETS_FROM_SEARCH, GET_TICKETS_INCREMENTALLY,
+     * GET_TICKETS_INCREMENTALLY_1, GET_TOPIC, GET_TOPICS, GET_TOPICS_1,
+     * GET_TOPICS_2, GET_TOPICS_3, GET_TOPICS_BY_USER, GET_TRIGGER,
+     * GET_TRIGGERS, GET_TWITTER_MONITORS, GET_USER, GET_USER_CCD_TICKETS,
+     * GET_USER_FIELDS, GET_USER_IDENTITIES, GET_USER_IDENTITIES_1,
+     * GET_USER_IDENTITY, GET_USER_IDENTITY_1, GET_USER_IDENTITY_2,
+     * GET_USER_RELATED_INFO, GET_USER_REQUESTED_TICKETS, GET_USER_REQUESTS,
+     * GET_USER_REQUESTS_1, GET_USER_SEGMENT, GET_USER_SEGMENTS,
+     * GET_USER_SEGMENTS_1, GET_USER_SEGMENTS_APPLICABLE,
+     * GET_USER_SUBSCRIPTIONS, GET_USER_SUBSCRIPTIONS_1, GET_USERS,
+     * GET_USERS_BY_ROLE, GET_USERS_INCREMENTALLY, IMPORT_TICKET, IMPORT_TOPIC,
+     * LOOKUP_ORGANIZATIONS_BY_EXTERNAL_ID, LOOKUP_USER_BY_EMAIL,
+     * LOOKUP_USER_BY_EXTERNAL_ID, MACROS_SHOW_CHANGES_TO_TICKET,
+     * MACROS_SHOW_TICKET_AFTER_CHANGES, MAKE_PRIVATE_TICKET_AUDIT,
+     * MAKE_PRIVATE_TICKET_AUDIT_1, MAKE_PRIVATE_TICKET_AUDIT_2,
+     * MARK_TICKET_AS_SPAM, MARK_TICKET_AS_SPAM_1, MERGE_USERS, NOTIFY_APP,
+     * PERMANENTLY_DELETE_TICKET, PERMANENTLY_DELETE_TICKET_1,
+     * PERMANENTLY_DELETE_TICKETS, PERMANENTLY_DELETE_USER,
+     * PERMANENTLY_DELETE_USER_1, QUEUE_CREATE_TICKET_ASYNC,
+     * REMOVE_TAG_FROM_ORGANISATIONS, REMOVE_TAG_FROM_TICKET,
+     * REMOVE_TAG_FROM_TOPICS, REQUEST_VERIFY_USER_IDENTITY,
+     * REQUEST_VERIFY_USER_IDENTITY_1, REQUEST_VERIFY_USER_IDENTITY_2,
+     * RESET_USER_PASSWORD, RESET_USER_PASSWORD_1,
+     * SET_GROUP_MEMBERSHIP_AS_DEFAULT, SET_ORGANIZATION_MEMBERSHIP_AS_DEFAULT,
+     * SET_TAG_ON_ORGANISATIONS, SET_TAG_ON_TICKET, SET_TAG_ON_TOPICS,
+     * SET_USER_PRIMARY_IDENTITY, SET_USER_PRIMARY_IDENTITY_1,
+     * SET_USER_PRIMARY_IDENTITY_2, SUSPEND_USER, TRUST_TICKET_AUDIT,
+     * TRUST_TICKET_AUDIT_1, TRUST_TICKET_AUDIT_2, UNSUSPEND_USER,
+     * UPDATE_ARTICLE, UPDATE_ARTICLE_TRANSLATION, UPDATE_AUTOMATION,
+     * UPDATE_CATEGORY, UPDATE_CATEGORY_TRANSLATION,
+     * UPDATE_DYNAMIC_CONTENT_ITEM, UPDATE_DYNAMIC_CONTENT_ITEM_VARIANT,
+     * UPDATE_FORUM, UPDATE_GROUP, UPDATE_INSTALLATION, UPDATE_MACRO,
+     * UPDATE_ORGANIZATION, UPDATE_ORGANIZATIONS, UPDATE_ORGANIZATIONS_1,
+     * UPDATE_ORGANIZATIONS_ASYNC, UPDATE_PERMISSION_GROUP, UPDATE_REQUEST,
+     * UPDATE_SECTION, UPDATE_SECTION_TRANSLATION, UPDATE_TICKET,
+     * UPDATE_TICKET_FIELD, UPDATE_TICKETS, UPDATE_TICKETS_1,
+     * UPDATE_TICKETS_ASYNC, UPDATE_TOPIC, UPDATE_TRIGGER, UPDATE_USER,
+     * UPDATE_USER_IDENTITY, UPDATE_USER_IDENTITY_1, UPDATE_USER_SEGMENT,
+     * UPDATE_USERS, UPDATE_USERS_1, UPDATE_USERS_ASYNC, VERIFY_USER_IDENTITY,
+     * VERIFY_USER_IDENTITY_1, VERIFY_USER_IDENTITY_2
      * 
      * @param path methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.ZendeskEndpointBuilder zendesk(
             String path) {
@@ -15488,10 +16678,135 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
+     * There are 342 enums and the value can be one of:
+     * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
+     * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
+     * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
+     * CREATE_CATEGORY, CREATE_CATEGORY_TRANSLATION, CREATE_COMMENT,
+     * CREATE_DYNAMIC_CONTENT_ITEM, CREATE_DYNAMIC_CONTENT_ITEM_VARIANT,
+     * CREATE_FORUM, CREATE_GROUP, CREATE_GROUP_MEMBERSHIP,
+     * CREATE_GROUP_MEMBERSHIP_1, CREATE_MACRO, CREATE_OR_UPDATE_USER,
+     * CREATE_OR_UPDATE_USERS, CREATE_OR_UPDATE_USERS_1,
+     * CREATE_OR_UPDATE_USERS_ASYNC, CREATE_ORGANIZATION,
+     * CREATE_ORGANIZATION_MEMBERSHIP, CREATE_ORGANIZATION_MEMBERSHIP_1,
+     * CREATE_ORGANIZATION_MEMBERSHIPS, CREATE_ORGANIZATION_MEMBERSHIPS_1,
+     * CREATE_ORGANIZATION_MEMBERSHIPS_ASYNC, CREATE_ORGANIZATIONS,
+     * CREATE_ORGANIZATIONS_1, CREATE_ORGANIZATIONS_ASYNC,
+     * CREATE_PERMISSION_GROUP, CREATE_REQUEST, CREATE_SATISFACTION_RATING,
+     * CREATE_SATISFACTION_RATING_1, CREATE_SECTION, CREATE_SECTION_TRANSLATION,
+     * CREATE_TARGET, CREATE_TICKET, CREATE_TICKET_ASYNC, CREATE_TICKET_FIELD,
+     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKETS,
+     * CREATE_TICKETS_1, CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER,
+     * CREATE_UPLOAD, CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
+     * CREATE_UPLOAD_ARTICLE_1, CREATE_USER, CREATE_USER_IDENTITY,
+     * CREATE_USER_IDENTITY_1, CREATE_USER_SEGMENT, CREATE_USERS,
+     * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,
+     * DELETE_ARTICLE_ATTACHMENT, DELETE_ARTICLE_ATTACHMENT_1,
+     * DELETE_ATTACHMENT, DELETE_ATTACHMENT_1, DELETE_AUTOMATION,
+     * DELETE_CATEGORY, DELETE_DYNAMIC_CONTENT_ITEM,
+     * DELETE_DYNAMIC_CONTENT_ITEM_VARIANT, DELETE_FORUM, DELETE_GROUP,
+     * DELETE_GROUP_1, DELETE_GROUP_MEMBERSHIP, DELETE_GROUP_MEMBERSHIP_1,
+     * DELETE_GROUP_MEMBERSHIP_2, DELETE_GROUP_MEMBERSHIP_3,
+     * DELETE_ORGANIZATION, DELETE_ORGANIZATION_1,
+     * DELETE_ORGANIZATION_MEMBERSHIP, DELETE_ORGANIZATION_MEMBERSHIP_1,
+     * DELETE_ORGANIZATION_MEMBERSHIP_2, DELETE_ORGANIZATION_MEMBERSHIPS,
+     * DELETE_PERMISSION_GROUP, DELETE_PERMISSION_GROUP_1, DELETE_SECTION,
+     * DELETE_SUSPENDED_TICKET, DELETE_SUSPENDED_TICKET_1, DELETE_TARGET,
+     * DELETE_TICKET, DELETE_TICKET_1, DELETE_TICKET_FIELD,
+     * DELETE_TICKET_FIELD_1, DELETE_TICKETS, DELETE_TOPIC, DELETE_TRANSLATION,
+     * DELETE_TRANSLATION_1, DELETE_TRIGGER, DELETE_UPLOAD, DELETE_UPLOAD_1,
+     * DELETE_USER, DELETE_USER_1, DELETE_USER_IDENTITY, DELETE_USER_IDENTITY_1,
+     * DELETE_USER_IDENTITY_2, DELETE_USER_SEGMENT, DELETE_USER_SEGMENT_1,
+     * GET_ARTICLE, GET_ARTICLE_FROM_SEARCH, GET_ARTICLE_FROM_SEARCH_1,
+     * GET_ARTICLE_SUBSCRIPTIONS, GET_ARTICLE_SUBSCRIPTIONS_1,
+     * GET_ARTICLE_TRANSLATIONS, GET_ARTICLES, GET_ARTICLES_1, GET_ARTICLES_2,
+     * GET_ARTICLES_3, GET_ARTICLES_FROM_ALL_LABELS,
+     * GET_ARTICLES_FROM_ANY_LABELS, GET_ARTICLES_FROM_PAGE,
+     * GET_ARTICLES_INCREMENTALLY, GET_ASSIGNABLE_GROUP_MEMBERSHIPS,
+     * GET_ASSIGNABLE_GROUP_MEMBERSHIPS_1, GET_ASSIGNABLE_GROUPS,
+     * GET_ATTACHMENT, GET_ATTACHMENT_1, GET_ATTACHMENTS_FROM_ARTICLE,
+     * GET_AUTHENTICATED_USER, GET_AUTO_COMPLETE_ORGANIZATIONS, GET_AUTOMATION,
+     * GET_AUTOMATIONS, GET_BRANDS, GET_CC_REQUESTS, GET_CATEGORIES,
+     * GET_CATEGORY, GET_CATEGORY_TRANSLATIONS,
+     * GET_COMPLIANCE_DELETION_STATUSES, GET_CURRENT_USER,
+     * GET_CUSTOM_AGENT_ROLES, GET_DELETED_TICKETS, GET_DELETED_TICKETS_1,
+     * GET_DYNAMIC_CONTENT_ITEM, GET_DYNAMIC_CONTENT_ITEM_VARIANT,
+     * GET_DYNAMIC_CONTENT_ITEM_VARIANTS, GET_DYNAMIC_CONTENT_ITEMS, GET_FORUM,
+     * GET_FORUMS, GET_FORUMS_1, GET_GROUP, GET_GROUP_MEMBERSHIP,
+     * GET_GROUP_MEMBERSHIP_1, GET_GROUP_MEMBERSHIP_BY_USER,
+     * GET_GROUP_MEMBERSHIPS, GET_GROUP_MEMBERSHIPS_1, GET_GROUP_ORGANIZATION,
+     * GET_GROUP_USERS, GET_GROUPS, GET_HELP_CENTER_LOCALES,
+     * GET_HOLIDAYS_FOR_SCHEDULE, GET_HOLIDAYS_FOR_SCHEDULE_1,
+     * GET_INCREMENTAL_TICKETS_RESULT, GET_JOB_STATUS, GET_JOB_STATUS_ASYNC,
+     * GET_JOB_STATUSES, GET_JOB_STATUSES_ASYNC, GET_MACRO, GET_MACROS,
+     * GET_OPEN_REQUESTS, GET_ORGANIZATION, GET_ORGANIZATION_FIELDS,
+     * GET_ORGANIZATION_MEMBERSHIP, GET_ORGANIZATION_MEMBERSHIP_BY_USER,
+     * GET_ORGANIZATION_MEMBERSHIP_FOR_USER, GET_ORGANIZATION_MEMBERSHIPS,
+     * GET_ORGANIZATION_MEMBERSHIPS_FOR_ORG,
+     * GET_ORGANIZATION_MEMBERSHIPS_FOR_USER, GET_ORGANIZATION_TICKETS,
+     * GET_ORGANIZATION_USERS, GET_ORGANIZATIONS,
+     * GET_ORGANIZATIONS_INCREMENTALLY, GET_PERMISSION_GROUP,
+     * GET_PERMISSION_GROUPS, GET_RECENT_TICKETS, GET_REQUEST,
+     * GET_REQUEST_COMMENT, GET_REQUEST_COMMENT_1, GET_REQUEST_COMMENT_2,
+     * GET_REQUEST_COMMENTS, GET_REQUEST_COMMENTS_1, GET_REQUESTS,
+     * GET_SATISFACTION_RATING, GET_SATISFACTION_RATINGS, GET_SCHEDULE,
+     * GET_SCHEDULE_1, GET_SCHEDULES, GET_SEARCH_RESULTS, GET_SEARCH_RESULTS_1,
+     * GET_SEARCH_RESULTS_2, GET_SEARCH_RESULTS_3, GET_SEARCH_RESULTS_4,
+     * GET_SECTION, GET_SECTION_SUBSCRIPTIONS, GET_SECTION_SUBSCRIPTIONS_1,
+     * GET_SECTION_TRANSLATIONS, GET_SECTIONS, GET_SECTIONS_1, GET_SECTIONS_2,
+     * GET_SOLVED_REQUESTS, GET_SUSPENDED_TICKETS, GET_TARGET, GET_TARGETS,
+     * GET_TICKET, GET_TICKET_AUDIT, GET_TICKET_AUDIT_1, GET_TICKET_AUDIT_2,
+     * GET_TICKET_AUDITS, GET_TICKET_AUDITS_1, GET_TICKET_COLLABORATORS,
+     * GET_TICKET_COMMENTS, GET_TICKET_COMMENTS_1, GET_TICKET_FIELD,
+     * GET_TICKET_FIELDS, GET_TICKET_FORM, GET_TICKET_FORMS,
+     * GET_TICKET_INCIDENTS, GET_TICKET_METRIC, GET_TICKET_METRIC_BY_TICKET,
+     * GET_TICKET_METRICS, GET_TICKETS, GET_TICKETS_1,
+     * GET_TICKETS_BY_EXTERNAL_ID, GET_TICKETS_BY_EXTERNAL_ID_1,
+     * GET_TICKETS_FROM_SEARCH, GET_TICKETS_INCREMENTALLY,
+     * GET_TICKETS_INCREMENTALLY_1, GET_TOPIC, GET_TOPICS, GET_TOPICS_1,
+     * GET_TOPICS_2, GET_TOPICS_3, GET_TOPICS_BY_USER, GET_TRIGGER,
+     * GET_TRIGGERS, GET_TWITTER_MONITORS, GET_USER, GET_USER_CCD_TICKETS,
+     * GET_USER_FIELDS, GET_USER_IDENTITIES, GET_USER_IDENTITIES_1,
+     * GET_USER_IDENTITY, GET_USER_IDENTITY_1, GET_USER_IDENTITY_2,
+     * GET_USER_RELATED_INFO, GET_USER_REQUESTED_TICKETS, GET_USER_REQUESTS,
+     * GET_USER_REQUESTS_1, GET_USER_SEGMENT, GET_USER_SEGMENTS,
+     * GET_USER_SEGMENTS_1, GET_USER_SEGMENTS_APPLICABLE,
+     * GET_USER_SUBSCRIPTIONS, GET_USER_SUBSCRIPTIONS_1, GET_USERS,
+     * GET_USERS_BY_ROLE, GET_USERS_INCREMENTALLY, IMPORT_TICKET, IMPORT_TOPIC,
+     * LOOKUP_ORGANIZATIONS_BY_EXTERNAL_ID, LOOKUP_USER_BY_EMAIL,
+     * LOOKUP_USER_BY_EXTERNAL_ID, MACROS_SHOW_CHANGES_TO_TICKET,
+     * MACROS_SHOW_TICKET_AFTER_CHANGES, MAKE_PRIVATE_TICKET_AUDIT,
+     * MAKE_PRIVATE_TICKET_AUDIT_1, MAKE_PRIVATE_TICKET_AUDIT_2,
+     * MARK_TICKET_AS_SPAM, MARK_TICKET_AS_SPAM_1, MERGE_USERS, NOTIFY_APP,
+     * PERMANENTLY_DELETE_TICKET, PERMANENTLY_DELETE_TICKET_1,
+     * PERMANENTLY_DELETE_TICKETS, PERMANENTLY_DELETE_USER,
+     * PERMANENTLY_DELETE_USER_1, QUEUE_CREATE_TICKET_ASYNC,
+     * REMOVE_TAG_FROM_ORGANISATIONS, REMOVE_TAG_FROM_TICKET,
+     * REMOVE_TAG_FROM_TOPICS, REQUEST_VERIFY_USER_IDENTITY,
+     * REQUEST_VERIFY_USER_IDENTITY_1, REQUEST_VERIFY_USER_IDENTITY_2,
+     * RESET_USER_PASSWORD, RESET_USER_PASSWORD_1,
+     * SET_GROUP_MEMBERSHIP_AS_DEFAULT, SET_ORGANIZATION_MEMBERSHIP_AS_DEFAULT,
+     * SET_TAG_ON_ORGANISATIONS, SET_TAG_ON_TICKET, SET_TAG_ON_TOPICS,
+     * SET_USER_PRIMARY_IDENTITY, SET_USER_PRIMARY_IDENTITY_1,
+     * SET_USER_PRIMARY_IDENTITY_2, SUSPEND_USER, TRUST_TICKET_AUDIT,
+     * TRUST_TICKET_AUDIT_1, TRUST_TICKET_AUDIT_2, UNSUSPEND_USER,
+     * UPDATE_ARTICLE, UPDATE_ARTICLE_TRANSLATION, UPDATE_AUTOMATION,
+     * UPDATE_CATEGORY, UPDATE_CATEGORY_TRANSLATION,
+     * UPDATE_DYNAMIC_CONTENT_ITEM, UPDATE_DYNAMIC_CONTENT_ITEM_VARIANT,
+     * UPDATE_FORUM, UPDATE_GROUP, UPDATE_INSTALLATION, UPDATE_MACRO,
+     * UPDATE_ORGANIZATION, UPDATE_ORGANIZATIONS, UPDATE_ORGANIZATIONS_1,
+     * UPDATE_ORGANIZATIONS_ASYNC, UPDATE_PERMISSION_GROUP, UPDATE_REQUEST,
+     * UPDATE_SECTION, UPDATE_SECTION_TRANSLATION, UPDATE_TICKET,
+     * UPDATE_TICKET_FIELD, UPDATE_TICKETS, UPDATE_TICKETS_1,
+     * UPDATE_TICKETS_ASYNC, UPDATE_TOPIC, UPDATE_TRIGGER, UPDATE_USER,
+     * UPDATE_USER_IDENTITY, UPDATE_USER_IDENTITY_1, UPDATE_USER_SEGMENT,
+     * UPDATE_USERS, UPDATE_USERS_1, UPDATE_USERS_ASYNC, VERIFY_USER_IDENTITY,
+     * VERIFY_USER_IDENTITY_1, VERIFY_USER_IDENTITY_2
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path methodName
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ZendeskEndpointBuilderFactory.ZendeskEndpointBuilder zendesk(
             String componentName,
@@ -15515,6 +16830,7 @@ public class StaticEndpointBuilders {
      * The node in the ZooKeeper server (aka znode)
      * 
      * @param path serverUrls/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String path) {
@@ -15539,6 +16855,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path serverUrls/path
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(
             String componentName,
@@ -15563,6 +16880,7 @@ public class StaticEndpointBuilders {
      * The consumer endpoint to use in master/slave mode
      * 
      * @param path groupName:consumerEndpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(
             String path) {
@@ -15588,6 +16906,7 @@ public class StaticEndpointBuilders {
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path groupName:consumerEndpointUri
+     * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(
             String componentName,

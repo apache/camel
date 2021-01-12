@@ -26,32 +26,32 @@ import org.slf4j.LoggerFactory;
 public final class SessionFactoryLocator {
     private static final Logger LOG = LoggerFactory.getLogger(SessionFactoryLocator.class);
     private static SessionFactory sessionFactory;
-    
+
     private SessionFactoryLocator() {
         //Utils class
     }
-    
+
     public static void setSessionFactory(SessionFactory factory) {
         sessionFactory = factory;
     }
-    
+
     public static SessionFactory getSessionFactory() {
         if (sessionFactory != null) {
             return sessionFactory;
         } else {
             // create the sessionFactory in another way
-            sessionFactory =  loadSessionFactoryFromClassPath();
+            sessionFactory = loadSessionFactoryFromClassPath();
             return sessionFactory;
         }
     }
-    
+
     private static SessionFactory loadSessionFactoryFromClassPath() {
         try {
             Class<?> factoryClass = null;
             factoryClass = Class.forName("org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl");
             if (factoryClass != null) {
                 Method method = factoryClass.getMethod("newInstance", new Class<?>[0]);
-                return (SessionFactory)method.invoke(null, new Object[0]);
+                return (SessionFactory) method.invoke(null, new Object[0]);
             }
         } catch (Exception ex) {
             LOG.error("Cannot create the SessionFactoryImpl due to: {0}", ex);
@@ -59,6 +59,5 @@ public final class SessionFactoryLocator {
         }
         return null;
     }
-    
 
 }

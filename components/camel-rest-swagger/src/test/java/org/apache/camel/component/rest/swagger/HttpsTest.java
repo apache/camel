@@ -51,7 +51,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runners.Parameterized.Parameters;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -65,9 +64,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class HttpsTest extends CamelTestSupport {
 
     protected static WireMockServer petstore = new WireMockServer(
-        wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
-            .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-            .keystorePassword("changeit"));
+            wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
+                    .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
+                    .keystorePassword("changeit"));
 
     static final Object NO_BODY = null;
 
@@ -97,7 +96,8 @@ public abstract class HttpsTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @ParameterizedTest @MethodSource("knownProducers")
+    @ParameterizedTest
+    @MethodSource("knownProducers")
     public void shouldBeConfiguredForHttps(String componentName) throws Exception {
         doSetUp(componentName);
         final Pet pet = template.requestBodyAndHeader("direct:getPetById", NO_BODY, "petId", 14, Pet.class);
@@ -108,11 +108,11 @@ public abstract class HttpsTest extends CamelTestSupport {
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
         petstore.verify(getRequestedFor(urlEqualTo("/v2/pet/14")).withHeader("Accept",
-            equalTo("application/xml, application/json")));
+                equalTo("application/xml, application/json")));
     }
 
-
-    @ParameterizedTest @MethodSource("knownProducers")
+    @ParameterizedTest
+    @MethodSource("knownProducers")
     public void swaggerJsonOverHttps(String componentName) throws Exception {
         doSetUp(componentName);
         final Pet pet = template.requestBodyAndHeader("direct:httpsJsonGetPetById", NO_BODY, "petId", 14, Pet.class);
@@ -153,12 +153,12 @@ public abstract class HttpsTest extends CamelTestSupport {
 
                 from("direct:getPetById").to("petStore:getPetById").unmarshal(jaxb);
 
-                from("direct:httpsJsonGetPetById").to("petStore:https://localhost:" + petstore.httpsPort() + "/swagger.json#getPetById").unmarshal(jaxb);
+                from("direct:httpsJsonGetPetById")
+                        .to("petStore:https://localhost:" + petstore.httpsPort() + "/swagger.json#getPetById").unmarshal(jaxb);
             }
         };
     }
 
-    @Parameters(name = "component = {0}")
     public static Iterable<String> knownProducers() {
         final List<String> producers = new ArrayList<>(Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS));
         return producers;
@@ -167,20 +167,21 @@ public abstract class HttpsTest extends CamelTestSupport {
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
         petstore.stubFor(get(urlEqualTo("/swagger.json")).willReturn(aResponse().withBody(
-            Files.readAllBytes(Paths.get(RestSwaggerGlobalHttpsTest.class.getResource("/swagger.json").toURI())))));
+                Files.readAllBytes(Paths.get(RestSwaggerGlobalHttpsTest.class.getResource("/swagger.json").toURI())))));
 
         petstore.stubFor(
-            get(urlEqualTo("/v2/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+                get(urlEqualTo("/v2/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
 
     static SSLContextParameters createHttpsParameters(final CamelContext camelContext) throws Exception {
         final TrustManagersParameters trustManagerParameters = new TrustManagersParameters();
         trustManagerParameters.setCamelContext(camelContext);
-        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        final TrustManagerFactory trustManagerFactory
+                = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         final HttpsSettings httpsSettings = petstore.getOptions().httpsSettings();
         final KeyStore trustStore = CertificateUtils.getKeyStore(Resource.newResource(httpsSettings.keyStorePath()),
-            httpsSettings.keyStoreType(), null, httpsSettings.keyStorePassword());
+                httpsSettings.keyStoreType(), null, httpsSettings.keyStorePassword());
         trustManagerFactory.init(trustStore);
         final TrustManager trustManager = trustManagerFactory.getTrustManagers()[0];
         trustManagerParameters.setTrustManager(trustManager);

@@ -70,7 +70,8 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
 
         exchange = template.send("direct:scroll-search", exchange);
 
-        try (ElasticsearchScrollRequestIterator scrollRequestIterator = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class)) {
+        try (ElasticsearchScrollRequestIterator scrollRequestIterator
+                = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class)) {
             assertNotNull(scrollRequestIterator, "response should not be null");
 
             List result = new ArrayList();
@@ -80,9 +81,11 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
             assertEquals(11, scrollRequestIterator.getRequestCount(), "11 request should have been send to Elasticsearch");
         }
 
-        ElasticsearchScrollRequestIterator scrollRequestIterator = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
+        ElasticsearchScrollRequestIterator scrollRequestIterator
+                = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
         assertTrue(scrollRequestIterator.isClosed(), "iterator should be closed");
-        assertEquals(11, (int) exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class), "11 request should have been send to Elasticsearch");
+        assertEquals(11, (int) exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class),
+                "11 request should have been send to Elasticsearch");
     }
 
     @Test
@@ -95,7 +98,8 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
         }
 
         // perform a refresh
-        Response refreshResponse = getClient().performRequest(new Request("post", "/" + SPLIT_TWITTER_ES_INDEX_NAME + "/_refresh"));
+        Response refreshResponse
+                = getClient().performRequest(new Request("post", "/" + SPLIT_TWITTER_ES_INDEX_NAME + "/_refresh"));
         assertEquals(200, refreshResponse.getStatusLine().getStatusCode(), "Cannot perform a refresh");
 
         MockEndpoint mock = getMockEndpoint("mock:output");
@@ -115,10 +119,12 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
 
         assertEquals(10, aggregatedExchanges.size(), "response hits should be == 10");
 
-        ElasticsearchScrollRequestIterator scrollRequestIterator = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
+        ElasticsearchScrollRequestIterator scrollRequestIterator
+                = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
         assertTrue(scrollRequestIterator.isClosed(), "iterator should be closed");
         assertEquals(11, scrollRequestIterator.getRequestCount(), "11 request should have been send to Elasticsearch");
-        assertEquals(11, (int)exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class), "11 request should have been send to Elasticsearch");
+        assertEquals(11, (int) exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class),
+                "11 request should have been send to Elasticsearch");
     }
 
     private SearchRequest getScrollSearchRequest(String indexName) {
@@ -144,7 +150,8 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
                         .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME);
                 from("direct:scroll-n-split-search")
                         .to("elasticsearch-rest://elasticsearch?"
-                                + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME)
+                            + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName="
+                            + SPLIT_TWITTER_ES_INDEX_NAME)
                         .split()
                         .body()
                         .streaming()

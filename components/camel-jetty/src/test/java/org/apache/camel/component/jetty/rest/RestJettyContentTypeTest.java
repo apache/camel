@@ -20,43 +20,45 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestJettyContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testJettyProducerNoContentType() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
-            .request(String.class);
+        String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update")
+                .request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
     }
 
     @Test
     public void testJettyProducerContentTypeValid() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
-            .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
+        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
     }
 
     @Test
-    public void testJettyProducerContentTypeInvalid() throws Exception {
-        try {
-            fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/xml").withHeader(Exchange.HTTP_METHOD, "post").withBody("<name>Donald Duck</name>")
-                .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
+    public void testJettyProducerContentTypeInvalid() {
+        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/xml")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("<name>Donald Duck</name>")
+                .to("http://localhost:" + getPort() + "/users/123/update");
 
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(415, cause.getStatusCode());
-            assertEquals("", cause.getResponseBody());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(415, cause.getStatusCode());
+        assertEquals("", cause.getResponseBody());
     }
 
     @Override
@@ -66,11 +68,12 @@ public class RestJettyContentTypeTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
-                    // turn on client request validation
-                    .clientRequestValidation(true);
+                        // turn on client request validation
+                        .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").route().setBody(constant("{ \"status\": \"ok\" }"));
+                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").route()
+                        .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

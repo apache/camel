@@ -39,8 +39,10 @@ public class XmlSignerComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-                                      Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(
+            String uri, String remaining,
+            Map<String, Object> parameters)
+            throws Exception {
 
         XmlSignerConfiguration config = signerConfiguration != null ? signerConfiguration.copy() : new XmlSignerConfiguration();
         XmlSignerEndpoint endpoint = new XmlSignerEndpoint(uri, this, config);

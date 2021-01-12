@@ -44,7 +44,8 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // async and continuation is not compatible!
-                from("jetty:http://localhost:{{port}}/myapp/myservice?async=true&useContinuation=false").process(new MyBookService());
+                from("jetty:http://localhost:{{port}}/myapp/myservice?async=true&useContinuation=false")
+                        .process(new MyBookService());
             }
         };
     }
@@ -64,7 +65,7 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
             assertEquals("bookid=123", body);
 
             // send a html response
-            exchange.getOut().setBody("<html><body>Book 123 is Camel in Action</body></html>");
+            exchange.getMessage().setBody("<html><body>Book 123 is Camel in Action</body></html>");
         }
     }
 

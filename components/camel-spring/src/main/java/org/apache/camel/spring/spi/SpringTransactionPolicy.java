@@ -22,8 +22,9 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -80,9 +81,9 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ErrorHandlerReifier.isErrorHandlerFactoryConfigured(ref)) {
+            if (ErrorHandlerHelper.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(route, ref);
+                builder = (ErrorHandlerBuilder) ErrorHandlerHelper.lookupErrorHandlerFactory(route, ref, true);
             }
         }
 
@@ -116,10 +117,12 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         return answer;
     }
 
-    protected TransactionErrorHandler createTransactionErrorHandler(Route route, Processor processor, ErrorHandlerBuilder builder) {
+    protected TransactionErrorHandler createTransactionErrorHandler(
+            Route route, Processor processor, ErrorHandlerBuilder builder) {
         TransactionErrorHandler answer;
         try {
-            answer = (TransactionErrorHandler) ErrorHandlerReifier.reifier(route, builder).createErrorHandler(processor);
+            ModelCamelContext mcc = route.getCamelContext().adapt(ModelCamelContext.class);
+            answer = (TransactionErrorHandler) mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

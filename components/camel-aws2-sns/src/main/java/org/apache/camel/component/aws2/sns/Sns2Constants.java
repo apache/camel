@@ -24,4 +24,5 @@ public interface Sns2Constants {
     String MESSAGE_ID = "CamelAwsSnsMessageId";
     String SUBJECT = "CamelAwsSnsSubject";
     String MESSAGE_STRUCTURE = "CamelAwsSnsMessageStructure";
+    String MESSAGE_GROUP_ID_PROPERTY = "CamelAwsSnsMessageGroupId";
 }

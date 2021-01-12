@@ -31,8 +31,6 @@ public enum ValidationRequestApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("phoneNumber", com.twilio.type.PhoneNumber.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private ValidationRequestApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

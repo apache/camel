@@ -33,8 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tests whether the ValidatorEndpoint.clearCachedSchema() can be executed when
- * several sender threads are running.
+ * Tests whether the ValidatorEndpoint.clearCachedSchema() can be executed when several sender threads are running.
  */
 public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
@@ -84,7 +83,8 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("validator:pd:somefile.xsd").convertBodyTo(String.class).to("log:after").to("mock:result");
+                from("direct:start").to("validator:pd:somefile.xsd").convertBodyTo(String.class).to("log:after")
+                        .to("mock:result");
 
             }
         };
@@ -139,7 +139,7 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         for (Endpoint endpoint : endpoints) {
             LOG.info("Endpoint URI: " + endpoint.getEndpointUri());
             if (endpoint.getEndpointUri().startsWith("validator:")) {
-                ValidatorEndpoint xsltEndpoint = (ValidatorEndpoint)endpoint;
+                ValidatorEndpoint xsltEndpoint = (ValidatorEndpoint) endpoint;
                 xsltEndpoint.clearCachedSchema();
                 LOG.info("schema cache cleared");
             }

@@ -17,23 +17,23 @@
 package org.apache.camel.component.cron;
 
 import org.apache.camel.Category;
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cron.api.CamelCronConfiguration;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A generic interface for triggering events at times specified through the Unix cron syntax.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "cron", title = "Cron", syntax = "cron:name", consumerOnly = true, category = {Category.SCHEDULING})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "cron", title = "Cron", syntax = "cron:name", consumerOnly = true,
+             category = { Category.SCHEDULING })
 public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private Endpoint delegate;
@@ -41,10 +41,13 @@ public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     @UriParam
     private CamelCronConfiguration configuration;
 
-    public CronEndpoint(String endpointUri, Component component, Endpoint delegate, CamelCronConfiguration configuration) {
+    public CronEndpoint(String endpointUri, CronComponent component, CamelCronConfiguration configuration) {
         super(endpointUri, component);
-        this.delegate = delegate;
         this.configuration = configuration;
+    }
+
+    public void setDelegate(Endpoint delegate) {
+        this.delegate = delegate;
     }
 
     @Override
@@ -69,43 +72,22 @@ public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     }
 
     @Override
-    public void setSynchronous(boolean synchronous) {
-        super.setSynchronous(synchronous);
-        if (delegate instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) delegate).setSynchronous(synchronous);
-        }
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ObjectHelper.notNull(delegate, "delegate endpoint");
+        ServiceHelper.startService(delegate);
     }
 
     @Override
-    public void setBasicPropertyBinding(boolean basicPropertyBinding) {
-        super.setBasicPropertyBinding(basicPropertyBinding);
-        if (delegate instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) delegate).setBasicPropertyBinding(basicPropertyBinding);
-        }
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(delegate);
     }
 
     @Override
-    public void setExchangePattern(ExchangePattern exchangePattern) {
-        super.setExchangePattern(exchangePattern);
-        if (delegate instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) delegate).setExchangePattern(exchangePattern);
-        }
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        ServiceHelper.stopAndShutdownService(delegate);
     }
-
-    @Override
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        super.setExceptionHandler(exceptionHandler);
-        if (delegate instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) delegate).setExceptionHandler(exceptionHandler);
-        }
-    }
-
-    @Override
-    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
-        super.setBridgeErrorHandler(bridgeErrorHandler);
-        if (delegate instanceof DefaultEndpoint) {
-            ((DefaultEndpoint) delegate).setBridgeErrorHandler(bridgeErrorHandler);
-        }
-    }
-
 }

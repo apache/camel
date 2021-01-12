@@ -39,7 +39,7 @@ public class HttpProducerConnectionCloseTest extends BaseJettyTest {
         });
         assertNotNull(exchange);
 
-        Map<?, ?> headers = exchange.getOut().getHeaders();
+        Map<?, ?> headers = exchange.getMessage().getHeaders();
 
         assertEquals("close", headers.get("Connection"));
     }

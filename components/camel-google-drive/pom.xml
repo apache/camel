@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-drive</artifactId>
@@ -70,15 +70,6 @@
             <version>${google-api-services-drive-version}</version>
         </dependency>
 
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-drive</artifactId>
-            <version>${google-api-services-drive-version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -114,67 +105,67 @@
                                 <api>
                                     <apiName>drive-about</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$About</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-apps</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Apps</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-changes</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Changes</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-channels</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Channels</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-children</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Children</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-comments</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Comments</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-files</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Files</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-parents</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Parents</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-permissions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Permissions</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-properties</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Properties</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-realtime</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Realtime</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-replies</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Replies</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drive-revisions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Revisions</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                             </apis>
                             <substitutions>
@@ -189,6 +180,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>com.google.apis</groupId>
+                        <artifactId>google-api-services-drive</artifactId>
+                        <version>${google-api-services-drive-version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

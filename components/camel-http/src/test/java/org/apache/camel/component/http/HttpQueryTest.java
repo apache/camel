@@ -37,16 +37,14 @@ public class HttpQueryTest extends BaseHttpTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler(GET.name(), "hl=en&q=camel", null, getExpectedContent())).
-                registerHandler("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent())).
-                registerHandler("/user/pass", new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new BasicValidationHandler(GET.name(), "hl=en&q=camel", null, getExpectedContent()))
+                .registerHandler("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent()))
+                .registerHandler("/user/pass",
+                        new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent()))
+                .create();
         localServer.start();
 
         baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -72,8 +70,8 @@ public class HttpQueryTest extends BaseHttpTest {
 
     @Test
     public void httpQueryHeader() throws Exception {
-        Exchange exchange = template.request(baseUrl + "/", exchange1 ->
-                exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel"));
+        Exchange exchange = template.request(baseUrl + "/",
+                exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel"));
 
         assertExchange(exchange);
     }

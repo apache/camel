@@ -54,7 +54,7 @@ public class CamelVersionHelperTest {
         assertEquals("3.0.0", prevMinor("3.0.0"));
         assertEquals("3.0.1", prevMinor("3.0.1"));
         assertEquals("3.3.1", prevMinor("3.4.1"));
-        assertEquals("3.4.0", prevMinor("3.5.0-SNAPSHOT"));
+        assertEquals("3.4.0", prevMinor("3.5.0"));
         assertEquals("3.5.0", prevMinor("3.6-SNAPSHOT"));
 
         assertEquals("3.4.0", prevMinor(prevMinor("3.6-SNAPSHOT")));

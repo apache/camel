@@ -56,7 +56,7 @@ public class SmppComponent extends DefaultComponent {
 
         SmppEndpoint answer = new SmppEndpoint(uri, this, config);
         setProperties(answer, parameters);
-        
+
         return answer;
     }
 

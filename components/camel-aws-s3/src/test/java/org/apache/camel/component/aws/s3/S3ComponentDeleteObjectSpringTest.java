@@ -53,7 +53,7 @@ public class S3ComponentDeleteObjectSpringTest extends CamelSpringTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange) {
-        assertEquals(resultExchange.getIn().getBody(), true);
+        assertEquals(true, resultExchange.getIn().getBody());
     }
 
     @Override

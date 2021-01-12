@@ -44,7 +44,8 @@ public class QuartzManagementTest extends BaseQuartzTest {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        String name = String.format("quartz:type=QuartzScheduler,name=DefaultQuartzScheduler-%s,instance=NON_CLUSTERED", context.getManagementName());
+        String name = String.format("quartz:type=QuartzScheduler,name=DefaultQuartzScheduler-%s,instance=NON_CLUSTERED",
+                context.getManagementName());
 
         ObjectName on = ObjectName.getInstance(name);
         assertTrue(mbeanServer.isRegistered(on));
@@ -58,7 +59,8 @@ public class QuartzManagementTest extends BaseQuartzTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+                        .to("mock:result");
             }
         };
     }

@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-vertx-websocket</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Vert.x :: WebSocket</name>
-    <description>Camel WebSocket support with Vert.x</description>
+    <description>Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x</description>
 
     <properties>
     </properties>

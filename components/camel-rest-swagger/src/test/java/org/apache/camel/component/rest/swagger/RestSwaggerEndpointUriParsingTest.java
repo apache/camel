@@ -26,12 +26,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestSwaggerEndpointUriParsingTest {
 
-    @ParameterizedTest @MethodSource("parameters")
+    @ParameterizedTest
+    @MethodSource("parameters")
     public void shouldParseEndpointUri(String uri, String remaining, String specificationUri, String operationId) {
         final RestSwaggerComponent component = new RestSwaggerComponent();
 
-        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint(specificationUri, remaining, component,
-            Collections.emptyMap());
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint(
+                specificationUri, remaining, component,
+                Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri().toString()).isEqualTo(specificationUri);
         assertThat(endpoint.getOperationId()).isEqualTo(operationId);
@@ -39,12 +41,13 @@ public class RestSwaggerEndpointUriParsingTest {
 
     public static Iterable<Object[]> parameters() {
         return Arrays.asList(
-            params("rest-swagger:operation", "operation", "swagger.json", "operation"),
-            params("rest-swagger:my-api.json#operation", "my-api.json#operation", "my-api.json", "operation"),
-            params("rest-swagger:http://api.example.com/swagger.json#operation", "http://api.example.com/swagger.json#operation", "http://api.example.com/swagger.json", "operation"));
+                params("rest-swagger:operation", "operation", "swagger.json", "operation"),
+                params("rest-swagger:my-api.json#operation", "my-api.json#operation", "my-api.json", "operation"),
+                params("rest-swagger:http://api.example.com/swagger.json#operation",
+                        "http://api.example.com/swagger.json#operation", "http://api.example.com/swagger.json", "operation"));
     }
 
     static Object[] params(final String uri, final String remaining, final String specificationUri, final String operationId) {
-        return new Object[] {uri, remaining, specificationUri, operationId};
+        return new Object[] { uri, remaining, specificationUri, operationId };
     }
 }

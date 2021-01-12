@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = { TimerRouteTest.TestConfig.class })
+                      classes = { TimerRouteTest.TestConfig.class })
 @MockEndpoints
 public class TimerRouteTest {
 

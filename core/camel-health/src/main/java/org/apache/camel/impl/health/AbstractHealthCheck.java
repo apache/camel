@@ -119,8 +119,8 @@ public abstract class AbstractHealthCheck implements HealthCheck {
             final int threshold = conf.getFailureThreshold();
 
             // Extract relevant information from meta data.
-            int invocationCount = (Integer)meta.getOrDefault(INVOCATION_COUNT, 0);
-            int failureCount = (Integer)meta.getOrDefault(FAILURE_COUNT, 0);
+            int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
+            int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
 
             String invocationTime = now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
             boolean call = true;
@@ -144,10 +144,10 @@ public abstract class AbstractHealthCheck implements HealthCheck {
 
                 if (elapsed.compareTo(Duration.ofMillis(interval)) < 0) {
                     LOGGER.debug("health-check {}/{} won't be invoked as interval ({}) is not yet expired (last-invocation={})",
-                        getGroup(),
-                        getId(),
-                        elapsed,
-                        lastInvocation);
+                            getGroup(),
+                            getId(),
+                            elapsed,
+                            lastInvocation);
 
                     call = false;
                 }
@@ -168,11 +168,12 @@ public abstract class AbstractHealthCheck implements HealthCheck {
                     // than the threshold configured, mark it as UP. This is
                     // used to avoid false positive in case of glitches.
                     if (failureCount++ < threshold) {
-                        LOGGER.debug("Health-check {}/{} has status DOWN but failure count ({}) is less than configured threshold ({})",
-                            getGroup(),
-                            getId(),
-                            failureCount,
-                            threshold);
+                        LOGGER.debug(
+                                "Health-check {}/{} has status DOWN but failure count ({}) is less than configured threshold ({})",
+                                getGroup(),
+                                getId(),
+                                failureCount,
+                                threshold);
 
                         builder.up();
                     }

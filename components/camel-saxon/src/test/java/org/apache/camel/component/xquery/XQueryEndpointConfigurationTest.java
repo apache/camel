@@ -42,7 +42,7 @@ public class XQueryEndpointConfigurationTest extends CamelSpringTestSupport {
 
         for (Endpoint ep : context.getEndpoints()) {
             if (ep instanceof XQueryEndpoint) {
-                endpoint = (XQueryEndpoint)ep;
+                endpoint = (XQueryEndpoint) ep;
                 break;
             }
         }

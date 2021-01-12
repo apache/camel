@@ -34,7 +34,8 @@ import org.apache.camel.spi.InflightRepository;
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
     private InflightRepository inflightRepository;
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
-    private MicrometerExchangeEventNotifierNamingStrategy namingStrategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+    private MicrometerExchangeEventNotifierNamingStrategy namingStrategy
+            = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -77,11 +78,14 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     private void handleExchangeEvent(ExchangeEvent exchangeEvent) {
-        String name = namingStrategy.getInflightExchangesName(exchangeEvent.getExchange(), exchangeEvent.getExchange().getFromEndpoint());
-        Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchangeEvent.getExchange().getFromEndpoint());
-        Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
-            .tags(tags)
-            .register(getMeterRegistry());
+        Exchange exchange = exchangeEvent.getExchange();
+        if (exchange.getFromRouteId() != null && exchange.getFromEndpoint() != null) {
+            String name = namingStrategy.getInflightExchangesName(exchange, exchange.getFromEndpoint());
+            Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
+            Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
+                    .tags(tags)
+                    .register(getMeterRegistry());
+        }
     }
 
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
@@ -109,6 +113,5 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         String routeId = exchangeEvent.getExchange().getFromRouteId();
         return inflightRepository.size(routeId);
     }
-
 
 }

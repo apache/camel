@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-fhir</artifactId>
@@ -65,15 +65,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-fhir-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-fhir-api</artifactId>
-            <version>${project.version}</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
         </dependency>
 
         <!-- These aren't needed for compilation but makes camel-fhir easier to use for third party projects/users e.g wildfly-camel -->
@@ -145,6 +136,23 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-fhir</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -165,7 +173,7 @@
                                 <api>
                                     <apiName>capabilities</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
-                                    <fromSignatureFile>signatures/capabilities-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -173,7 +181,7 @@
                                 <api>
                                     <apiName>create</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCreate</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>url</nullableOption>
                                         <nullableOption>preferReturn</nullableOption>
@@ -183,7 +191,7 @@
                                 <api>
                                     <apiName>delete</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirDelete</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -191,7 +199,7 @@
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirHistory</proxyClass>
-                                    <fromSignatureFile>signatures/history-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>count</nullableOption>
                                         <nullableOption>cutoff</nullableOption>
@@ -202,7 +210,7 @@
                                 <api>
                                     <apiName>load-page</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
-                                    <fromSignatureFile>signatures/load-page-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -210,7 +218,7 @@
                                 <api>
                                     <apiName>meta</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
-                                    <fromSignatureFile>signatures/meta-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -218,7 +226,7 @@
                                 <api>
                                     <apiName>operation</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
-                                    <fromSignatureFile>signatures/operation-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                         <nullableOption>parameters</nullableOption>
@@ -230,7 +238,7 @@
                                 <api>
                                     <apiName>patch</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>preferReturn</nullableOption>
                                         <nullableOption>extraParameters</nullableOption>
@@ -239,7 +247,7 @@
                                 <api>
                                     <apiName>read</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirRead</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>ifVersionMatches</nullableOption>
                                         <nullableOption>returnNull</nullableOption>
@@ -252,7 +260,7 @@
                                 <api>
                                     <apiName>search</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirSearch</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -260,7 +268,7 @@
                                 <api>
                                     <apiName>transaction</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirTransaction</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -268,7 +276,7 @@
                                 <api>
                                     <apiName>update</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>id</nullableOption>
                                         <nullableOption>stringId</nullableOption>
@@ -279,7 +287,7 @@
                                 <api>
                                     <apiName>validate</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirValidate</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -288,6 +296,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-fhir-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->
@@ -322,13 +339,51 @@
     </build>
 
     <profiles>
+        <!-- activate test if the docker socket file is accessible -->
         <profile>
-            <id>it-fhir</id>
+            <id>fhir-tests-docker-file</id>
+            <activation>
+                <file>
+                    <exists>/var/run/docker.sock</exists>
+                </file>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- activate test if the DOCKER_HOST env var is set -->
+        <profile>
+            <id>fhir-tests-docker-env</id>
+            <activation>
+                <property>
+                    <name>env.DOCKER_HOST</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>

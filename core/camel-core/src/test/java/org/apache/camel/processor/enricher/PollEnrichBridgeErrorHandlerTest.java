@@ -50,7 +50,8 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
 
         assertEquals(1 + 3, myPoll.getCounter());
 
-        Exception caught = getMockEndpoint("mock:dead").getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception caught
+                = getMockEndpoint("mock:dead").getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(caught);
         assertTrue(caught.getMessage().startsWith("Error during poll"));
         assertEquals("Something went wrong", caught.getCause().getCause().getMessage());
@@ -65,10 +66,11 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("seda:start")
-                    // bridge the error handler when doing a polling so we can
-                    // let Camel's error handler decide what to do
-                    .pollEnrich("file:target/data/foo?initialDelay=0&delay=10&pollStrategy=#myPoll&bridgeErrorHandler=true", 10000, new UseLatestAggregationStrategy())
-                    .to("mock:result");
+                        // bridge the error handler when doing a polling so we can
+                        // let Camel's error handler decide what to do
+                        .pollEnrich("file:target/data/foo?initialDelay=0&delay=10&pollStrategy=#myPoll&bridgeErrorHandler=true",
+                                10000, new UseLatestAggregationStrategy())
+                        .to("mock:result");
             }
         };
     }

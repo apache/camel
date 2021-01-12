@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
                       portName = "MultiPartInvokePort",
                       targetNamespace = "http://adapter.ti.tongtech.com/ws",
                       endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
-                      
+
 public class MultiPartInvokeImpl implements MultiPartInvoke {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiPartInvokeImpl.class);
@@ -44,7 +44,7 @@ public class MultiPartInvokeImpl implements MultiPartInvoke {
             InE out1Value = in1;
             out1.value = out1Value;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("I/O error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }

@@ -49,12 +49,12 @@ public class DefaultCxfMessageMapperTest {
 
         Exchange camelExchange = setupCamelExchange(requestURI, requestPath, null);
         Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
-            camelExchange, mock(HeaderFilterStrategy.class));
+                camelExchange, mock(HeaderFilterStrategy.class));
 
         assertEquals(requestURI, cxfMessage.get(Message.REQUEST_URI).toString());
         assertEquals(requestPath, cxfMessage.get(Message.BASE_PATH).toString());
     }
-    
+
     @Test
     public void testSecurityContext() {
         DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
@@ -64,9 +64,9 @@ public class DefaultCxfMessageMapperTest {
         when(request.isUserInRole("role1")).thenReturn(true);
         when(request.isUserInRole("role2")).thenReturn(false);
         Exchange camelExchange = setupCamelExchange("/", "/", request);
-        
+
         Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
-            camelExchange, mock(HeaderFilterStrategy.class));
+                camelExchange, mock(HeaderFilterStrategy.class));
         SecurityContext sc = cxfMessage.get(SecurityContext.class);
         assertNotNull(sc);
         assertEquals("barry", sc.getUserPrincipal().getName());
@@ -78,7 +78,7 @@ public class DefaultCxfMessageMapperTest {
         org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
         Exchange camelExchange = mock(Exchange.class);
         when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
-            org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());
+                org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());
         when(camelExchange.hasOut()).thenReturn(false);
         when(camelExchange.getIn()).thenReturn(camelMessage);
         when(camelMessage.getHeaders()).thenReturn(Collections.emptyMap());

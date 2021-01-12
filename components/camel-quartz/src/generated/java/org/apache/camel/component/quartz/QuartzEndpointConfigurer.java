@@ -4,8 +4,10 @@ package org.apache.camel.component.quartz;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autostartscheduler":
         case "autoStartScheduler": target.setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cron": target.setCron(property(camelContext, java.lang.String.class, value)); return true;
@@ -61,29 +61,45 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoStartScheduler", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cron", java.lang.String.class);
-        answer.put("customCalendar", org.quartz.Calendar.class);
-        answer.put("deleteJob", boolean.class);
-        answer.put("durableJob", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fireNow", boolean.class);
-        answer.put("jobParameters", java.util.Map.class);
-        answer.put("pauseJob", boolean.class);
-        answer.put("prefixJobNameWithEndpointId", boolean.class);
-        answer.put("recoverableJob", boolean.class);
-        answer.put("startDelayedSeconds", int.class);
-        answer.put("stateful", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("triggerParameters", java.util.Map.class);
-        answer.put("triggerStartDelay", long.class);
-        answer.put("usingFixedCamelContextName", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autostartscheduler":
+        case "autoStartScheduler": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cron": return java.lang.String.class;
+        case "customcalendar":
+        case "customCalendar": return org.quartz.Calendar.class;
+        case "deletejob":
+        case "deleteJob": return boolean.class;
+        case "durablejob":
+        case "durableJob": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "firenow":
+        case "fireNow": return boolean.class;
+        case "jobparameters":
+        case "jobParameters": return java.util.Map.class;
+        case "pausejob":
+        case "pauseJob": return boolean.class;
+        case "prefixjobnamewithendpointid":
+        case "prefixJobNameWithEndpointId": return boolean.class;
+        case "recoverablejob":
+        case "recoverableJob": return boolean.class;
+        case "startdelayedseconds":
+        case "startDelayedSeconds": return int.class;
+        case "stateful": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "triggerparameters":
+        case "triggerParameters": return java.util.Map.class;
+        case "triggerstartdelay":
+        case "triggerStartDelay": return long.class;
+        case "usingfixedcamelcontextname":
+        case "usingFixedCamelContextName": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -92,8 +108,6 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autostartscheduler":
         case "autoStartScheduler": return target.isAutoStartScheduler();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cron": return target.getCron();
@@ -127,6 +141,17 @@ public class QuartzEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "triggerStartDelay": return target.getTriggerStartDelay();
         case "usingfixedcamelcontextname":
         case "usingFixedCamelContextName": return target.isUsingFixedCamelContextName();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "jobparameters":
+        case "jobParameters": return java.lang.Object.class;
+        case "triggerparameters":
+        case "triggerParameters": return java.lang.Object.class;
         default: return null;
         }
     }

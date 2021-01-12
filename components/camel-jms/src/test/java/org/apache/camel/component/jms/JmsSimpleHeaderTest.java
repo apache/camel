@@ -34,7 +34,7 @@ public class JmsSimpleHeaderTest extends CamelTestSupport {
     public void testByteJMSHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header("data").isEqualTo((byte)40);
+        mock.message(0).header("data").isEqualTo((byte) 40);
 
         template.sendBodyAndHeader("activemq:queue:foo", "Hello World", "data", (byte) 40);
 

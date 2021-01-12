@@ -4,8 +4,10 @@ package org.apache.camel.component.elasticsearch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "client": target.setClient(property(camelContext, org.elasticsearch.client.RestClient.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
@@ -47,30 +49,46 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("client", org.elasticsearch.client.RestClient.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("enableSSL", java.lang.Boolean.class);
-        answer.put("enableSniffer", java.lang.Boolean.class);
-        answer.put("hostAddresses", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxRetryTimeout", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("sniffAfterFailureDelay", int.class);
-        answer.put("snifferInterval", int.class);
-        answer.put("socketTimeout", int.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"client"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "client": return org.elasticsearch.client.RestClient.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "enablessl":
+        case "enableSSL": return java.lang.Boolean.class;
+        case "enablesniffer":
+        case "enableSniffer": return java.lang.Boolean.class;
+        case "hostaddresses":
+        case "hostAddresses": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretrytimeout":
+        case "maxRetryTimeout": return int.class;
+        case "password": return java.lang.String.class;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": return int.class;
+        case "snifferinterval":
+        case "snifferInterval": return int.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "client": return target.getClient();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();

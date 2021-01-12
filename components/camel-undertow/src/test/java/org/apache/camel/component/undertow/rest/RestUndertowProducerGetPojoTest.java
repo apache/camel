@@ -64,7 +64,7 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("lives")
+                        .get("lives")
                         // just return the default country here
                         .to("direct:start");
 

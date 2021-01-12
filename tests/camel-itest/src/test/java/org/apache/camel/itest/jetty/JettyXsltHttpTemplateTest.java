@@ -52,9 +52,11 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("jetty:http://0.0.0.0:" + port + "/myxslt")
-                    .pollEnrich("file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none", 2000)
-                    .convertBodyTo(String.class)
-                    .to("log:transform");
+                        .pollEnrich(
+                                "file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none",
+                                2000)
+                        .convertBodyTo(String.class)
+                        .to("log:transform");
             }
         };
     }

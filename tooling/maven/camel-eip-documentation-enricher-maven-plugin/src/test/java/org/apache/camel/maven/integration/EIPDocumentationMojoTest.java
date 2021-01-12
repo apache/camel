@@ -49,7 +49,7 @@ public class EIPDocumentationMojoTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        eipDocumentationEnricherMojo.camelCoreDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
+        eipDocumentationEnricherMojo.camelCoreModelDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.camelCoreXmlDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.camelSpringDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.inputCamelSchemaFile = ResourceUtils.getResourceAsFile("integration/camel-spring.xsd");

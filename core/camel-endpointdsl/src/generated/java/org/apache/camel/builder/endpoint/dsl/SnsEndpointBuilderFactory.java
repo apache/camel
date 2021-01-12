@@ -42,10 +42,13 @@ public interface SnsEndpointBuilderFactory {
         /**
          * To use the AmazonSNS as the client.
          * 
-         * The option is a: <code>com.amazonaws.services.sns.AmazonSNS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.sns.AmazonSNS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSNSClient the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
             doSetProperty("amazonSNSClient", amazonSNSClient);
@@ -55,9 +58,12 @@ public interface SnsEndpointBuilderFactory {
          * To use the AmazonSNS as the client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.sns.AmazonSNS</code> type.
+         * &lt;code&gt;com.amazonaws.services.sns.AmazonSNS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSNSClient the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
             doSetProperty("amazonSNSClient", amazonSNSClient);
@@ -66,10 +72,13 @@ public interface SnsEndpointBuilderFactory {
         /**
          * An SQS Client to use as bridge between SNS and SQS.
          * 
-         * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.sqs.AmazonSQS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
@@ -79,9 +88,12 @@ public interface SnsEndpointBuilderFactory {
          * An SQS Client to use as bridge between SNS and SQS.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
+         * &lt;code&gt;com.amazonaws.services.sqs.AmazonSQS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
@@ -90,10 +102,13 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Setting the autocreation of the topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param autoCreateTopic the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder autoCreateTopic(boolean autoCreateTopic) {
             doSetProperty("autoCreateTopic", autoCreateTopic);
@@ -102,10 +117,14 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Setting the autocreation of the topic.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param autoCreateTopic the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
             doSetProperty("autoCreateTopic", autoCreateTopic);
@@ -116,10 +135,13 @@ public interface SnsEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder autoDiscoverClient(boolean autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -130,10 +152,14 @@ public interface SnsEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -143,9 +169,13 @@ public interface SnsEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -156,9 +186,13 @@ public interface SnsEndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -169,9 +203,12 @@ public interface SnsEndpointBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
          * a custom CMK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kmsMasterKeyId the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
             doSetProperty("kmsMasterKeyId", kmsMasterKeyId);
@@ -188,10 +225,13 @@ public interface SnsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -208,10 +248,14 @@ public interface SnsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -220,9 +264,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * The message structure to use such as json.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageStructure the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder messageStructure(String messageStructure) {
             doSetProperty("messageStructure", messageStructure);
@@ -231,9 +278,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * The policy for this queue.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -242,9 +292,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SNS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -253,9 +306,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SNS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -264,10 +320,13 @@ public interface SnsEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SNS client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -276,10 +335,14 @@ public interface SnsEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SNS client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -288,11 +351,14 @@ public interface SnsEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SNS client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -301,9 +367,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * The queueUrl to subscribe to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder queueUrl(String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -315,9 +384,12 @@ public interface SnsEndpointBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -326,10 +398,13 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
@@ -339,10 +414,14 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
@@ -353,9 +432,12 @@ public interface SnsEndpointBuilderFactory {
          * The subject which is used if the message header 'CamelAwsSnsSubject'
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -365,10 +447,13 @@ public interface SnsEndpointBuilderFactory {
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param subscribeSNStoSQS the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder subscribeSNStoSQS(boolean subscribeSNStoSQS) {
             doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
@@ -378,10 +463,14 @@ public interface SnsEndpointBuilderFactory {
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param subscribeSNStoSQS the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder subscribeSNStoSQS(String subscribeSNStoSQS) {
             doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
@@ -390,9 +479,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -401,9 +493,12 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default SnsEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -422,41 +517,16 @@ public interface SnsEndpointBuilderFactory {
             return (SnsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -466,10 +536,14 @@ public interface SnsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -500,6 +574,7 @@ public interface SnsEndpointBuilderFactory {
          * Topic name or ARN
          * 
          * @param path topicNameOrArn
+         * @return the dsl builder
          */
         default SnsEndpointBuilder awsSns(String path) {
             return SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
@@ -520,6 +595,7 @@ public interface SnsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topicNameOrArn
+         * @return the dsl builder
          */
         default SnsEndpointBuilder awsSns(String componentName, String path) {
             return SnsEndpointBuilderFactory.endpointBuilder(componentName, path);

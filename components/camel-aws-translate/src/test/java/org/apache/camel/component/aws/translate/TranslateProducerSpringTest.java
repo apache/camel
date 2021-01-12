@@ -54,6 +54,7 @@ public class TranslateProducerSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/translate/TranslateComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws/translate/TranslateComponentSpringTest-context.xml");
     }
 }

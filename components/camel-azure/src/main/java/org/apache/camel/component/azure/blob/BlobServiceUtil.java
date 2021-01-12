@@ -37,7 +37,6 @@ import org.apache.camel.component.azure.common.ExchangeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.azure.blob.BlobHeadersConstants.OVERRIDE_BLOB_NAME;
 
 public final class BlobServiceUtil {
@@ -120,8 +119,9 @@ public final class BlobServiceUtil {
             }
         }
     }
+
     private static String getBlobFileName(BlobServiceConfiguration cfg) {
-        return cfg.getBlobName()  + ".blob";
+        return cfg.getBlobName() + ".blob";
     }
 
     public static CloudBlobContainer createBlobContainerClient(Exchange exchange, BlobServiceConfiguration cfg)
@@ -216,7 +216,6 @@ public final class BlobServiceUtil {
         return URI.create(uriBuilder.toString());
     }
 
-
     public static BlobServiceRequestOptions getRequestOptions(Exchange exchange) {
         BlobServiceRequestOptions opts = exchange.getIn().getHeader(
                 BlobServiceConstants.BLOB_SERVICE_REQUEST_OPTIONS, BlobServiceRequestOptions.class);
@@ -225,12 +224,10 @@ public final class BlobServiceUtil {
         } else {
             opts = new BlobServiceRequestOptions();
         }
-        AccessCondition accessCond =
-                exchange.getIn().getHeader(BlobServiceConstants.ACCESS_CONDITION, AccessCondition.class);
-        BlobRequestOptions requestOpts =
-                exchange.getIn().getHeader(BlobServiceConstants.BLOB_REQUEST_OPTIONS, BlobRequestOptions.class);
-        OperationContext opContext =
-                exchange.getIn().getHeader(BlobServiceConstants.OPERATION_CONTEXT, OperationContext.class);
+        AccessCondition accessCond = exchange.getIn().getHeader(BlobServiceConstants.ACCESS_CONDITION, AccessCondition.class);
+        BlobRequestOptions requestOpts
+                = exchange.getIn().getHeader(BlobServiceConstants.BLOB_REQUEST_OPTIONS, BlobRequestOptions.class);
+        OperationContext opContext = exchange.getIn().getHeader(BlobServiceConstants.OPERATION_CONTEXT, OperationContext.class);
         opts.setAccessCond(accessCond);
         opts.setOpContext(opContext);
         opts.setRequestOpts(requestOpts);

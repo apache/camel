@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,8 +45,7 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
  * <li>languages</li>
  * <li>others</li>
  * </ul>
- * And for each of those generates extra descriptors and schema files for easier
- * auto-discovery in Camel and tooling.
+ * And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling.
  */
 @Mojo(name = "prepare-components", threadSafe = true)
 public class PrepareComponentMojo extends AbstractGeneratorMojo {
@@ -102,12 +102,13 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     protected boolean prepareComponent;
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         configurerSourceOutDir = new File(project.getBasedir(), "src/generated/java");
         configurerResourceOutDir = componentOutDir
                 = dataFormatOutDir = languageOutDir
-                = otherOutDir = schemaOutDir
-                = new File(project.getBasedir(), "src/generated/resources");
+                        = otherOutDir = schemaOutDir
+                                = new File(project.getBasedir(), "src/generated/resources");
         buildDir = new File(project.getBuild().getDirectory());
         prepareComponent = Boolean.parseBoolean(project.getProperties().getProperty("camel-prepare-component", "false"));
         super.execute(project, projectHelper, buildContext);
@@ -116,10 +117,9 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -128,28 +128,89 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         }
 
         int count = 0;
-        count += new PackageComponentMojo(getLog(), project, projectHelper, buildDir,
-                        componentOutDir, buildContext).prepareComponent();
-        count += new PackageDataFormatMojo(getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir,
-                        configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
-        count += new PackageLanguageMojo(getLog(), project, projectHelper, buildDir, languageOutDir,
-                        schemaOutDir, buildContext).prepareLanguage();
+        count += new PackageComponentMojo(
+                getLog(), project, projectHelper, buildDir,
+                componentOutDir, buildContext).prepareComponent();
+        count += new PackageDataFormatMojo(
+                getLog(), project, projectHelper, dataFormatOutDir, configurerSourceOutDir,
+                configurerResourceOutDir, schemaOutDir, buildContext).prepareDataFormat();
+        count += new PackageLanguageMojo(
+                getLog(), project, projectHelper, buildDir, languageOutDir,
+                schemaOutDir, buildContext).prepareLanguage();
         if (count == 0 && new File(project.getBasedir(), "src/main/java").isDirectory()) {
             // okay its not any of the above then its other
-            new PackageOtherMojo(getLog(), project, projectHelper, otherOutDir,
+            new PackageOtherMojo(
+                    getLog(), project, projectHelper, otherOutDir,
                     schemaOutDir, buildContext).prepareOthers();
+            // skip maven plugins or from core as core is maintained manually
+            boolean skip = project.getArtifactId().endsWith("-maven-plugin");
+            if (!skip) {
+                count = 1;
+            }
         }
 
         // whether to sync pom
         Object val = project.getContextValue("syncPomFile");
+        if (val != null) {
+            File parent = project.getBasedir().getParentFile();
+            File components = findCamelDirectory(project.getBasedir(), "components");
+            if (Objects.equals(parent, components)) {
+                val = false;
+            }
+        }
 
-        // Update all component pom sync point
-        if (count > 0 && (val == null || val.equals("true"))) {
-            syncPomFile();
+        // skip from core folder as they are manitained manually in parent and should not be in all-components
+        boolean core = project.getParentArtifact() != null && project.getParentArtifact().getArtifactId().equals("core");
+        if (!core && count > 0 && (val == null || val.equals("true"))) {
+            // Update all component pom sync point
+            syncParentPomFile();
+            syncAllComponentsPomFile();
         }
     }
 
-    private void syncPomFile() throws MojoExecutionException {
+    private void syncParentPomFile() throws MojoExecutionException {
+        Path root = findCamelDirectory(project.getBasedir(), "parent").toPath();
+        Path pomFile = root.resolve("pom.xml");
+
+        final String startDependenciesMarker = "<!-- camel components: START -->";
+        final String endDependenciesMarker = "<!-- camel components: END -->";
+
+        if (!Files.isRegularFile(pomFile)) {
+            throw new MojoExecutionException("Pom file " + pomFile + " does not exist");
+        }
+
+        try {
+            final String pomText = loadText(pomFile);
+
+            final String before = Strings.before(pomText, startDependenciesMarker);
+            final String after = Strings.after(pomText, endDependenciesMarker);
+
+            final String between = pomText.substring(before.length(), pomText.length() - after.length());
+
+            Pattern pattern = Pattern.compile(
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>\\$\\{project\\.version}</version>\\s*</dependency>");
+            Matcher matcher = pattern.matcher(between);
+            TreeSet<String> dependencies = new TreeSet<>();
+            while (matcher.find()) {
+                dependencies.add(matcher.group());
+            }
+            dependencies.add("<dependency>\n"
+                             + "\t\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
+                             + "\t\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                             + "\t\t\t\t<version>${project.version}</version>\n"
+                             + "\t\t\t</dependency>");
+
+            final String updatedPom = before + startDependenciesMarker + "\n\t\t\t"
+                                      + String.join("\n\t\t\t", dependencies) + "\n\t\t\t"
+                                      + endDependenciesMarker + after;
+
+            updateResource(buildContext, pomFile, updatedPom);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
+        }
+    }
+
+    private void syncAllComponentsPomFile() throws MojoExecutionException {
         Path root = findCamelDirectory(project.getBasedir(), "core/camel-allcomponents").toPath();
         Path pomFile = root.resolve("pom.xml");
 
@@ -168,20 +229,21 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
-            Pattern pattern = Pattern.compile("<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
+            Pattern pattern = Pattern.compile(
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
             Matcher matcher = pattern.matcher(between);
             TreeSet<String> dependencies = new TreeSet<>();
             while (matcher.find()) {
                 dependencies.add(matcher.group());
             }
             dependencies.add("<dependency>\n"
-                        + "\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
-                        + "\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                        + "\t\t</dependency>");
+                             + "\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
+                             + "\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                             + "\t\t</dependency>");
 
             final String updatedPom = before + startDependenciesMarker + "\n\t\t"
-                    + String.join("\n\t\t", dependencies) + "\n\t"
-                    + endDependenciesMarker + after;
+                                      + String.join("\n\t\t", dependencies) + "\n\t"
+                                      + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {

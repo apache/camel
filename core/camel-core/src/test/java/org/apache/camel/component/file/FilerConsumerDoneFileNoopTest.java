@@ -57,7 +57,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be kept now
         File file = new File("target/data/done/done");

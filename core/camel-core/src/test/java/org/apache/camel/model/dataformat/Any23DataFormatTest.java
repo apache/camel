@@ -31,10 +31,10 @@ import static org.assertj.core.api.Assertions.entry;
 public class Any23DataFormatTest {
 
     private final String xml = "<?xml version=\"1.0\"?>"
-        + "<any23 xmlns=\"http://camel.apache.org/schema/spring\">"
-        + "<configuration key=\"k1\" value=\"v1\" />"
-        + "<configuration key=\"k2\" value=\"v2\" />"
-        + "</any23>";
+                               + "<any23 xmlns=\"http://camel.apache.org/schema/spring\">"
+                               + "<configuration key=\"k1\" value=\"v1\" />"
+                               + "<configuration key=\"k2\" value=\"v2\" />"
+                               + "</any23>";
 
     @Test
     public void shouldDeserializeConfigurationPropertiesFromXml() throws JAXBException, IOException {

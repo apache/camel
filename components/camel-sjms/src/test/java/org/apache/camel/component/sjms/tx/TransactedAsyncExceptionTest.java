@@ -52,13 +52,13 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
                 AtomicInteger counter = new AtomicInteger();
 
                 from(destination + "?acknowledgementMode=SESSION_TRANSACTED&transacted=true")
-                    .threads()
-                    .process(exchange -> {
-                        if (counter.incrementAndGet() < TRANSACTION_REDELIVERY_COUNT) {
-                            throw new IllegalArgumentException();
-                        }
-                    })
-                    .to("mock:async.exception");
+                        .threads()
+                        .process(exchange -> {
+                            if (counter.incrementAndGet() < TRANSACTION_REDELIVERY_COUNT) {
+                                throw new IllegalArgumentException();
+                            }
+                        })
+                        .to("mock:async.exception");
             }
         });
 
@@ -81,7 +81,8 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
             } else {
                 log.info("normal thread: {}", threadInfo);
             }
-            log.info("full stack: {}", Arrays.stream(threadInfo.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\t")));
+            log.info("full stack: {}",
+                    Arrays.stream(threadInfo.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\t")));
         }
     }
 

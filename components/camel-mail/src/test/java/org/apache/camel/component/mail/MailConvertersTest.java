@@ -73,7 +73,7 @@ public class MailConvertersTest extends CamelTestSupport {
 
         InputStream is = MailConverters.toInputStream(mailMessage);
         assertNotNull(is);
-        assertEquals(context.getTypeConverter().convertTo(String.class, is), "Hello World");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, is));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MailConvertersTest extends CamelTestSupport {
 
         InputStream is = mock.getReceivedExchanges().get(0).getIn().getBody(InputStream.class);
         assertNotNull(is);
-        assertEquals(context.getTypeConverter().convertTo(String.class, is), "Alternative World");
+        assertEquals("Alternative World", context.getTypeConverter().convertTo(String.class, is));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class MailConvertersTest extends CamelTestSupport {
 
         byte[] is = mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         assertNotNull(is);
-        assertEquals(context.getTypeConverter().convertTo(String.class, is), "Alternative World");
+        assertEquals("Alternative World", context.getTypeConverter().convertTo(String.class, is));
     }
 
     @Test

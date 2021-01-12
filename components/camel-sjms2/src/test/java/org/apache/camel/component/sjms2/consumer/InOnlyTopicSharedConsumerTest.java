@@ -47,12 +47,6 @@ public class InOnlyTopicSharedConsumerTest extends Jms2TestSupport {
         mock2.assertIsSatisfied();
     }
 
-    /**
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

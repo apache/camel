@@ -50,8 +50,9 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // aggregate timeout after 0.1 second
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:result");
+                        // aggregate timeout after 0.1 second
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10).to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -47,8 +47,8 @@ public class MockExpectedHeaderNoMessageSentTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:foo")
-                    .routeId("myRoute")
-                    .to("mock:result");
+                        .routeId("myRoute")
+                        .to("mock:result");
             }
         };
     }

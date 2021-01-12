@@ -25,7 +25,8 @@ import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
  */
 public enum WordpressOperationType {
 
-    post(PostSearchCriteria.class), user(UserSearchCriteria.class);
+    post(PostSearchCriteria.class),
+    user(UserSearchCriteria.class);
 
     private final Class<? extends SearchCriteria> criteriaType;
 

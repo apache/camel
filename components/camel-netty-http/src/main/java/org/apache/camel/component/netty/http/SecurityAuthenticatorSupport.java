@@ -60,8 +60,8 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
     /**
      * Is the given principal a role class?
      *
-     * @param principal the principal
-     * @return <tt>true</tt> if role class, <tt>false</tt> if not
+     * @param  principal the principal
+     * @return           <tt>true</tt> if role class, <tt>false</tt> if not
      */
     protected boolean isRoleClass(Principal principal) {
         if (roleClassNames == null) {

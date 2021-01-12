@@ -94,7 +94,7 @@ public class ManagedRouteRestartTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routePolicy(myRoutePolicy)
-                    .delayer(10).to("log:foo").to("mock:result");
+                        .delayer(10).to("log:foo").to("mock:result");
             }
         };
     }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-box-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-box</artifactId>
@@ -68,24 +68,6 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup-version}</version>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-box-api</artifactId>
-            <version>${project.version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>com.box</groupId>
-            <artifactId>box-java-sdk</artifactId>
-            <version>${box-java-sdk-version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
         </dependency>
 
         <!-- logging -->
@@ -136,7 +118,8 @@
                                 <api>
                                     <apiName>collaborations</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxCollaborationsManager</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFolderCollaboration</methodPattern>
@@ -171,7 +154,8 @@
                                 <api>
                                     <apiName>comments</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxCommentsManager</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFileComment</methodPattern>
@@ -202,7 +186,8 @@
                                 <api>
                                     <apiName>event-logs</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxEventLogsManager</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>getEnterpriseEvents</methodPattern>
@@ -217,7 +202,8 @@
                                 <api>
                                     <apiName>files</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxFilesManager</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>uploadFile</methodPattern>
@@ -328,8 +314,8 @@
                                 <api>
                                     <apiName>folders</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxFoldersManager</proxyClass>
-                                    <fromJavadoc>
-                                    </fromJavadoc>
+                                    <producerOnly>true</producerOnly>
+                                    <fromJavasource />
                                     <aliases>
                                         <alias>
                                             <methodPattern>getRootFolder</methodPattern>
@@ -380,13 +366,14 @@
                                         <nullableOption>offset</nullableOption>
                                         <nullableOption>limit</nullableOption>
                                         <nullableOption>fields</nullableOption>
+                                        <nullableOption>newName</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>
                                     <apiName>groups</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxGroupsManager</proxyClass>
-                                    <fromJavadoc>
-                                    </fromJavadoc>
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>createGroup</methodPattern>
@@ -437,9 +424,10 @@
                                 <api>
                                     <apiName>events</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxEventsManager</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>stopListening</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
+                                    <consumerOnly>true</consumerOnly>
                                     <excludeConfigNames>listener</excludeConfigNames>
                                     <nullableOptions>
                                         <nullableOption>startingPosition</nullableOption>
@@ -448,7 +436,8 @@
                                 <api>
                                     <apiName>search</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxSearchManager</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>searchFolder</methodPattern>
@@ -459,8 +448,8 @@
                                 <api>
                                     <apiName>tasks</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxTasksManager</proxyClass>
-                                    <fromJavadoc>
-                                    </fromJavadoc>
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFileTask</methodPattern>
@@ -506,7 +495,8 @@
                                 <api>
                                     <apiName>users</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxUsersManager</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>getCurrentUser</methodPattern>
@@ -561,11 +551,27 @@
                                  <excludeConfigNames />
                                  <excludeConfigTypes />
                                  <extraOptions>
-                                 <fromJavadoc />
+                                 <fromJavasource />
                                  <aliases /> -->
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API javadoc in provided scope to read API signatures -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-box-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                    <!-- Component API javadoc in provided scope to read API signatures -->
+                    <dependency>
+                        <groupId>com.box</groupId>
+                        <artifactId>box-java-sdk</artifactId>
+                        <version>${box-java-sdk-version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

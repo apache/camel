@@ -40,10 +40,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * OpenStack API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: V3
          * Group: producer
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -52,10 +55,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * OpenStack configuration.
          * 
-         * The option is a: <code>org.openstack4j.core.transport.Config</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder config(Object config) {
             doSetProperty("config", config);
@@ -65,9 +71,12 @@ public interface SwiftEndpointBuilderFactory {
          * OpenStack configuration.
          * 
          * The option will be converted to a
-         * <code>org.openstack4j.core.transport.Config</code> type.
+         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder config(String config) {
             doSetProperty("config", config);
@@ -76,10 +85,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * Authentication domain.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: default
          * Group: producer
+         * 
+         * @param domain the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder domain(String domain) {
             doSetProperty("domain", domain);
@@ -96,10 +108,13 @@ public interface SwiftEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -116,10 +131,14 @@ public interface SwiftEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -128,9 +147,12 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * The operation to do.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -139,10 +161,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * OpenStack password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -151,10 +176,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * The project ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param project the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder project(String project) {
             doSetProperty("project", project);
@@ -163,10 +191,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * OpenStack Swift subsystem.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param subsystem the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder subsystem(String subsystem) {
             doSetProperty("subsystem", subsystem);
@@ -175,10 +206,13 @@ public interface SwiftEndpointBuilderFactory {
         /**
          * OpenStack username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -196,41 +230,16 @@ public interface SwiftEndpointBuilderFactory {
             return (SwiftEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSwiftEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSwiftEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSwiftEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -240,10 +249,14 @@ public interface SwiftEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSwiftEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -266,6 +279,7 @@ public interface SwiftEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder openstackSwift(String path) {
             return SwiftEndpointBuilderFactory.endpointBuilder("openstack-swift", path);
@@ -286,6 +300,7 @@ public interface SwiftEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder openstackSwift(
                 String componentName,

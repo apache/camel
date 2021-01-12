@@ -31,7 +31,8 @@ public class DeleteTableCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        TableDescription tableDescription = ddbClient.deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
+        TableDescription tableDescription = ddbClient
+                .deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
 
         HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.PROVISIONED_THROUGHPUT, tableDescription.provisionedThroughput());

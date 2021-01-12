@@ -34,7 +34,7 @@ public class InOnlyConsumerTempQueueTest extends JmsTestSupport {
         mock.expectedBodiesReceived(expectedBody);
 
         template.sendBody(SJMS_QUEUE_NAME, expectedBody);
-        
+
         mock.assertIsSatisfied();
     }
 
@@ -43,7 +43,7 @@ public class InOnlyConsumerTempQueueTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(SJMS_QUEUE_NAME)
-                    .to(MOCK_RESULT);
+                        .to(MOCK_RESULT);
             }
         };
     }

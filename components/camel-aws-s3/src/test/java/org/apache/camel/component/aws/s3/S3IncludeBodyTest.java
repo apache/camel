@@ -38,8 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Test to verify that the body is not retrieved when the includeBody option is
- * false
+ * Test to verify that the body is not retrieved when the includeBody option is false
  */
 public class S3IncludeBodyTest extends CamelTestSupport {
 
@@ -60,14 +59,15 @@ public class S3IncludeBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false").to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50"
+                     + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false").to("mock:result");
             }
         };
     }
 
     class DummyAmazonS3Client extends AmazonS3Client {
 
-        private AtomicInteger requestCount = new AtomicInteger(0);
+        private AtomicInteger requestCount = new AtomicInteger();
 
         DummyAmazonS3Client() {
             super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));

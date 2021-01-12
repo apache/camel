@@ -40,7 +40,7 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
         HttpResponse response = client.execute(get);
 
         ObjectInputStream in = new ObjectInputStream(response.getEntity().getContent());
-        IllegalArgumentException e = (IllegalArgumentException)in.readObject();
+        IllegalArgumentException e = (IllegalArgumentException) in.readObject();
         assertNotNull(e);
         assertEquals(500, response.getStatusLine().getStatusCode());
         assertEquals("Camel cannot do this", e.getMessage());
@@ -54,7 +54,7 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
 
             public void configure() {
                 from("undertow:http://localhost:" + getPort() + "/test/transfer?transferException=true").to("mock:input")
-                    .throwException(new IllegalArgumentException("Camel cannot do this"));
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

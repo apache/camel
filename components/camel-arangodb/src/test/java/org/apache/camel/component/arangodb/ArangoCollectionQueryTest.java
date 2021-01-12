@@ -16,34 +16,23 @@
  */
 package org.apache.camel.component.arangodb;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoCursor;
 import com.arangodb.util.MapBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_BIND_PARAMETERS;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArangoCollectionQueryTest extends AbstractArangoDbTest {
-
-    private ArangoCollection collection;
-
-    @BeforeEach
-    public void beforeEach() {
-        arangoDatabase.createCollection(COLLECTION_NAME);
-        collection = arangoDatabase.collection(COLLECTION_NAME);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
-    }
+public class ArangoCollectionQueryTest extends BaseCollectionTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -57,7 +46,6 @@ public class ArangoCollectionQueryTest extends AbstractArangoDbTest {
 
     @Test
     public void findByParameters() {
-
         TestDocumentEntity test = new TestDocumentEntity("bar", 10);
         collection.insertDocument(test);
 
@@ -76,21 +64,21 @@ public class ArangoCollectionQueryTest extends AbstractArangoDbTest {
         Exchange result = template.request("direct:query", exchange -> {
             exchange.getMessage().setHeader(AQL_QUERY, query);
             exchange.getMessage().setHeader(AQL_QUERY_BIND_PARAMETERS, bindVars);
-            exchange.getMessage().setHeader(AQL_QUERY_OPTIONS, null);
             exchange.getMessage().setHeader(RESULT_CLASS_TYPE, TestDocumentEntity.class);
         });
 
-        assertTrue(result.getMessage().getBody() instanceof ArangoCursor);
-        ArangoCursor<TestDocumentEntity> cursor = (ArangoCursor<TestDocumentEntity>) result.getMessage().getBody();
+        assertTrue(result.getMessage().getBody() instanceof Collection);
+        Collection<TestDocumentEntity> list = (Collection<TestDocumentEntity>) result.getMessage().getBody();
 
-        assertTrue(cursor.hasNext());
-        cursor.forEachRemaining(doc -> {
-            assertNotNull(doc);
-            assertNotNull(doc.getKey());
-            assertNotNull(doc.getRev());
-            assertEquals(test.getFoo(), doc.getFoo());
-            assertEquals(test.getNumber(), doc.getNumber());
-        });
+        assertNotNull(list);
+        Optional<TestDocumentEntity> optional = list.stream().findFirst();
+        assertTrue(optional.isPresent());
+        TestDocumentEntity doc = optional.get();
+        assertNotNull(doc);
+        assertNotNull(doc.getKey());
+        assertNotNull(doc.getRev());
+        assertEquals(test.getFoo(), doc.getFoo());
+        assertEquals(test.getNumber(), doc.getNumber());
     }
 
 }

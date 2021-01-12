@@ -48,7 +48,8 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
-        template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
+        template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
+                "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -81,7 +82,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
-                        exchange.getOut().setBody(bis);
+                        exchange.getMessage().setBody(bis);
                     }
                 };
 

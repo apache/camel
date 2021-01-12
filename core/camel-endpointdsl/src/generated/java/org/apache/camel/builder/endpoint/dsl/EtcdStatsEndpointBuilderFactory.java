@@ -49,10 +49,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -61,10 +64,14 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -73,10 +80,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: common
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder servicePath(String servicePath) {
             doSetProperty("servicePath", servicePath);
@@ -85,9 +95,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder timeout(Long timeout) {
             doSetProperty("timeout", timeout);
@@ -96,9 +109,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -107,10 +124,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder uris(String uris) {
             doSetProperty("uris", uris);
@@ -125,10 +145,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -144,10 +167,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -157,10 +184,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To send an empty message in case of timeout watching for a key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyExchangeOnTimeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
                 boolean sendEmptyExchangeOnTimeout) {
@@ -170,10 +200,14 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To send an empty message in case of timeout watching for a key.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyExchangeOnTimeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
                 String sendEmptyExchangeOnTimeout) {
@@ -184,10 +218,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -198,10 +235,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -212,9 +253,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -225,9 +269,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -238,9 +285,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -251,9 +301,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -268,9 +321,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -285,9 +341,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -297,10 +356,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -309,10 +371,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -322,10 +387,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -335,10 +403,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -347,10 +419,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -359,10 +434,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -374,10 +452,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -388,10 +469,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -401,10 +485,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -416,10 +504,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -432,9 +523,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -447,9 +541,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -458,12 +555,32 @@ public interface EtcdStatsEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default EtcdStatsEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -473,13 +590,17 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -491,13 +612,16 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -506,10 +630,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -519,10 +646,14 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -532,10 +663,14 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -545,10 +680,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -558,10 +696,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -572,10 +713,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -585,9 +730,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -597,9 +745,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -610,9 +761,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -622,9 +776,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointConsumerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -647,10 +804,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -664,9 +824,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -676,9 +839,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -689,9 +856,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -701,10 +871,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer (advanced)
+         * 
+         * @param fromIndex the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder fromIndex(
                 long fromIndex) {
@@ -714,10 +887,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer (advanced)
+         * 
+         * @param fromIndex the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder fromIndex(
                 String fromIndex) {
@@ -731,9 +907,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -747,9 +926,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -757,41 +939,16 @@ public interface EtcdStatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdStatsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdStatsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -802,10 +959,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -826,10 +987,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -838,10 +1002,14 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -850,10 +1018,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: common
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder servicePath(String servicePath) {
             doSetProperty("servicePath", servicePath);
@@ -862,9 +1033,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder timeout(Long timeout) {
             doSetProperty("timeout", timeout);
@@ -873,9 +1047,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -884,10 +1062,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder uris(String uris) {
             doSetProperty("uris", uris);
@@ -904,10 +1085,13 @@ public interface EtcdStatsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -925,10 +1109,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -938,9 +1126,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the lifespan of a key in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder timeToLive(Integer timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -949,10 +1140,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the lifespan of a key in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder timeToLive(String timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -961,9 +1155,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -973,9 +1170,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -986,9 +1186,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -998,9 +1201,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointProducerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1018,41 +1224,16 @@ public interface EtcdStatsEndpointBuilderFactory {
             return (EtcdStatsEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdStatsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdStatsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1063,10 +1244,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1088,10 +1273,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -1100,10 +1288,14 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -1112,10 +1304,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: common
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder servicePath(String servicePath) {
             doSetProperty("servicePath", servicePath);
@@ -1124,9 +1319,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder timeout(Long timeout) {
             doSetProperty("timeout", timeout);
@@ -1135,9 +1333,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1146,10 +1348,13 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder uris(String uris) {
             doSetProperty("uris", uris);
@@ -1158,9 +1363,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1170,9 +1378,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1183,9 +1394,12 @@ public interface EtcdStatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1195,9 +1409,12 @@ public interface EtcdStatsEndpointBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1216,41 +1433,16 @@ public interface EtcdStatsEndpointBuilderFactory {
             return (EtcdStatsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdStatsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEtcdStatsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1260,10 +1452,14 @@ public interface EtcdStatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEtcdStatsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1286,6 +1482,7 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The path the endpoint refers to
          * 
          * @param path path
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder etcdStats(String path) {
             return EtcdStatsEndpointBuilderFactory.endpointBuilder("etcd-stats", path);
@@ -1306,6 +1503,7 @@ public interface EtcdStatsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder etcdStats(
                 String componentName,

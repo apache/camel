@@ -52,7 +52,8 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged anyway
-        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter
+                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
@@ -71,7 +72,8 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged anyway
-        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter
+                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
@@ -90,7 +92,8 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged anyway
-        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter
+                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
@@ -109,7 +112,8 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should NOT be logged
-        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter
+                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
     }
@@ -128,7 +132,8 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should NOT be logged
-        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter
+                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
     }
@@ -147,7 +152,8 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged
-        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter
+                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
         assertIsInstanceOf(InputStream.class, mock.getReceivedExchanges().get(0).getIn().getBody());

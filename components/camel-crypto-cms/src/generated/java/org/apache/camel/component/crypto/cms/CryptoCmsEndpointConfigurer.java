@@ -4,8 +4,10 @@ package org.apache.camel.component.crypto.cms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentencryptionalgorithm":
         case "contentEncryptionAlgorithm": target.getEncryptConfig().setContentEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "frombase64":
@@ -54,34 +54,44 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentEncryptionAlgorithm", java.lang.String.class);
-        answer.put("fromBase64", boolean.class);
-        answer.put("includeContent", java.lang.Boolean.class);
-        answer.put("keyStore", java.security.KeyStore.class);
-        answer.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("originatorInformationProvider", org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class);
-        answer.put("password", char[].class);
-        answer.put("recipient", java.util.List.class);
-        answer.put("secretKeyLength", int.class);
-        answer.put("signedDataHeaderBase64", boolean.class);
-        answer.put("signer", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("toBase64", java.lang.Boolean.class);
-        answer.put("unprotectedAttributesGeneratorProvider", org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class);
-        answer.put("verifySignaturesOfAllSigners", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contentencryptionalgorithm":
+        case "contentEncryptionAlgorithm": return java.lang.String.class;
+        case "frombase64":
+        case "fromBase64": return boolean.class;
+        case "includecontent":
+        case "includeContent": return java.lang.Boolean.class;
+        case "keystore":
+        case "keyStore": return java.security.KeyStore.class;
+        case "keystoreparameters":
+        case "keyStoreParameters": return org.apache.camel.support.jsse.KeyStoreParameters.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "originatorinformationprovider":
+        case "originatorInformationProvider": return org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class;
+        case "password": return char[].class;
+        case "recipient": return java.util.List.class;
+        case "secretkeylength":
+        case "secretKeyLength": return int.class;
+        case "signeddataheaderbase64":
+        case "signedDataHeaderBase64": return boolean.class;
+        case "signer": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tobase64":
+        case "toBase64": return java.lang.Boolean.class;
+        case "unprotectedattributesgeneratorprovider":
+        case "unprotectedAttributesGeneratorProvider": return org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class;
+        case "verifysignaturesofallsigners":
+        case "verifySignaturesOfAllSigners": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentencryptionalgorithm":
         case "contentEncryptionAlgorithm": return target.getEncryptConfig().getContentEncryptionAlgorithm();
         case "frombase64":
@@ -110,6 +120,14 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "unprotectedAttributesGeneratorProvider": return target.getEncryptConfig().getUnprotectedAttributesGeneratorProvider();
         case "verifysignaturesofallsigners":
         case "verifySignaturesOfAllSigners": return target.getVerifyConfig().isVerifySignaturesOfAllSigners();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "recipient": return org.apache.camel.component.crypto.cms.crypt.RecipientInfo.class;
         default: return null;
         }
     }

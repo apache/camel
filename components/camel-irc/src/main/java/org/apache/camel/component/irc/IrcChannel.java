@@ -19,7 +19,7 @@ package org.apache.camel.component.irc;
 public final class IrcChannel {
     private String name;
     private String key;
-    
+
     public IrcChannel() {
     }
 

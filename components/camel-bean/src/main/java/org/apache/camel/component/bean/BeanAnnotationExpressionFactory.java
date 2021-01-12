@@ -30,7 +30,9 @@ import org.apache.camel.util.StringHelper;
 public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+    public Expression createExpression(
+            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
         String beanName = getFromAnnotation(annotation, "ref");
         String method = getFromAnnotation(annotation, "method");
 
@@ -52,16 +54,17 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
 
     protected String getFromAnnotation(Annotation annotation, String attribute) {
         try {
-            Method method = annotation.getClass().getMethod(attribute);
+            Method method = annotation.annotationType().getDeclaredMethod(attribute);
             Object value = ObjectHelper.invokeMethod(method, annotation);
             if (value == null) {
                 throw new IllegalArgumentException("Cannot determine the " + attribute + " from the annotation: " + annotation);
             }
             return value.toString();
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the " + attribute
-                + " of the annotation: " + annotation + " as it does not have a " + attribute + "() method");
+            throw new IllegalArgumentException(
+                    "Cannot determine the " + attribute
+                                               + " of the annotation: " + annotation + " as it does not have a " + attribute
+                                               + "() method");
         }
     }
 }
-

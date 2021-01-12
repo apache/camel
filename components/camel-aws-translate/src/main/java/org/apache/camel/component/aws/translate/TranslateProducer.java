@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon Translate Service
- * <a href="http://aws.amazon.com/translate/">AWS Translate</a>
+ * A Producer which sends messages to the Amazon Translate Service <a href="http://aws.amazon.com/translate/">AWS
+ * Translate</a>
  */
 public class TranslateProducer extends DefaultProducer {
 
@@ -78,17 +78,19 @@ public class TranslateProducer extends DefaultProducer {
 
     @Override
     public TranslateEndpoint getEndpoint() {
-        return (TranslateEndpoint)super.getEndpoint();
+        return (TranslateEndpoint) super.getEndpoint();
     }
 
     private void translateText(AmazonTranslate translateClient, Exchange exchange) {
         TranslateTextRequest request = new TranslateTextRequest();
         if (!getConfiguration().isAutodetectSourceLanguage()) {
-            if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
+            if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage())
+                    && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
                 String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
                 String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
                 if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                    throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
+                    throw new IllegalArgumentException(
+                            "Source and target language must be specified as headers or endpoint options");
                 }
                 request.setSourceLanguageCode(source);
                 request.setTargetLanguageCode(target);
@@ -101,7 +103,8 @@ public class TranslateProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
                 String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
                 if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                    throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
+                    throw new IllegalArgumentException(
+                            "Target language must be specified when autodetection of source language is enabled");
                 }
                 request.setSourceLanguageCode(source);
                 request.setTargetLanguageCode(target);
@@ -111,7 +114,8 @@ public class TranslateProducer extends DefaultProducer {
             }
         }
         if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class))) {
-            Collection<String> terminologies = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
+            Collection<String> terminologies
+                    = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
             request.setTerminologyNames(terminologies);
         }
         request.setText(exchange.getMessage().getBody(String.class));

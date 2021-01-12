@@ -33,8 +33,9 @@ public class DispositionNotificationOptionsParser {
     private static final String SIGNED_RECEIPT_PROTOCOL_ATTR_NAME = "signed-receipt-protocol";
     private static final String SIGNED_RECEIPT_MICALG_ATTR_NAME = "signed-receipt-micalg";
 
-    public static DispositionNotificationOptions parseDispositionNotificationOptions(final String value,
-                                                                                     DispositionNotificationOptionsParser parser)
+    public static DispositionNotificationOptions parseDispositionNotificationOptions(
+            final String value,
+            DispositionNotificationOptionsParser parser)
             throws ParseException {
         if (value == null) {
             return new DispositionNotificationOptions(null, null);
@@ -47,8 +48,9 @@ public class DispositionNotificationOptionsParser {
                 .parseDispositionNotificationOptions(buffer, cursor);
     }
 
-    public DispositionNotificationOptions parseDispositionNotificationOptions(final CharArrayBuffer buffer,
-                                                                              final ParserCursor cursor) {
+    public DispositionNotificationOptions parseDispositionNotificationOptions(
+            final CharArrayBuffer buffer,
+            final ParserCursor cursor) {
         Args.notNull(buffer, "buffer");
         Args.notNull(cursor, "cursor");
 
@@ -61,7 +63,6 @@ public class DispositionNotificationOptionsParser {
         Parameter signedReceiptProtocolParameter = parameters.get(SIGNED_RECEIPT_PROTOCOL_ATTR_NAME);
 
         Parameter signedReceiptMicalgParameter = parameters.get(SIGNED_RECEIPT_MICALG_ATTR_NAME);
-
 
         return new DispositionNotificationOptions(signedReceiptProtocolParameter, signedReceiptMicalgParameter);
     }

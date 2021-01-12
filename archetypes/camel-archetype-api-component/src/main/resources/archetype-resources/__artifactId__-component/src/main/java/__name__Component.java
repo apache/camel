@@ -36,7 +36,7 @@ public class ${name}Component extends AbstractApiComponent<${name}ApiName, ${nam
 
     @Override
     protected ${name}ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return ${name}ApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(${name}ApiName.class, apiNameStr);
     }
 
     @Override

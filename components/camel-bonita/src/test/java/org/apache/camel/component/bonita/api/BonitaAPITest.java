@@ -31,7 +31,7 @@ public class BonitaAPITest {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         assertThrows(IllegalArgumentException.class,
-            () -> bonitaApi.getProcessDefinition(""));
+                () -> bonitaApi.getProcessDefinition(""));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class BonitaAPITest {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         assertThrows(IllegalArgumentException.class,
-            () -> bonitaApi.startCase(null, new HashMap<String, Serializable>()));
+                () -> bonitaApi.startCase(null, new HashMap<String, Serializable>()));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class BonitaAPITest {
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();
         assertThrows(IllegalArgumentException.class,
-            () -> bonitaApi.startCase(processDefinition, null));
+                () -> bonitaApi.startCase(processDefinition, null));
     }
 
 }

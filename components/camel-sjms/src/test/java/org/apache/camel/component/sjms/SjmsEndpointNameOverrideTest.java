@@ -41,9 +41,9 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         Endpoint endpoint = context.getEndpoint(BEAN_NAME + ":test");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint sjms = (SjmsEndpoint)endpoint;
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://test");
-        assertEquals(sjms.createExchange().getPattern(), ExchangePattern.InOnly);
+        SjmsEndpoint sjms = (SjmsEndpoint) endpoint;
+        assertEquals(BEAN_NAME + "://test", sjms.getEndpointUri());
+        assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":queue:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof SjmsEndpoint);
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://queue:test");
+        assertEquals(BEAN_NAME + "://queue:test", sjms.getEndpointUri());
     }
 
     @Test
@@ -59,16 +59,16 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         Endpoint sjms = context.getEndpoint(BEAN_NAME + ":topic:test");
         assertNotNull(sjms);
         assertTrue(sjms instanceof SjmsEndpoint);
-        assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://topic:test");
+        assertEquals(BEAN_NAME + "://topic:test", sjms.getEndpointUri());
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+        ActiveMQConnectionFactory connectionFactory
+                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
-        component.setConnectionCount(1);
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent(BEAN_NAME, component);
 

@@ -61,13 +61,13 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("cart")
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("cart")
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -87,15 +87,15 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("cart")
-            .path("delivery_address")
-            .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_USER_ID, in))
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("cart")
+                .path("delivery_address")
+                .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_USER_ID, in))
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -115,14 +115,14 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("cart")
-            .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_CART_ITEM_ID, in))
-            .query(responseModel)
-            .invoke(HttpMethod.POST, in.getMandatoryBody());
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("cart")
+                .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_CART_ITEM_ID, in))
+                .query(responseModel)
+                .invoke(HttpMethod.POST, in.getMandatoryBody());
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -143,15 +143,15 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("cart")
-            .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_SYS_ID, in))
-            .path("empty")
-            .query(responseModel)
-            .invoke(HttpMethod.DELETE);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("cart")
+                .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_SYS_ID, in))
+                .path("empty")
+                .query(responseModel)
+                .invoke(HttpMethod.DELETE);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -175,14 +175,14 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("cart")
-            .path("checkout")
-            .query(responseModel)
-            .invoke(HttpMethod.POST);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("cart")
+                .path("checkout")
+                .query(responseModel)
+                .invoke(HttpMethod.POST);
 
         setBodyAndHeaders(in, responseModel, response);
     }
@@ -203,14 +203,14 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
         final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("sn_sc")
-            .path(apiVersion)
-            .path("servicecatalog")
-            .path("cart")
-            .path("submit_order")
-            .query(responseModel)
-            .invoke(HttpMethod.POST);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("sn_sc")
+                .path(apiVersion)
+                .path("servicecatalog")
+                .path("cart")
+                .path("submit_order")
+                .query(responseModel)
+                .invoke(HttpMethod.POST);
 
         setBodyAndHeaders(in, responseModel, response);
     }

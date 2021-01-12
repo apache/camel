@@ -24,8 +24,8 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 
 /**
- * This class is supposed to be extended by users and annotated with @Listener
- * and passed to the consumer endpoint through the 'customListener' parameter.
+ * This class is supposed to be extended by users and annotated with @Listener and passed to the consumer endpoint
+ * through the 'customListener' parameter.
  */
 public abstract class InfinispanEmbeddedCustomListener extends InfinispanCustomListener {
 
@@ -39,7 +39,8 @@ public abstract class InfinispanEmbeddedCustomListener extends InfinispanCustomL
     @CacheEntryExpired
     public void processEvent(CacheEntryEvent<Object, Object> event) {
         if (isAccepted(event.getType().toString())) {
-            infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(), event.getKey());
+            infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(),
+                    event.getKey());
         }
     }
 

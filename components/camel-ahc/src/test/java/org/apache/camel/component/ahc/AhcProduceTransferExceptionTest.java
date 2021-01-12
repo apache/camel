@@ -50,7 +50,7 @@ public class AhcProduceTransferExceptionTest extends BaseAhcTest {
 
     @Override
     protected String getAhcEndpointUri() {
-        return super.getAhcEndpointUri()  + "?transferException=true";
+        return super.getAhcEndpointUri() + "?transferException=true";
     }
 
     @Override
@@ -59,11 +59,11 @@ public class AhcProduceTransferExceptionTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
-                    .throwException(new MyOrderException("123"));
+                        .throwException(new MyOrderException("123"));
             }
         };
     }

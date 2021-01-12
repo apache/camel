@@ -50,7 +50,8 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
         }
 
         mockResultEndpoint.expectedMessageCount(5);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "MODIFIED", "MODIFIED", "MODIFIED", "DELETED");
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "MODIFIED", "MODIFIED", "MODIFIED", "DELETED");
 
         Exchange ex = template.request("direct:createNamespace", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -83,7 +84,8 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
 
         assertTrue(testExists);
 
-        ex = template.request("direct:deleteNamespace", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        ex = template.request("direct:deleteNamespace",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
 
         boolean nsDeleted = ex.getMessage().getBody(Boolean.class);
 
@@ -100,11 +102,15 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespaces", host, authToken);
-                from("direct:listByLabels").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespacesByLabels", host, authToken);
+                from("direct:listByLabels").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespacesByLabels",
+                        host, authToken);
                 from("direct:getNs").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=getNamespace", host, authToken);
-                from("direct:createNamespace").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=createNamespace", host, authToken);
-                from("direct:deleteNamespace").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=deleteNamespace", host, authToken);
-                fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken).process(new KubernetesProcessor()).to(mockResultEndpoint);
+                from("direct:createNamespace").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=createNamespace", host,
+                        authToken);
+                from("direct:deleteNamespace").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=deleteNamespace", host,
+                        authToken);
+                fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken).process(new KubernetesProcessor())
+                        .to(mockResultEndpoint);
             }
         };
     }
@@ -113,7 +119,8 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            log.info("Got event with body: " + in.getBody() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with body: " + in.getBody() + " and action "
+                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

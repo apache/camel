@@ -45,7 +45,7 @@ public class ChunkLetterTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action."
-                + "\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James\n");
+                                    + "\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James\n");
 
         template.send("direct:a", createLetter());
 

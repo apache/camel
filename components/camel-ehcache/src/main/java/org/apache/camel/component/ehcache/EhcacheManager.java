@@ -46,9 +46,10 @@ public class EhcacheManager implements Service {
         this.userCaches = new ConcurrentHashMap<>();
         this.configuration = configuration;
         this.refCount = ReferenceCount.on(
-            managed ? cacheManager::init : () -> { },
-            managed ? cacheManager::close : () -> { }
-        );
+                managed ? cacheManager::init : () -> {
+                },
+                managed ? cacheManager::close : () -> {
+                });
     }
 
     @Override
@@ -69,7 +70,7 @@ public class EhcacheManager implements Service {
             if (configuration.hasConfiguration(name)) {
                 LOGGER.debug("Using custom cache configuration for cache {}", name);
                 cacheConfiguration = CacheConfiguration.class.cast(configuration.getConfigurations().get(name));
-            } else  if (configuration.hasConfiguration()) {
+            } else if (configuration.hasConfiguration()) {
                 LOGGER.debug("Using global cache configuration for cache {}", name);
                 cacheConfiguration = CacheConfiguration.class.cast(configuration.getConfiguration());
             }
@@ -88,7 +89,8 @@ public class EhcacheManager implements Service {
             if (cacheConfiguration != null) {
                 if (keyType != cacheConfiguration.getKeyType() || valueType != cacheConfiguration.getValueType()) {
                     LOGGER.info("Mismatch keyType / valueType configuration for cache {}", name);
-                    CacheConfigurationBuilder builder = CacheConfigurationBuilder.newCacheConfigurationBuilder(keyType, valueType, cacheConfiguration.getResourcePools())
+                    CacheConfigurationBuilder builder = CacheConfigurationBuilder
+                            .newCacheConfigurationBuilder(keyType, valueType, cacheConfiguration.getResourcePools())
                             .withClassLoader(cacheConfiguration.getClassLoader())
                             .withEvictionAdvisor(cacheConfiguration.getEvictionAdvisor())
                             .withExpiry(cacheConfiguration.getExpiryPolicy());
@@ -105,14 +107,13 @@ public class EhcacheManager implements Service {
                 Class<K> kt = keyType;
                 Class<V> vt = valueType;
                 cache = Cache.class.cast(userCaches.computeIfAbsent(
-                    name,
-                    key -> UserManagedCacheBuilder.newUserManagedCacheBuilder(kt, vt).build(true)
-                ));
+                        name,
+                        key -> UserManagedCacheBuilder.newUserManagedCacheBuilder(kt, vt).build(true)));
             }
         }
 
         if (cache == null) {
-            throw new RuntimeCamelException("Unable to retrieve the cache " +  name + " from cache manager " + cacheManager);
+            throw new RuntimeCamelException("Unable to retrieve the cache " + name + " from cache manager " + cacheManager);
         }
 
         return cache;

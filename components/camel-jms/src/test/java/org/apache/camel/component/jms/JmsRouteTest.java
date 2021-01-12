@@ -60,7 +60,6 @@ public class JmsRouteTest extends CamelTestSupport {
         template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
     }
 
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {

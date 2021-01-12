@@ -60,7 +60,8 @@ public class RssDataFormatTest extends CamelTestSupport {
                 // START SNIPPET: ex
                 from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000").marshal().rss().to("mock:marshal");
                 // END SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500").marshal().rss().unmarshal().rss().to("mock:unmarshal");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500").marshal().rss().unmarshal().rss()
+                        .to("mock:unmarshal");
             }
         };
     }

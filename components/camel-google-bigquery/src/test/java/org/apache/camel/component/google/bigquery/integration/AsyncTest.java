@@ -25,6 +25,7 @@ import java.util.UUID;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -62,7 +63,7 @@ public class AsyncTest extends BigQueryTestSupport {
                         .to("seda:seda");
                 from("seda:seda")
                         .routeId("Async")
-                        .inOnly(bigqueryEndpoint)
+                        .to(ExchangePattern.InOnly, bigqueryEndpoint)
                         .log(LoggingLevel.INFO, "To sendresult")
                         .to(sendResult);
             }
@@ -88,7 +89,7 @@ public class AsyncTest extends BigQueryTestSupport {
 
         sendResult.assertIsSatisfied(4000);
 
-        for (Map object: objects) {
+        for (Map object : objects) {
             assertRowExist(TABLE_ID, object);
         }
     }

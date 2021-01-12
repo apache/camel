@@ -92,8 +92,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets the known_hosts file, so that the SFTP endpoint can do host key
-     * verification.
+     * Sets the known_hosts file, so that the SFTP endpoint can do host key verification.
      */
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
@@ -108,16 +107,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * If knownHostFile has not been explicit configured then use the host file
-     * from System.getProperty(user.home)/.ssh/known_hosts
+     * If knownHostFile has not been explicit configured then use the host file from
+     * System.getProperty(user.home)/.ssh/known_hosts
      */
     public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
         this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
 
     /**
-     * Sets the known_hosts file (loaded from classpath by default), so that the
-     * SFTP endpoint can do host key verification.
+     * Sets the known_hosts file (loaded from classpath by default), so that the SFTP endpoint can do host key
+     * verification.
      */
     public void setKnownHostsUri(String knownHostsUri) {
         this.knownHostsUri = knownHostsUri;
@@ -128,8 +127,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets the known_hosts from the byte array, so that the SFTP endpoint can
-     * do host key verification.
+     * Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification.
      */
     public void setKnownHosts(byte[] knownHosts) {
         this.knownHosts = knownHosts;
@@ -140,8 +138,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file so that the SFTP endpoint can do private key
-     * verification.
+     * Set the private key file so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
@@ -152,8 +149,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file (loaded from classpath by default) so that the
-     * SFTP endpoint can do private key verification.
+     * Set the private key file (loaded from classpath by default) so that the SFTP endpoint can do private key
+     * verification.
      */
     public void setPrivateKeyUri(String privateKeyUri) {
         this.privateKeyUri = privateKeyUri;
@@ -164,8 +161,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key as byte[] so that the SFTP endpoint can do private
-     * key verification.
+     * Set the private key as byte[] so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKey(byte[] privateKey) {
         this.privateKey = privateKey;
@@ -176,8 +172,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file passphrase so that the SFTP endpoint can do
-     * private key verification.
+     * Set the private key file passphrase so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
@@ -198,8 +193,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets a key pair of the public and private key so to that the SFTP
-     * endpoint can do public/private key verification.
+     * Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key
+     * verification.
      */
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
@@ -217,9 +212,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets the interval (millis) to send a keep-alive message. If zero is
-     * specified, any keep-alive message must not be sent. The default interval
-     * is zero.
+     * Sets the interval (millis) to send a keep-alive message. If zero is specified, any keep-alive message must not be
+     * sent. The default interval is zero.
      */
     public void setServerAliveInterval(int serverAliveInterval) {
         this.serverAliveInterval = serverAliveInterval;
@@ -230,10 +224,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets the number of keep-alive messages which may be sent without
-     * receiving any messages back from the server. If this threshold is reached
-     * while keep-alive messages are being sent, the connection will be
-     * disconnected. The default value is one.
+     * Sets the number of keep-alive messages which may be sent without receiving any messages back from the server. If
+     * this threshold is reached while keep-alive messages are being sent, the connection will be disconnected. The
+     * default value is one.
      */
     public void setServerAliveCountMax(int serverAliveCountMax) {
         this.serverAliveCountMax = serverAliveCountMax;
@@ -255,11 +248,10 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set a comma separated list of ciphers that will be used in order of
-     * preference. Possible cipher names are defined by JCraft JSCH. Some
-     * examples include:
-     * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc.
-     * If not specified the default list from JSCH will be used.
+     * Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined
+     * by JCraft JSCH. Some examples include:
+     * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list
+     * from JSCH will be used.
      */
     public void setCiphers(String ciphers) {
         this.ciphers = ciphers;
@@ -274,18 +266,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * To use compression. Specify a level from 1 to 10. Important: You must
-     * manually add the needed JSCH zlib JAR to the classpath for compression
-     * support.
+     * To use compression. Specify a level from 1 to 10. Important: You must manually add the needed JSCH zlib JAR to
+     * the classpath for compression support.
      */
     public void setCompression(int compression) {
         this.compression = compression;
     }
 
     /**
-     * Set the preferred authentications which SFTP endpoint will used. Some
-     * example include:password,publickey. If not specified the default list
-     * from JSCH will be used.
+     * Set the preferred authentications which SFTP endpoint will used. Some example include:password,publickey. If not
+     * specified the default list from JSCH will be used.
      */
     public void setPreferredAuthentications(String pAuthentications) {
         this.preferredAuthentications = pAuthentications;
@@ -300,17 +290,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * The logging level to use for JSCH activity logging. As JSCH is verbose at
-     * by default at INFO level the threshold is WARN by default.
+     * The logging level to use for JSCH activity logging. As JSCH is verbose at by default at INFO level the threshold
+     * is WARN by default.
      */
     public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
         this.jschLoggingLevel = jschLoggingLevel;
     }
 
     /**
-     * Specifies how many requests may be outstanding at any one time.
-     * Increasing this value may slightly improve file transfer speed but will
-     * increase memory usage.
+     * Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file
+     * transfer speed but will increase memory usage.
      */
     public void setBulkRequests(Integer bulkRequests) {
         this.bulkRequests = bulkRequests;
@@ -321,8 +310,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Specifies the address of the local interface against which the connection
-     * should bind.
+     * Specifies the address of the local interface against which the connection should bind.
      */
     public void setBindAddress(String bindAddress) {
         this.bindAddress = bindAddress;
@@ -332,16 +320,14 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return bindAddress;
     }
 
-
     public boolean isExistDirCheckUsingLs() {
         return existDirCheckUsingLs;
     }
 
     /**
-     * Whether to check for existing directory using LS command or CD.
-     * By default LS is used which is safer as otherwise Camel needs to change the directory
-     * back after checking. However LS has been reported to cause a problem on windows system in some situations
-     * and therefore you can disable this option to use CD.
+     * Whether to check for existing directory using LS command or CD. By default LS is used which is safer as otherwise
+     * Camel needs to change the directory back after checking. However LS has been reported to cause a problem on
+     * windows system in some situations and therefore you can disable this option to use CD.
      */
     public void setExistDirCheckUsingLs(boolean existDirCheckUsingLs) {
         this.existDirCheckUsingLs = existDirCheckUsingLs;

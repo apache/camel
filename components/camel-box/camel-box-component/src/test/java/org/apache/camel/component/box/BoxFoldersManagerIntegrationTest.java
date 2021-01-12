@@ -39,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link BoxFoldersManager}
- * APIs.
+ * Test class for {@link BoxFoldersManager} APIs.
  */
 public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -52,7 +51,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_COPY_FOLDER = BoxFoldersManagerIntegrationTest.CAMEL_TEST_FOLDER + "_Copy";
     private static final String CAMEL_TEST_MOVE_FOLDER = BoxFoldersManagerIntegrationTest.CAMEL_TEST_FOLDER + "_Move";
     private static final String CAMEL_TEST_RENAME_FOLDER = BoxFoldersManagerIntegrationTest.CAMEL_TEST_FOLDER
-            + "_Rename";
+                                                           + "_Rename";
     private static final String CAMEL_TEST_ROOT_FOLDER_ID = "0";
     private static final String CAMEL_TEST_DESTINATION_FOLDER_ID = "0";
 
@@ -85,7 +84,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.parentFolderId", "0");
         // parameter type is String[]
-        headers.put("CamelBox.path", new String[] {CAMEL_TEST_FOLDER});
+        headers.put("CamelBox.path", new String[] { CAMEL_TEST_FOLDER });
 
         testFolder = requestBodyAndHeaders("direct://CREATEFOLDER", null, headers);
 
@@ -152,7 +151,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetFolder() throws Exception {
         // using String[] message body for single parameter "path"
-        final com.box.sdk.BoxFolder result = requestBody("direct://GETFOLDER", new String[] {CAMEL_TEST_FOLDER});
+        final com.box.sdk.BoxFolder result = requestBody("direct://GETFOLDER", new String[] { CAMEL_TEST_FOLDER });
 
         assertNotNull(result, "getFolder result");
         assertEquals(testFolder.getID(), result.getID(), "getFolder folder id");
@@ -165,7 +164,7 @@ public class BoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.folderId", testFolder.getID());
         // parameter type is String[]
-        headers.put("CamelBox.fields", new String[] {"name"});
+        headers.put("CamelBox.fields", new String[] { "name" });
 
         final com.box.sdk.BoxFolder.Info result = requestBodyAndHeaders("direct://GETFOLDERINFO", null, headers);
 

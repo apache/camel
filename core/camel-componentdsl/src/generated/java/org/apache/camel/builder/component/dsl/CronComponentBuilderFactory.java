@@ -39,6 +39,8 @@ public interface CronComponentBuilderFactory {
      * Category: scheduling
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-cron
+     * 
+     * @return the dsl builder
      */
     static CronComponentBuilder cron() {
         return new CronComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface CronComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CronComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -68,26 +73,35 @@ public interface CronComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CronComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CronComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The id of the CamelCronService to use when multiple implementations
          * are provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cronService the value to set
+         * @return the dsl builder
          */
         default CronComponentBuilder cronService(java.lang.String cronService) {
             doSetProperty("cronService", cronService);
@@ -111,7 +125,7 @@ public interface CronComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((CronComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "basicPropertyBinding": ((CronComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CronComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "cronService": ((CronComponent) component).setCronService((java.lang.String) value); return true;
             default: return false;
             }

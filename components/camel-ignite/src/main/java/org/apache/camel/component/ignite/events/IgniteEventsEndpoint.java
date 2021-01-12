@@ -41,14 +41,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from
- * an Ignite cluster by creating a local event listener.
+ * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from an Ignite cluster by creating a local
+ * event listener.
  *
- * This endpoint only supports consumers.
- * The Exchanges created by this consumer put the received Event object into the body of the IN message.
+ * This endpoint only supports consumers. The Exchanges created by this consumer put the received Event object into the
+ * body of the IN message.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId", category = {Category.MESSAGING, Category.EVENTBUS},
-    consumerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId",
+             category = { Category.MESSAGING, Category.EVENTBUS },
+             consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsEndpoint.class);
@@ -62,7 +63,8 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "consumer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteEventsComponent igniteComponent) {
+    public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters,
+                                IgniteEventsComponent igniteComponent) {
         super(uri, igniteComponent);
     }
 

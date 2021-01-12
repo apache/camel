@@ -30,7 +30,7 @@ public class CustomParameterMappingStrategyTest extends ContextTestSupport {
     protected Registry createRegistry() throws Exception {
         Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
-        jndi.bind(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, new MyCustomStrategy());
+        jndi.bind("myStrategy", new MyCustomStrategy());
         return jndi;
     }
 

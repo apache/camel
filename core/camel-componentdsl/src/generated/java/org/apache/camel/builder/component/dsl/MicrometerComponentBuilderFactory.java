@@ -39,6 +39,8 @@ public interface MicrometerComponentBuilderFactory {
      * Category: monitoring
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
+     * 
+     * @return the dsl builder
      */
     static MicrometerComponentBuilder micrometer() {
         return new MicrometerComponentBuilderImpl();
@@ -61,10 +63,13 @@ public interface MicrometerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicrometerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -72,26 +77,37 @@ public interface MicrometerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MicrometerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MicrometerComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a custom configured MetricRegistry.
          * 
          * The option is a:
-         * <code>io.micrometer.core.instrument.MeterRegistry</code> type.
+         * &lt;code&gt;io.micrometer.core.instrument.MeterRegistry&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param metricsRegistry the value to set
+         * @return the dsl builder
          */
         default MicrometerComponentBuilder metricsRegistry(
                 io.micrometer.core.instrument.MeterRegistry metricsRegistry) {
@@ -116,7 +132,7 @@ public interface MicrometerComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((MicrometerComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MicrometerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MicrometerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "metricsRegistry": ((MicrometerComponent) component).setMetricsRegistry((io.micrometer.core.instrument.MeterRegistry) value); return true;
             default: return false;
             }

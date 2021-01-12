@@ -62,9 +62,7 @@ public class XQueryWithNamespacesFilterTest extends CamelTestSupport {
                 // START SNIPPET: example
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:start").
-                        filter().xquery("/c:person[@name='James']", ns).
-                        to("mock:result");
+                from("direct:start").filter().xquery("/c:person[@name='James']", ns).to("mock:result");
                 // END SNIPPET: example
             }
         };

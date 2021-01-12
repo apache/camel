@@ -78,8 +78,8 @@ public abstract class ContainerAwareSpringTestSupport extends CamelSpringTestSup
         GenericContainer<?> container = createContainer();
 
         return container == null
-            ? Collections.emptyList()
-            : Collections.singletonList(container);
+                ? Collections.emptyList()
+                : Collections.singletonList(container);
     }
 
     protected long containersStartupTimeout() {

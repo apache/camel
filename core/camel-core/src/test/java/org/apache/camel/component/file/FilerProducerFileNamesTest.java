@@ -28,8 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test for the how FileProducer behaves a bit strangely when generating
- * filenames
+ * Unit test for the how FileProducer behaves a bit strangely when generating filenames
  */
 public class FilerProducerFileNamesTest extends ContextTestSupport {
 

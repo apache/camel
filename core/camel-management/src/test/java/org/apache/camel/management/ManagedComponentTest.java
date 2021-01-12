@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
-        "java.lang.String", "java.util.Map"
+            "java.lang.String", "java.util.Map"
     };
 
     @Override
@@ -82,24 +82,25 @@ public class ManagedComponentTest extends ManagementTestSupport {
 
         MBeanServerConnection mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
+        ObjectName on
+                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));
         assertTrue((Boolean) invoke(mbeanServer, on, "isVerifySupported"));
 
         ComponentVerifierExtension.Result res;
 
         // check lowercase
-        res = invoke(mbeanServer, on, "verify", new Object[]{"connectivity", Collections.emptyMap()}, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] { "connectivity", Collections.emptyMap() }, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check mixed case
-        res = invoke(mbeanServer, on, "verify", new Object[]{"ConnEctivIty", Collections.emptyMap()}, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] { "ConnEctivIty", Collections.emptyMap() }, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check uppercase
-        res = invoke(mbeanServer, on, "verify", new Object[]{"PARAMETERS", Collections.emptyMap()}, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[] { "PARAMETERS", Collections.emptyMap() }, VERIFY_SIGNATURE);
         assertEquals(Result.Status.OK, res.getStatus());
         assertEquals(Scope.PARAMETERS, res.getScope());
     }
@@ -115,6 +116,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
                 protected Result verifyConnectivity(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).build();
                 }
+
                 @Override
                 protected Result verifyParameters(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).build();

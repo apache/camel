@@ -50,8 +50,8 @@ public class MyBatisSelectOneWithOutputHeaderTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:selectAccountById?statementType=SelectOne&outputHeader=" + TEST_CASE_HEADER_NAME)
-                    .to("mock:result");
+                        .to("mybatis:selectAccountById?statementType=SelectOne&outputHeader=" + TEST_CASE_HEADER_NAME)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

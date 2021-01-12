@@ -54,10 +54,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -71,10 +74,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -88,10 +95,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -105,10 +115,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -118,9 +132,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder argumentFile(
                 File argumentFile) {
@@ -130,9 +147,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder argumentFile(
                 String argumentFile) {
@@ -143,9 +164,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Creates combined statistics based on tags. Use the format tags:title
          * List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param combinedTagStats the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder combinedTagStats(
                 String combinedTagStats) {
@@ -155,10 +179,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder contentCache(
                 boolean contentCache) {
@@ -168,10 +195,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder contentCache(
                 String contentCache) {
@@ -181,9 +212,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Tests that have the given tags are considered critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param criticalTags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder criticalTags(
                 String criticalTags) {
@@ -193,9 +227,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder debugFile(File debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -204,9 +241,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder debugFile(String debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -215,9 +256,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the documentation of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param document the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder document(String document) {
             doSetProperty("document", document);
@@ -228,10 +272,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder dryrun(boolean dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -242,10 +289,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder dryrun(String dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -254,9 +305,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param excludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder excludes(String excludes) {
             doSetProperty("excludes", excludes);
@@ -265,10 +319,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder exitOnFailure(
                 boolean exitOnFailure) {
@@ -278,10 +335,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder exitOnFailure(
                 String exitOnFailure) {
@@ -291,9 +352,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder includes(String includes) {
             doSetProperty("includes", includes);
@@ -302,9 +366,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a single listener for monitoring tests execution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listener the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder listener(String listener) {
             doSetProperty("listener", listener);
@@ -314,9 +381,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets multiple listeners for monitoring tests execution. Use the
          * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listeners the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder listeners(String listeners) {
             doSetProperty("listeners", listeners);
@@ -325,9 +395,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder log(File log) {
             doSetProperty("log", log);
@@ -336,9 +409,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder log(String log) {
             doSetProperty("log", log);
@@ -347,9 +424,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the threshold level for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder logLevel(String logLevel) {
             doSetProperty("logLevel", logLevel);
@@ -358,9 +438,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated tests log.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder logTitle(String logTitle) {
             doSetProperty("logTitle", logTitle);
@@ -370,9 +453,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets free metadata for the top level tests suites. comma seperated
          * list of string resulting as List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metadata the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder metadata(String metadata) {
             doSetProperty("metadata", metadata);
@@ -384,9 +470,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Windows 'off' - never use colors 'force' - always use colors (also in
          * Windows).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param monitorColors the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder monitorColors(
                 String monitorColors) {
@@ -396,10 +485,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Width of the monitor output. Default is 78.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 78
          * Group: common
+         * 
+         * @param monitorWidth the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder monitorWidth(
                 String monitorWidth) {
@@ -409,9 +501,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the name of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder name(String name) {
             doSetProperty("name", name);
@@ -420,9 +515,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Tests that have the given tags are not critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nonCriticalTags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder nonCriticalTags(
                 String nonCriticalTags) {
@@ -433,10 +531,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder noStatusReturnCode(
                 boolean noStatusReturnCode) {
@@ -447,10 +548,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder noStatusReturnCode(
                 String noStatusReturnCode) {
@@ -460,9 +565,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder output(File output) {
             doSetProperty("output", output);
@@ -471,9 +579,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder output(String output) {
             doSetProperty("output", output);
@@ -482,9 +594,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder outputDirectory(
                 File outputDirectory) {
@@ -494,9 +609,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder outputDirectory(
                 String outputDirectory) {
@@ -507,9 +626,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets the test execution order to be randomized. Valid values are all,
          * suite, and test.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param randomize the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder randomize(String randomize) {
             doSetProperty("randomize", randomize);
@@ -518,9 +640,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder report(File report) {
             doSetProperty("report", report);
@@ -529,9 +654,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder report(String report) {
             doSetProperty("report", report);
@@ -540,9 +669,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets background colors for the generated report and summary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportBackground the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder reportBackground(
                 String reportBackground) {
@@ -552,9 +684,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated tests report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder reportTitle(
                 String reportTitle) {
@@ -566,10 +701,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runEmptySuite(
                 boolean runEmptySuite) {
@@ -581,10 +719,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runEmptySuite(
                 String runEmptySuite) {
@@ -594,9 +736,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runFailed(File runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -605,9 +750,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runFailed(String runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -618,9 +767,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * has been deprecated in Robot Framework 2.8. Use separate dryryn,
          * skipTeardownOnExit, exitOnFailure, and randomize settings instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runMode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runMode(String runMode) {
             doSetProperty("runMode", runMode);
@@ -630,10 +782,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder skipTeardownOnExit(
                 boolean skipTeardownOnExit) {
@@ -644,10 +799,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder skipTeardownOnExit(
                 String skipTeardownOnExit) {
@@ -657,9 +816,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Splits output and log files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param splitOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder splitOutputs(
                 String splitOutputs) {
@@ -669,9 +831,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests suites by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suites the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder suites(String suites) {
             doSetProperty("suites", suites);
@@ -681,9 +846,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Defines how many levels to show in the Statistics by Suite table in
          * outputs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suiteStatLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder suiteStatLevel(
                 String suiteStatLevel) {
@@ -693,9 +861,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated summary report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param summaryTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder summaryTitle(
                 String summaryTitle) {
@@ -705,9 +876,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds documentation to the specified tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagDocs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder tagDocs(String tagDocs) {
             doSetProperty("tagDocs", tagDocs);
@@ -716,9 +890,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the tags(s) to all executed tests cases. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -728,9 +905,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Excludes these tags from the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatExcludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder tagStatExcludes(
                 String tagStatExcludes) {
@@ -741,9 +921,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Includes only these tags in the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatIncludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder tagStatIncludes(
                 String tagStatIncludes) {
@@ -754,9 +937,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Adds external links to the Statistics by Tag table in outputs. Use
          * the format pattern:link:title List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatLinks the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder tagStatLinks(
                 String tagStatLinks) {
@@ -766,9 +952,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tests the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder tests(String tests) {
             doSetProperty("tests", tests);
@@ -777,10 +966,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder timestampOutputs(
                 boolean timestampOutputs) {
@@ -790,10 +982,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder timestampOutputs(
                 String timestampOutputs) {
@@ -803,9 +999,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets variables using variables files. Use the format path:args List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variableFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder variableFiles(
                 String variableFiles) {
@@ -815,9 +1014,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets individual variables. Use the format name:value List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variables the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder variables(String variables) {
             doSetProperty("variables", variables);
@@ -826,10 +1028,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder warnOnSkippedFiles(
                 boolean warnOnSkippedFiles) {
@@ -839,10 +1044,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder warnOnSkippedFiles(
                 String warnOnSkippedFiles) {
@@ -855,9 +1064,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder xunitFile(File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -869,9 +1081,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder xunitFile(String xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -886,10 +1102,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -905,10 +1124,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -919,10 +1142,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -933,10 +1159,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -947,9 +1177,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -960,9 +1193,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -973,9 +1209,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -986,9 +1225,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -1003,9 +1245,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -1020,9 +1265,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -1032,10 +1280,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -1044,10 +1295,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -1057,10 +1311,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -1070,10 +1327,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -1082,10 +1343,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
@@ -1095,10 +1359,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -1110,10 +1377,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder repeatCount(
                 long repeatCount) {
@@ -1125,10 +1395,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder repeatCount(
                 String repeatCount) {
@@ -1139,10 +1412,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -1154,10 +1431,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -1170,9 +1450,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -1185,9 +1468,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -1196,12 +1482,32 @@ public interface RobotFrameworkEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default RobotFrameworkEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1211,13 +1517,17 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -1229,13 +1539,16 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder schedulerProperties(
                 Map values) {
@@ -1245,10 +1558,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -1258,10 +1574,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -1271,10 +1591,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1284,10 +1608,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1297,10 +1624,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -1311,10 +1641,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -1339,10 +1673,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1356,9 +1693,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1368,9 +1708,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1381,9 +1725,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1397,9 +1744,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -1413,9 +1763,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -1423,41 +1776,16 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRobotFrameworkEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRobotFrameworkEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1468,10 +1796,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1496,10 +1828,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -1513,10 +1848,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -1530,10 +1869,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -1547,10 +1889,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -1560,9 +1906,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder argumentFile(
                 File argumentFile) {
@@ -1572,9 +1921,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder argumentFile(
                 String argumentFile) {
@@ -1585,9 +1938,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Creates combined statistics based on tags. Use the format tags:title
          * List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param combinedTagStats the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder combinedTagStats(
                 String combinedTagStats) {
@@ -1597,10 +1953,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder contentCache(
                 boolean contentCache) {
@@ -1610,10 +1969,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder contentCache(
                 String contentCache) {
@@ -1623,9 +1986,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Tests that have the given tags are considered critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param criticalTags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder criticalTags(
                 String criticalTags) {
@@ -1635,9 +2001,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder debugFile(File debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -1646,9 +2015,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder debugFile(String debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -1657,9 +2030,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the documentation of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param document the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder document(String document) {
             doSetProperty("document", document);
@@ -1670,10 +2046,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder dryrun(boolean dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -1684,10 +2063,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder dryrun(String dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -1696,9 +2079,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param excludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder excludes(String excludes) {
             doSetProperty("excludes", excludes);
@@ -1707,10 +2093,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder exitOnFailure(
                 boolean exitOnFailure) {
@@ -1720,10 +2109,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder exitOnFailure(
                 String exitOnFailure) {
@@ -1733,9 +2126,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder includes(String includes) {
             doSetProperty("includes", includes);
@@ -1744,9 +2140,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a single listener for monitoring tests execution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listener the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder listener(String listener) {
             doSetProperty("listener", listener);
@@ -1756,9 +2155,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets multiple listeners for monitoring tests execution. Use the
          * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listeners the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder listeners(String listeners) {
             doSetProperty("listeners", listeners);
@@ -1767,9 +2169,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder log(File log) {
             doSetProperty("log", log);
@@ -1778,9 +2183,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder log(String log) {
             doSetProperty("log", log);
@@ -1789,9 +2198,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the threshold level for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder logLevel(String logLevel) {
             doSetProperty("logLevel", logLevel);
@@ -1800,9 +2212,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated tests log.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder logTitle(String logTitle) {
             doSetProperty("logTitle", logTitle);
@@ -1812,9 +2227,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets free metadata for the top level tests suites. comma seperated
          * list of string resulting as List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metadata the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder metadata(String metadata) {
             doSetProperty("metadata", metadata);
@@ -1826,9 +2244,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Windows 'off' - never use colors 'force' - always use colors (also in
          * Windows).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param monitorColors the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder monitorColors(
                 String monitorColors) {
@@ -1838,10 +2259,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Width of the monitor output. Default is 78.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 78
          * Group: common
+         * 
+         * @param monitorWidth the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder monitorWidth(
                 String monitorWidth) {
@@ -1851,9 +2275,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the name of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder name(String name) {
             doSetProperty("name", name);
@@ -1862,9 +2289,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Tests that have the given tags are not critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nonCriticalTags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder nonCriticalTags(
                 String nonCriticalTags) {
@@ -1875,10 +2305,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder noStatusReturnCode(
                 boolean noStatusReturnCode) {
@@ -1889,10 +2322,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder noStatusReturnCode(
                 String noStatusReturnCode) {
@@ -1902,9 +2339,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder output(File output) {
             doSetProperty("output", output);
@@ -1913,9 +2353,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder output(String output) {
             doSetProperty("output", output);
@@ -1924,9 +2368,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder outputDirectory(
                 File outputDirectory) {
@@ -1936,9 +2383,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder outputDirectory(
                 String outputDirectory) {
@@ -1949,9 +2400,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets the test execution order to be randomized. Valid values are all,
          * suite, and test.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param randomize the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder randomize(String randomize) {
             doSetProperty("randomize", randomize);
@@ -1960,9 +2414,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder report(File report) {
             doSetProperty("report", report);
@@ -1971,9 +2428,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder report(String report) {
             doSetProperty("report", report);
@@ -1982,9 +2443,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets background colors for the generated report and summary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportBackground the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder reportBackground(
                 String reportBackground) {
@@ -1994,9 +2458,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated tests report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder reportTitle(
                 String reportTitle) {
@@ -2008,10 +2475,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder runEmptySuite(
                 boolean runEmptySuite) {
@@ -2023,10 +2493,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder runEmptySuite(
                 String runEmptySuite) {
@@ -2036,9 +2510,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder runFailed(File runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -2047,9 +2524,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder runFailed(String runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -2060,9 +2541,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * has been deprecated in Robot Framework 2.8. Use separate dryryn,
          * skipTeardownOnExit, exitOnFailure, and randomize settings instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runMode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder runMode(String runMode) {
             doSetProperty("runMode", runMode);
@@ -2072,10 +2556,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder skipTeardownOnExit(
                 boolean skipTeardownOnExit) {
@@ -2086,10 +2573,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder skipTeardownOnExit(
                 String skipTeardownOnExit) {
@@ -2099,9 +2590,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Splits output and log files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param splitOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder splitOutputs(
                 String splitOutputs) {
@@ -2111,9 +2605,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests suites by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suites the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder suites(String suites) {
             doSetProperty("suites", suites);
@@ -2123,9 +2620,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Defines how many levels to show in the Statistics by Suite table in
          * outputs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suiteStatLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder suiteStatLevel(
                 String suiteStatLevel) {
@@ -2135,9 +2635,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated summary report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param summaryTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder summaryTitle(
                 String summaryTitle) {
@@ -2147,9 +2650,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds documentation to the specified tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagDocs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder tagDocs(String tagDocs) {
             doSetProperty("tagDocs", tagDocs);
@@ -2158,9 +2664,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the tags(s) to all executed tests cases. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -2170,9 +2679,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Excludes these tags from the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatExcludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder tagStatExcludes(
                 String tagStatExcludes) {
@@ -2183,9 +2695,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Includes only these tags in the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatIncludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder tagStatIncludes(
                 String tagStatIncludes) {
@@ -2196,9 +2711,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Adds external links to the Statistics by Tag table in outputs. Use
          * the format pattern:link:title List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatLinks the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder tagStatLinks(
                 String tagStatLinks) {
@@ -2208,9 +2726,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tests the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder tests(String tests) {
             doSetProperty("tests", tests);
@@ -2219,10 +2740,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder timestampOutputs(
                 boolean timestampOutputs) {
@@ -2232,10 +2756,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder timestampOutputs(
                 String timestampOutputs) {
@@ -2245,9 +2773,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets variables using variables files. Use the format path:args List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variableFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder variableFiles(
                 String variableFiles) {
@@ -2257,9 +2788,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets individual variables. Use the format name:value List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variables the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder variables(String variables) {
             doSetProperty("variables", variables);
@@ -2268,10 +2802,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder warnOnSkippedFiles(
                 boolean warnOnSkippedFiles) {
@@ -2281,10 +2818,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder warnOnSkippedFiles(
                 String warnOnSkippedFiles) {
@@ -2297,9 +2838,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder xunitFile(File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -2311,9 +2855,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder xunitFile(String xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -2330,10 +2878,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -2351,10 +2902,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -2374,41 +2929,16 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return (RobotFrameworkEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRobotFrameworkEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRobotFrameworkEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -2419,10 +2949,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -2448,10 +2982,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -2465,10 +3002,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -2482,10 +3023,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -2499,10 +3043,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -2512,9 +3060,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder argumentFile(File argumentFile) {
             doSetProperty("argumentFile", argumentFile);
@@ -2523,9 +3074,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder argumentFile(String argumentFile) {
             doSetProperty("argumentFile", argumentFile);
@@ -2535,9 +3090,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Creates combined statistics based on tags. Use the format tags:title
          * List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param combinedTagStats the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder combinedTagStats(
                 String combinedTagStats) {
@@ -2547,10 +3105,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -2559,10 +3120,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -2571,9 +3136,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Tests that have the given tags are considered critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param criticalTags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder criticalTags(String criticalTags) {
             doSetProperty("criticalTags", criticalTags);
@@ -2582,9 +3150,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder debugFile(File debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -2593,9 +3164,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder debugFile(String debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -2604,9 +3179,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the documentation of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param document the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder document(String document) {
             doSetProperty("document", document);
@@ -2617,10 +3195,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder dryrun(boolean dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -2631,10 +3212,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder dryrun(String dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -2643,9 +3228,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param excludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder excludes(String excludes) {
             doSetProperty("excludes", excludes);
@@ -2654,10 +3242,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder exitOnFailure(
                 boolean exitOnFailure) {
@@ -2667,10 +3258,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder exitOnFailure(String exitOnFailure) {
             doSetProperty("exitOnFailure", exitOnFailure);
@@ -2679,9 +3274,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder includes(String includes) {
             doSetProperty("includes", includes);
@@ -2690,9 +3288,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a single listener for monitoring tests execution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listener the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder listener(String listener) {
             doSetProperty("listener", listener);
@@ -2702,9 +3303,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets multiple listeners for monitoring tests execution. Use the
          * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listeners the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder listeners(String listeners) {
             doSetProperty("listeners", listeners);
@@ -2713,9 +3317,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder log(File log) {
             doSetProperty("log", log);
@@ -2724,9 +3331,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder log(String log) {
             doSetProperty("log", log);
@@ -2735,9 +3346,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the threshold level for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder logLevel(String logLevel) {
             doSetProperty("logLevel", logLevel);
@@ -2746,9 +3360,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated tests log.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder logTitle(String logTitle) {
             doSetProperty("logTitle", logTitle);
@@ -2758,9 +3375,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets free metadata for the top level tests suites. comma seperated
          * list of string resulting as List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metadata the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder metadata(String metadata) {
             doSetProperty("metadata", metadata);
@@ -2772,9 +3392,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Windows 'off' - never use colors 'force' - always use colors (also in
          * Windows).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param monitorColors the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder monitorColors(String monitorColors) {
             doSetProperty("monitorColors", monitorColors);
@@ -2783,10 +3406,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Width of the monitor output. Default is 78.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 78
          * Group: common
+         * 
+         * @param monitorWidth the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder monitorWidth(String monitorWidth) {
             doSetProperty("monitorWidth", monitorWidth);
@@ -2795,9 +3421,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the name of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder name(String name) {
             doSetProperty("name", name);
@@ -2806,9 +3435,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Tests that have the given tags are not critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nonCriticalTags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder nonCriticalTags(
                 String nonCriticalTags) {
@@ -2819,10 +3451,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder noStatusReturnCode(
                 boolean noStatusReturnCode) {
@@ -2833,10 +3468,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder noStatusReturnCode(
                 String noStatusReturnCode) {
@@ -2846,9 +3485,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder output(File output) {
             doSetProperty("output", output);
@@ -2857,9 +3499,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder output(String output) {
             doSetProperty("output", output);
@@ -2868,9 +3514,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder outputDirectory(
                 File outputDirectory) {
@@ -2880,9 +3529,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder outputDirectory(
                 String outputDirectory) {
@@ -2893,9 +3546,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets the test execution order to be randomized. Valid values are all,
          * suite, and test.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param randomize the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder randomize(String randomize) {
             doSetProperty("randomize", randomize);
@@ -2904,9 +3560,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder report(File report) {
             doSetProperty("report", report);
@@ -2915,9 +3574,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder report(String report) {
             doSetProperty("report", report);
@@ -2926,9 +3589,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets background colors for the generated report and summary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportBackground the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder reportBackground(
                 String reportBackground) {
@@ -2938,9 +3604,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated tests report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder reportTitle(String reportTitle) {
             doSetProperty("reportTitle", reportTitle);
@@ -2951,10 +3620,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder runEmptySuite(
                 boolean runEmptySuite) {
@@ -2966,10 +3638,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder runEmptySuite(String runEmptySuite) {
             doSetProperty("runEmptySuite", runEmptySuite);
@@ -2978,9 +3654,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder runFailed(File runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -2989,9 +3668,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder runFailed(String runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -3002,9 +3685,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * has been deprecated in Robot Framework 2.8. Use separate dryryn,
          * skipTeardownOnExit, exitOnFailure, and randomize settings instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runMode the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder runMode(String runMode) {
             doSetProperty("runMode", runMode);
@@ -3014,10 +3700,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder skipTeardownOnExit(
                 boolean skipTeardownOnExit) {
@@ -3028,10 +3717,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder skipTeardownOnExit(
                 String skipTeardownOnExit) {
@@ -3041,9 +3734,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Splits output and log files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param splitOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder splitOutputs(String splitOutputs) {
             doSetProperty("splitOutputs", splitOutputs);
@@ -3052,9 +3748,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests suites by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suites the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder suites(String suites) {
             doSetProperty("suites", suites);
@@ -3064,9 +3763,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Defines how many levels to show in the Statistics by Suite table in
          * outputs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suiteStatLevel the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder suiteStatLevel(
                 String suiteStatLevel) {
@@ -3076,9 +3778,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets a title for the generated summary report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param summaryTitle the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder summaryTitle(String summaryTitle) {
             doSetProperty("summaryTitle", summaryTitle);
@@ -3087,9 +3792,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds documentation to the specified tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagDocs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder tagDocs(String tagDocs) {
             doSetProperty("tagDocs", tagDocs);
@@ -3098,9 +3806,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets the tags(s) to all executed tests cases. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -3110,9 +3821,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Excludes these tags from the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatExcludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder tagStatExcludes(
                 String tagStatExcludes) {
@@ -3123,9 +3837,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Includes only these tags in the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatIncludes the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder tagStatIncludes(
                 String tagStatIncludes) {
@@ -3136,9 +3853,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Adds external links to the Statistics by Tag table in outputs. Use
          * the format pattern:link:title List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatLinks the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder tagStatLinks(String tagStatLinks) {
             doSetProperty("tagStatLinks", tagStatLinks);
@@ -3147,9 +3867,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Selects the tests cases by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tests the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder tests(String tests) {
             doSetProperty("tests", tests);
@@ -3158,10 +3881,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder timestampOutputs(
                 boolean timestampOutputs) {
@@ -3171,10 +3897,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder timestampOutputs(
                 String timestampOutputs) {
@@ -3184,9 +3914,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets variables using variables files. Use the format path:args List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variableFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder variableFiles(String variableFiles) {
             doSetProperty("variableFiles", variableFiles);
@@ -3195,9 +3928,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Sets individual variables. Use the format name:value List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variables the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder variables(String variables) {
             doSetProperty("variables", variables);
@@ -3206,10 +3942,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder warnOnSkippedFiles(
                 boolean warnOnSkippedFiles) {
@@ -3219,10 +3958,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder warnOnSkippedFiles(
                 String warnOnSkippedFiles) {
@@ -3235,9 +3978,12 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder xunitFile(File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -3249,9 +3995,13 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder xunitFile(String xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -3270,41 +4020,16 @@ public interface RobotFrameworkEndpointBuilderFactory {
             return (RobotFrameworkEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRobotFrameworkEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRobotFrameworkEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -3315,10 +4040,14 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRobotFrameworkEndpointBuilder synchronous(
                 String synchronous) {
@@ -3347,6 +4076,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder robotframework(String path) {
             return RobotFrameworkEndpointBuilderFactory.endpointBuilder("robotframework", path);
@@ -3372,6 +4102,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default RobotFrameworkEndpointBuilder robotframework(
                 String componentName,

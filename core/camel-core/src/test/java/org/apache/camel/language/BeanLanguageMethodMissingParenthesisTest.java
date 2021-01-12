@@ -36,8 +36,11 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo})")).to("mock:foo").end()
-                    .to("mock:result");
+                from("direct:start")
+                        .filter(method(BeanLanguageMethodMissingParenthesisTest.class,
+                                "couldThisBeFoo(${body}, ${header.foo})"))
+                        .to("mock:foo").end()
+                        .to("mock:result");
             }
         });
         context.start();
@@ -60,7 +63,9 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo}")).to("mock:foo").end().to("mock:result");
+                from("direct:start")
+                        .filter(method(BeanLanguageMethodMissingParenthesisTest.class, "couldThisBeFoo(${body}, ${header.foo}"))
+                        .to("mock:foo").end().to("mock:result");
             }
         });
         context.start();
@@ -79,8 +84,11 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").filter(method(BeanLanguageMethodMissingParenthesisTest.class, "--couldThisBeFoo(${body}, ${header.foo})")).to("mock:foo").end()
-                    .to("mock:result");
+                from("direct:start")
+                        .filter(method(BeanLanguageMethodMissingParenthesisTest.class,
+                                "--couldThisBeFoo(${body}, ${header.foo})"))
+                        .to("mock:foo").end()
+                        .to("mock:result");
             }
         });
         context.start();
@@ -90,7 +98,9 @@ public class BeanLanguageMethodMissingParenthesisTest extends ContextTestSupport
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Method name must start with a valid java identifier at position: 0 in method: --couldThisBeFoo(${body}, ${header.foo})", iae.getMessage());
+            assertEquals(
+                    "Method name must start with a valid java identifier at position: 0 in method: --couldThisBeFoo(${body}, ${header.foo})",
+                    iae.getMessage());
         }
     }
 

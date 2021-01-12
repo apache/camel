@@ -42,8 +42,8 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
             public void configure() {
                 onException(BeanValidationException.class).to(mockEndpoint);
 
-                from("direct:test").
-                    to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+                from("direct:test").to(
+                        "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
     }

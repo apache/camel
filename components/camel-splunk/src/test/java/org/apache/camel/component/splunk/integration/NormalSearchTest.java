@@ -50,11 +50,14 @@ public class NormalSearchTest extends SplunkTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:submit").to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX + "&sourceType=testSource&source=test")
+                from("direct:submit")
+                        .to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX
+                            + "&sourceType=testSource&source=test")
                         .to("mock:submit-result");
 
-                from("splunk://normal?delay=5000&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&initEarliestTime=-10s&latestTime=now" + "&search=search index="
-                                + INDEX + " sourcetype=testSource").to("mock:search-result");
+                from("splunk://normal?delay=5000&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD
+                     + "&initEarliestTime=-10s&latestTime=now" + "&search=search index="
+                     + INDEX + " sourcetype=testSource").to("mock:search-result");
             }
         };
     }

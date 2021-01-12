@@ -112,7 +112,8 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         assertTrue(payload instanceof CxfPayload);
         assertEquals(1, payload.getBodySources().size(), "Get a wrong size of body");
         assertEquals(1, payload.getBody().size(), "Get a wrong size of body");
-        assertEquals("streamsource", payload.getBodySources().get(0).getClass().getSimpleName().toLowerCase(), "expects stream source");
+        assertEquals("streamsource", payload.getBodySources().get(0).getClass().getSimpleName().toLowerCase(),
+                "expects stream source");
     }
 
     @Test

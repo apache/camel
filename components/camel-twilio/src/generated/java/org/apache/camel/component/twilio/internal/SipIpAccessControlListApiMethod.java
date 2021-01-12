@@ -75,8 +75,6 @@ public enum SipIpAccessControlListApiMethod implements ApiMethod {
         arg("pathSid", String.class),
         arg("friendlyName", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private SipIpAccessControlListApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentUploadGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
 
     @Test
     public void testCreate() throws Exception {
@@ -44,13 +45,11 @@ public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestS
         File evidenceDocument = new File(getClass().getClassLoader().getResource(documentName).getPath());
         DocumentUploadRequest documentUploadRequest = new DocumentUploadRequest(
                 DocumentUpload.Kind.EVIDENCE_DOCUMENT,
-                evidenceDocument
-        );
+                evidenceDocument);
 
         final Result<DocumentUpload> result = requestBody(
                 "direct://CREATE",
-                documentUploadRequest
-        );
+                documentUploadRequest);
 
         assertNotNull(result, "create result");
         assertTrue(result.isSuccess(), "create result success");
@@ -65,7 +64,7 @@ public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestS
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
 
             }
         };

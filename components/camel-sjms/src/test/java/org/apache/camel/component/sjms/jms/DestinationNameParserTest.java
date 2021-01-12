@@ -23,39 +23,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author jkorab
- */
 public class DestinationNameParserTest {
 
     @Test
     public void testIsTopic() throws Exception {
-        DestinationNameParser parser = new DestinationNameParser();
-        assertTrue(parser.isTopic("topic:foo"));
-        assertFalse(parser.isTopic("queue:bar"));
-        assertFalse(parser.isTopic("bar"));
+        assertTrue(DestinationNameParser.isTopic("topic:foo"));
+        assertFalse(DestinationNameParser.isTopic("queue:bar"));
+        assertFalse(DestinationNameParser.isTopic("bar"));
     }
 
     @Test
     public void testIsTopicNullDestinationName() throws Exception {
-        DestinationNameParser parser = new DestinationNameParser();
         assertThrows(IllegalArgumentException.class,
-            () -> parser.isTopic(null));
+                () -> DestinationNameParser.isTopic(null));
     }
 
     @Test
     public void testGetShortName() throws Exception {
-        DestinationNameParser parser = new DestinationNameParser();
-        assertEquals("foo", parser.getShortName("topic:foo"));
-        assertFalse(parser.isTopic("queue:bar"), "bar");
-        assertFalse(parser.isTopic("bar"), "bar");
+        assertEquals("foo", DestinationNameParser.getShortName("topic:foo"));
+        assertFalse(DestinationNameParser.isTopic("queue:bar"), "bar");
+        assertFalse(DestinationNameParser.isTopic("bar"), "bar");
     }
 
     @Test
     public void testGetShortNameNullDestinationName() throws Exception {
-        DestinationNameParser parser = new DestinationNameParser();
         assertThrows(IllegalArgumentException.class,
-            () -> parser.getShortName(null));
+                () -> DestinationNameParser.getShortName(null));
     }
 
 }

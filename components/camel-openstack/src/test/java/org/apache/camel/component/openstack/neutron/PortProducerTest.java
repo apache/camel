@@ -36,7 +36,6 @@ import org.openstack4j.model.network.Port;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -65,7 +64,7 @@ public class PortProducerTest extends NeutronProducerTestSupport {
         when(networkingService.port()).thenReturn(portService);
 
         producer = new PortProducer(endpoint, client);
-        when(portService.create(any())).thenReturn(testOSport);
+        when(portService.create((Port) any())).thenReturn(testOSport);
         when(portService.get(anyString())).thenReturn(testOSport);
 
         List<Port> getAllList = new ArrayList<>();
@@ -119,7 +118,7 @@ public class PortProducerTest extends NeutronProducerTestSupport {
         producer.process(exchange);
 
         final List<Port> result = msg.getBody(List.class);
-        assertTrue(result.size() == 2);
+        assertEquals(2, result.size());
         assertEquals(testOSport, result.get(0));
     }
 

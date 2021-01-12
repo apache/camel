@@ -48,7 +48,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Query or transform JSON payloads using an JSLT.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "jslt", title = "JSLT", syntax = "jslt:resourceUri", producerOnly = true,
+             category = { Category.TRANSFORMATION })
 public class JsltEndpoint extends ResourceEndpoint {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -80,10 +81,12 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (transform == null) {
             if (log.isDebugEnabled()) {
                 String path = getResourceUri();
-                log.debug("Jslt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
+                log.debug("Jslt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                        getEndpointUri());
             }
 
-            String jsltStringFromHeader = allowTemplateFromHeader ? msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class) : null;
+            String jsltStringFromHeader
+                    = allowTemplateFromHeader ? msg.getHeader(JsltConstants.HEADER_JSLT_STRING, String.class) : null;
             Collection<Function> functions = ((JsltComponent) getComponent()).getFunctions();
             JsonFilter objectFilter = ((JsltComponent) getComponent()).getObjectFilter();
 
@@ -114,7 +117,6 @@ public class JsltEndpoint extends ResourceEndpoint {
         return transform;
     }
 
-
     public JsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
@@ -133,7 +135,8 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(JsltConstants.HEADER_JSLT_RESOURCE_URI);
 
-            log.debug("{} set to {} creating new endpoint to handle exchange", JsltConstants.HEADER_JSLT_RESOURCE_URI, newResourceUri);
+            log.debug("{} set to {} creating new endpoint to handle exchange", JsltConstants.HEADER_JSLT_RESOURCE_URI,
+                    newResourceUri);
             JsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
             return;
@@ -214,8 +217,8 @@ public class JsltEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;

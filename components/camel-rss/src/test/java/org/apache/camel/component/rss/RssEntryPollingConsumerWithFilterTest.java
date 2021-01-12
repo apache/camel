@@ -29,7 +29,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
 
@@ -55,8 +55,8 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").
-                        filter().method("myBean", "isAfterDate").to("mock:result");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").filter().method("myBean", "isAfterDate")
+                        .to("mock:result");
             }
         };
     }
@@ -70,7 +70,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
 
         public boolean isAfterDate(Exchange ex) {
             SyndFeed feed = ex.getIn().getBody(SyndFeed.class);
-            assertTrue(feed.getEntries().size() == 1);
+            assertEquals(1, feed.getEntries().size());
             SyndEntry entry = feed.getEntries().get(0);
             return entry.getPublishedDate().after(time);
         }

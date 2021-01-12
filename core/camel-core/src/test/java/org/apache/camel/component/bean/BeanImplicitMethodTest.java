@@ -29,11 +29,11 @@ public class BeanImplicitMethodTest extends ContextTestSupport {
     public void testRoute() throws Exception {
 
         String stringBody = "stringBody";
-        String stringResponse = (String)template.requestBody("direct:in", stringBody);
+        String stringResponse = (String) template.requestBody("direct:in", stringBody);
         assertEquals(stringBody, stringResponse);
 
         Integer intBody = 1;
-        Integer intResponse = (Integer)template.requestBody("direct:in", intBody);
+        Integer intResponse = (Integer) template.requestBody("direct:in", intBody);
         assertEquals(1, intResponse.intValue());
     }
 

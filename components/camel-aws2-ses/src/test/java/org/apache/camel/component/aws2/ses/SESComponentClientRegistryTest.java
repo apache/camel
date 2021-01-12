@@ -20,9 +20,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SESComponentClientRegistryTest extends CamelTestSupport {
 
@@ -31,41 +29,21 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
-        Ses2Component component = new Ses2Component(context);
-        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com");
+        Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
-        component.close();
     }
 
     @Test
-    public void createEndpointWithMinimalSESClientMisconfiguration() throws Exception {
-
-        Ses2Component component = new Ses2Component(context);
-        assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws2-ses://from@example.com");
-        });
-        component.close();
-    }
-    
-    @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
-    }
-    
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
-
-        AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
-        context.getRegistry().bind("awsSesClient", awsSESClient);
-        Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
 
         assertSame(awsSESClient, endpoint.getConfiguration().getAmazonSESClient());
     }

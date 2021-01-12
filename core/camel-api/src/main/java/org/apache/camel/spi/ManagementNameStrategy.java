@@ -17,19 +17,18 @@
 package org.apache.camel.spi;
 
 /**
- * Strategy for assigning the name part of the {@link javax.management.ObjectName}
- * for a managed {@link org.apache.camel.CamelContext}.
+ * Strategy for assigning the name part of the {@link javax.management.ObjectName} for a managed
+ * {@link org.apache.camel.CamelContext}.
  * <p/>
- * A strategy is needed as you can run multiple CamelContext in the same JVM, and want them
- * to be enlisted in the JVM wide JMXMBeanServer. And this requires a strategy to be able
- * to calculate unique names, in case of clashes. Or to enforce an explicit fixed name,
- * to ensure the JMX name is not using dynamic counters etc.
+ * A strategy is needed as you can run multiple CamelContext in the same JVM, and want them to be enlisted in the JVM
+ * wide JMXMBeanServer. And this requires a strategy to be able to calculate unique names, in case of clashes. Or to
+ * enforce an explicit fixed name, to ensure the JMX name is not using dynamic counters etc.
  * <p/>
  * This strategy supports a naming pattern which supports at least the following tokens
  * <ul>
- *   <li>#camelId# - the camel id (eg the camel name)</li>
- *   <li>#name# - same as #camelId#</li>
- *   <li>#counter# - an incrementing counter</li>
+ * <li>#camelId# - the camel id (eg the camel name)</li>
+ * <li>#name# - same as #camelId#</li>
+ * <li>#counter# - an incrementing counter</li>
  * </ul>
  *
  * @see CamelContextNameStrategy
@@ -54,8 +53,8 @@ public interface ManagementNameStrategy {
     /**
      * Gets the name
      * <p/>
-     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter,
-     * or the name is always fixed.
+     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
+     * is always fixed.
      *
      * @return the name.
      */
@@ -64,8 +63,8 @@ public interface ManagementNameStrategy {
     /**
      * Gets the next calculated name, if this strategy is not using fixed names.
      * <p/>
-     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter,
-     * or the name is always fixed.
+     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter, or the name
+     * is always fixed.
      *
      * @return the next name
      */
@@ -81,10 +80,10 @@ public interface ManagementNameStrategy {
     /**
      * Creates a new management name with the given pattern.
      *
-     * @param pattern the pattern
-     * @param name    the name
-     * @param invalidCheck whether to check for invalid pattern
-     * @return the management name
+     * @param  pattern                  the pattern
+     * @param  name                     the name
+     * @param  invalidCheck             whether to check for invalid pattern
+     * @return                          the management name
      * @throws IllegalArgumentException if the pattern or name is invalid or empty
      */
     String resolveManagementName(String pattern, String name, boolean invalidCheck);

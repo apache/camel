@@ -24,8 +24,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
- * A simple converter that can convert any object to a String type by using the
- * toString() method of the object.
+ * A simple converter that can convert any object to a String type by using the toString() method of the object.
  */
 public class ToStringTypeConverter extends TypeConverterSupport {
 

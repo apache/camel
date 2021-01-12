@@ -25,8 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that Splitter aggregator clear the filtered history in
- * case filter has been used <b>before</b> the splitter.
+ * Unit test to verify that Splitter aggregator clear the filtered history in case filter has been used <b>before</b>
+ * the splitter.
  */
 
 public class FilterBeforeSplitTest extends ContextTestSupport {
@@ -66,8 +66,9 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
             public void configure() throws Exception {
                 Predicate goodWord = body().contains("World");
 
-                from("direct:start").to("mock:before").filter(goodWord).to("mock:good").end().split(body().tokenize(" "), new MyAggregationStrategy()).to("mock:split").end()
-                    .to("mock:result");
+                from("direct:start").to("mock:before").filter(goodWord).to("mock:good").end()
+                        .split(body().tokenize(" "), new MyAggregationStrategy()).to("mock:split").end()
+                        .to("mock:result");
             }
         };
     }

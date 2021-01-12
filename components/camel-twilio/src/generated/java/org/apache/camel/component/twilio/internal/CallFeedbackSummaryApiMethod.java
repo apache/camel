@@ -55,8 +55,6 @@ public enum CallFeedbackSummaryApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CallFeedbackSummaryApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

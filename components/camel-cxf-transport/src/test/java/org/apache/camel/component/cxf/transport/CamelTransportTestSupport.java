@@ -112,5 +112,4 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
         os.close();
     }
 
-
 }

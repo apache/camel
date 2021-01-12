@@ -37,6 +37,8 @@ public interface Aws2MskComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-msk
+     * 
+     * @return the dsl builder
      */
     static Aws2MskComponentBuilder aws2Msk() {
         return new Aws2MskComponentBuilderImpl();
@@ -47,28 +49,15 @@ public interface Aws2MskComponentBuilderFactory {
      */
     interface Aws2MskComponentBuilder extends ComponentBuilder<MSK2Component> {
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2MskComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.msk.MSK2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.msk.MSK2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder configuration(
                 org.apache.camel.component.aws2.msk.MSK2Configuration configuration) {
@@ -86,10 +75,13 @@ public interface Aws2MskComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -100,9 +92,12 @@ public interface Aws2MskComponentBuilderFactory {
          * To use a existing configured AWS MSK as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kafka.KafkaClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.kafka.KafkaClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mskClient the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder mskClient(
                 software.amazon.awssdk.services.kafka.KafkaClient mskClient) {
@@ -113,9 +108,12 @@ public interface Aws2MskComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.msk.MSK2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.msk.MSK2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder operation(
                 org.apache.camel.component.aws2.msk.MSK2Operations operation) {
@@ -125,10 +123,13 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -137,9 +138,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the MSK client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -148,9 +152,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the MSK client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -159,11 +166,14 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MSK client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -176,9 +186,12 @@ public interface Aws2MskComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -188,10 +201,13 @@ public interface Aws2MskComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -199,25 +215,35 @@ public interface Aws2MskComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2MskComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2MskComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -226,9 +252,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -258,7 +287,6 @@ public interface Aws2MskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoDiscoverClient": getOrCreateConfiguration((MSK2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((MSK2Component) component).setConfiguration((org.apache.camel.component.aws2.msk.MSK2Configuration) value); return true;
             case "lazyStartProducer": ((MSK2Component) component).setLazyStartProducer((boolean) value); return true;
             case "mskClient": getOrCreateConfiguration((MSK2Component) component).setMskClient((software.amazon.awssdk.services.kafka.KafkaClient) value); return true;
@@ -269,7 +297,7 @@ public interface Aws2MskComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((MSK2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((MSK2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((MSK2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((MSK2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MSK2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MSK2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((MSK2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

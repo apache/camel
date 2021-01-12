@@ -4,8 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.HealthConfigurationProperties;
 
@@ -34,14 +36,20 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Config", java.util.Map.class);
-        answer.put("ContextEnabled", java.lang.Boolean.class);
-        answer.put("Enabled", java.lang.Boolean.class);
-        answer.put("RegistryEnabled", java.lang.Boolean.class);
-        answer.put("RoutesEnabled", java.lang.Boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "config":
+        case "Config": return java.util.Map.class;
+        case "contextenabled":
+        case "ContextEnabled": return java.lang.Boolean.class;
+        case "enabled":
+        case "Enabled": return java.lang.Boolean.class;
+        case "registryenabled":
+        case "RegistryEnabled": return java.lang.Boolean.class;
+        case "routesenabled":
+        case "RoutesEnabled": return java.lang.Boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -58,6 +66,15 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
         case "RegistryEnabled": return target.getRegistryEnabled();
         case "routesenabled":
         case "RoutesEnabled": return target.getRoutesEnabled();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "config":
+        case "Config": return org.apache.camel.main.HealthCheckConfigurationProperties.class;
         default: return null;
         }
     }

@@ -73,7 +73,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // content of file should be Hello London
         String content = IOConverter.toString(new File("target/data/done/london.txt"), null);
@@ -84,7 +84,8 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?move=../done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:report");
+                from("file://target/data/reports?move=../done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
+                        .to("mock:report");
             }
         };
     }

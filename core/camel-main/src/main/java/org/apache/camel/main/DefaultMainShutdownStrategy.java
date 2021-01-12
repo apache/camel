@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook to
- * properly stop the main instance.
+ * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook to properly stop the main
+ * instance.
  */
 public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultMainShutdownStrategy.class);
@@ -46,8 +46,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     /**
-     * Disable the hangup support. No graceful stop by calling stop() on a
-     * Hangup signal.
+     * Disable the hangup support. No graceful stop by calling stop() on a Hangup signal.
      */
     public void disableHangupSupport() {
         hangupInterceptorEnabled = false;
@@ -73,7 +72,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     private void handleHangup() {
-        LOG.info("Received hang up - stopping the main instance.");
+        LOG.info("Received hangup signal, stopping the main instance.");
         // and shutdown listener to allow camel context to graceful shutdown if JVM shutdown hook is triggered
         // as otherwise the JVM terminates before Camel is graceful shutdown
         addShutdownListener(() -> {
@@ -91,13 +90,15 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 tracker.open();
 
                 // use timeout from camel shutdown strategy and add 5 second extra to allow camel to shutdown graceful
-                long max = 5000 + main.getCamelContext().getShutdownStrategy().getTimeUnit().toMillis(main.getCamelContext().getShutdownStrategy().getTimeout());
+                long max = 5000 + main.getCamelContext().getShutdownStrategy().getTimeUnit()
+                        .toMillis(main.getCamelContext().getShutdownStrategy().getTimeout());
                 int waits = 0;
                 boolean done = false;
                 StopWatch watch = new StopWatch();
                 while (!main.getCamelContext().isStopped() && !done && watch.taken() < max) {
-                    String msg = "Waiting for CamelContext to graceful shutdown, elapsed: " + TimeUtils.printDuration(watch.taken());
-                    if (waits % 5 == 0) {
+                    String msg = "Waiting for CamelContext to graceful shutdown, elapsed: "
+                                 + TimeUtils.printDuration(watch.taken());
+                    if (waits > 0 && waits % 5 == 0) {
                         // do some info logging every 5th time
                         LOG.info(msg);
                     } else {

@@ -40,7 +40,8 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     @Test
     public void testHttpClientOptions() {
         VertxWebsocketEndpoint endpoint = context
-                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/client?clientOptions=#clientOptions", VertxWebsocketEndpoint.class);
+                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/client?clientOptions=#clientOptions",
+                        VertxWebsocketEndpoint.class);
 
         assertSame(clientOptions, endpoint.getConfiguration().getClientOptions());
     }
@@ -48,7 +49,8 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     @Test
     public void testHttpServerOptions() {
         VertxWebsocketEndpoint endpoint = context
-                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/server?serverOptions=#serverOptions", VertxWebsocketEndpoint.class);
+                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/server?serverOptions=#serverOptions",
+                        VertxWebsocketEndpoint.class);
 
         assertSame(serverOptions, endpoint.getConfiguration().getServerOptions());
     }

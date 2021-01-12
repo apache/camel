@@ -26,8 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A proxy class for {@link QueueConfiguration} and {@link QueueExchangeHeaders}. Ideally this
- * is responsible to obtain the correct configurations options either from configs or exchange headers
+ * A proxy class for {@link QueueConfiguration} and {@link QueueExchangeHeaders}. Ideally this is responsible to obtain
+ * the correct configurations options either from configs or exchange headers
  */
 public class QueueConfigurationOptionsProxy {
 
@@ -87,7 +87,8 @@ public class QueueConfigurationOptionsProxy {
 
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
-        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange)) ? fallbackFn.get()
+        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))
+                ? fallbackFn.get()
                 : exchangeFn.apply(exchange);
     }
 }

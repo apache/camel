@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Verify XML payloads using the XML signature specification.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-verify", title = "XML Security Verify",
-        syntax = "xmlsecurity-verify:name", producerOnly = true, label = "security,transformation")
+             syntax = "xmlsecurity-verify:name", producerOnly = true, label = "security,transformation")
 public class XmlVerifierEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -51,7 +51,8 @@ public class XmlVerifierEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The name part in the URI can be chosen by the user to distinguish between different verify endpoints within the camel context.
+     * The name part in the URI can be chosen by the user to distinguish between different verify endpoints within the
+     * camel context.
      */
     public void setName(String name) {
         this.name = name;

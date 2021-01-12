@@ -33,7 +33,7 @@ public class DropboxConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("dropbox://get?accessToken=accessToken&remotePath=/path").to("mock:test1");
-                
+
                 from("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file").to("mock:test2");
             }
         };
@@ -49,9 +49,10 @@ public class DropboxConsumerTest extends CamelTestSupport {
 
         // Then
         assertTrue(consumer1 instanceof DropboxScheduledPollGetConsumer);
-        
+
         // Given
-        Endpoint dropboxEndpoint2 = context.getEndpoint("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file");
+        Endpoint dropboxEndpoint2
+                = context.getEndpoint("dropbox://get?accessToken=accessToken&remotePath=/path with spaces/file");
 
         // When
         Consumer consumer2 = dropboxEndpoint2.createConsumer(null);

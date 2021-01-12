@@ -92,11 +92,11 @@ public class ControlBusStatsTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
                 from("direct:current").routeId("current")
-                    .to("mock:current");
+                        .to("mock:current");
             }
         };
     }

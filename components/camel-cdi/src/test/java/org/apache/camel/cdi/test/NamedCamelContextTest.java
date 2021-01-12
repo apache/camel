@@ -33,10 +33,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 public class NamedCamelContextTest {
@@ -82,24 +82,23 @@ public class NamedCamelContextTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void verifyCamelContexts(Instance<CamelContext> contexts) {
         assertThat(contexts, containsInAnyOrder(
-            hasProperty("name", equalTo("emptyNamedFieldContext")),
-            hasProperty("name", equalTo("emptyNamedGetterContext")),
-            hasProperty("name", equalTo("emptyNamedMethodContext")),
-            hasProperty("name", equalTo("named-field-context")),
-            hasProperty("name", equalTo("named-getter-context")),
-            hasProperty("name", equalTo("named-method-context")),
-            hasProperty("name", equalTo("emptyNamedBeanContext")),
-            hasProperty("name", equalTo("named-bean-context"))
-        ));
+                hasProperty("name", equalTo("emptyNamedFieldContext")),
+                hasProperty("name", equalTo("emptyNamedGetterContext")),
+                hasProperty("name", equalTo("emptyNamedMethodContext")),
+                hasProperty("name", equalTo("named-field-context")),
+                hasProperty("name", equalTo("named-getter-context")),
+                hasProperty("name", equalTo("named-method-context")),
+                hasProperty("name", equalTo("emptyNamedBeanContext")),
+                hasProperty("name", equalTo("named-bean-context"))));
     }
 
     @Named

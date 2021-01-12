@@ -28,7 +28,8 @@ public class ActiveMQComponentFactoryUserNamePasswordTest extends CamelSpringTes
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/ActiveMQComponentFactoryUserNamePassword.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/activemq/ActiveMQComponentFactoryUserNamePassword.xml");
     }
 
     @Test
@@ -36,9 +37,9 @@ public class ActiveMQComponentFactoryUserNamePasswordTest extends CamelSpringTes
         ActiveMQComponent comp = context.getComponent("activemq", ActiveMQComponent.class);
         assertNotNull(comp);
 
-        ActiveMQConfiguration config = (ActiveMQConfiguration)comp.getConfiguration();
+        ActiveMQConfiguration config = (ActiveMQConfiguration) comp.getConfiguration();
         assertNotNull(config);
-        assertEquals("admin2", config.getUserName());
+        assertEquals("admin2", config.getUsername());
         assertEquals("secret2", config.getPassword());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

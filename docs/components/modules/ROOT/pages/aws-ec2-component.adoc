@@ -8,6 +8,7 @@
 :since: 2.16
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-ec2.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 
@@ -50,13 +51,13 @@ The AWS Elastic Compute Cloud (EC2) component supports 12 options, which are lis
 | *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2
 | *configuration* (producer) | The component configuration |  | EC2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. The value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | EC2Operations
+| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. There are 11 enums and the value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | EC2Operations
 | *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -82,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,13 +93,12 @@ with the following path and query parameters:
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. The value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | EC2Operations
+| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. There are 11 enums and the value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | EC2Operations
 | *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -191,7 +191,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::camel-spring-boot::page$aws-ec2-starter.adoc[]

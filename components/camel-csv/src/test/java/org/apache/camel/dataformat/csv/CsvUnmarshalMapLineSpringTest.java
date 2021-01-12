@@ -28,8 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of
- * the <tt>useMaps</tt> option.
+ * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of the <tt>useMaps</tt> option.
  */
 public class CsvUnmarshalMapLineSpringTest extends CamelSpringTestSupport {
     @EndpointInject("mock:result")

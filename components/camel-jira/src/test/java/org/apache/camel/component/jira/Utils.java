@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.atlassian.jira.rest.client.api.StatusCategory;
 import com.atlassian.jira.rest.client.api.domain.Attachment;
 import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import com.atlassian.jira.rest.client.api.domain.BasicPriority;
@@ -33,6 +34,7 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.IssueLink;
 import com.atlassian.jira.rest.client.api.domain.IssueLinkType;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.domain.Priority;
 import com.atlassian.jira.rest.client.api.domain.Resolution;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import com.atlassian.jira.rest.client.api.domain.User;
@@ -40,19 +42,21 @@ import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.jira.rest.client.api.domain.User.S48_48;
 import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
 
 public final class Utils {
-
     public static User userAssignee;
     static {
         try {
-            userAssignee = new User(null, "user-test", "User Test", "user@test", true, null, buildUserAvatarUris("user-test", 10082L), null);
+            userAssignee = new User(
+                    null, "user-test", "User Test", "user@test", true, null, buildUserAvatarUris("user-test", 10082L), null);
         } catch (Exception e) {
-            e.printStackTrace();
+
+            LoggerFactory.getLogger(Utils.class).debug("Failed to build test user: {}", e.getMessage(), e);
         }
     }
     private static IssueType issueType = new IssueType(null, 1L, "Bug", false, "Bug", null);
@@ -64,25 +68,47 @@ public final class Utils {
         return createIssueWithComments(id, 0);
     }
 
-    public static Issue createIssue(long id, String summary, String key, IssueType issueType, String description,
+    public static Issue createIssue(
+            long id, String summary, String key, IssueType issueType, String description,
             BasicPriority priority, User assignee, Collection<BasicComponent> components, BasicWatchers watchers) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
-        return new Issue(summary, selfUri, KEY + "-" + id, id, null, issueType, null, description, priority, null, null, null,
+        return new Issue(
+                summary, selfUri, KEY + "-" + id, id, null, issueType, null, description, priority, null, null, null,
                 assignee, null, null, null, null, null, components, null, null, null, null, null, null, null, watchers,
                 null, null, null, null, null);
     }
 
     public static Issue transitionIssueDone(Issue issue, Status status, Resolution resolution) {
-        return new Issue(issue.getSummary(), issue.getSelf(), issue.getKey(), issue.getId(), null, issue.getIssueType(),
+        return new Issue(
+                issue.getSummary(), issue.getSelf(), issue.getKey(), issue.getId(), null, issue.getIssueType(),
                 status, issue.getDescription(), issue.getPriority(), resolution, null, null,
                 issue.getAssignee(), null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null);
     }
 
-    public static Issue createIssueWithAttachment(long id, String summary, String key, IssueType issueType, String description,
+    public static Issue setPriority(Issue issue, Priority p) {
+        return new Issue(
+                issue.getSummary(), issue.getSelf(), issue.getKey(), issue.getId(), null, issue.getIssueType(),
+                issue.getStatus(), issue.getDescription(), p, issue.getResolution(), null, null,
+                issue.getAssignee(), null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null);
+    }
+
+    public static Issue transitionIssueDone(Issue issue) {
+        URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
+        URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/1");
+        StatusCategory sc = new StatusCategory(doneResolutionUri, "statusCategory", 1L, "SC-1", "GREEN");
+        Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, sc);
+        Resolution resolution = new Resolution(doneResolutionUri, 5L, "Resolution", "Resolution");
+        return transitionIssueDone(issue, status, resolution);
+    }
+
+    public static Issue createIssueWithAttachment(
+            long id, String summary, String key, IssueType issueType, String description,
             BasicPriority priority, User assignee, Collection<Attachment> attachments) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
-        return new Issue(summary, selfUri, KEY + "-" + id, id, null, issueType, null, description, priority, null, attachments, null,
+        return new Issue(
+                summary, selfUri, KEY + "-" + id, id, null, issueType, null, description, priority, null, attachments, null,
                 assignee, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null);
     }
@@ -100,23 +126,26 @@ public final class Utils {
 
     public static Issue createIssueWithComments(long id, Collection<Comment> comments) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
-        return new Issue("jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+        return new Issue(
+                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
                 null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, comments, null, null,
                 null, null, null, null, null, null, null, null);
     }
 
     public static Issue createIssueWithLinks(long id, Collection<IssueLink> issueLinks) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
-        return new Issue("jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
-            null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, issueLinks,
-            null, null, null, null, null, null, null, null);
+        return new Issue(
+                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+                null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, issueLinks,
+                null, null, null, null, null, null, null, null);
     }
 
     public static Issue createIssueWithWorkLogs(long id, Collection<Worklog> worklogs) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
-        return new Issue("jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
-            null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, null,
-            null, worklogs, null, null, null, null, null, null);
+        return new Issue(
+                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+                null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, null,
+                null, worklogs, null, null, null, null, null, null);
     }
 
     public static Comment newComment(long issueId, int newCommentId, String comment) {

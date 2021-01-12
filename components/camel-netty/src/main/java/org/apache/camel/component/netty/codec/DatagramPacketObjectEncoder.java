@@ -30,22 +30,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Sharable
-public class DatagramPacketObjectEncoder extends
+public class DatagramPacketObjectEncoder
+        extends
         MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
     private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketObjectEncoder.class);
     private ObjectEncoder delegateObjectEncoder;
+
     public DatagramPacketObjectEncoder() {
         delegateObjectEncoder = new ObjectEncoder();
     }
+
     @Override
-    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
-                          List<Object> out) throws Exception {
+    protected void encode(
+            ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
+            List<Object> out)
+            throws Exception {
         if (msg.content() instanceof Serializable) {
             Serializable payload = (Serializable) msg.content();
             ByteBuf buf = ctx.alloc().buffer();
             delegateObjectEncoder.encode(ctx, payload, buf);
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<>(buf, msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
+                    = new DefaultAddressedEnvelope<>(buf, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not a java.io.Serializable instance.");

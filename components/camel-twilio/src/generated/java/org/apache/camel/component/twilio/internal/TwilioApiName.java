@@ -124,8 +124,6 @@ public enum TwilioApiName implements ApiName {
     USAGE_RECORD_YESTERDAY("usage-record-yesterday");
 
 
-    private static final TwilioApiName[] VALUES = values();
-    
     private final String name;
 
     private TwilioApiName(String name) {
@@ -137,12 +135,4 @@ public enum TwilioApiName implements ApiName {
         return name;
     }
 
-    public static TwilioApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

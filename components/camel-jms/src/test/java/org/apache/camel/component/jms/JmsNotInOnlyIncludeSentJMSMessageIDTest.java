@@ -68,8 +68,8 @@ public class JmsNotInOnlyIncludeSentJMSMessageIDTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo")
-                    .to("mock:done");
+                        .to("activemq:queue:foo")
+                        .to("mock:done");
             }
         };
     }

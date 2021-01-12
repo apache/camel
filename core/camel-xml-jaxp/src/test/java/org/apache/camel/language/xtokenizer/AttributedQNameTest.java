@@ -32,7 +32,7 @@ public class AttributedQNameTest {
         assertTrue(aqname.matches(new QName("urn:foo", "petra")));
         assertFalse(aqname.matches(new QName("urn:bar", "petra")));
         assertFalse(aqname.matches(new QName("urn:foo", "petira")));
-        
+
         aqname = new AttributedQName("urn:foo", "*tra");
         assertTrue(aqname.matches(new QName("urn:foo", "petra")));
         assertTrue(aqname.matches(new QName("urn:foo", "astra")));
@@ -43,7 +43,7 @@ public class AttributedQNameTest {
         assertFalse(aqname.matches(new QName("urn:foo", "astra")));
         assertTrue(aqname.matches(new QName("urn:foo", "peach")));
         assertTrue(aqname.matches(new QName("urn:foo", "peteria")));
-        
+
         aqname = new AttributedQName("urn:foo", "p*t*a");
         assertTrue(aqname.matches(new QName("urn:foo", "petra")));
         assertFalse(aqname.matches(new QName("urn:foo", "astra")));

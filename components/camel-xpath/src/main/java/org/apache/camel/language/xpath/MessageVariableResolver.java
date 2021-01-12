@@ -34,9 +34,8 @@ import static org.apache.camel.support.builder.Namespaces.OUT_NAMESPACE;
 import static org.apache.camel.support.builder.Namespaces.SYSTEM_PROPERTIES_NAMESPACE;
 
 /**
- * A variable resolver for XPath expressions which support properties on the
- * message, exchange as well as making system properties and environment
- * properties available.
+ * A variable resolver for XPath expressions which support properties on the message, exchange as well as making system
+ * properties and environment properties available.
  * <p/>
  * Implementations of this resolver must be thread safe
  */
@@ -72,7 +71,7 @@ public class MessageVariableResolver implements XPathVariableResolver {
             try {
                 answer = System.getProperty(localPart);
             } catch (Exception e) {
-                LOG.debug("Security exception evaluating system property: " + localPart + ". Reason: " + e, e);
+                LOG.debug("Security exception evaluating system property: {}. Reason: {}", localPart, e.getMessage(), e);
             }
         } else if (uri.equals(ENVIRONMENT_VARIABLES)) {
             answer = System.getenv().get(localPart);

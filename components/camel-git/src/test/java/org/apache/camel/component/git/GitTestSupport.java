@@ -75,11 +75,11 @@ public class GitTestSupport extends CamelTestSupport {
         // now open the resulting repository with a FileRepositoryBuilder
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = builder.setGitDir(gitRepo).readEnvironment() // scan
-                                                                       // environment
-                                                                       // GIT_*
-                                                                       // variables
-            .findGitDir() // scan up the file system tree
-            .build();
+                // environment
+                // GIT_*
+                // variables
+                .findGitDir() // scan up the file system tree
+                .build();
         return repo;
     }
 

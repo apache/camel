@@ -31,20 +31,18 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a>
- * ({@link DataFormat}) using XStream to marshal to and from XML
+ * Marshal POJOs to JSON and back using <a href="http://x-stream.github.io/">XStream</a>
  */
 @Dataformat("xstream")
 @Metadata(includeProperties = "encoding,converters,aliases,omitFields,implicitCollections,permissions,mode,contentTypeHeader")
-public class XStreamDataFormat extends AbstractXStreamWrapper  {
+public class XStreamDataFormat extends AbstractXStreamWrapper {
     private String encoding;
-    
+
     public XStreamDataFormat() {
     }
 
@@ -60,7 +58,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
-    
+
     public String getEncoding() {
         return encoding;
     }
@@ -103,7 +101,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         }
         return answer;
     }
-    
+
     // just make sure the exchange property can override the xmlstream encoding setting
     protected void updateCharacterEncodingInfo(Exchange exchange) {
         if (exchange.getProperty(Exchange.CHARSET_NAME) == null && encoding != null) {
@@ -112,7 +110,8 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     }
 
     @Override
-    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
+    protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream)
+            throws XMLStreamException {
         updateCharacterEncodingInfo(exchange);
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createWriter(stream);
@@ -122,7 +121,8 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     }
 
     @Override
-    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
+    protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream)
+            throws XMLStreamException {
         updateCharacterEncodingInfo(exchange);
         if (getXstreamDriver() != null) {
             return getXstreamDriver().createReader(stream);

@@ -30,15 +30,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/log.html">Log Component</a>
- * is for logging message exchanges via the underlying logging mechanism.
+ * The <a href="http://camel.apache.org/log.html">Log Component</a> is for logging message exchanges via the underlying
+ * logging mechanism.
  */
 @org.apache.camel.spi.annotations.Component("log")
 public class LogComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
-    @Metadata(label = "advanced")
+    private ExchangeFormatter defaultExchangeFormatter;
+
+    @Metadata(label = "advanced", autowired = true)
     private ExchangeFormatter exchangeFormatter;
 
     public LogComponent() {
@@ -56,12 +58,14 @@ public class LogComponent extends DefaultComponent {
                 providedLogger = availableLoggers.values().iterator().next();
                 LOG.info("Using custom Logger: {}", providedLogger);
             } else if (availableLoggers.size() > 1) {
-                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
+                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.",
+                        Logger.class.getName(), uri);
             }
         }
 
         // first, try to pick up the ExchangeFormatter from the registry
-        ExchangeFormatter logFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
+        ExchangeFormatter logFormatter
+                = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
         if (logFormatter != null) {
             setProperties(logFormatter, parameters);
         } else if (exchangeFormatter != null) {
@@ -95,8 +99,8 @@ public class LogComponent extends DefaultComponent {
      * Gets optional {@link Logger} instance from parameters. If non-null, the provided instance will be used as
      * {@link Logger} in {@link CamelLogger}
      *
-     * @param parameters the parameters
-     * @return the Logger object from the parameter
+     * @param  parameters the parameters
+     * @return            the Logger object from the parameter
      */
     protected Logger getLogger(Map<String, Object> parameters) {
         return getAndRemoveOrResolveReferenceParameter(parameters, "logger", Logger.class);
@@ -107,11 +111,29 @@ public class LogComponent extends DefaultComponent {
     }
 
     /**
-     * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging.
-     * If not specified, we default to {@link DefaultExchangeFormatter}.
+     * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging. If not
+     * specified, we default to {@link DefaultExchangeFormatter}.
      */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
     }
 
+    /**
+     * Gets the default shared exchange formatter.
+     */
+    public ExchangeFormatter getDefaultExchangeFormatter() {
+        return defaultExchangeFormatter;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+        def.setShowExchangePattern(true);
+        def.setSkipBodyLineSeparator(true);
+        def.setShowBody(true);
+        def.setShowBodyType(true);
+        def.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
+        def.setMaxChars(10000);
+        this.defaultExchangeFormatter = def;
+    }
 }

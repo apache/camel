@@ -4,8 +4,10 @@ package org.apache.camel.component.milo.client;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -25,8 +27,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channellifetime":
@@ -81,39 +81,65 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedSecurityPolicies", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("applicationUri", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channelLifetime", java.lang.Long.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("defaultAwaitWrites", boolean.class);
-        answer.put("discoveryEndpointSuffix", java.lang.String.class);
-        answer.put("discoveryEndpointUri", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("keyAlias", java.lang.String.class);
-        answer.put("keyPassword", java.lang.String.class);
-        answer.put("keyStorePassword", java.lang.String.class);
-        answer.put("keyStoreType", java.lang.String.class);
-        answer.put("keyStoreUrl", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxPendingPublishRequests", java.lang.Long.class);
-        answer.put("maxResponseMessageSize", java.lang.Long.class);
-        answer.put("method", java.lang.String.class);
-        answer.put("node", java.lang.String.class);
-        answer.put("overrideHost", boolean.class);
-        answer.put("productUri", java.lang.String.class);
-        answer.put("requestTimeout", java.lang.Long.class);
-        answer.put("requestedPublishingInterval", java.lang.Double.class);
-        answer.put("samplingInterval", java.lang.Double.class);
-        answer.put("sessionName", java.lang.String.class);
-        answer.put("sessionTimeout", java.lang.Long.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedsecuritypolicies":
+        case "allowedSecurityPolicies": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "applicationuri":
+        case "applicationUri": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channellifetime":
+        case "channelLifetime": return java.lang.Long.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "defaultawaitwrites":
+        case "defaultAwaitWrites": return boolean.class;
+        case "discoveryendpointsuffix":
+        case "discoveryEndpointSuffix": return java.lang.String.class;
+        case "discoveryendpointuri":
+        case "discoveryEndpointUri": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "keyalias":
+        case "keyAlias": return java.lang.String.class;
+        case "keypassword":
+        case "keyPassword": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
+        case "keystoretype":
+        case "keyStoreType": return java.lang.String.class;
+        case "keystoreurl":
+        case "keyStoreUrl": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxpendingpublishrequests":
+        case "maxPendingPublishRequests": return java.lang.Long.class;
+        case "maxresponsemessagesize":
+        case "maxResponseMessageSize": return java.lang.Long.class;
+        case "method": return java.lang.String.class;
+        case "node": return java.lang.String.class;
+        case "overridehost":
+        case "overrideHost": return boolean.class;
+        case "producturi":
+        case "productUri": return java.lang.String.class;
+        case "requesttimeout":
+        case "requestTimeout": return java.lang.Long.class;
+        case "requestedpublishinginterval":
+        case "requestedPublishingInterval": return java.lang.Double.class;
+        case "samplinginterval":
+        case "samplingInterval": return java.lang.Double.class;
+        case "sessionname":
+        case "sessionName": return java.lang.String.class;
+        case "sessiontimeout":
+        case "sessionTimeout": return java.lang.Long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -126,8 +152,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": return target.getConfiguration().getApplicationName();
         case "applicationuri":
         case "applicationUri": return target.getConfiguration().getApplicationUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channellifetime":

@@ -92,11 +92,13 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             initializeStream();
         }
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                endpoint.getEndpointUri());
         executor.execute(this);
 
         if (endpoint.getGroupLines() < 0) {
-            throw new IllegalArgumentException("Option groupLines must be 0 or positive number, was " + endpoint.getGroupLines());
+            throw new IllegalArgumentException(
+                    "Option groupLines must be 0 or positive number, was " + endpoint.getGroupLines());
         }
     }
 
@@ -289,7 +291,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private InputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
         StringHelper.notEmpty(fileName, "fileName");
-        
+
         FileInputStream fileStream;
 
         file = new File(fileName);
@@ -325,7 +327,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         if (this.uri.startsWith("//")) {
             this.uri = this.uri.substring(2);
         }
-        
+
         if (!TYPES_LIST.contains(this.uri)) {
             throw new IllegalArgumentException(INVALID_URI);
         }

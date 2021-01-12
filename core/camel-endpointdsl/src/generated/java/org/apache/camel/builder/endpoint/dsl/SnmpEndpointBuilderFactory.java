@@ -53,10 +53,14 @@ public interface SnmpEndpointBuilderFactory {
          * or a coma separated list of OIDs. Example:
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
-         * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
          * type.
          * 
          * Group: common
+         * 
+         * @param oids the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder oids(Object oids) {
             doSetProperty("oids", oids);
@@ -69,9 +73,13 @@ public interface SnmpEndpointBuilderFactory {
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.snmp.OIDList</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param oids the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder oids(String oids) {
             doSetProperty("oids", oids);
@@ -81,10 +89,13 @@ public interface SnmpEndpointBuilderFactory {
          * Here you can select which protocol to use. You can use either udp or
          * tcp.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: udp
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -93,10 +104,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder retries(int retries) {
             doSetProperty("retries", retries);
@@ -105,10 +119,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder retries(String retries) {
             doSetProperty("retries", retries);
@@ -117,10 +134,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the community octet string for the snmp request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: public
          * Group: common
+         * 
+         * @param snmpCommunity the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder snmpCommunity(String snmpCommunity) {
             doSetProperty("snmpCommunity", snmpCommunity);
@@ -129,9 +149,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context engine ID field of the scoped PDU.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param snmpContextEngineId the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder snmpContextEngineId(
                 String snmpContextEngineId) {
@@ -141,9 +164,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context name field of this scoped PDU.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param snmpContextName the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder snmpContextName(
                 String snmpContextName) {
@@ -154,10 +180,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param snmpVersion the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder snmpVersion(int snmpVersion) {
             doSetProperty("snmpVersion", snmpVersion);
@@ -167,10 +196,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param snmpVersion the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder snmpVersion(String snmpVersion) {
             doSetProperty("snmpVersion", snmpVersion);
@@ -179,10 +211,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1500
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -191,10 +226,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1500
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -204,9 +242,12 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder type(SnmpActionType type) {
             doSetProperty("type", type);
@@ -216,9 +257,12 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder type(String type) {
             doSetProperty("type", type);
@@ -233,10 +277,13 @@ public interface SnmpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -252,10 +299,14 @@ public interface SnmpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -265,10 +316,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets update rate in seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -277,10 +331,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets update rate in seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -290,10 +347,13 @@ public interface SnmpEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -304,10 +364,14 @@ public interface SnmpEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -318,10 +382,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the flag whether the scoped PDU will be displayed as the list if
          * it has child elements in its tree.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param treeList the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder treeList(boolean treeList) {
             doSetProperty("treeList", treeList);
@@ -331,10 +398,14 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the flag whether the scoped PDU will be displayed as the list if
          * it has child elements in its tree.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param treeList the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder treeList(String treeList) {
             doSetProperty("treeList", treeList);
@@ -344,9 +415,12 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -357,9 +431,12 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -370,9 +447,12 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -383,9 +463,12 @@ public interface SnmpEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -400,9 +483,12 @@ public interface SnmpEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -417,9 +503,12 @@ public interface SnmpEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -430,10 +519,13 @@ public interface SnmpEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -443,10 +535,14 @@ public interface SnmpEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -455,10 +551,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -467,10 +566,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -481,10 +583,13 @@ public interface SnmpEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -495,10 +600,13 @@ public interface SnmpEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -508,10 +616,14 @@ public interface SnmpEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -523,10 +635,13 @@ public interface SnmpEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -539,9 +654,12 @@ public interface SnmpEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -554,9 +672,12 @@ public interface SnmpEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -565,12 +686,32 @@ public interface SnmpEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default SnmpEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -580,13 +721,17 @@ public interface SnmpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -598,13 +743,16 @@ public interface SnmpEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -613,10 +761,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -626,10 +777,14 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -638,10 +793,14 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -651,10 +810,13 @@ public interface SnmpEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -664,10 +826,13 @@ public interface SnmpEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -677,10 +842,14 @@ public interface SnmpEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -692,9 +861,12 @@ public interface SnmpEndpointBuilderFactory {
          * minimum length of 8 bytes. If the length of authenticationPassphrase
          * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationPassphrase the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder authenticationPassphrase(
                 String authenticationPassphrase) {
@@ -705,9 +877,12 @@ public interface SnmpEndpointBuilderFactory {
          * Authentication protocol to use if security level is set to enable
          * authentication The possible values are: MD5, SHA1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationProtocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder authenticationProtocol(
                 String authenticationProtocol) {
@@ -720,9 +895,12 @@ public interface SnmpEndpointBuilderFactory {
          * bytes. If the length of authenticationPassphrase is less than 8 bytes
          * an IllegalArgumentException is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privacyPassphrase the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder privacyPassphrase(
                 String privacyPassphrase) {
@@ -733,9 +911,12 @@ public interface SnmpEndpointBuilderFactory {
          * The privacy protocol ID to be associated with this user. If set to
          * null, this user only supports unencrypted messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privacyProtocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder privacyProtocol(
                 String privacyProtocol) {
@@ -756,10 +937,13 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder securityLevel(int securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -779,10 +963,13 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder securityLevel(String securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -791,9 +978,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security name to be used with this target.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityName the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointConsumerBuilder securityName(String securityName) {
             doSetProperty("securityName", securityName);
@@ -816,10 +1006,13 @@ public interface SnmpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -833,9 +1026,12 @@ public interface SnmpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -845,9 +1041,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -858,9 +1058,12 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -874,9 +1077,12 @@ public interface SnmpEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -890,9 +1096,12 @@ public interface SnmpEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -900,41 +1109,16 @@ public interface SnmpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnmpEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnmpEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -945,10 +1129,14 @@ public interface SnmpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -972,10 +1160,14 @@ public interface SnmpEndpointBuilderFactory {
          * or a coma separated list of OIDs. Example:
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
-         * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
          * type.
          * 
          * Group: common
+         * 
+         * @param oids the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder oids(Object oids) {
             doSetProperty("oids", oids);
@@ -988,9 +1180,13 @@ public interface SnmpEndpointBuilderFactory {
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.snmp.OIDList</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param oids the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder oids(String oids) {
             doSetProperty("oids", oids);
@@ -1000,10 +1196,13 @@ public interface SnmpEndpointBuilderFactory {
          * Here you can select which protocol to use. You can use either udp or
          * tcp.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: udp
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -1012,10 +1211,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder retries(int retries) {
             doSetProperty("retries", retries);
@@ -1024,10 +1226,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder retries(String retries) {
             doSetProperty("retries", retries);
@@ -1036,10 +1241,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the community octet string for the snmp request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: public
          * Group: common
+         * 
+         * @param snmpCommunity the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder snmpCommunity(String snmpCommunity) {
             doSetProperty("snmpCommunity", snmpCommunity);
@@ -1048,9 +1256,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context engine ID field of the scoped PDU.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param snmpContextEngineId the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder snmpContextEngineId(
                 String snmpContextEngineId) {
@@ -1060,9 +1271,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context name field of this scoped PDU.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param snmpContextName the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder snmpContextName(
                 String snmpContextName) {
@@ -1073,10 +1287,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param snmpVersion the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder snmpVersion(int snmpVersion) {
             doSetProperty("snmpVersion", snmpVersion);
@@ -1086,10 +1303,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param snmpVersion the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder snmpVersion(String snmpVersion) {
             doSetProperty("snmpVersion", snmpVersion);
@@ -1098,10 +1318,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1500
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -1110,10 +1333,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1500
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1123,9 +1349,12 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder type(SnmpActionType type) {
             doSetProperty("type", type);
@@ -1135,9 +1364,12 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder type(String type) {
             doSetProperty("type", type);
@@ -1154,10 +1386,13 @@ public interface SnmpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1175,10 +1410,14 @@ public interface SnmpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1191,9 +1430,12 @@ public interface SnmpEndpointBuilderFactory {
          * minimum length of 8 bytes. If the length of authenticationPassphrase
          * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationPassphrase the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder authenticationPassphrase(
                 String authenticationPassphrase) {
@@ -1204,9 +1446,12 @@ public interface SnmpEndpointBuilderFactory {
          * Authentication protocol to use if security level is set to enable
          * authentication The possible values are: MD5, SHA1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationProtocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder authenticationProtocol(
                 String authenticationProtocol) {
@@ -1219,9 +1464,12 @@ public interface SnmpEndpointBuilderFactory {
          * bytes. If the length of authenticationPassphrase is less than 8 bytes
          * an IllegalArgumentException is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privacyPassphrase the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder privacyPassphrase(
                 String privacyPassphrase) {
@@ -1232,9 +1480,12 @@ public interface SnmpEndpointBuilderFactory {
          * The privacy protocol ID to be associated with this user. If set to
          * null, this user only supports unencrypted messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privacyProtocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder privacyProtocol(
                 String privacyProtocol) {
@@ -1255,10 +1506,13 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder securityLevel(int securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -1278,10 +1532,13 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder securityLevel(String securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -1290,9 +1547,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security name to be used with this target.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityName the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointProducerBuilder securityName(String securityName) {
             doSetProperty("securityName", securityName);
@@ -1310,41 +1570,16 @@ public interface SnmpEndpointBuilderFactory {
             return (SnmpEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnmpEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnmpEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1355,10 +1590,14 @@ public interface SnmpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1383,10 +1622,14 @@ public interface SnmpEndpointBuilderFactory {
          * or a coma separated list of OIDs. Example:
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
-         * The option is a: <code>org.apache.camel.component.snmp.OIDList</code>
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
          * type.
          * 
          * Group: common
+         * 
+         * @param oids the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder oids(Object oids) {
             doSetProperty("oids", oids);
@@ -1399,9 +1642,13 @@ public interface SnmpEndpointBuilderFactory {
          * oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.snmp.OIDList</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.OIDList&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param oids the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder oids(String oids) {
             doSetProperty("oids", oids);
@@ -1411,10 +1658,13 @@ public interface SnmpEndpointBuilderFactory {
          * Here you can select which protocol to use. You can use either udp or
          * tcp.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: udp
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -1423,10 +1673,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder retries(int retries) {
             doSetProperty("retries", retries);
@@ -1435,10 +1688,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Defines how often a retry is made before canceling the request.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder retries(String retries) {
             doSetProperty("retries", retries);
@@ -1447,10 +1703,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the community octet string for the snmp request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: public
          * Group: common
+         * 
+         * @param snmpCommunity the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmpCommunity(String snmpCommunity) {
             doSetProperty("snmpCommunity", snmpCommunity);
@@ -1459,9 +1718,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context engine ID field of the scoped PDU.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param snmpContextEngineId the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmpContextEngineId(
                 String snmpContextEngineId) {
@@ -1471,9 +1733,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the context name field of this scoped PDU.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param snmpContextName the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmpContextName(String snmpContextName) {
             doSetProperty("snmpContextName", snmpContextName);
@@ -1483,10 +1748,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param snmpVersion the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmpVersion(int snmpVersion) {
             doSetProperty("snmpVersion", snmpVersion);
@@ -1496,10 +1764,13 @@ public interface SnmpEndpointBuilderFactory {
          * Sets the snmp version for the request. The value 0 means SNMPv1, 1
          * means SNMPv2c, and the value 3 means SNMPv3.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param snmpVersion the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmpVersion(String snmpVersion) {
             doSetProperty("snmpVersion", snmpVersion);
@@ -1508,10 +1779,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1500
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -1520,10 +1794,13 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the timeout value for the request in millis.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1500
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1533,9 +1810,12 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder type(SnmpActionType type) {
             doSetProperty("type", type);
@@ -1545,9 +1825,12 @@ public interface SnmpEndpointBuilderFactory {
          * Which operation to perform such as poll, trap, etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.snmp.SnmpActionType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder type(String type) {
             doSetProperty("type", type);
@@ -1559,9 +1842,12 @@ public interface SnmpEndpointBuilderFactory {
          * minimum length of 8 bytes. If the length of authenticationPassphrase
          * is less than 8 bytes an IllegalArgumentException is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationPassphrase the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder authenticationPassphrase(
                 String authenticationPassphrase) {
@@ -1572,9 +1858,12 @@ public interface SnmpEndpointBuilderFactory {
          * Authentication protocol to use if security level is set to enable
          * authentication The possible values are: MD5, SHA1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationProtocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder authenticationProtocol(
                 String authenticationProtocol) {
@@ -1587,9 +1876,12 @@ public interface SnmpEndpointBuilderFactory {
          * bytes. If the length of authenticationPassphrase is less than 8 bytes
          * an IllegalArgumentException is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privacyPassphrase the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder privacyPassphrase(String privacyPassphrase) {
             doSetProperty("privacyPassphrase", privacyPassphrase);
@@ -1599,9 +1891,12 @@ public interface SnmpEndpointBuilderFactory {
          * The privacy protocol ID to be associated with this user. If set to
          * null, this user only supports unencrypted messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privacyProtocol the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder privacyProtocol(String privacyProtocol) {
             doSetProperty("privacyProtocol", privacyProtocol);
@@ -1621,10 +1916,13 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder securityLevel(int securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -1644,10 +1942,13 @@ public interface SnmpEndpointBuilderFactory {
          * only the one with the right encryption/decryption key can read the
          * contents of the message.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder securityLevel(String securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -1656,9 +1957,12 @@ public interface SnmpEndpointBuilderFactory {
         /**
          * Sets the security name to be used with this target.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityName the value to set
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder securityName(String securityName) {
             doSetProperty("securityName", securityName);
@@ -1677,41 +1981,16 @@ public interface SnmpEndpointBuilderFactory {
             return (SnmpEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnmpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSnmpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1721,10 +2000,14 @@ public interface SnmpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSnmpEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1761,6 +2044,7 @@ public interface SnmpEndpointBuilderFactory {
          * Port number of the SNMP enabled device
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmp(String path) {
             return SnmpEndpointBuilderFactory.endpointBuilder("snmp", path);
@@ -1785,6 +2069,7 @@ public interface SnmpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmp(String componentName, String path) {
             return SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);

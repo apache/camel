@@ -4,8 +4,10 @@ package org.apache.camel.component.netty.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.netty.NettyComponentConfigurer;
 
@@ -30,12 +32,16 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("nettyHttpBinding", org.apache.camel.component.netty.http.NettyHttpBinding.class);
-        answer.put("securityConfiguration", org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "nettyhttpbinding":
+        case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
+        case "securityconfiguration":
+        case "securityConfiguration": return org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

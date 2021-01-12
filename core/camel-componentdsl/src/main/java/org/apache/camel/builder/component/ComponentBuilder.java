@@ -22,7 +22,8 @@ import org.apache.camel.Component;
 /**
  * Type-safe component DSL for building Camel components
  */
-public interface ComponentBuilder <C extends Component> {
+public interface ComponentBuilder<C extends Component> {
+
     /**
      * Builds a component using the default {@link CamelContext}.
      *
@@ -33,22 +34,25 @@ public interface ComponentBuilder <C extends Component> {
     /**
      * Builds a component using a provided {@link CamelContext}.
      *
-     * @param context the camel context
-     * @return a built {@link Component}
+     * @param  context the camel context
+     * @return         a built {@link Component}
      */
     C build(CamelContext context);
 
     /**
      * Builds and register a component to the provided {@link CamelContext}.
      *
-     * @param context the camel context
+     * @param context       the camel context
      * @param componentName the name the component is registered as
      */
     void register(CamelContext context, String componentName);
 
     /**
-     * Adds an option to this component. This API is only intended for Camel
-     * internally.
+     * Adds an option to this component. This API is only intended for Camel internally.
+     *
+     * @param name  the name of the option
+     * @param value the value
      */
     void doSetProperty(String name, Object value);
+
 }

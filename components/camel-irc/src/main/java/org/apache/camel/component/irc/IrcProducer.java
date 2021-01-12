@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.irc;
 
-import java.io.IOException;
-
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
@@ -30,8 +27,9 @@ import org.slf4j.LoggerFactory;
 
 public class IrcProducer extends DefaultProducer {
 
-    public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
-        "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
+    public static final String[] COMMANDS = new String[] {
+            "AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
+            "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST" };
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
 
@@ -88,13 +86,15 @@ public class IrcProducer extends DefaultProducer {
         } else {
             // reconnecting
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Reconnecting to {}:{}", getEndpoint().getConfiguration().getHostname(), getEndpoint().getConfiguration().getNickname());
+                LOG.debug("Reconnecting to {}:{}", getEndpoint().getConfiguration().getHostname(),
+                        getEndpoint().getConfiguration().getNickname());
             }
             getEndpoint().getComponent().closeConnection(getEndpoint().getConfiguration().getCacheKey(), connection);
             connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
         }
         connection.addIRCEventListener(listener);
-        LOG.debug("Sleeping for {} seconds before sending commands.", getEndpoint().getConfiguration().getCommandTimeout() / 1000);
+        LOG.debug("Sleeping for {} seconds before sending commands.",
+                getEndpoint().getConfiguration().getCommandTimeout() / 1000);
         // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
         try {
             Thread.sleep(getEndpoint().getConfiguration().getCommandTimeout());
@@ -143,7 +143,6 @@ public class IrcProducer extends DefaultProducer {
                 getEndpoint().joinChannel(channel);
             }
         }
-
 
         @Override
         public void onError(int num, String msg) {

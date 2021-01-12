@@ -53,7 +53,8 @@ public class VelocityTemplateInHeaderTest extends CamelTestSupport {
         assertRespondsWith("CorrelationID", "bar", "<hello>bar</hello>");
     }
 
-    protected void assertRespondsWith(final String headerName, final String headerValue, String expectedBody) throws InvalidPayloadException {
+    protected void assertRespondsWith(final String headerName, final String headerValue, String expectedBody)
+            throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();

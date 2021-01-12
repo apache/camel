@@ -32,10 +32,10 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DigitalOceanComponentTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
-   
+
     @BindToRegistry("digitalOceanClient")
     DigitalOceanClient digitalOceanClient = new DigitalOceanClientMock();
 
@@ -44,9 +44,9 @@ public class DigitalOceanComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:getAccountInfo")
-                    .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
-                    .to("digitalocean:account?digitalOceanClient=#digitalOceanClient")
-                    .to("mock:result");
+                        .setHeader(DigitalOceanHeaders.OPERATION, constant(DigitalOceanOperations.get))
+                        .to("digitalocean:account?digitalOceanClient=#digitalOceanClient")
+                        .to("mock:result");
             }
         };
     }
@@ -58,6 +58,6 @@ public class DigitalOceanComponentTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:getAccountInfo", null);
         assertMockEndpointsSatisfied();
         assertIsInstanceOf(Account.class, exchange.getMessage().getBody());
-        assertEquals(exchange.getMessage().getBody(Account.class).getEmail(), "camel@apache.org");
+        assertEquals("camel@apache.org", exchange.getMessage().getBody(Account.class).getEmail());
     }
 }

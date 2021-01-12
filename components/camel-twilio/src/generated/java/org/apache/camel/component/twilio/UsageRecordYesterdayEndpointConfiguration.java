@@ -4,18 +4,24 @@
  */
 package org.apache.camel.component.twilio;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.record.Yesterday
+ * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.usage.record.Yesterday}.
  */
+@ApiParams(apiName = "usage-record-yesterday", 
+           description = "",
+           apiMethods = {@ApiMethod(methodName = "reader", description="Create a YesterdayReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.record.YesterdayReader reader()", "com.twilio.rest.api.v2010.account.usage.record.YesterdayReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class UsageRecordYesterdayEndpointConfiguration extends TwilioConfiguration {
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})
     private String pathAccountSid;
 
     public String getPathAccountSid() {

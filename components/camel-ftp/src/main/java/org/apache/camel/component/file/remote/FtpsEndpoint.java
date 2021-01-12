@@ -44,12 +44,13 @@ import org.slf4j.LoggerFactory;
  * Upload and download files to/from FTP servers supporting the FTPS protocol.
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
-        syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName", label = "file")
+             syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
+             label = "file")
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                   + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                   + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                   + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                   + "renameUsingCopy")
+                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                              + "renameUsingCopy")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
@@ -108,7 +109,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             // already configured configuration
             // from the socket for all future sockets it creates. Not sexy and a
             // little brittle, but it works.
-            SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket();
+            SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
             client.setEnabledCipherSuites(socket.getEnabledCipherSuites());
             client.setEnabledProtocols(socket.getEnabledProtocols());
             client.setNeedClientAuth(socket.getNeedClientAuth());
@@ -118,12 +119,13 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             client = new FTPSClient(getFtpsConfiguration().getSecurityProtocol(), getFtpsConfiguration().isImplicit());
 
             if (ftpClientKeyStoreParameters != null) {
-                String type = (ftpClientKeyStoreParameters.containsKey("type")) ? (String)ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
-                String file = (String)ftpClientKeyStoreParameters.get("file");
-                String password = (String)ftpClientKeyStoreParameters.get("password");
+                String type = (ftpClientKeyStoreParameters.containsKey("type"))
+                        ? (String) ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
+                String file = (String) ftpClientKeyStoreParameters.get("file");
+                String password = (String) ftpClientKeyStoreParameters.get("password");
                 String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm"))
-                    ? (String)ftpClientKeyStoreParameters.get("algorithm") : KeyManagerFactory.getDefaultAlgorithm();
-                String keyPassword = (String)ftpClientKeyStoreParameters.get("keyPassword");
+                        ? (String) ftpClientKeyStoreParameters.get("algorithm") : KeyManagerFactory.getDefaultAlgorithm();
+                String keyPassword = (String) ftpClientKeyStoreParameters.get("keyPassword");
 
                 KeyStore keyStore = KeyStore.getInstance(type);
                 FileInputStream keyStoreFileInputStream = new FileInputStream(new File(file));
@@ -140,11 +142,12 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             }
 
             if (ftpClientTrustStoreParameters != null) {
-                String type = (ftpClientTrustStoreParameters.containsKey("type")) ? (String)ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
-                String file = (String)ftpClientTrustStoreParameters.get("file");
-                String password = (String)ftpClientTrustStoreParameters.get("password");
+                String type = (ftpClientTrustStoreParameters.containsKey("type"))
+                        ? (String) ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
+                String file = (String) ftpClientTrustStoreParameters.get("file");
+                String password = (String) ftpClientTrustStoreParameters.get("password");
                 String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
-                    ? (String)ftpClientTrustStoreParameters.get("algorithm") : TrustManagerFactory.getDefaultAlgorithm();
+                        ? (String) ftpClientTrustStoreParameters.get("algorithm") : TrustManagerFactory.getDefaultAlgorithm();
 
                 KeyStore trustStore = KeyStore.getInstance(type);
                 FileInputStream trustStoreFileInputStream = new FileInputStream(new File(file));
@@ -172,7 +175,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         if (client == null) {
             // must use a new client if not explicit configured to use a custom
             // client
-            client = (FTPSClient)createFtpClient();
+            client = (FTPSClient) createFtpClient();
         }
 
         // use configured buffer size which is larger and therefore faster (as
@@ -221,8 +224,9 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created FTPSClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
-                      + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}", client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
-                      client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
+                      + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
+                    client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                    client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
         }
 
         FtpsOperations operations = new FtpsOperations(client, getFtpClientConfig());
@@ -234,7 +238,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
      * Returns the FTPSClient. This method exists only for convenient.
      */
     public FTPSClient getFtpsClient() {
-        return (FTPSClient)getFtpClient();
+        return (FTPSClient) getFtpClient();
     }
 
     /**
@@ -267,20 +271,16 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     }
 
     /**
-     * Gets the JSSE configuration that overrides any settings in
-     * {@link FtpsEndpoint#ftpClientKeyStoreParameters},
-     * {@link #ftpClientTrustStoreParameters}, and
-     * {@link FtpsConfiguration#getSecurityProtocol()}.
+     * Gets the JSSE configuration that overrides any settings in {@link FtpsEndpoint#ftpClientKeyStoreParameters},
+     * {@link #ftpClientTrustStoreParameters}, and {@link FtpsConfiguration#getSecurityProtocol()}.
      */
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     /**
-     * Gets the JSSE configuration that overrides any settings in
-     * {@link FtpsEndpoint#ftpClientKeyStoreParameters},
-     * {@link #ftpClientTrustStoreParameters}, and
-     * {@link FtpsConfiguration#getSecurityProtocol()}.
+     * Gets the JSSE configuration that overrides any settings in {@link FtpsEndpoint#ftpClientKeyStoreParameters},
+     * {@link #ftpClientTrustStoreParameters}, and {@link FtpsConfiguration#getSecurityProtocol()}.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;

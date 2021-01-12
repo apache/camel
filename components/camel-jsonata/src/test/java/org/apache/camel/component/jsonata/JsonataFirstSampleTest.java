@@ -28,17 +28,17 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test based on the first sample test from the Jsonata project.
+ * Unit test based on the first sample test from the JSONata project.
  */
 public class JsonataFirstSampleTest extends CamelTestSupport {
 
     @Test
     public void testFirstSampleJsonata() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
-            IOHelper.loadText(
-                ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, "org/apache/camel/component/jsonata/firstSample/output.json")
-            ).trim() // Remove the last newline added by IOHelper.loadText()
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jsonata/firstSample/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",
@@ -61,12 +61,10 @@ public class JsonataFirstSampleTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                JsonataComponent jsonata = context.getComponent("jsonata", JsonataComponent.class);
-
                 from("direct://start")
                         .process(processor)
-                    .to("jsonata:org/apache/camel/component/jsonata/firstSample/expressions.json?inputType=JsonString&outputType=JsonString")
-                    .to("mock:result");
+                        .to("jsonata:org/apache/camel/component/jsonata/firstSample/expressions.spec?inputType=JsonString&outputType=JsonString")
+                        .to("mock:result");
             }
         };
     }

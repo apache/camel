@@ -37,6 +37,8 @@ public interface SlackComponentBuilderFactory {
      * Category: social
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-slack
+     * 
+     * @return the dsl builder
      */
     static SlackComponentBuilder slack() {
         return new SlackComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface SlackComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SlackComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,10 +81,13 @@ public interface SlackComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SlackComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -87,25 +95,34 @@ public interface SlackComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default SlackComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SlackComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The incoming webhook URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: webhook
+         * 
+         * @param webhookUrl the value to set
+         * @return the dsl builder
          */
         default SlackComponentBuilder webhookUrl(java.lang.String webhookUrl) {
             doSetProperty("webhookUrl", webhookUrl);
@@ -130,7 +147,7 @@ public interface SlackComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((SlackComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SlackComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((SlackComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SlackComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "webhookUrl": ((SlackComponent) component).setWebhookUrl((java.lang.String) value); return true;
             default: return false;
             }

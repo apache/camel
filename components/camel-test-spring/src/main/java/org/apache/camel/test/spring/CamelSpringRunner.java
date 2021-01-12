@@ -29,10 +29,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DefaultBootstrapContext;
 
 /**
- * An implementation bringing the functionality of {@link org.apache.camel.test.spring.CamelSpringTestSupport} to
- * Spring Test based test cases.  This approach allows developers to implement tests
- * for their Spring based applications/routes using the typical Spring Test conventions
- * for test development.
+ * An implementation bringing the functionality of {@link org.apache.camel.test.spring.CamelSpringTestSupport} to Spring
+ * Test based test cases. This approach allows developers to implement tests for their Spring based applications/routes
+ * using the typical Spring Test conventions for test development.
  */
 public class CamelSpringRunner extends SpringJUnit4ClassRunner {
 
@@ -41,8 +40,8 @@ public class CamelSpringRunner extends SpringJUnit4ClassRunner {
     }
 
     /**
-     * Returns the specialized manager instance that provides tight integration between Camel testing
-     * features and Spring.
+     * Returns the specialized manager instance that provides tight integration between Camel testing features and
+     * Spring.
      *
      * @return a new instance of {@link CamelTestContextManager}.
      */
@@ -52,8 +51,7 @@ public class CamelSpringRunner extends SpringJUnit4ClassRunner {
     }
 
     /**
-     * An implementation providing additional integration between Spring Test and Camel
-     * testing features.
+     * An implementation providing additional integration between Spring Test and Camel testing features.
      */
     public static final class CamelTestContextManager extends TestContextManager {
 

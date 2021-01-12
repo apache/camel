@@ -37,6 +37,8 @@ public interface HazelcastMapComponentBuilderFactory {
      * Category: cache,datagrid
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder
      */
     static HazelcastMapComponentBuilder hazelcastMap() {
         return new HazelcastMapComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface HazelcastMapComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastMapComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface HazelcastMapComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastMapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,17 +97,24 @@ public interface HazelcastMapComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default HazelcastMapComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default HazelcastMapComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -107,10 +122,13 @@ public interface HazelcastMapComponentBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMapComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
@@ -122,10 +140,13 @@ public interface HazelcastMapComponentBuilderFactory {
          * If you don't specify the mode, then the node mode will be the
          * default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: node
          * Group: advanced
+         * 
+         * @param hazelcastMode the value to set
+         * @return the dsl builder
          */
         default HazelcastMapComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {
@@ -151,7 +172,7 @@ public interface HazelcastMapComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((HazelcastMapComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HazelcastMapComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((HazelcastMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((HazelcastMapComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "hazelcastInstance": ((HazelcastMapComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
             case "hazelcastMode": ((HazelcastMapComponent) component).setHazelcastMode((java.lang.String) value); return true;
             default: return false;

@@ -25,18 +25,46 @@ import org.apache.camel.Predicate;
 public interface Language {
 
     /**
-     * Creates a predicate based on the given string input
+     * Creates a predicate based on <b>only</b> the given string input
      *
-     * @param expression  the expression
-     * @return the created predicate
+     * @param  expression the expression as a string input
+     * @return            the created predicate
      */
     Predicate createPredicate(String expression);
 
     /**
-     * Creates an expression based on the given string input
+     * Creates an expression based on <b>only</b> the given string input
      *
-     * @param expression  the expression as a string input
-     * @return the created expression
+     * @param  expression the expression as a string input
+     * @return            the created expression
      */
     Expression createExpression(String expression);
+
+    /**
+     * Creates an expression based on the input with properties
+     * <p>
+     * This is used for languages that have been configured with custom properties most noticeable for
+     * xpath/xquery/tokenizer languages that have several options.
+     *
+     * @param  expression the expression
+     * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
+     * @return            the created predicate
+     */
+    default Predicate createPredicate(String expression, Object[] properties) {
+        return createPredicate(expression);
+    }
+
+    /**
+     * Creates an expression based on the input with properties
+     * <p>
+     * This is used for languages that have been configured with custom properties most noticeable for
+     * xpath/xquery/tokenizer languages that have several options.
+     *
+     * @param  expression the expression
+     * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
+     * @return            the created expression
+     */
+    default Expression createExpression(String expression, Object[] properties) {
+        return createExpression(expression);
+    }
 }

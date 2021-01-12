@@ -14,6 +14,10 @@ in case the template should be reused to send other messages.
 After the template has been started / used the first time, then its general configuration cannot be altered later,
 instead create a new template.
 
+=== PackageScanClassResolver
+
+The `PackageScanClassResolver` will now skip abstract classes in its `findImplementations` method.
+
 === camel-bean
 
 The `bean(class)` EIP will now lookup in the registry first whether there is a single bean instance of the given class type
@@ -32,13 +36,80 @@ This could have direct impact on the type of parameter `beanRef` if you are usin
 There is a new parameter `datacenter` (with default value `datacenter1`). Data center has to be defined for the proper
 behavior of the default load balancing policy.
 
+=== camel-sjms
 
-=== Camel Karaf
-
-The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
+The default value for `keepAliveDelay` was changed from `-1` to `5000` in the batch jms consumer.
 
 === camel-weather
 
 The option `httpClient` is now a query parameter.
 
 A new parameter `geoLocationProvider` was introduced to allow the use of a custom `GeolocationProvider` implementation.
+
+=== Camel Karaf
+
+The following feature has been removed due to no longer being compatible with OSGi: `camel-couchbase`.
+
+=== LifecycleStrategy
+
+The `LifecycleStrategy` has been enhanced and provides some additional methods and changes in the behavior:
+
+* **onContextInitializing**: is invoked when the context is about to be initialized, this was previopusly achieved by `onContextInitialized` but as the name was a misleading
+* **onContextInitialized**: is now invoked when the context is initialized
+* **onContextStarting**: is invoked when the context is about to start, this was previously achieved by the `onContextStart` which is now deprecated.
+* **onContextStarted**: is now invoked when the context is started
+* **onContextStopping**: is invoked when the context is about to be stopped, this was previously achieved by the `onContextStop` which is now deprecated.
+* **onContextStop**: is now invoked when the context is stopped
+
+=== JUnit 5 testing
+
+Camel has been migrated from JUnit 4 to JUnit 5 as our default testing in all the components.
+The new test components reflect this with the following JAR names:
+
+- camel-test-junit5
+- camel-test-spring-junit5
+- camel-testcontainers-junit5
+- camel-testcontainers-spring-junit5
+
+The older test components supports only JUnit 4.
+
+=== Spring Boot testing with JUnit 5
+
+Testing Camel on Spring Boot with JUnit 5 have also changed slightly to use JUnit 5 APIs and testing style.
+
+The following set of dependencies can be used:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit5</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Then in your test classes you should annotate the Spring Boot test class with the new `@CamelSpringBootTest`
+(from package `org.apache.camel.test.spring.junit5.CamelSpringBootTest` in camel-test-spring-junit5 JAR)
+annotation as shown:
+
+[source,java]
+----
+@CamelSpringBootTest
+@SpringBootTest(classes = MyCamelApplication.class)
+public class MyCamelApplicationJUnit5Test {
+
+    @Autowired
+    private CamelContext camelContext;
+
+    @Test
+    public void shouldProduceMessages() throws Exception {
+        // here you can write your unit test
+    }
+
+}
+----

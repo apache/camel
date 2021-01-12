@@ -28,6 +28,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -37,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
-    private static final String LOCAL_RABBITMQ_PARAMS = "hostname=localhost&portNumber=5672&username=cameltest&password=cameltest";
     private static final String QUEUE = "queue";
     private static final String DLQ = QUEUE + "_dlq";
     private static final String QUEUE_SKIP_DECLARE = "queue_skip_declare";
@@ -68,13 +68,18 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        final String localRabbitmqParams = String.format("hostname=%s&portNumber=%d&username=%s&password=%s",
+                connectionProperties.hostname(), connectionProperties.port(), connectionProperties.username(),
+                connectionProperties.password());
+
         return new RouteBuilder() {
 
             @Override
             public void configure() {
                 final String endpointUri1 = String.format(
                         "rabbitmq:exchange?%s&queue=%s&deadLetterQueue=%s&autoAck=false&durable=true&args=#dlqArgs&deadLetterExchange=dlqexchange",
-                        LOCAL_RABBITMQ_PARAMS, QUEUE, DLQ);
+                        localRabbitmqParams, QUEUE, DLQ);
                 from("direct:start")
                         .to(endpointUri1);
                 fromF(endpointUri1)
@@ -85,12 +90,12 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
 
                 final String endpointUri2 = String.format(
                         "rabbitmq:anotherExchange?%s&queue=%s&deadLetterQueue=%s&autoAck=false&durable=true&deadLetterExchange=anotherExchange&skipDlqDeclare=true",
-                        LOCAL_RABBITMQ_PARAMS, QUEUE_SKIP_DECLARE, DLQ_SKIP_DECLARE);
+                        localRabbitmqParams, QUEUE_SKIP_DECLARE, DLQ_SKIP_DECLARE);
                 from("direct:start_skip_dlq_declare")
                         .to(endpointUri2);
                 from(endpointUri2)
                         .throwException(new RuntimeException("Simulated"));
-                fromF("rabbitmq:anotherExchange?%s&queue=%s&args=#args", LOCAL_RABBITMQ_PARAMS, DLQ_SKIP_DECLARE)
+                fromF("rabbitmq:anotherExchange?%s&queue=%s&args=#args", localRabbitmqParams, DLQ_SKIP_DECLARE)
                         .convertBodyTo(String.class)
                         .to(receivedDlqEndpoint);
             }
@@ -99,6 +104,8 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void testDlq() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
         template.sendBody("direct:start_skip_dlq_declare", "Hi");
         receivedDlqEndpoint.expectedMessageCount(1);
         receivedDlqEndpoint.expectedBodiesReceived("Hi");
@@ -113,19 +120,29 @@ public class RabbitMQDeadLetterArgsIntTest extends AbstractRabbitMQIntTest {
         assertEquals(10, endpoint.getDlqArgs().get("x-max-priority"));
 
         String rabbitApiResponse = template.requestBody(
-                String.format("http://localhost:%s/api/queues?authUsername=cameltest&authPassword=cameltest&authMethod=Basic&httpMethod=GET", DockerTestUtils.EXPOSE_PORT_MANAGEMENT),
+                String.format(
+                        "http://%s:%s/api/queues?authUsername=%s&authPassword=%s&authMethod=Basic&httpMethod=GET",
+                        connectionProperties.hostname(), service.getHttpPort(), connectionProperties.username(),
+                        connectionProperties.password()),
                 "", String.class);
 
         JsonArray rabbitApiResponseJson = (JsonArray) Jsoner.deserialize(rabbitApiResponse);
         JsonObject dlqObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ)).findAny().orElse(null);
-        JsonObject queueObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE)).findAny().orElse(null);
-        JsonObject queueSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE_SKIP_DECLARE)).findAny().orElse(null);
-        JsonObject dlqSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ_SKIP_DECLARE)).findAny().orElse(null);
+        JsonObject queueObject
+                = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(QUEUE)).findAny().orElse(null);
+        JsonObject queueSkipDeclareObject = (JsonObject) rabbitApiResponseJson.stream()
+                .filter(jsonQueueFilter(QUEUE_SKIP_DECLARE)).findAny().orElse(null);
+        JsonObject dlqSkipDeclareObject
+                = (JsonObject) rabbitApiResponseJson.stream().filter(jsonQueueFilter(DLQ_SKIP_DECLARE)).findAny().orElse(null);
 
-        assertNotNull(dlqObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ, rabbitApiResponse));
-        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE, rabbitApiResponse));
-        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE_SKIP_DECLARE, rabbitApiResponse));
-        assertNotNull(dlqSkipDeclareObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ_SKIP_DECLARE, rabbitApiResponse));
+        assertNotNull(dlqObject,
+                String.format("Queue with name '%s' not found in REST API. API response was '%s'", DLQ, rabbitApiResponse));
+        assertNotNull(queueObject,
+                String.format("Queue with name '%s' not found in REST API. API response was '%s'", QUEUE, rabbitApiResponse));
+        assertNotNull(queueObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'",
+                QUEUE_SKIP_DECLARE, rabbitApiResponse));
+        assertNotNull(dlqSkipDeclareObject, String.format("Queue with name '%s' not found in REST API. API response was '%s'",
+                DLQ_SKIP_DECLARE, rabbitApiResponse));
 
         assertEquals(BigDecimal.valueOf(10), dlqObject.getMap("arguments").get("x-max-priority"));
         assertEquals(BigDecimal.valueOf(5), dlqSkipDeclareObject.getMap("arguments").get("x-max-priority"));

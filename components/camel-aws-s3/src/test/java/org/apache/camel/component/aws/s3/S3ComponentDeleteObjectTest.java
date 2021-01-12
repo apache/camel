@@ -57,7 +57,7 @@ public class S3ComponentDeleteObjectTest extends CamelTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange) {
-        assertEquals(resultExchange.getIn().getBody(), true);
+        assertEquals(true, resultExchange.getIn().getBody());
     }
 
     @Override

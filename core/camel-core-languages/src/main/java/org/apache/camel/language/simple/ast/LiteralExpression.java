@@ -16,7 +16,9 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -25,7 +27,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
 
-    protected StringBuilder text = new StringBuilder();
+    protected final StringBuilder text = new StringBuilder();
 
     public LiteralExpression(SimpleToken token) {
         super(token);
@@ -55,7 +57,12 @@ public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         return ExpressionBuilder.constantExpression(getText());
+    }
+
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        return getText();
     }
 }

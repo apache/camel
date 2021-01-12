@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -31,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class LogicalExpression extends BaseSimpleNode {
 
-    private LogicalOperatorType operator;
+    private final LogicalOperatorType operator;
     private SimpleNode left;
     private SimpleNode right;
 
@@ -59,13 +60,21 @@ public class LogicalExpression extends BaseSimpleNode {
         return operator;
     }
 
+    public SimpleNode getLeft() {
+        return left;
+    }
+
+    public SimpleNode getRight() {
+        return right;
+    }
+
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         ObjectHelper.notNull(left, "left node", this);
         ObjectHelper.notNull(right, "right node", this);
 
-        final Expression leftExp = left.createExpression(expression);
-        final Expression rightExp = right.createExpression(expression);
+        final Expression leftExp = left.createExpression(camelContext, expression);
+        final Expression rightExp = right.createExpression(camelContext, expression);
 
         if (operator == LogicalOperatorType.AND) {
             return createAndExpression(leftExp, rightExp);
@@ -112,4 +121,20 @@ public class LogicalExpression extends BaseSimpleNode {
         };
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        ObjectHelper.notNull(left, "left node", this);
+        ObjectHelper.notNull(right, "right node", this);
+
+        final String leftExp = left.createCode(expression);
+        final String rightExp = right.createCode(expression);
+
+        if (operator == LogicalOperatorType.AND) {
+            return leftExp + " && " + rightExp;
+        } else if (operator == LogicalOperatorType.OR) {
+            return leftExp + " || " + rightExp;
+        }
+
+        throw new SimpleParserException("Unknown logical operator " + operator, token.getIndex());
+    }
 }

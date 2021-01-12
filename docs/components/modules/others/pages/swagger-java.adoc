@@ -1,4 +1,4 @@
-[[swagger-java-component]]
+[[swagger-java-other]]
 = Swagger Java Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-swagger-java/src/main/docs/swagger-java.adoc
@@ -7,6 +7,7 @@
 :description: Rest-dsl support for using swagger api-doc
 :since: 2.16
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/swagger-java.adoc[opts=optional]
 
 *Since Camel {since}*
 

@@ -4,8 +4,10 @@ package org.apache.camel.component.atomix.client.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         AtomixQueueEndpoint target = (AtomixQueueEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": target.getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configurationuri":
@@ -56,27 +56,40 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("atomix", io.atomix.Atomix.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("defaultAction", org.apache.camel.component.atomix.client.queue.AtomixQueue.Action.class);
-        answer.put("defaultResourceConfig", java.util.Properties.class);
-        answer.put("defaultResourceOptions", java.util.Properties.class);
-        answer.put("ephemeral", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("nodes", java.lang.String.class);
-        answer.put("readConsistency", io.atomix.resource.ReadConsistency.class);
-        answer.put("resourceConfigs", java.util.Map.class);
-        answer.put("resourceOptions", java.util.Map.class);
-        answer.put("resultHeader", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transportClassName", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "atomix": return io.atomix.Atomix.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "defaultaction":
+        case "defaultAction": return org.apache.camel.component.atomix.client.queue.AtomixQueue.Action.class;
+        case "defaultresourceconfig":
+        case "defaultResourceConfig": return java.util.Properties.class;
+        case "defaultresourceoptions":
+        case "defaultResourceOptions": return java.util.Properties.class;
+        case "ephemeral": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "nodes": return java.lang.String.class;
+        case "readconsistency":
+        case "readConsistency": return io.atomix.resource.ReadConsistency.class;
+        case "resourceconfigs":
+        case "resourceConfigs": return java.util.Map.class;
+        case "resourceoptions":
+        case "resourceOptions": return java.util.Map.class;
+        case "resultheader":
+        case "resultHeader": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "transportclassname":
+        case "transportClassName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -84,8 +97,6 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         AtomixQueueEndpoint target = (AtomixQueueEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return target.getConfiguration().getAtomix();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configurationuri":
@@ -115,6 +126,17 @@ public class AtomixQueueEndpointConfigurer extends PropertyConfigurerSupport imp
         case "synchronous": return target.isSynchronous();
         case "transportclassname":
         case "transportClassName": return target.getConfiguration().getTransportClassName();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "resourceconfigs":
+        case "resourceConfigs": return java.util.Properties.class;
+        case "resourceoptions":
+        case "resourceOptions": return java.util.Properties.class;
         default: return null;
         }
     }

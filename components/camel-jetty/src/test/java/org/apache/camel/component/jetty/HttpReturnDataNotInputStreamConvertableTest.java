@@ -38,6 +38,7 @@ public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
+                        // See: CAMEL-15475
                         exchange.getOut().setBody(new MyResponseBean());
                     }
                 });

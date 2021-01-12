@@ -45,7 +45,8 @@ public class ChunkComponentNestedLayersTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader("name", "Andrew");
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("<div>\nMars to Andrew. Come in, Andrew. This is the body: <div>\nEarth to Andrew. Come in, Andrew.\n</div>\n\n</div>\n");
+        endSimpleMock.expectedBodiesReceived(
+                "<div>\nMars to Andrew. Come in, Andrew. This is the body: <div>\nEarth to Andrew. Come in, Andrew.\n</div>\n\n</div>\n");
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
@@ -65,4 +66,3 @@ public class ChunkComponentNestedLayersTest extends CamelTestSupport {
         };
     }
 }
-

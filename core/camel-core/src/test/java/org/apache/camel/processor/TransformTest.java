@@ -51,13 +51,13 @@ public class TransformTest extends ContextTestSupport {
             public void configure() {
                 /*tag::example[]*/
                 from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            Message in = exchange.getIn();
-                            in.setBody(in.getBody(String.class) + " World!");
-                        }
-                    })
-                    .to("mock:result");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                Message in = exchange.getIn();
+                                in.setBody(in.getBody(String.class) + " World!");
+                            }
+                        })
+                        .to("mock:result");
                 /*end::example[]*/
             }
         };

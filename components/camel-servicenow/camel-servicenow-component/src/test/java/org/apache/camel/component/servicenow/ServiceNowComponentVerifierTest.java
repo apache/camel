@@ -48,7 +48,8 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
     @Test
     public void testParameter() {
         Map<String, Object> parameters = getParameters();
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
@@ -57,11 +58,13 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
     public void testMissingMandatoryParameter() {
         Map<String, Object> parameters = getParameters();
         parameters.remove("instanceName");
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals("instanceName", result.getErrors().get(0).getParameterKeys().iterator().next());
     }
 
@@ -69,11 +72,13 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
     public void testMissingMandatoryAuthenticationParameter() {
         Map<String, Object> parameters = getParameters();
         parameters.remove("userName");
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals("userName", result.getErrors().get(0).getParameterKeys().iterator().next());
     }
 
@@ -84,7 +89,8 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
     @Test
     public void testConnectivity() {
         Map<String, Object> parameters = getParameters();
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
@@ -94,7 +100,8 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         Map<String, Object> parameters = getParameters();
         parameters.put("table", "ticket");
 
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
@@ -104,13 +111,16 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         Map<String, Object> parameters = getParameters();
         parameters.put("instanceName", "unknown-instance");
 
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ProcessingException);
+        assertNotNull(result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        assertTrue(result.getErrors().get(0).getDetails().get(
+                ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ProcessingException);
     }
 
     @Test
@@ -118,14 +128,18 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         Map<String, Object> parameters = getParameters();
         parameters.put("table", "unknown");
 
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-        assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
-        assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
+        assertNotNull(result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        assertEquals(400, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
+        assertTrue(result.getErrors().get(0).getDetails().get(
+                ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
     }
 
     @Test
@@ -135,14 +149,19 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         parameters.remove("oauthClientId");
         parameters.remove("oauthClientSecret");
 
-        ComponentVerifierExtension.Result result = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result
+                = getVerifier().verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
-        assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        assertEquals(401, result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
-        assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION,
+                result.getErrors().get(0).getCode());
+        assertNotNull(result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        assertEquals(401, result.getErrors().get(0).getDetails()
+                .get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
+        assertTrue(result.getErrors().get(0).getDetails().get(
+                ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("userName"));
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("password"));
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("oauthClientId"));

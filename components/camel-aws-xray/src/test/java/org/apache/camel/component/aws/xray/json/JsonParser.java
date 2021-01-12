@@ -37,7 +37,7 @@ public final class JsonParser {
         List<String> doNotIncludeSymbols = Arrays.asList(",", ":", "\"");
         StringBuilder curToken = new StringBuilder();
         String keyName = null;
-        boolean inWord =  false;
+        boolean inWord = false;
         for (char c : json.toCharArray()) {
             // CHECKSTYLE:OFF
             // fallthrough is intended here and as this is only a helper class for tests (as the previously used
@@ -124,9 +124,9 @@ public final class JsonParser {
         if (!stack.isEmpty()) {
             JsonStructure json = stack.peek();
             if (json instanceof JsonObject && key != null) {
-                ((JsonObject)json).addElement(sanitizeKey(key), element);
+                ((JsonObject) json).addElement(sanitizeKey(key), element);
             } else if (json instanceof JsonArray) {
-                ((JsonArray)json).add(element);
+                ((JsonArray) json).add(element);
             }
         }
     }

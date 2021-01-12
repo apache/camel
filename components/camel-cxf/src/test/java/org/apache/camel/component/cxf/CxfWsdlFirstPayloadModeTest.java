@@ -33,8 +33,8 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
     @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + getPort1() 
-            + "/CxfWsdlFirstPayloadModeTest/PersonService/";
+        String address = "http://localhost:" + getPort1()
+                         + "/CxfWsdlFirstPayloadModeTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
 
@@ -42,7 +42,6 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeansPayloadMode.xml");
     }
-    
 
     @Override
     @Test
@@ -60,7 +59,5 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
         //assertEquals(3, toHandler.getMessageCount());
         assertEquals(1, toHandler.getFaultCount());
     }
-    
-
 
 }

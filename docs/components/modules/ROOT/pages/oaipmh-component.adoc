@@ -1,0 +1,162 @@
+[[oaipmh-component]]
+= OAI-PMH Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-oaipmh/src/main/docs/oaipmh-component.adoc
+:docTitle: OAI-PMH
+:artifactId: camel-oaipmh
+:description: Harvest metadata using OAI-PMH protocol
+:since: 3.5
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/oaipmh.adoc[opts=optional]
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The oaipmh component is used for harvest OAI-PMH data providers. It allows do request to OAI-PMH endpoint using all verbs supported by the protocol.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-oaipmh</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,text]
+----------------------------------------------------
+oaipmh:url[?options]
+----------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+// component options: START
+The OAI-PMH component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The OAI-PMH endpoint is configured using URI syntax:
+
+----
+oaipmh:baseUrl
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *baseUrl* | *Required* Base URL of the repository to which the request is made through the OAI-PMH protocol |  | String
+|===
+
+
+=== Query Parameters (30 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *from* (common) | Specifies a lower bound for datestamp-based selective harvesting. UTC DateTime value |  | String
+| *identifier* (common) | Identifier of the requested resources. Applicable only with certain verbs |  | String
+| *metadataPrefix* (common) | Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records. | oai_dc | String
+| *set* (common) | Specifies membership as a criteria for set-based selective harvesting |  | String
+| *until* (common) | Specifies an upper bound for datestamp-based selective harvesting. UTC DateTime value. |  | String
+| *verb* (common) | Request name supported by OAI-PMh protocol | ListRecords | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *onlyFirst* (producer) | Returns the response of a single request. Otherwise it will make requests until there is no more data to return. | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *ignoreSSLWarnings* (security) | Ignore SSL certificate warnings | false | boolean
+| *ssl* (security) | Causes the defined url to make an https request | false | boolean
+|===
+// endpoint options: END
+
+
+
+
+
+== Message Headers
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Name |Description
+|`CamelOaimphResumptionToken` | This header is obtained when onlyFirst option is enable. Return resumptiontoken of the request when data is still available.
+|=======================================================================
+
+== Usage
+
+The OAIPMH component supports both consumer and producer endpoints.
+
+
+== Producer Example
+
+The following is a basic example of how to send a request to a OAIPMH Server.
+
+in Java DSL
+
+[source,java]
+---------------------------------------------------------
+from("direct:start").to("oaipmh:baseUrlRepository/oai/request");
+---------------------------------------------------------
+
+
+The result is a set of pages in XML format with all the records of the consulted repository.
+
+
+
+== Consumer Example
+
+The following is a basic example of how to receive all messages from a OAIPMH Server.
+In Java DSL
+
+[source,java]
+---------------------------------------------------------
+from("oaipmh:baseUrlRepository/oai/request")
+.to(mock:result)
+---------------------------------------------------------
+
+For more details about OAI-PMH see the documentation: http://www.openarchives.org/pmh/

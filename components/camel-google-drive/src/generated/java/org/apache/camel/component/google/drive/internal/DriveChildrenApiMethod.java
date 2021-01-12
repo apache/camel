@@ -43,8 +43,6 @@ public enum DriveChildrenApiMethod implements ApiMethod {
         "list",
         arg("folderId", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveChildrenApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

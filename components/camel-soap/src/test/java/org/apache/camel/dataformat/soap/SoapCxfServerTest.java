@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Checks for interoperability between a CXF server that is attached using 
- * the Camel transport for CXF and a dynamic proxy using the SOAP data format
+ * Checks for interoperability between a CXF server that is attached using the Camel transport for CXF and a dynamic
+ * proxy using the SOAP data format
  */
 @CamelSpringTest
 @ContextConfiguration
@@ -76,9 +76,9 @@ public class SoapCxfServerTest extends RouteBuilder {
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
         SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
         from("direct:camelClient") //
-            .marshal(soapDataFormat) //
-            .to("direct:cxfEndpoint") //
-            .unmarshal(soapDataFormat);
+                .marshal(soapDataFormat) //
+                .to("direct:cxfEndpoint") //
+                .unmarshal(soapDataFormat);
     }
 
 }

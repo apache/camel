@@ -66,7 +66,8 @@ public class MulticastStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end().to("mock:result");
+                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:bar", "direct:baz").end()
+                        .to("mock:result");
 
                 from("direct:foo").to("mock:foo");
 

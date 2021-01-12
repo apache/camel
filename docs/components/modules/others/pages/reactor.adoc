@@ -1,4 +1,4 @@
-[[reactor-component]]
+[[reactor-other]]
 = Reactor Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-reactor/src/main/docs/reactor.adoc
@@ -7,6 +7,7 @@
 :description: Reactor based back-end for Camel's reactive streams component
 :since: 2.20
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactor.adoc[opts=optional]
 
 *Since Camel {since}*
 

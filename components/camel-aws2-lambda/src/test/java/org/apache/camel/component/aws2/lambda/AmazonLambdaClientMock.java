@@ -84,10 +84,12 @@ public class AmazonLambdaClientMock implements LambdaClient {
     }
 
     @Override
-    public CreateEventSourceMappingResponse createEventSourceMapping(CreateEventSourceMappingRequest createEventSourceMappingRequest) {
+    public CreateEventSourceMappingResponse createEventSourceMapping(
+            CreateEventSourceMappingRequest createEventSourceMappingRequest) {
         CreateEventSourceMappingResponse.Builder result = CreateEventSourceMappingResponse.builder();
         result.batchSize(100);
-        result.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.functionName());
+        result.functionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.functionName());
         result.state("Enabled");
         result.eventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
         return result.build();
@@ -121,7 +123,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
     }
 
     @Override
-    public DeleteEventSourceMappingResponse deleteEventSourceMapping(DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
+    public DeleteEventSourceMappingResponse deleteEventSourceMapping(
+            DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
         return DeleteEventSourceMappingResponse.builder().uuid("a1239494949382882383").state("Deleting").build();
     }
 
@@ -187,7 +190,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
     }
 
     @Override
-    public ListEventSourceMappingsResponse listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
+    public ListEventSourceMappingsResponse listEventSourceMappings(
+            ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
         ListEventSourceMappingsResponse.Builder result = ListEventSourceMappingsResponse.builder();
         List<EventSourceMappingConfiguration> confList = new ArrayList<>();
         EventSourceMappingConfiguration.Builder conf = EventSourceMappingConfiguration.builder();

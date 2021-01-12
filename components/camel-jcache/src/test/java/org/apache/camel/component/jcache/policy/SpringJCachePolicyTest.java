@@ -54,8 +54,7 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
         //reset mock
         MockEndpoint mock = getMockEndpoint("mock:spring");
         mock.reset();
-        mock.whenAnyExchangeReceived(e ->
-            e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
+        mock.whenAnyExchangeReceived(e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
     //Verify value gets cached and route is not executed for the second time
@@ -159,6 +158,5 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
         assertEquals(1, mock.getExchanges().size());
 
     }
-
 
 }

@@ -21,11 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
+ * and a polling event yields no results.
  */
 public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
 
@@ -35,8 +35,8 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
+        assertNull(mock.getExchanges().get(0).getIn().getBody());
+        assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
 
     @Override
@@ -44,8 +44,8 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&delay=50&initialDelay=0"
-                        + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
-                        .to("mock:result");
+                     + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
+                             .to("mock:result");
             }
         };
     }

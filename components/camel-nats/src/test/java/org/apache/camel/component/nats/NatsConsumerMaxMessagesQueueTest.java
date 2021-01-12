@@ -31,7 +31,7 @@ public class NatsConsumerMaxMessagesQueueTest extends NatsTestSupport {
     @Test
     public void testMaxConsumer() throws InterruptedException, IOException {
         mockResultEndpoint.setExpectedMessageCount(2);
-        
+
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "test1");
 

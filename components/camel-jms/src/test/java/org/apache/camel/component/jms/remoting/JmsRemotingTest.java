@@ -28,7 +28,7 @@ public class JmsRemotingTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/remoting/spring.xml");
     }
-    
+
     @Test
     public void testRemoting() throws Exception {
         ISay proxy = applicationContext.getBean("sayProxy", ISay.class);

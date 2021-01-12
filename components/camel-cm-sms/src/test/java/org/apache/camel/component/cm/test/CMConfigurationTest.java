@@ -59,7 +59,7 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -75,7 +75,7 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -107,7 +107,7 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -135,6 +135,6 @@ public class CMConfigurationTest {
         configuration.setTestConnectionOnStartup(false);
 
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = validator.validate(configuration);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 }

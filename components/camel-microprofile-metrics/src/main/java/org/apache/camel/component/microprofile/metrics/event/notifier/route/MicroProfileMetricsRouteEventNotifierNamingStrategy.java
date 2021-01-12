@@ -38,11 +38,12 @@ public interface MicroProfileMetricsRouteEventNotifierNamingStrategy {
     };
 
     String getRouteAddedName();
+
     String getRouteRunningName();
 
     default Tag[] getTags(CamelContext camelContext) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, camelContext.getName())
+                new Tag(CAMEL_CONTEXT_TAG, camelContext.getName())
         };
     }
 }

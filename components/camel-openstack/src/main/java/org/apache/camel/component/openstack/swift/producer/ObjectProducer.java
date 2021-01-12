@@ -90,7 +90,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
 
     private void doGetAll(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class), String.class);
+        final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class),
+                String.class);
         StringHelper.notEmpty(name, "Container name");
         final List<? extends SwiftObject> out = os.objectStorage().objects().list(name);
         exchange.getIn().setBody(out);
@@ -122,7 +123,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
         StringHelper.notEmpty(containerName, "Container name");
         StringHelper.notEmpty(objectName, "Object name");
-        final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName), msg.getBody(Map.class));
+        final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName),
+                msg.getBody(Map.class));
         if (!success) {
             exchange.setException(new OpenstackException("Updating metadata was not successful"));
         }

@@ -46,10 +46,11 @@ public class MailMessageTest extends CamelTestSupport {
 
     @Test
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost")});
+        mimeMessage.setRecipients(Message.RecipientType.TO,
+                new Address[] { new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost") });
 
         Exchange exchange = endpoint.createExchange(mimeMessage);
-        MailMessage in = (MailMessage)exchange.getIn();
+        MailMessage in = (MailMessage) exchange.getIn();
         assertNotNull(in);
         assertEquals(body, in.getBody(), "mail body");
 
@@ -70,10 +71,10 @@ public class MailMessageTest extends CamelTestSupport {
 
     @Test
     public void testMailMessageHandlesSingleHeader() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("frank@localhost")});
+        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] { new InternetAddress("frank@localhost") });
 
         Exchange exchange = endpoint.createExchange(mimeMessage);
-        MailMessage in = (MailMessage)exchange.getIn();
+        MailMessage in = (MailMessage) exchange.getIn();
         assertNotNull(in);
         Object header = in.getHeader("TO");
         String value = assertIsInstanceOf(String.class, header);

@@ -74,7 +74,8 @@ public class OsgiManagedGroupFactory implements ManagedGroupFactory {
         delegate.close();
     }
 
-    static class OsgiTrackingManagedGroupFactory implements ManagedGroupFactory, ServiceTrackerCustomizer<CuratorFramework, CuratorFramework> {
+    static class OsgiTrackingManagedGroupFactory
+            implements ManagedGroupFactory, ServiceTrackerCustomizer<CuratorFramework, CuratorFramework> {
 
         private final BundleContext bundleContext;
         private final ServiceTracker<CuratorFramework, CuratorFramework> tracker;
@@ -88,7 +89,7 @@ public class OsgiManagedGroupFactory implements ManagedGroupFactory {
         OsgiTrackingManagedGroupFactory(BundleContext bundleContext) {
             this.bundleContext = bundleContext;
             this.tracker = new ServiceTracker<>(
-                bundleContext, CuratorFramework.class, this);
+                    bundleContext, CuratorFramework.class, this);
             this.tracker.open();
         }
 

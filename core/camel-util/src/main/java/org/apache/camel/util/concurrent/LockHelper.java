@@ -57,7 +57,7 @@ public final class LockHelper {
         }
     }
 
-    public static <R> R supplyWithReadLock(StampedLock lock, Supplier<R> task)  {
+    public static <R> R supplyWithReadLock(StampedLock lock, Supplier<R> task) {
         long stamp = lock.readLock();
 
         try {
@@ -97,7 +97,7 @@ public final class LockHelper {
         }
     }
 
-    public static <R> R supplyWithWriteLock(StampedLock lock, Supplier<R> task)  {
+    public static <R> R supplyWithWriteLock(StampedLock lock, Supplier<R> task) {
         long stamp = lock.writeLock();
 
         try {

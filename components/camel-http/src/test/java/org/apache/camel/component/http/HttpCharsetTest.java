@@ -38,13 +38,10 @@ public class HttpCharsetTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -62,30 +59,33 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
-            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
-            exchange1.getIn().setBody(getBody());
-        });
+        Exchange exchange = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+                    exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange1.getIn().setBody(getBody());
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void sendByteArrayCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
-            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
-            exchange1.getIn().setBody(getBody().getBytes(charset));
-        });
+        Exchange exchange = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+                    exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange1.getIn().setBody(getBody().getBytes(charset));
+                });
 
         assertExchange(exchange);
     }
 
     @Test
     public void sendInputStreamCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
-            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
-            exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
-        });
+        Exchange exchange = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+                    exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+                    exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
+                });
 
         assertExchange(exchange);
     }
@@ -97,9 +97,9 @@ public class HttpCharsetTest extends BaseHttpTest {
         char latinSmallLetterSharpS = 0x00DF;
 
         return "hl=de&q=camel+"
-                + latinSmallLetterAWithDiaeresis
-                + latinSmallLetterOWithDiaeresis
-                + latinSmallLetterUWithDiaeresis
-                + latinSmallLetterSharpS;
+               + latinSmallLetterAWithDiaeresis
+               + latinSmallLetterOWithDiaeresis
+               + latinSmallLetterUWithDiaeresis
+               + latinSmallLetterSharpS;
     }
 }

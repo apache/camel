@@ -23,8 +23,6 @@ import javax.jcr.Value;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.support.ObjectHelper;
@@ -48,7 +46,8 @@ public class JcrConverterTest {
 
     @BeforeEach
     public void init() throws Exception {
-        converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
+        converter = new DefaultTypeConverter(
+                new DefaultPackageScanClassResolver(),
                 new Injector() {
                     @Override
                     public <T> T newInstance(Class<T> type) {
@@ -69,7 +68,7 @@ public class JcrConverterTest {
                     public boolean supportsAutoWiring() {
                         return false;
                     }
-                }, new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
+                }, true);
         ServiceHelper.startService(converter);
     }
 

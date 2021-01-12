@@ -40,7 +40,7 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
     protected static final String CONFIG_FILE = "target/test-classes/repository-simple-security.xml";
 
     protected static final String REPO_PATH = "target/repository-simple-security";
-    
+
     protected static final String CUSTOM_WORKSPACE_NAME = "testWorkspace";
 
     private Repository repository;
@@ -60,7 +60,7 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
     protected Repository getRepository() {
         return repository;
     }
-    
+
     protected Session openSession(String workspaceName) throws RepositoryException {
         return getRepository().login(new SimpleCredentials("user", "pass".toCharArray()), workspaceName);
     }
@@ -71,7 +71,7 @@ public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSup
         if (!config.exists()) {
             throw new FileNotFoundException("Missing config file: " + config.getPath());
         }
-        
+
         repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
         registry.bind("repository", repository);
     }

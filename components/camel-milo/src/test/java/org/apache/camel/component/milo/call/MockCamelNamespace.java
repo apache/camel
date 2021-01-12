@@ -55,7 +55,8 @@ public class MockCamelNamespace extends ManagedNamespace {
 
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
-    public MockCamelNamespace(final OpcUaServer server, Function<UaMethodNode, AbstractMethodInvocationHandler>  callMethodCreator) {
+    public MockCamelNamespace(final OpcUaServer server,
+                              Function<UaMethodNode, AbstractMethodInvocationHandler> callMethodCreator) {
         super(server, URI);
 
         this.subscriptionModel = new SubscriptionModel(server, this);
@@ -80,8 +81,7 @@ public class MockCamelNamespace extends ManagedNamespace {
                 folder.getNodeId(),
                 Identifiers.Organizes,
                 Identifiers.ObjectsFolder.expanded(),
-                false
-        ));
+                false));
 
         addCallMethod(folder);
     }
@@ -106,18 +106,15 @@ public class MockCamelNamespace extends ManagedNamespace {
                 methodNode.getNodeId(),
                 Identifiers.HasComponent,
                 folderNode.getNodeId().expanded(),
-                false
-        ));
+                false));
 
         methodNode.addReference(new Reference(
                 methodNode.getNodeId(),
                 Identifiers.HasComponent,
                 folderNode.getNodeId().expanded(),
                 folderNode.getNodeClass(),
-                false
-        ));
+                false));
     }
-
 
     @Override
     public void onDataItemsCreated(final List<DataItem> dataItems) {

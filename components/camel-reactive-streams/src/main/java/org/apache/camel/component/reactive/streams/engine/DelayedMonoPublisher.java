@@ -40,7 +40,7 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
 
     private final List<MonoSubscription> subscriptions = new CopyOnWriteArrayList<>();
 
-    private final AtomicBoolean flushing = new AtomicBoolean(false);
+    private final AtomicBoolean flushing = new AtomicBoolean();
 
     private volatile T data;
 

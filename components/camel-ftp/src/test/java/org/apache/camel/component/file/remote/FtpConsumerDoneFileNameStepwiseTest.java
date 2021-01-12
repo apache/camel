@@ -20,7 +20,7 @@ public class FtpConsumerDoneFileNameStepwiseTest extends FtpConsumerDoneFileName
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin&initialDelay=0&delay=100&stepwise=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&initialDelay=0&delay=100&stepwise=true";
     }
 
 }

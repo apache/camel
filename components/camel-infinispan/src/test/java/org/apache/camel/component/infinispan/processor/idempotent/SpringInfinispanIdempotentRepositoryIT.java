@@ -43,7 +43,8 @@ public class SpringInfinispanIdempotentRepositoryIT extends CamelSpringTestSuppo
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/infinispan/processor/idempotent/SpringInfinispanIdempotentRepositoryIT.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/infinispan/processor/idempotent/SpringInfinispanIdempotentRepositoryIT.xml");
     }
 
     @Test

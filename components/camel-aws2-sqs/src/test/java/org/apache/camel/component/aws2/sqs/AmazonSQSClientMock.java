@@ -28,6 +28,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
@@ -36,11 +38,14 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest;
 import software.amazon.awssdk.services.sqs.model.PurgeQueueResponse;
+import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
@@ -50,6 +55,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesResponse;
+import software.amazon.awssdk.services.sqs.model.SqsException;
 
 public class AmazonSQSClientMock implements SqsClient {
 
@@ -93,25 +99,30 @@ public class AmazonSQSClientMock implements SqsClient {
         message.body(sendMessageRequest.messageBody());
         message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
-        message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
+        message.receiptHandle(
+                "0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
                               + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
 
         synchronized (messages) {
             messages.add(message.build());
         }
 
-        return SendMessageResponse.builder().messageId("f6fb6f99-5eb2-4be4-9b15-144774141458").md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
+        return SendMessageResponse.builder().messageId("f6fb6f99-5eb2-4be4-9b15-144774141458")
+                .md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
     }
 
     @Override
     public ReceiveMessageResponse receiveMessage(ReceiveMessageRequest receiveMessageRequest) {
-        Integer maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null ? receiveMessageRequest.maxNumberOfMessages() : Integer.MAX_VALUE;
+        Integer maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null
+                ? receiveMessageRequest.maxNumberOfMessages() : Integer.MAX_VALUE;
         ReceiveMessageResponse.Builder result = ReceiveMessageResponse.builder();
         Collection<Message> resultMessages = new ArrayList<>();
 
         synchronized (messages) {
             int fetchSize = 0;
-            for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext() && fetchSize < maxNumberOfMessages; fetchSize++) {
+            for (Iterator<Message> iterator = messages.iterator();
+                 iterator.hasNext() && fetchSize < maxNumberOfMessages;
+                 fetchSize++) {
                 Message rc = iterator.next();
                 resultMessages.add(rc);
                 iterator.remove();
@@ -171,7 +182,7 @@ public class AmazonSQSClientMock implements SqsClient {
         }
         return DeleteMessageResponse.builder().build();
     }
-    
+
     @Override
     public PurgeQueueResponse purgeQueue(PurgeQueueRequest purgeQueueRequest) {
         return PurgeQueueResponse.builder().build();
@@ -191,7 +202,8 @@ public class AmazonSQSClientMock implements SqsClient {
     }
 
     @Override
-    public ChangeMessageVisibilityResponse changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) {
+    public ChangeMessageVisibilityResponse changeMessageVisibility(
+            ChangeMessageVisibilityRequest changeMessageVisibilityRequest) {
         this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
         return ChangeMessageVisibilityResponse.builder().build();
     }
@@ -228,5 +240,13 @@ public class AmazonSQSClientMock implements SqsClient {
     public void close() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public GetQueueUrlResponse getQueueUrl(GetQueueUrlRequest getQueueUrlRequest)
+            throws QueueDoesNotExistException, AwsServiceException, SdkClientException, SqsException {
+        return GetQueueUrlResponse.builder()
+                .queueUrl("https://queue.amazonaws.com/queue/camel-836")
+                .build();
     }
 }

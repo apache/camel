@@ -18,32 +18,27 @@ package org.apache.camel.component.leveldb;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
-public class LevelDBAggregateRecoverDeadLetterChannelTest extends CamelTestSupport {
-
-    private LevelDBAggregationRepository repo;
+public class LevelDBAggregateRecoverDeadLetterChannelTest extends LevelDBTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
         // enable recovery
-        repo.setUseRecovery(true);
+        getRepo().setUseRecovery(true);
         // exhaust after at most 3 attempts
-        repo.setMaximumRedeliveries(3);
+        getRepo().setMaximumRedeliveries(3);
         // and move to this dead letter channel
-        repo.setDeadLetterUri("mock:dead");
+        getRepo().setDeadLetterUri("mock:dead");
         // check faster
-        repo.setRecoveryInterval(500, TimeUnit.MILLISECONDS);
+        getRepo().setRecoveryInterval(500, TimeUnit.MILLISECONDS);
 
         super.setUp();
     }
@@ -85,29 +80,14 @@ public class LevelDBAggregateRecoverDeadLetterChannelTest extends CamelTestSuppo
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
+                        .aggregate(header("id"), new StringAggregationStrategy())
+                        .completionSize(5).aggregationRepository(getRepo())
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
-    }
-
-    public static class MyAggregationStrategy implements AggregationStrategy {
-
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-            String body1 = oldExchange.getIn().getBody(String.class);
-            String body2 = newExchange.getIn().getBody(String.class);
-
-            oldExchange.getIn().setBody(body1 + body2);
-            return oldExchange;
-        }
     }
 }

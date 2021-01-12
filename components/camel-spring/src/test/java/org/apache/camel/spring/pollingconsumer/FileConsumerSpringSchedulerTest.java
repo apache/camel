@@ -27,7 +27,8 @@ public class FileConsumerSpringSchedulerTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/pollingconsumer/FileConsumerSpringSchedulerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/pollingconsumer/FileConsumerSpringSchedulerTest.xml");
     }
 
     @Override

@@ -56,10 +56,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * kicked out in the message header beanstalk.result.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder command(
                 BeanstalkCommand command) {
@@ -76,10 +78,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * kicked out in the message header beanstalk.result.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder command(String command) {
             doSetProperty("command", command);
@@ -88,10 +92,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job delay in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param jobDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder jobDelay(int jobDelay) {
             doSetProperty("jobDelay", jobDelay);
@@ -100,10 +107,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job delay in seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param jobDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder jobDelay(String jobDelay) {
             doSetProperty("jobDelay", jobDelay);
@@ -112,10 +122,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job priority. (0 is the highest, see Beanstalk protocol).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param jobPriority the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder jobPriority(long jobPriority) {
             doSetProperty("jobPriority", jobPriority);
@@ -124,10 +137,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job priority. (0 is the highest, see Beanstalk protocol).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param jobPriority the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder jobPriority(String jobPriority) {
             doSetProperty("jobPriority", jobPriority);
@@ -137,10 +153,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Job time to run in seconds. (when 0, the beanstalkd daemon raises it
          * to 1 automatically, see Beanstalk protocol).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param jobTimeToRun the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder jobTimeToRun(int jobTimeToRun) {
             doSetProperty("jobTimeToRun", jobTimeToRun);
@@ -150,10 +169,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Job time to run in seconds. (when 0, the beanstalkd daemon raises it
          * to 1 automatically, see Beanstalk protocol).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param jobTimeToRun the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder jobTimeToRun(
                 String jobTimeToRun) {
@@ -164,10 +186,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Whether to wait for job to complete before ack the job from
          * beanstalk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param awaitJob the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder awaitJob(boolean awaitJob) {
             doSetProperty("awaitJob", awaitJob);
@@ -177,10 +202,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * Whether to wait for job to complete before ack the job from
          * beanstalk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param awaitJob the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder awaitJob(String awaitJob) {
             doSetProperty("awaitJob", awaitJob);
@@ -195,10 +224,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -214,10 +246,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -228,10 +264,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * Command to use when processing failed.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param onFailure the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder onFailure(
                 BeanstalkCommand onFailure) {
@@ -242,10 +280,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * Command to use when processing failed.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param onFailure the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder onFailure(String onFailure) {
             doSetProperty("onFailure", onFailure);
@@ -255,10 +295,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -269,10 +312,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -282,10 +329,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Whether to use blockIO.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useBlockIO the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder useBlockIO(boolean useBlockIO) {
             doSetProperty("useBlockIO", useBlockIO);
@@ -294,10 +344,14 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Whether to use blockIO.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useBlockIO the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder useBlockIO(String useBlockIO) {
             doSetProperty("useBlockIO", useBlockIO);
@@ -307,9 +361,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -320,9 +377,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -333,9 +393,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -346,9 +409,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -363,9 +429,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -380,9 +449,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -392,10 +464,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -404,10 +479,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -417,10 +495,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -430,10 +511,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -442,10 +527,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -454,10 +542,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -469,10 +560,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -483,10 +577,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -496,10 +593,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -511,10 +612,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -527,9 +631,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -542,9 +649,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -553,12 +663,32 @@ public interface BeanstalkEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default BeanstalkEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -568,13 +698,17 @@ public interface BeanstalkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -586,13 +720,16 @@ public interface BeanstalkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -601,10 +738,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -614,10 +754,14 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -627,10 +771,14 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -640,10 +788,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -653,10 +804,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -667,10 +821,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -694,10 +852,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -711,9 +872,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -723,9 +887,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -736,9 +904,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -752,9 +923,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -768,9 +942,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -778,41 +955,16 @@ public interface BeanstalkEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBeanstalkEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBeanstalkEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -823,10 +975,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -854,10 +1010,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * kicked out in the message header beanstalk.result.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder command(
                 BeanstalkCommand command) {
@@ -874,10 +1032,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * kicked out in the message header beanstalk.result.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder command(String command) {
             doSetProperty("command", command);
@@ -886,10 +1046,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job delay in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param jobDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder jobDelay(int jobDelay) {
             doSetProperty("jobDelay", jobDelay);
@@ -898,10 +1061,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job delay in seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param jobDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder jobDelay(String jobDelay) {
             doSetProperty("jobDelay", jobDelay);
@@ -910,10 +1076,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job priority. (0 is the highest, see Beanstalk protocol).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param jobPriority the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder jobPriority(long jobPriority) {
             doSetProperty("jobPriority", jobPriority);
@@ -922,10 +1091,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job priority. (0 is the highest, see Beanstalk protocol).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param jobPriority the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder jobPriority(String jobPriority) {
             doSetProperty("jobPriority", jobPriority);
@@ -935,10 +1107,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Job time to run in seconds. (when 0, the beanstalkd daemon raises it
          * to 1 automatically, see Beanstalk protocol).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param jobTimeToRun the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder jobTimeToRun(int jobTimeToRun) {
             doSetProperty("jobTimeToRun", jobTimeToRun);
@@ -948,10 +1123,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Job time to run in seconds. (when 0, the beanstalkd daemon raises it
          * to 1 automatically, see Beanstalk protocol).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param jobTimeToRun the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder jobTimeToRun(
                 String jobTimeToRun) {
@@ -969,10 +1147,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -990,10 +1171,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1012,41 +1197,16 @@ public interface BeanstalkEndpointBuilderFactory {
             return (BeanstalkEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBeanstalkEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBeanstalkEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1057,10 +1217,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1089,10 +1253,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * kicked out in the message header beanstalk.result.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder command(BeanstalkCommand command) {
             doSetProperty("command", command);
@@ -1108,10 +1274,12 @@ public interface BeanstalkEndpointBuilderFactory {
          * kicked out in the message header beanstalk.result.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.BeanstalkCommand&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder command(String command) {
             doSetProperty("command", command);
@@ -1120,10 +1288,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job delay in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param jobDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder jobDelay(int jobDelay) {
             doSetProperty("jobDelay", jobDelay);
@@ -1132,10 +1303,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job delay in seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param jobDelay the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder jobDelay(String jobDelay) {
             doSetProperty("jobDelay", jobDelay);
@@ -1144,10 +1318,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job priority. (0 is the highest, see Beanstalk protocol).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param jobPriority the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder jobPriority(long jobPriority) {
             doSetProperty("jobPriority", jobPriority);
@@ -1156,10 +1333,13 @@ public interface BeanstalkEndpointBuilderFactory {
         /**
          * Job priority. (0 is the highest, see Beanstalk protocol).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param jobPriority the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder jobPriority(String jobPriority) {
             doSetProperty("jobPriority", jobPriority);
@@ -1169,10 +1349,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Job time to run in seconds. (when 0, the beanstalkd daemon raises it
          * to 1 automatically, see Beanstalk protocol).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param jobTimeToRun the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder jobTimeToRun(int jobTimeToRun) {
             doSetProperty("jobTimeToRun", jobTimeToRun);
@@ -1182,10 +1365,13 @@ public interface BeanstalkEndpointBuilderFactory {
          * Job time to run in seconds. (when 0, the beanstalkd daemon raises it
          * to 1 automatically, see Beanstalk protocol).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param jobTimeToRun the value to set
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder jobTimeToRun(String jobTimeToRun) {
             doSetProperty("jobTimeToRun", jobTimeToRun);
@@ -1204,41 +1390,16 @@ public interface BeanstalkEndpointBuilderFactory {
             return (BeanstalkEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBeanstalkEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBeanstalkEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1248,10 +1409,14 @@ public interface BeanstalkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanstalkEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1287,6 +1452,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Connection settings host:port/tube
          * 
          * @param path connectionSettings
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder beanstalk(String path) {
             return BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
@@ -1307,6 +1473,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionSettings
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder beanstalk(
                 String componentName,

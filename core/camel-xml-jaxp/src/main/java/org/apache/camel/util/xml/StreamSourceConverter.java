@@ -30,10 +30,10 @@ import org.apache.camel.StreamCache;
 import static org.apache.camel.converter.stream.StreamCacheConverter.convertToByteArray;
 
 /**
- * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache}
- * implementation to ensure message re-readability (eg multicasting, retrying)
+ * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache} implementation to
+ * ensure message re-readability (eg multicasting, retrying)
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class StreamSourceConverter {
 
     /**
@@ -42,24 +42,24 @@ public final class StreamSourceConverter {
     private StreamSourceConverter() {
     }
 
-    @Converter
-    public static StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
-        return new StreamSourceCache(source, exchange);
-    }
-
-    @Converter
+    @Converter(order = 1)
     public static StreamCache convertToStreamCache(BytesSource source) {
         //no need to do stream caching for a BytesSource
         return null;
     }
 
-    @Converter
+    @Converter(order = 2)
+    public static StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
+        return new StreamSourceCache(source, exchange);
+    }
+
+    @Converter(order = 3)
     public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source);
         return new SourceCache(data);
     }
 
-    @Converter
+    @Converter(order = 4)
     public static Serializable convertToSerializable(StreamCache cache, Exchange exchange) throws IOException {
         byte[] data = convertToByteArray(cache, exchange);
         return new BytesSource(data);

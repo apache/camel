@@ -18,6 +18,8 @@ package org.apache.camel.component.hdfs.integration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.hdfs.v2.services.HDFSService;
+import org.apache.camel.test.infra.hdfs.v2.services.HDFSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -26,13 +28,19 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("Must run manual")
 public class HdfsAppendTest extends CamelTestSupport {
+    @RegisterExtension
+    public static HDFSService service = HDFSServiceFactory.createService();
+
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsAppendTest.class);
+
     private static final int ITERATIONS = 10;
 
     @Override
@@ -47,7 +55,10 @@ public class HdfsAppendTest extends CamelTestSupport {
 
         Configuration conf = new Configuration();
         conf.addResource("hdfs-test.xml");
-        Path file = new Path("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1");
+        String path = String.format("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1", service.getHDFSHost(),
+                service.getPort());
+
+        Path file = new Path(path);
         FileSystem fs = FileSystem.get(file.toUri(), conf);
         if (fs.exists(file)) {
             fs.delete(file, true);
@@ -64,7 +75,9 @@ public class HdfsAppendTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS");
+                from("direct:start1")
+                        .toF("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1?append=true&fileSystemType=HDFS",
+                                service.getHDFSHost(), service.getPort());
             }
         });
         startCamelContext();
@@ -74,14 +87,16 @@ public class HdfsAppendTest extends CamelTestSupport {
         }
 
         Configuration conf = new Configuration();
-        Path file = new Path("hdfs://localhost:9000/tmp/test/test-camel-simple-write-file1");
+        String path = String.format("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1", service.getHDFSHost(),
+                service.getPort());
+        Path file = new Path(path);
         FileSystem fs = FileSystem.get(file.toUri(), conf);
         FSDataInputStream in = fs.open(file);
         byte[] buffer = new byte[5];
         int ret = 0;
         for (int i = 0; i < 20; ++i) {
             ret = in.read(buffer);
-            System.out.println("> " + new String(buffer));
+            LOG.info("> {}", new String(buffer));
         }
         ret = in.read(buffer);
         assertEquals(-1, ret);
@@ -94,7 +109,8 @@ public class HdfsAppendTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs://localhost:9000/tmp/test-dynamic/?append=true&fileSystemType=HDFS");
+                from("direct:start1").toF("hdfs://%s:%d/tmp/test-dynamic/?append=true&fileSystemType=HDFS",
+                        service.getHDFSHost(), service.getPort());
             }
         });
         startCamelContext();
@@ -104,13 +120,16 @@ public class HdfsAppendTest extends CamelTestSupport {
         }
 
         Configuration conf = new Configuration();
-        Path file = new Path("hdfs://localhost:9000/tmp/test-dynamic/camel-hdfs.log");
+        String path = String.format("hdfs://%s:%d/tmp/test-dynamic/camel-hdfs.log", service.getHDFSHost(),
+                service.getPort());
+
+        Path file = new Path(path);
         FileSystem fs = FileSystem.get(file.toUri(), conf);
         FSDataInputStream in = fs.open(file);
         byte[] buffer = new byte[5];
         for (int i = 0; i < ITERATIONS; ++i) {
             assertEquals(5, in.read(buffer));
-            System.out.println("> " + new String(buffer));
+            LOG.info("> {}", new String(buffer));
         }
         int ret = in.read(buffer);
         assertEquals(-1, ret);
@@ -124,10 +143,10 @@ public class HdfsAppendTest extends CamelTestSupport {
 
         Thread.sleep(250);
         Configuration conf = new Configuration();
-        Path dir = new Path("hdfs://localhost:9000/tmp/test");
+        Path dir = new Path(String.format("hdfs://%s:%d/tmp/test", service.getHDFSHost(), service.getPort()));
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
         fs.delete(dir, true);
-        dir = new Path("hdfs://localhost:9000/tmp/test-dynamic");
+        dir = new Path(String.format("hdfs://%s:%d/tmp/test-dynamic", service.getHDFSHost(), service.getPort()));
         fs.delete(dir, true);
     }
 }

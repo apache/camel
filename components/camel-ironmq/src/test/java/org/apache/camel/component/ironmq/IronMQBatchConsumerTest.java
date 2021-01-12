@@ -37,7 +37,7 @@ public class IronMQBatchConsumerTest extends CamelTestSupport {
             Message message = new Message();
             message.setBody("{\"body\": \"Message " + counter + "\"}");
             message.setId("" + counter);
-            ((MockQueue)endpoint.getClient().queue("testqueue")).add(message);
+            ((MockQueue) endpoint.getClient().queue("testqueue")).add(message);
         }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -69,7 +69,7 @@ public class IronMQBatchConsumerTest extends CamelTestSupport {
         parameters.put("token", "dummy");
         parameters.put("maxMessagesPerPoll", "5");
         parameters.put("batchDelete", "true");
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq", "testqueue", parameters);
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq", "testqueue", parameters);
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

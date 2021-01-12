@@ -1,0 +1,13 @@
+{
+  "test%root": {
+    "*xmlns": {
+      "test": "http://www.modusbox.com"
+    },
+    "test%datasonnet": {
+      "*version": "1.0",
+      "__text": "Hello World",
+      "~": 1
+    },
+    "~": 1
+  }
+}

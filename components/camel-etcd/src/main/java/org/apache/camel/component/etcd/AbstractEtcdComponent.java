@@ -42,7 +42,6 @@ public abstract class AbstractEtcdComponent extends DefaultComponent implements 
     // Options
     // ************************************
 
-
     public EtcdConfiguration getConfiguration() {
         return configuration;
     }

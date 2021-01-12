@@ -1,4 +1,4 @@
-[[spring-security-component]]
+[[spring-security-other]]
 = Spring Security Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-security/src/main/docs/spring-security.adoc
@@ -7,6 +7,7 @@
 :description: Security using Spring Security
 :since: 2.3
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-security.adoc[opts=optional]
 //Manually maintained attributes
 :group: Spring
 
@@ -246,4 +247,3 @@ policy as well as the type of exception:
   </choice>
 </onException>
 ----
-

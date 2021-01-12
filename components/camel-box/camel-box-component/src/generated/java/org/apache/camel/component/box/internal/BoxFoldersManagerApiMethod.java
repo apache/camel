@@ -20,26 +20,26 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxFoldersManagerApiMethod implements ApiMethod {
 
-    COPYFOLDER(
+    COPY_FOLDER(
         com.box.sdk.BoxFolder.class,
         "copyFolder",
         arg("folderId", String.class),
         arg("destinationFolderId", String.class),
         arg("newName", String.class)),
 
-    CREATEFOLDER(
+    CREATE_FOLDER(
         com.box.sdk.BoxFolder.class,
         "createFolder",
         arg("parentFolderId", String.class),
         arg("folderName", String.class)),
 
-    CREATEFOLDER_1(
+    CREATE_FOLDER_1(
         com.box.sdk.BoxFolder.class,
         "createFolder",
         arg("parentFolderId", String.class),
         arg("path", new String[0].getClass())),
 
-    CREATEFOLDERSHAREDLINK(
+    CREATE_FOLDER_SHARED_LINK(
         com.box.sdk.BoxSharedLink.class,
         "createFolderSharedLink",
         arg("folderId", String.class),
@@ -47,23 +47,23 @@ public enum BoxFoldersManagerApiMethod implements ApiMethod {
         arg("unshareDate", java.util.Date.class),
         arg("permissions", com.box.sdk.BoxSharedLink.Permissions.class)),
 
-    DELETEFOLDER(
+    DELETE_FOLDER(
         void.class,
         "deleteFolder",
         arg("folderId", String.class)),
 
-    GETFOLDER(
+    GET_FOLDER(
         com.box.sdk.BoxFolder.class,
         "getFolder",
         arg("path", new String[0].getClass())),
 
-    GETFOLDERINFO(
+    GET_FOLDER_INFO(
         com.box.sdk.BoxFolder.Info.class,
         "getFolderInfo",
         arg("folderId", String.class),
         arg("fields", new String[0].getClass())),
 
-    GETFOLDERITEMS(
+    GET_FOLDER_ITEMS(
         java.util.Collection.class,
         "getFolderItems",
         arg("folderId", String.class),
@@ -71,30 +71,28 @@ public enum BoxFoldersManagerApiMethod implements ApiMethod {
         arg("limit", Long.class),
         arg("fields", new String[0].getClass())),
 
-    GETROOTFOLDER(
+    GET_ROOT_FOLDER(
         com.box.sdk.BoxFolder.class,
         "getRootFolder"),
 
-    MOVEFOLDER(
+    MOVE_FOLDER(
         com.box.sdk.BoxFolder.class,
         "moveFolder",
         arg("folderId", String.class),
         arg("destinationFolderId", String.class),
         arg("newName", String.class)),
 
-    RENAMEFOLDER(
+    RENAME_FOLDER(
         com.box.sdk.BoxFolder.class,
         "renameFolder",
         arg("folderId", String.class),
         arg("newFolderName", String.class)),
 
-    UPDATEFOLDERINFO(
+    UPDATE_FOLDER_INFO(
         com.box.sdk.BoxFolder.class,
         "updateFolderInfo",
         arg("folderId", String.class),
         arg("info", com.box.sdk.BoxFolder.Info.class));
-
-    
 
     private final ApiMethod apiMethod;
 

@@ -39,6 +39,8 @@ public interface UndertowComponentBuilderFactory {
      * Category: http,websocket
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
+     * 
+     * @return the dsl builder
      */
     static UndertowComponentBuilder undertow() {
         return new UndertowComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface UndertowComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -73,10 +78,13 @@ public interface UndertowComponentBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder muteException(boolean muteException) {
             doSetProperty("muteException", muteException);
@@ -93,10 +101,13 @@ public interface UndertowComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,27 +115,36 @@ public interface UndertowComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default UndertowComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default UndertowComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To configure common options, such as thread pools.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.undertow.UndertowHostOptions</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHostOptions&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param hostOptions the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder hostOptions(
                 org.apache.camel.component.undertow.UndertowHostOptions hostOptions) {
@@ -136,10 +156,12 @@ public interface UndertowComponentBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.undertow.UndertowHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param undertowHttpBinding the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder undertowHttpBinding(
                 org.apache.camel.component.undertow.UndertowHttpBinding undertowHttpBinding) {
@@ -150,9 +172,12 @@ public interface UndertowComponentBuilderFactory {
          * Configuration used by UndertowSecurityProvider. Comma separated list
          * of allowed roles.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param allowedRoles the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder allowedRoles(
                 java.lang.String allowedRoles) {
@@ -165,9 +190,12 @@ public interface UndertowComponentBuilderFactory {
          * Configuration is UndertowSecurityProvider specific. Each provider
          * decides, whether it accepts configuration.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityConfiguration the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder securityConfiguration(
                 java.lang.Object securityConfiguration) {
@@ -180,9 +208,12 @@ public interface UndertowComponentBuilderFactory {
          * security provider using SPI).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.undertow.spi.UndertowSecurityProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.undertow.spi.UndertowSecurityProvider&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityProvider the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder securityProvider(
                 org.apache.camel.component.undertow.spi.UndertowSecurityProvider securityProvider) {
@@ -193,9 +224,12 @@ public interface UndertowComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -205,10 +239,13 @@ public interface UndertowComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default UndertowComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -235,7 +272,7 @@ public interface UndertowComponentBuilderFactory {
             case "bridgeErrorHandler": ((UndertowComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "muteException": ((UndertowComponent) component).setMuteException((boolean) value); return true;
             case "lazyStartProducer": ((UndertowComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((UndertowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((UndertowComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "hostOptions": ((UndertowComponent) component).setHostOptions((org.apache.camel.component.undertow.UndertowHostOptions) value); return true;
             case "undertowHttpBinding": ((UndertowComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
             case "allowedRoles": ((UndertowComponent) component).setAllowedRoles((java.lang.String) value); return true;

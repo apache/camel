@@ -42,12 +42,12 @@ public abstract class CryptoCmsUnmarshaller implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception { // NOPMD all
-                                                              // exceptions must
-                                                              // be caught to
-                                                              // react on
-                                                              // exception case
-                                                              // and re-thrown,
-                                                              // see code below
+                                                             // exceptions must
+                                                             // be caught to
+                                                             // react on
+                                                             // exception case
+                                                             // and re-thrown,
+                                                             // see code below
 
         InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
         try {

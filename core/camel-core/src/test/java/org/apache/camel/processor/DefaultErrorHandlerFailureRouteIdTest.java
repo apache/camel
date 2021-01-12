@@ -25,8 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test to test that route id of the failed route is available to the end
- * user.
+ * Unit test to test that route id of the failed route is available to the end user.
  */
 public class DefaultErrorHandlerFailureRouteIdTest extends ContextTestSupport {
 

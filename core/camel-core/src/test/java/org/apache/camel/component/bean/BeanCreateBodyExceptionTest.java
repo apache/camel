@@ -134,9 +134,9 @@ public class BeanCreateBodyExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:dead"))
-                    .bean(BeanCreateBodyExceptionTest.class, "callMe")
-                    .to("mock:result");
+                        .errorHandler(deadLetterChannel("mock:dead"))
+                        .bean(BeanCreateBodyExceptionTest.class, "callMe")
+                        .to("mock:result");
             }
         };
     }

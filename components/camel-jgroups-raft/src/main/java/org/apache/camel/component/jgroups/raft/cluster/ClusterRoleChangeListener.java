@@ -42,7 +42,8 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
             case Leader:
                 if (!jgroupsRaftClusterView.isMaster()) {
                     jgroupsRaftClusterView.setMaster(true);
-                    jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.ofNullable(jgroupsRaftClusterView.getLocalMember()));
+                    jgroupsRaftClusterView
+                            .fireLeadershipChangedEvent(Optional.ofNullable(jgroupsRaftClusterView.getLocalMember()));
                 }
                 break;
             case Follower:
@@ -63,4 +64,3 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
         }
     }
 }
-

@@ -22,17 +22,17 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public CxfRsHeaderFilterStrategy() {
-        initialize();  
+        initialize();
     }
 
     protected void initialize() {
-        
+
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
-        
+
         getOutFilter().add("Content-Type".toLowerCase());
         // Support to filter the Content-Type case insensitive
         setLowerCase(true);
-        
+
         // filter headers begin with "Camel" or "org.apache.camel"
         setOutFilterPattern(CAMEL_FILTER_PATTERN);
 

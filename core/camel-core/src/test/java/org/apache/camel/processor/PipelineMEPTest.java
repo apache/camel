@@ -104,9 +104,9 @@ public class PipelineMEPTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").process(outProcessor)
-                    // this pipeline is not really needed by to have some more
-                    // routing in there to test with
-                    .pipeline("log:x", "log:y").process(inProcessor).to("mock:result");
+                        // this pipeline is not really needed by to have some more
+                        // routing in there to test with
+                        .pipeline("log:x", "log:y").process(inProcessor).to("mock:result");
             }
         };
     }

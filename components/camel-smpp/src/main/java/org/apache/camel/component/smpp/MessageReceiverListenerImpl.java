@@ -33,14 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MessageReceiverListenerImpl implements MessageReceiverListener {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MessageReceiverListenerImpl.class);
 
     private MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private SmppEndpoint endpoint;
     private Processor processor;
     private ExceptionHandler exceptionHandler;
-    
+
     public MessageReceiverListenerImpl(SmppEndpoint endpoint, Processor processor, ExceptionHandler exceptionHandler) {
         this.endpoint = endpoint;
         this.processor = processor;
@@ -59,7 +59,8 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         }
 
         if (exchange.getException() != null) {
-            exceptionHandler.handleException("Cannot process exchange. This exception will be ignored.", exchange, exchange.getException());
+            exceptionHandler.handleException("Cannot process exchange. This exception will be ignored.", exchange,
+                    exchange.getException());
         }
     }
 

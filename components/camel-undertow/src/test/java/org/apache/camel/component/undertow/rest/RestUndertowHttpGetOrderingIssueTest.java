@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
-    
+
     @Test
     public void testProducerGet() throws Exception {
         getMockEndpoint("mock:root").expectedMessageCount(1);
@@ -55,21 +55,21 @@ public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 rest()
-                    .get("/bar")
+                        .get("/bar")
                         .route()
                         .setBody().constant("Going to the bar")
                         .to("mock:bar")
                         .setHeader("Content-Type", constant("text/plain"));
 
                 rest()
-                    .get("/{pippo}")
+                        .get("/{pippo}")
                         .route()
                         .setBody().simple("Route with name: ${header.pippo}")
                         .to("mock:pippo")
                         .setHeader("Content-Type", constant("text/plain"));
 
                 rest()
-                    .get("/")
+                        .get("/")
                         .route()
                         .setBody().constant("Route without name")
                         .to("mock:root")

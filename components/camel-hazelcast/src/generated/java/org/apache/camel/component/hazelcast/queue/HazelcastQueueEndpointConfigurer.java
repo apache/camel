@@ -4,8 +4,10 @@ package org.apache.camel.component.hazelcast.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class HazelcastQueueEndpointConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastQueueEndpoint target = (HazelcastQueueEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "defaultoperation":
@@ -47,29 +47,37 @@ public class HazelcastQueueEndpointConfigurer extends PropertyConfigurerSupport 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("defaultOperation", org.apache.camel.component.hazelcast.HazelcastOperation.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("hazelcastInstance", com.hazelcast.core.HazelcastInstance.class);
-        answer.put("hazelcastInstanceName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("pollingTimeout", long.class);
-        answer.put("poolSize", int.class);
-        answer.put("queueConsumerMode", org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "defaultoperation":
+        case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "hazelcastinstance":
+        case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
+        case "hazelcastinstancename":
+        case "hazelcastInstanceName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "pollingtimeout":
+        case "pollingTimeout": return long.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "queueconsumermode":
+        case "queueConsumerMode": return org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HazelcastQueueEndpoint target = (HazelcastQueueEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "defaultoperation":

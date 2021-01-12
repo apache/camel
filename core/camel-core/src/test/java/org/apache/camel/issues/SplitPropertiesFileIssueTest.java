@@ -60,8 +60,9 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file/splitprop?initialDelay=0&delay=10&move=done").convertBodyTo(String.class).split(new MyCustomExpression())
-                    .recipientList(header("myCustomDestination"));
+                from("file://target/data/file/splitprop?initialDelay=0&delay=10&move=done").convertBodyTo(String.class)
+                        .split(new MyCustomExpression())
+                        .recipientList(header("myCustomDestination"));
             }
         };
     }
@@ -111,7 +112,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
             // just cast it to T as its safe as its Object anyway for custom
             // expressions
-            return (T)answer;
+            return (T) answer;
         }
     }
 }

@@ -58,7 +58,7 @@ public class LogAdvancedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(timer("foo").delay(-1).period(0).repeatCount(10))
-                    .noAutoStartup()
+                        .noAutoStartup()
                         .to("mock:result")
                         .to(log("foo").advanced().exchangeFormatter(myFormatter));
             }

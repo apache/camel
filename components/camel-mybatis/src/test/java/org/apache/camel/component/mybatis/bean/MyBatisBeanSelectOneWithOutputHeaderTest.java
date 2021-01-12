@@ -52,11 +52,10 @@ public class MyBatisBeanSelectOneWithOutputHeaderTest extends MyBatisTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:selectBeanAccountById?outputHeader=" + TEST_CASE_HEADER_NAME)
-                    .to("mock:result");
+                        .to("mybatis-bean:AccountService:selectBeanAccountById?outputHeader=" + TEST_CASE_HEADER_NAME)
+                        .to("mock:result");
             }
         };
     }
-
 
 }

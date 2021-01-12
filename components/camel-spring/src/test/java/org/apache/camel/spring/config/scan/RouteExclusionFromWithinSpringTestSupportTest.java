@@ -31,7 +31,9 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/config/scan/componentScan.xml"}, getRouteExcludingApplicationContext());
+        return new ClassPathXmlApplicationContext(
+                new String[] { "org/apache/camel/spring/config/scan/componentScan.xml" },
+                getRouteExcludingApplicationContext());
     }
 
     @Test

@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Execute commands on remote hosts using SSH.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port", category = {Category.FILE})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
+             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE })
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

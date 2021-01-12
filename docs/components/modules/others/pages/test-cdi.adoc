@@ -1,4 +1,4 @@
-[[test-cdi-component]]
+[[test-cdi-other]]
 = Test CDI Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-test-cdi/src/main/docs/test-cdi.adoc
@@ -7,6 +7,7 @@
 :description: Camel unit testing with CDI
 :since: 2.17
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test-cdi.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -461,9 +462,11 @@ public class CamelCdiTest {
     // that is automatically added to the Camel context
     static class TestRoute extends RouteBuilder {
 
-    @Override
-    public void configure() {
-        from("direct:out").routeId("test").to("mock:out");
+        @Override
+        public void configure() {
+            from("direct:out").routeId("test").to("mock:out");
+        }
+    
     }
 
     // And retrieve the MockEndpoint for further assertions

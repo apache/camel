@@ -55,4 +55,3 @@ public class InfinispanConsumerEntryCreatedTest extends InfinispanTestSupport {
         };
     }
 }
-

@@ -45,9 +45,8 @@ import org.wildfly.security.http.util.FilterServerMechanismFactory;
 import org.wildfly.security.http.util.SecurityProviderServerMechanismFactory;
 
 /**
- * Implementation of `UndertowSecurityProvider` which adds elytron capability into camel-undertow.
- * Provider requires instance of `ElytronSecurityConfiguration` to be provided as `securityConfiguration`
- * parameter in camel-undertow.
+ * Implementation of `UndertowSecurityProvider` which adds elytron capability into camel-undertow. Provider requires
+ * instance of `ElytronSecurityConfiguration` to be provided as `securityConfiguration` parameter in camel-undertow.
  */
 public class ElytronSecurityProvider implements UndertowSecurityProvider {
     /**
@@ -98,7 +97,7 @@ public class ElytronSecurityProvider implements UndertowSecurityProvider {
     @Override
     public boolean acceptConfiguration(Object configuration, String endpointUri) throws Exception {
         if (configuration instanceof ElytronSercurityConfiguration) {
-            ElytronSercurityConfiguration conf = (ElytronSercurityConfiguration)configuration;
+            ElytronSercurityConfiguration conf = (ElytronSercurityConfiguration) configuration;
             this.securityDomain = conf.getDomainBuilder().build();
             this.mechanismName = conf.getMechanismName();
             this.elytronProvider = conf.getElytronProvider();
@@ -130,10 +129,11 @@ public class ElytronSecurityProvider implements UndertowSecurityProvider {
                 }).build();
     }
 
-
     private HttpAuthenticationFactory createHttpAuthenticationFactory(final SecurityDomain securityDomain) {
-        HttpServerAuthenticationMechanismFactory providerFactory = new SecurityProviderServerMechanismFactory(() -> new Provider[]{this.elytronProvider});
-        HttpServerAuthenticationMechanismFactory httpServerMechanismFactory = new FilterServerMechanismFactory(providerFactory, true, this.mechanismName);
+        HttpServerAuthenticationMechanismFactory providerFactory
+                = new SecurityProviderServerMechanismFactory(() -> new Provider[] { this.elytronProvider });
+        HttpServerAuthenticationMechanismFactory httpServerMechanismFactory
+                = new FilterServerMechanismFactory(providerFactory, true, this.mechanismName);
 
         return HttpAuthenticationFactory.builder()
                 .setSecurityDomain(securityDomain)

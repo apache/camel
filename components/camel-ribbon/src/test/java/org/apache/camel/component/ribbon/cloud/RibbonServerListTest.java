@@ -29,16 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RibbonServerListTest {
     @Test
     public void testFixedServerList() throws Exception {
-        ZoneAwareLoadBalancer<RibbonServiceDefinition> lb = LoadBalancerBuilder.<RibbonServiceDefinition>newBuilder()
-            .withDynamicServerList(new RibbonServiceLoadBalancer.RibbonServerList(
-                "unknown",
-                StaticServiceDiscovery.forServices(
-                    new RibbonServiceDefinition("unknown", "localhost", 9090),
-                    new RibbonServiceDefinition("unknown", "localhost", 9091)
-                ),
-                new PassThroughServiceFilter()))
-            .withRule(new RoundRobinRule())
-            .buildDynamicServerListLoadBalancer();
+        ZoneAwareLoadBalancer<RibbonServiceDefinition> lb = LoadBalancerBuilder.<RibbonServiceDefinition> newBuilder()
+                .withDynamicServerList(new RibbonServiceLoadBalancer.RibbonServerList(
+                        "unknown",
+                        StaticServiceDiscovery.forServices(
+                                new RibbonServiceDefinition("unknown", "localhost", 9090),
+                                new RibbonServiceDefinition("unknown", "localhost", 9091)),
+                        new PassThroughServiceFilter()))
+                .withRule(new RoundRobinRule())
+                .buildDynamicServerListLoadBalancer();
 
         Server server = lb.chooseServer();
         assertEquals("localhost", server.getHost());

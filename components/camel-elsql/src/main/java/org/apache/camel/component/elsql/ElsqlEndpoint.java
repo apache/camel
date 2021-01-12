@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
 
 import javax.sql.DataSource;
 
@@ -52,7 +51,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
  * Use ElSql to define SQL queries. Extends the SQL Component.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri",
-        category = {Category.DATABASE, Category.SQL})
+             category = { Category.DATABASE, Category.SQL })
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
@@ -72,7 +71,8 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     @UriParam(label = "advanced")
     private ElSqlConfig elSqlConfig;
 
-    public ElsqlEndpoint(final String uri, final Component component, final NamedParameterJdbcTemplate namedJdbcTemplate, final DataSource dataSource,
+    public ElsqlEndpoint(final String uri, final Component component, final NamedParameterJdbcTemplate namedJdbcTemplate,
+                         final DataSource dataSource,
                          final String elsqlName, final String resourceUri) {
         super(uri, component, null);
         this.elsqlName = elsqlName;
@@ -91,7 +91,8 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         final String sql = elSql.getSql(elsqlName, new SpringSqlParams(param));
         LOG.debug("ElsqlConsumer @{} using sql: {}", elsqlName, sql);
 
-        final ElsqlConsumer consumer = new ElsqlConsumer(this, processor, namedJdbcTemplate, sql, param, preStategy, proStrategy);
+        final ElsqlConsumer consumer
+                = new ElsqlConsumer(this, processor, namedJdbcTemplate, sql, param, preStategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
         consumer.setOnConsumeFailed(getOnConsumeFailed());
@@ -106,8 +107,10 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        final SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
-        final ElsqlProducer result = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, dataSource, prepareStrategy, isBatch());
+        final SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null
+                ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
+        final ElsqlProducer result
+                = new ElsqlProducer(this, elSql, elsqlName, namedJdbcTemplate, dataSource, prepareStrategy, isBatch());
         return result;
     }
 
@@ -124,7 +127,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         }
 
         // load and parse the sources which are from classpath
-        parseResources(resourceUri, uri-> ResourceHelper.isClasspathUri(uri));
+        parseResources(resourceUri, uri -> ResourceHelper.isClasspathUri(uri));
     }
 
     @Override
@@ -132,7 +135,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         super.doStart();
 
         // load and parse the sources which are not from classpath
-        parseResources(resourceUri, uri-> !ResourceHelper.isClasspathUri(uri));
+        parseResources(resourceUri, uri -> !ResourceHelper.isClasspathUri(uri));
     }
 
     private void parseResources(String resourceUri, Predicate<String> predicate) throws Exception {
@@ -188,9 +191,10 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     }
 
     /**
-     * The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma.
-     * The resources are loaded on the classpath by default, you can prefix with <tt>file:</tt> to load from file system.
-     * Notice you can set this option on the component and then you do not have to configure this on the endpoint.
+     * The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by
+     * comma. The resources are loaded on the classpath by default, you can prefix with <tt>file:</tt> to load from file
+     * system. Notice you can set this option on the component and then you do not have to configure this on the
+     * endpoint.
      */
     public void setResourceUri(final String resourceUri) {
         this.resourceUri = resourceUri;

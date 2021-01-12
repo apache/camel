@@ -45,13 +45,10 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/content-streamed", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/content-streamed", (request, response, context) -> {
                     Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
                     String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
                     Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
@@ -116,6 +113,5 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
         assertFalse(out.isFailed(), "Should not fail");
 
     }
-
 
 }

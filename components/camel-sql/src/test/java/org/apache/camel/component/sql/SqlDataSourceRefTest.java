@@ -34,21 +34,21 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqlDataSourceRefTest extends CamelTestSupport {
-    
+
     private EmbeddedDatabase db;
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry reg = new SimpleRegistry();
-        
+
         // START SNIPPET: e2
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
         // END SNIPPET: e2
-        
+
         reg.bind("jdbc/myDataSource", db);
-        
+
         return reg;
     }
 
@@ -81,7 +81,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -91,8 +91,8 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:simple")
-                    .to("sql:select * from projects where license = # order by id?dataSource=#jdbc/myDataSource")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = # order by id?dataSource=#jdbc/myDataSource")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

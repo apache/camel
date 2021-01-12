@@ -89,7 +89,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 1 message");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(new Integer(1), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         Object out = consumer.receiveBody("activemq2:queue:outbox", 3000);
         assertEquals("DONE-A", out);
     }
@@ -120,7 +121,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 7 message");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -153,7 +155,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -181,7 +184,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 3 messages");
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(new Integer(2), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(2),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertEquals("DONE-D", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq2:queue:outbox", 3000));
     }
@@ -217,7 +221,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 4 messages");
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(new Integer(3), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(3),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertEquals("DONE-D", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-F", consumer.receiveBody("activemq2:queue:outbox", 3000));
@@ -225,7 +230,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
     protected void checkInitialState() {
         // check there are no messages in the database and JMS queue
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 2000));
     }
 
@@ -234,15 +240,16 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                IdempotentRepository repository = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
+                IdempotentRepository repository
+                        = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
 
                 from("activemq2:queue:inbox")
-                    .transacted("required")
-                    .to("mock:a")
-                    .idempotentConsumer(header("uid"), repository)
-                    .to("mock:b")
-                    .transform(simple("DONE-${body}"))
-                    .to("activemq2:queue:outbox");
+                        .transacted("required")
+                        .to("mock:a")
+                        .idempotentConsumer(header("uid"), repository)
+                        .to("mock:b")
+                        .transform(simple("DONE-${body}"))
+                        .to("activemq2:queue:outbox");
             }
         };
     }

@@ -58,7 +58,8 @@ public class FileConsumerStartingDirectoryMustHaveAccessTest extends ContextTest
 
     @Test
     public void testStartingDirectoryMustHaveAccess() throws Exception {
-        Endpoint endpoint = context.getEndpoint("file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
+        Endpoint endpoint = context.getEndpoint(
+                "file://target/noAccess?autoCreate=false&startingDirectoryMustExist=true&startingDirectoryMustHaveAccess=true");
         try {
             endpoint.createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {

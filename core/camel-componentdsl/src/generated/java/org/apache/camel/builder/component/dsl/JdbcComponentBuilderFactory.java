@@ -37,6 +37,8 @@ public interface JdbcComponentBuilderFactory {
      * Category: database,sql
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
+     * 
+     * @return the dsl builder
      */
     static JdbcComponentBuilder jdbc() {
         return new JdbcComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface JdbcComponentBuilderFactory {
          * To use the DataSource instance instead of looking up the data source
          * by name from the registry.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default JdbcComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -69,27 +74,36 @@ public interface JdbcComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JdbcComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default JdbcComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JdbcComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -111,7 +125,7 @@ public interface JdbcComponentBuilderFactory {
             switch (name) {
             case "dataSource": ((JdbcComponent) component).setDataSource((javax.sql.DataSource) value); return true;
             case "lazyStartProducer": ((JdbcComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((JdbcComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JdbcComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

@@ -17,47 +17,30 @@
 package org.apache.camel.component.rabbitmq.integration;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.qpid.server.SystemLauncher;
-import org.apache.qpid.server.model.ConfiguredObject;
-import org.apache.qpid.server.model.SystemConfig;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.component.rabbitmq.test.infra.services.RabbitMQServiceFactory;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
+import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport {
-    protected static final String INITIAL_CONFIGURATION = "qpid-test-initial-config.json";
-    protected static SystemLauncher systemLauncher = new SystemLauncher();
-
-    // Container starts once per test class
-    private static GenericContainer container;
+public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
+    // Note: this is using the RabbitMQService from this module so that we can also run
+    // tests using the embedded QPid broker.
+    @RegisterExtension
+    public static RabbitMQService service = RabbitMQServiceFactory.createService();
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    protected boolean isStartDocker() {
-        return true;
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     /**
-     * Helper method for creating a RabbitMQ connection to the test instance of
-     * the RabbitMQ server.
+     * Helper method for creating a RabbitMQ connection to the test instance of the RabbitMQ server.
      *
      * @return
      * @throws IOException
@@ -65,44 +48,17 @@ public abstract class AbstractRabbitMQIntTest extends ContainerAwareTestSupport 
      */
     protected Connection connection() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        factory.setPort(5672);
-        factory.setUsername("cameltest");
-        factory.setPassword("cameltest");
+        ConnectionProperties properties = service.connectionProperties();
+
+        factory.setHost(properties.hostname());
+
+        factory.setPort(properties.port());
+
+        factory.setUsername(properties.username());
+
+        factory.setPassword(properties.password());
         factory.setVirtualHost("/");
         return factory.newConnection();
     }
 
-    /**
-     * Helper method for creating a Qpid Broker-J system configuration for the
-     * initiate of the local AMQP server.
-     */
-    protected static Map<String, Object> createQpidSystemConfig() {
-        Map<String, Object> attributes = new HashMap<>();
-        URL initialConfig = AbstractRabbitMQIntTest.class.getClassLoader().getResource(INITIAL_CONFIGURATION);
-        attributes.put(ConfiguredObject.TYPE, "Memory");
-        attributes.put(SystemConfig.INITIAL_CONFIGURATION_LOCATION, initialConfig.toExternalForm());
-        attributes.put(SystemConfig.STARTUP_LOGGED_TO_SYSTEM_OUT, false);
-
-        return attributes;
-    }
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        container = isStartDocker() ? DockerTestUtils.rabbitMQContainer() : null;
-        return (GenericContainer<?>)container;
-    }
-
-    @Override
-    protected void cleanupResources() throws Exception {
-        super.cleanupResources();
-
-        if (container != null) {
-            container.stop();
-        }
-    }
-
-    protected long containerShutdownTimeout() {
-        return TimeUnit.MINUTES.toSeconds(1L);
-    }
 }

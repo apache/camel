@@ -20,46 +20,44 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxCollaborationsManagerApiMethod implements ApiMethod {
 
-    ADDFOLDERCOLLABORATION(
+    ADD_FOLDER_COLLABORATION(
         com.box.sdk.BoxCollaboration.class,
         "addFolderCollaboration",
         arg("folderId", String.class),
         arg("collaborator", com.box.sdk.BoxCollaborator.class),
         arg("role", com.box.sdk.BoxCollaboration.Role.class)),
 
-    ADDFOLDERCOLLABORATIONBYEMAIL(
+    ADD_FOLDER_COLLABORATION_BY_EMAIL(
         com.box.sdk.BoxCollaboration.class,
         "addFolderCollaborationByEmail",
         arg("folderId", String.class),
         arg("email", String.class),
         arg("role", com.box.sdk.BoxCollaboration.Role.class)),
 
-    DELETECOLLABORATION(
+    DELETE_COLLABORATION(
         void.class,
         "deleteCollaboration",
         arg("collaborationId", String.class)),
 
-    GETCOLLABORATIONINFO(
+    GET_COLLABORATION_INFO(
         com.box.sdk.BoxCollaboration.Info.class,
         "getCollaborationInfo",
         arg("collaborationId", String.class)),
 
-    GETFOLDERCOLLABORATIONS(
+    GET_FOLDER_COLLABORATIONS(
         java.util.Collection.class,
         "getFolderCollaborations",
         arg("folderId", String.class)),
 
-    GETPENDINGCOLLABORATIONS(
+    GET_PENDING_COLLABORATIONS(
         java.util.Collection.class,
         "getPendingCollaborations"),
 
-    UPDATECOLLABORATIONINFO(
+    UPDATE_COLLABORATION_INFO(
         com.box.sdk.BoxCollaboration.class,
         "updateCollaborationInfo",
         arg("collaborationId", String.class),
         arg("info", com.box.sdk.BoxCollaboration.Info.class));
-
-    
 
     private final ApiMethod apiMethod;
 

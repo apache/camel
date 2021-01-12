@@ -1,4 +1,4 @@
-[[microprofile-health-component]]
+[[microprofile-health-other]]
 = Microprofile Health Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-microprofile-health/src/main/docs/microprofile-health.adoc
@@ -7,6 +7,7 @@
 :description: Bridging Eclipse MicroProfile Health with Camel health checks
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-health.adoc[opts=optional]
 
 *Since Camel {since}*
 

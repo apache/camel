@@ -44,12 +44,13 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://127.0.0.1:" + getPort() + "?decoders=#hl7decoder&encoders=#hl7encoder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message input = exchange.getIn().getBody(Message.class);
-                        exchange.getOut().setBody(input.generateACK());
-                    }
-                }).to("mock:result");
+                from("netty:tcp://127.0.0.1:" + getPort() + "?decoders=#hl7decoder&encoders=#hl7encoder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message input = exchange.getIn().getBody(Message.class);
+                                exchange.getOut().setBody(input.generateACK());
+                            }
+                        }).to("mock:result");
             }
         };
     }

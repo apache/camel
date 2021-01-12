@@ -29,7 +29,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Call another endpoint in the same CamelContext asynchronously.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "vm", title = "VM", syntax = "vm:name", category = {Category.CORE, Category.ENDPOINT})
+@UriEndpoint(firstVersion = "1.1.0", scheme = "vm", title = "VM", syntax = "vm:name",
+             category = { Category.CORE, Category.ENDPOINT })
 public class VmEndpoint extends SedaEndpoint {
 
     public VmEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -40,7 +41,8 @@ public class VmEndpoint extends SedaEndpoint {
         super(endpointUri, component, queue, concurrentConsumers);
     }
 
-    public VmEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    public VmEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory,
+                      int concurrentConsumers) {
         super(endpointUri, component, queueFactory, concurrentConsumers);
     }
 

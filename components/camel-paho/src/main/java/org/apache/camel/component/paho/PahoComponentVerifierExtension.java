@@ -44,8 +44,8 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .error(ResultErrorHelper.requiresOption("brokerUrl", parameters))
-            .build();
+                .error(ResultErrorHelper.requiresOption("brokerUrl", parameters))
+                .build();
     }
 
     // *********************************
@@ -55,8 +55,8 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
     @Override
     protected Result verifyConnectivity(Map<String, Object> parameters) {
         return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY)
-            .error(parameters, this::verifyCredentials)
-            .build();
+                .error(parameters, this::verifyCredentials)
+                .build();
     }
 
     private void verifyCredentials(ResultBuilder builder, Map<String, Object> parameters) {
@@ -81,17 +81,19 @@ public class PahoComponentVerifierExtension extends DefaultComponentVerifierExte
                 }
             } catch (MqttException e) {
                 builder.error(
-                    ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, "Unable to connect to MQTT broker")
-                        .parameterKey("brokerUrl")
-                        .build()
-                );
+                        ResultErrorBuilder
+                                .withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE,
+                                        "Unable to connect to MQTT broker")
+                                .parameterKey("brokerUrl")
+                                .build());
             }
         } else {
             builder.error(
-                ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, "Invalid blank MQTT brokerUrl ")
-                    .parameterKey("brokerUrl")
-                    .build()
-            );
+                    ResultErrorBuilder
+                            .withCodeAndDescription(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE,
+                                    "Invalid blank MQTT brokerUrl ")
+                            .parameterKey("brokerUrl")
+                            .build());
         }
     }
 }

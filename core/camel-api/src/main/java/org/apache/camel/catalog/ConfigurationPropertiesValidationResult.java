@@ -69,8 +69,8 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
     /**
      * A human readable summary of the validation errors.
      *
-     * @param includeHeader    whether to include a header
-     * @return the summary, or <tt>null</tt> if no validation errors
+     * @param  includeHeader whether to include a header
+     * @return               the summary, or <tt>null</tt> if no validation errors
      */
     public String summaryErrorMessage(boolean includeHeader) {
         return summaryErrorMessage(includeHeader, true, false);
@@ -79,10 +79,10 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
     /**
      * A human readable summary of the validation errors.
      *
-     * @param includeHeader    whether to include a header
-     * @param ignoreDeprecated whether to ignore deprecated options in use as an error or not
-     * @param includeWarnings  whether to include warnings as an error or not
-     * @return the summary, or <tt>null</tt> if no validation errors
+     * @param  includeHeader    whether to include a header
+     * @param  ignoreDeprecated whether to ignore deprecated options in use as an error or not
+     * @param  includeWarnings  whether to include warnings as an error or not
+     * @return                  the summary, or <tt>null</tt> if no validation errors
      */
     public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
         boolean ok = isSuccess();
@@ -225,7 +225,8 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
         StringBuilder sb = new StringBuilder();
         if (includeHeader) {
             sb.append("Configuration properties error\n");
-            sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+            sb.append(
+                    "---------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append("\n");
         }
         if (text != null) {

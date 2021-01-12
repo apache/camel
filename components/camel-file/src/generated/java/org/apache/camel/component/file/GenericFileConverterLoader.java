@@ -28,6 +28,8 @@ public final class GenericFileConverterLoader implements TypeConverterLoader {
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.InputStream.class, org.apache.camel.component.file.GenericFile.class, false,
             (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToInputStream((org.apache.camel.component.file.GenericFile) value, exchange));
+        addTypeConverter(registry, java.io.Reader.class, org.apache.camel.component.file.GenericFile.class, false,
+            (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToReader((org.apache.camel.component.file.GenericFile) value, exchange));
         addTypeConverter(registry, java.io.Serializable.class, org.apache.camel.component.file.GenericFile.class, false,
             (type, exchange, value) -> org.apache.camel.component.file.GenericFileConverter.genericFileToSerializable((org.apache.camel.component.file.GenericFile) value, exchange));
         addTypeConverter(registry, java.lang.String.class, org.apache.camel.component.file.GenericFile.class, false,

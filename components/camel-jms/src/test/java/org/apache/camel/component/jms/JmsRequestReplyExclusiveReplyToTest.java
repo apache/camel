@@ -33,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Using exclusive fixed replyTo queues should be faster as there is no need for
- * JMSMessage selectors.
+ * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
 public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
 
@@ -60,7 +59,8 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("ReplyToType Temporary is not supported when replyTo bar is also configured.", e.getCause().getCause().getMessage());
+            assertEquals("ReplyToType Temporary is not supported when replyTo bar is also configured.",
+                    e.getCause().getCause().getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

@@ -31,16 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSupport {
 
     // START SNIPPET: e2
-    private static final String FIXED_DATA =
-            "Joe,Smith,Developer,75000,10012009" + Constants.LS
-            + "Jane,Doe,Architect,80000,01152008" + Constants.LS
-            + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
+    private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                                             + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                                             + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
     // END SNIPPET: e2
 
-    private static final String FIXED_FAIL_DATA =
-            "Joe,Smith,Developer,75000,10012009" + Constants.LS
-                    + "Jane,Doe,Architect,80000,01152008" + Constants.LS
-                    + "Jon,Anderson,Manager,XXX,03182007" + Constants.LS;
+    private static final String FIXED_FAIL_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                                                  + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                                                  + "Jon,Anderson,Manager,XXX,03182007" + Constants.LS;
 
     @Test
     void testSplit() throws Exception {
@@ -85,8 +83,8 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
                 // a route which uses the bean io data format to format a CSV data
                 // to java objects
                 from("direct:unmarshal")
-                    // and then split the message body so we get a message for each row
-                    .split(splitter).streaming()
+                        // and then split the message body so we get a message for each row
+                        .split(splitter).streaming()
                         .to("log:line")
                         .to("mock:beanio-unmarshal");
                 // END SNIPPET: e1

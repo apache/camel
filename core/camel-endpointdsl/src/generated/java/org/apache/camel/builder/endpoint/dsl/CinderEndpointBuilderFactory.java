@@ -40,10 +40,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * OpenStack API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: V3
          * Group: producer
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -52,10 +55,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * OpenStack configuration.
          * 
-         * The option is a: <code>org.openstack4j.core.transport.Config</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder config(Object config) {
             doSetProperty("config", config);
@@ -65,9 +71,12 @@ public interface CinderEndpointBuilderFactory {
          * OpenStack configuration.
          * 
          * The option will be converted to a
-         * <code>org.openstack4j.core.transport.Config</code> type.
+         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder config(String config) {
             doSetProperty("config", config);
@@ -76,10 +85,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * Authentication domain.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: default
          * Group: producer
+         * 
+         * @param domain the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder domain(String domain) {
             doSetProperty("domain", domain);
@@ -96,10 +108,13 @@ public interface CinderEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -117,10 +132,14 @@ public interface CinderEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -129,9 +148,12 @@ public interface CinderEndpointBuilderFactory {
         /**
          * The operation to do.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -140,10 +162,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * OpenStack password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -152,10 +177,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * The project ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param project the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder project(String project) {
             doSetProperty("project", project);
@@ -164,10 +192,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * OpenStack Cinder subsystem.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param subsystem the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder subsystem(String subsystem) {
             doSetProperty("subsystem", subsystem);
@@ -176,10 +207,13 @@ public interface CinderEndpointBuilderFactory {
         /**
          * OpenStack username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CinderEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -197,41 +231,16 @@ public interface CinderEndpointBuilderFactory {
             return (CinderEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCinderEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCinderEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCinderEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -241,10 +250,14 @@ public interface CinderEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCinderEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -267,6 +280,7 @@ public interface CinderEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default CinderEndpointBuilder openstackCinder(String path) {
             return CinderEndpointBuilderFactory.endpointBuilder("openstack-cinder", path);
@@ -287,6 +301,7 @@ public interface CinderEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default CinderEndpointBuilder openstackCinder(
                 String componentName,

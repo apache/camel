@@ -46,8 +46,8 @@ public class JsltObjectFilterTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived(
                 IOHelper.loadText(
                         ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/objectFilter/output.json")
-                ).trim() // Remove the last newline added by IOHelper.loadText()
+                                context, "org/apache/camel/component/jslt/objectFilter/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
         sendBody("direct://start",

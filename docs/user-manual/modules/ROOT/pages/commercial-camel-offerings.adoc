@@ -50,6 +50,13 @@ and runtime. You start by composing ETLs using the application builder.
 You test ETLs instantly on your machine. You bundle ETLs with your
 application.
 
+
+[[CommercialCamelOfferings-IBM]]
+== http://ibm.biz/OSSupport[IBM]
+
+http://ibm.biz/OSSupport[IBM] provides cross-platform support for
+Apache Camel and many other open source packages.
+
 [[CommercialCamelOfferings-MediaDriver]]
 == http://mediadriver.com[Media Driver]
 
@@ -71,7 +78,7 @@ consulting services.
 [[CommercialCamelOfferings-OpenLogic]]
 == http://www.openlogic.com/[OpenLogic]
 
-http://www.openlogic.com/[OpenLogic] provide support.
+http://www.openlogic.com/[OpenLogic] by Perforce has a team of Camel experts ready to help you. We provide 24/7 support for troubleshooting issues and outages, consulting on architecture and design, and instructor-led, hands-on training. https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support].
 
 [[CommercialCamelOfferings-RedHat]]
 == https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat]
@@ -84,6 +91,14 @@ In addition to enterprise support, Red Hat provides
 https://www.redhat.com/en/services/training/courses-by-curriculum#Red-Hat-JBoss-Fuse-BRMS-and-more[training],
 https://www.redhat.com/en/services/consulting[consulting], and
 https://developers.redhat.com/products/fuse/overview/[a developer community].
+
+[[CommercialCamelOfferings-RouteBLAZE]]
+== https://www.routeblaze.io[RouteBLAZE]
+
+https://www.routeblaze.io[RouteBLAZE] allows you to design, develop and deploy business processes at Enterprise scale. 
+It comes bundled with a suite of tools and services that support every step of the journey, from project inception through to production support.
+We also provide bespoke development and consultancy. 
+
 
 [[CommercialCamelOfferings-SavoirTechnologiesInc]]
 == http://www.savoirtech.com[Savoir Technologies, Inc]

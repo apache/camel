@@ -27,7 +27,8 @@ public class NettyHttpOperationFailedExceptionTest {
 
     @Test
     public void testUriIsSanitized() {
-        NettyHttpOperationFailedException nettyHttpOperationFailedException = new NettyHttpOperationFailedException("http://user:password@host", 500, "", "", new DefaultLastHttpContent());
+        NettyHttpOperationFailedException nettyHttpOperationFailedException
+                = new NettyHttpOperationFailedException("http://user:password@host", 500, "", "", new DefaultLastHttpContent());
 
         assertThat(nettyHttpOperationFailedException.getMessage(), not(containsString("password")));
         assertThat(nettyHttpOperationFailedException.getUri(), not(containsString("password")));

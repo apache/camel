@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public final class KuduUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduUtils.class);
-    
+
     private KuduUtils() {
     }
 
@@ -67,8 +67,8 @@ public final class KuduUtils {
         }
 
         KuduScanner scanner = connection.newScannerBuilder(table)
-                                  .setProjectedColumnNames(projectColumns)
-                                  .build();
+                .setProjectedColumnNames(projectColumns)
+                .build();
         return KuduUtils.scannerToList(table, scanner);
     }
 }

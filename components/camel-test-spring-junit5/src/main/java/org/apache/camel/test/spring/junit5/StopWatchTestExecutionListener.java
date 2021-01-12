@@ -32,8 +32,7 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
     protected static ThreadLocal<StopWatch> threadStopWatch = new ThreadLocal<>();
 
     /**
-     * Returns the precedence that is used by Spring to choose the appropriate
-     * execution order of test listeners.
+     * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
      * 
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */
@@ -43,8 +42,7 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
     }
 
     /**
-     * Exists primarily for testing purposes, but allows for access to the
-     * underlying stop watch instance for a test.
+     * Exists primarily for testing purposes, but allows for access to the underlying stop watch instance for a test.
      */
     public static StopWatch getStopWatch() {
         return threadStopWatch.get();
@@ -64,8 +62,8 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
             Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
             log.info("********************************************************************************");
-            log.info("Testing done: " + testContext.getTestMethod().getName() + "(" + testContext.getTestClass().getName() + ")");
-            log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+            log.info("Testing done: {} ({})", testContext.getTestMethod().getName(), testContext.getTestClass().getName());
+            log.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
             log.info("********************************************************************************");
 
             threadStopWatch.remove();

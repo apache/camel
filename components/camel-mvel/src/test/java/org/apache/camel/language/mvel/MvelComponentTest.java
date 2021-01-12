@@ -47,7 +47,8 @@ public class MvelComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(7);
-                exchange.getIn().setHeader(MvelConstants.MVEL_TEMPLATE, "{ \"text\": \"@{\"The result is \" + request.body * 3}\" }");
+                exchange.getIn().setHeader(MvelConstants.MVEL_TEMPLATE,
+                        "{ \"text\": \"@{\"The result is \" + request.body * 3}\" }");
             }
         });
 
@@ -60,7 +61,8 @@ public class MvelComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(7);
-                exchange.getIn().setHeader(MvelConstants.MVEL_RESOURCE_URI, getClass().getClassLoader().getResource("template2.mvel").toURI().toString());
+                exchange.getIn().setHeader(MvelConstants.MVEL_RESOURCE_URI,
+                        getClass().getClassLoader().getResource("template2.mvel").toURI().toString());
             }
         });
 
@@ -72,11 +74,9 @@ public class MvelComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                        to("mvel:template.mvel");
+                from("direct:a").to("mvel:template.mvel");
 
-                from("direct:b").
-                        to("mvel:template.mvel?allowTemplateFromHeader=true&allowContextMapAll=true");
+                from("direct:b").to("mvel:template.mvel?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

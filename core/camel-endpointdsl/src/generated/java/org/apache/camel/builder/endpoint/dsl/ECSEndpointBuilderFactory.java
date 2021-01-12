@@ -43,10 +43,13 @@ public interface ECSEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder autoDiscoverClient(boolean autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -57,10 +60,14 @@ public interface ECSEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -69,9 +76,12 @@ public interface ECSEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -80,10 +90,13 @@ public interface ECSEndpointBuilderFactory {
         /**
          * To use a existing configured AWS ECS as client.
          * 
-         * The option is a: <code>com.amazonaws.services.ecs.AmazonECS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.ecs.AmazonECS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param ecsClient the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder ecsClient(Object ecsClient) {
             doSetProperty("ecsClient", ecsClient);
@@ -93,9 +106,12 @@ public interface ECSEndpointBuilderFactory {
          * To use a existing configured AWS ECS as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.ecs.AmazonECS</code> type.
+         * &lt;code&gt;com.amazonaws.services.ecs.AmazonECS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param ecsClient the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder ecsClient(String ecsClient) {
             doSetProperty("ecsClient", ecsClient);
@@ -112,10 +128,13 @@ public interface ECSEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -132,10 +151,14 @@ public interface ECSEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -145,10 +168,13 @@ public interface ECSEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ecs.ECSOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder operation(ECSOperations operation) {
             doSetProperty("operation", operation);
@@ -158,10 +184,13 @@ public interface ECSEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ecs.ECSOperations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -170,9 +199,12 @@ public interface ECSEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the ECS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -181,9 +213,12 @@ public interface ECSEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the ECS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -192,10 +227,13 @@ public interface ECSEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the ECS client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -204,10 +242,14 @@ public interface ECSEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the ECS client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -216,11 +258,14 @@ public interface ECSEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the ECS client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -232,9 +277,12 @@ public interface ECSEndpointBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -243,9 +291,12 @@ public interface ECSEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default ECSEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -264,41 +315,16 @@ public interface ECSEndpointBuilderFactory {
             return (ECSEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedECSEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedECSEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedECSEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -308,10 +334,14 @@ public interface ECSEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedECSEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -353,6 +383,7 @@ public interface ECSEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default ECSEndpointBuilder awsEcs(String path) {
             return ECSEndpointBuilderFactory.endpointBuilder("aws-ecs", path);
@@ -373,6 +404,7 @@ public interface ECSEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default ECSEndpointBuilder awsEcs(String componentName, String path) {
             return ECSEndpointBuilderFactory.endpointBuilder(componentName, path);

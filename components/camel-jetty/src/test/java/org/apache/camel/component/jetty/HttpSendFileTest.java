@@ -46,8 +46,8 @@ public class HttpSendFileTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("text/plain", out.getOut().getHeader("Content-Type"));
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("text/plain", out.getMessage().getHeader("Content-Type"));
     }
 
     @Override

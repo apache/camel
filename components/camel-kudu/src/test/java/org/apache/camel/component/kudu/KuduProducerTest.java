@@ -51,16 +51,16 @@ public class KuduProducerTest extends AbstractKuduTest {
 
                 //integration test route
                 from("direct:create")
-                    .to("kudu:localhost:7051/TestTable?operation=create_table")
-                    .to("mock:result");
+                        .to("kudu:localhost:7051/TestTable?operation=create_table")
+                        .to("mock:result");
 
                 from("direct:insert")
-                    .to("kudu:localhost:7051/TestTable?operation=insert")
-                    .to("mock:result");
+                        .to("kudu:localhost:7051/TestTable?operation=insert")
+                        .to("mock:result");
 
                 from("direct:data")
-                    .to("kudu:localhost:7051/TestTable?operation=insert")
-                    .to("mock:result");
+                        .to("kudu:localhost:7051/TestTable?operation=insert")
+                        .to("mock:result");
             }
         };
     }
@@ -84,10 +84,9 @@ public class KuduProducerTest extends AbstractKuduTest {
 
         for (int i = 0; i < columnNames.size(); i++) {
             columns.add(
-                new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
-                    .key(i == 0)
-                    .build()
-            );
+                    new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
+                            .key(i == 0)
+                            .build());
         }
 
         List<String> rangeKeys = new ArrayList<>();

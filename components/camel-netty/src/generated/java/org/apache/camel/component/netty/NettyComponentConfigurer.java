@@ -4,8 +4,10 @@ package org.apache.camel.component.netty;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -32,9 +34,9 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowSerializedHeaders": getOrCreateConfiguration(target).setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "autoappenddelimiter":
         case "autoAppendDelimiter": getOrCreateConfiguration(target).setAutoAppendDelimiter(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backlog": getOrCreateConfiguration(target).setBacklog(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bosscount":
         case "bossCount": getOrCreateConfiguration(target).setBossCount(property(camelContext, int.class, value)); return true;
         case "bossgroup":
@@ -161,81 +163,140 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowDefaultCodec", boolean.class);
-        answer.put("allowSerializedHeaders", boolean.class);
-        answer.put("autoAppendDelimiter", boolean.class);
-        answer.put("backlog", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bossCount", int.class);
-        answer.put("bossGroup", io.netty.channel.EventLoopGroup.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("broadcast", boolean.class);
-        answer.put("channelGroup", io.netty.channel.group.ChannelGroup.class);
-        answer.put("clientInitializerFactory", org.apache.camel.component.netty.ClientInitializerFactory.class);
-        answer.put("clientMode", boolean.class);
-        answer.put("configuration", org.apache.camel.component.netty.NettyConfiguration.class);
-        answer.put("connectTimeout", int.class);
-        answer.put("correlationManager", org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class);
-        answer.put("decoderMaxLineLength", int.class);
-        answer.put("decoders", java.util.List.class);
-        answer.put("delimiter", org.apache.camel.component.netty.TextLineDelimiter.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("disconnectOnNoReply", boolean.class);
-        answer.put("enabledProtocols", java.lang.String.class);
-        answer.put("encoders", java.util.List.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("executorService", io.netty.util.concurrent.EventExecutorGroup.class);
-        answer.put("keepAlive", boolean.class);
-        answer.put("keyStoreFile", java.io.File.class);
-        answer.put("keyStoreFormat", java.lang.String.class);
-        answer.put("keyStoreResource", java.lang.String.class);
-        answer.put("lazyChannelCreation", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maximumPoolSize", int.class);
-        answer.put("nativeTransport", boolean.class);
-        answer.put("needClientAuth", boolean.class);
-        answer.put("nettyServerBootstrapFactory", org.apache.camel.component.netty.NettyServerBootstrapFactory.class);
-        answer.put("networkInterface", java.lang.String.class);
-        answer.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("options", java.util.Map.class);
-        answer.put("passphrase", java.lang.String.class);
-        answer.put("producerPoolEnabled", boolean.class);
-        answer.put("producerPoolMaxActive", int.class);
-        answer.put("producerPoolMaxIdle", int.class);
-        answer.put("producerPoolMinEvictableIdle", long.class);
-        answer.put("producerPoolMinIdle", int.class);
-        answer.put("receiveBufferSize", int.class);
-        answer.put("receiveBufferSizePredictor", int.class);
-        answer.put("reconnect", boolean.class);
-        answer.put("reconnectInterval", int.class);
-        answer.put("requestTimeout", long.class);
-        answer.put("reuseAddress", boolean.class);
-        answer.put("reuseChannel", boolean.class);
-        answer.put("securityProvider", java.lang.String.class);
-        answer.put("sendBufferSize", int.class);
-        answer.put("serverClosedChannelExceptionCaughtLogLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("serverExceptionCaughtLogLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("serverInitializerFactory", org.apache.camel.component.netty.ServerInitializerFactory.class);
-        answer.put("ssl", boolean.class);
-        answer.put("sslClientCertHeaders", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sslHandler", io.netty.handler.ssl.SslHandler.class);
-        answer.put("sync", boolean.class);
-        answer.put("tcpNoDelay", boolean.class);
-        answer.put("textline", boolean.class);
-        answer.put("transferExchange", boolean.class);
-        answer.put("trustStoreFile", java.io.File.class);
-        answer.put("trustStoreResource", java.lang.String.class);
-        answer.put("udpByteArrayCodec", boolean.class);
-        answer.put("udpConnectionlessSending", boolean.class);
-        answer.put("useByteBuf", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("usingExecutorService", boolean.class);
-        answer.put("workerCount", int.class);
-        answer.put("workerGroup", io.netty.channel.EventLoopGroup.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowdefaultcodec":
+        case "allowDefaultCodec": return boolean.class;
+        case "allowserializedheaders":
+        case "allowSerializedHeaders": return boolean.class;
+        case "autoappenddelimiter":
+        case "autoAppendDelimiter": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "backlog": return int.class;
+        case "bosscount":
+        case "bossCount": return int.class;
+        case "bossgroup":
+        case "bossGroup": return io.netty.channel.EventLoopGroup.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "broadcast": return boolean.class;
+        case "channelgroup":
+        case "channelGroup": return io.netty.channel.group.ChannelGroup.class;
+        case "clientinitializerfactory":
+        case "clientInitializerFactory": return org.apache.camel.component.netty.ClientInitializerFactory.class;
+        case "clientmode":
+        case "clientMode": return boolean.class;
+        case "configuration": return org.apache.camel.component.netty.NettyConfiguration.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "correlationmanager":
+        case "correlationManager": return org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class;
+        case "decodermaxlinelength":
+        case "decoderMaxLineLength": return int.class;
+        case "decoders": return java.util.List.class;
+        case "delimiter": return org.apache.camel.component.netty.TextLineDelimiter.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonnoreply":
+        case "disconnectOnNoReply": return boolean.class;
+        case "enabledprotocols":
+        case "enabledProtocols": return java.lang.String.class;
+        case "encoders": return java.util.List.class;
+        case "encoding": return java.lang.String.class;
+        case "executorservice":
+        case "executorService": return io.netty.util.concurrent.EventExecutorGroup.class;
+        case "keepalive":
+        case "keepAlive": return boolean.class;
+        case "keystorefile":
+        case "keyStoreFile": return java.io.File.class;
+        case "keystoreformat":
+        case "keyStoreFormat": return java.lang.String.class;
+        case "keystoreresource":
+        case "keyStoreResource": return java.lang.String.class;
+        case "lazychannelcreation":
+        case "lazyChannelCreation": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximumpoolsize":
+        case "maximumPoolSize": return int.class;
+        case "nativetransport":
+        case "nativeTransport": return boolean.class;
+        case "needclientauth":
+        case "needClientAuth": return boolean.class;
+        case "nettyserverbootstrapfactory":
+        case "nettyServerBootstrapFactory": return org.apache.camel.component.netty.NettyServerBootstrapFactory.class;
+        case "networkinterface":
+        case "networkInterface": return java.lang.String.class;
+        case "noreplyloglevel":
+        case "noReplyLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "options": return java.util.Map.class;
+        case "passphrase": return java.lang.String.class;
+        case "producerpoolenabled":
+        case "producerPoolEnabled": return boolean.class;
+        case "producerpoolmaxactive":
+        case "producerPoolMaxActive": return int.class;
+        case "producerpoolmaxidle":
+        case "producerPoolMaxIdle": return int.class;
+        case "producerpoolminevictableidle":
+        case "producerPoolMinEvictableIdle": return long.class;
+        case "producerpoolminidle":
+        case "producerPoolMinIdle": return int.class;
+        case "receivebuffersize":
+        case "receiveBufferSize": return int.class;
+        case "receivebuffersizepredictor":
+        case "receiveBufferSizePredictor": return int.class;
+        case "reconnect": return boolean.class;
+        case "reconnectinterval":
+        case "reconnectInterval": return int.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "reuseaddress":
+        case "reuseAddress": return boolean.class;
+        case "reusechannel":
+        case "reuseChannel": return boolean.class;
+        case "securityprovider":
+        case "securityProvider": return java.lang.String.class;
+        case "sendbuffersize":
+        case "sendBufferSize": return int.class;
+        case "serverclosedchannelexceptioncaughtloglevel":
+        case "serverClosedChannelExceptionCaughtLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "serverexceptioncaughtloglevel":
+        case "serverExceptionCaughtLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "serverinitializerfactory":
+        case "serverInitializerFactory": return org.apache.camel.component.netty.ServerInitializerFactory.class;
+        case "ssl": return boolean.class;
+        case "sslclientcertheaders":
+        case "sslClientCertHeaders": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslhandler":
+        case "sslHandler": return io.netty.handler.ssl.SslHandler.class;
+        case "sync": return boolean.class;
+        case "tcpnodelay":
+        case "tcpNoDelay": return boolean.class;
+        case "textline": return boolean.class;
+        case "transferexchange":
+        case "transferExchange": return boolean.class;
+        case "truststorefile":
+        case "trustStoreFile": return java.io.File.class;
+        case "truststoreresource":
+        case "trustStoreResource": return java.lang.String.class;
+        case "udpbytearraycodec":
+        case "udpByteArrayCodec": return boolean.class;
+        case "udpconnectionlesssending":
+        case "udpConnectionlessSending": return boolean.class;
+        case "usebytebuf":
+        case "useByteBuf": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "usingexecutorservice":
+        case "usingExecutorService": return boolean.class;
+        case "workercount":
+        case "workerCount": return int.class;
+        case "workergroup":
+        case "workerGroup": return io.netty.channel.EventLoopGroup.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -248,9 +309,9 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowSerializedHeaders": return getOrCreateConfiguration(target).isAllowSerializedHeaders();
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return getOrCreateConfiguration(target).isAutoAppendDelimiter();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backlog": return getOrCreateConfiguration(target).getBacklog();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bosscount":
         case "bossCount": return getOrCreateConfiguration(target).getBossCount();
         case "bossgroup":
@@ -372,6 +433,16 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "workerCount": return getOrCreateConfiguration(target).getWorkerCount();
         case "workergroup":
         case "workerGroup": return getOrCreateConfiguration(target).getWorkerGroup();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "decoders": return io.netty.channel.ChannelHandler.class;
+        case "encoders": return io.netty.channel.ChannelHandler.class;
+        case "options": return java.lang.Object.class;
         default: return null;
         }
     }

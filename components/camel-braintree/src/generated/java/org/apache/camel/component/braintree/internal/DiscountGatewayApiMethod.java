@@ -24,8 +24,6 @@ public enum DiscountGatewayApiMethod implements ApiMethod {
         java.util.List.class,
         "all");
 
-    
-
     private final ApiMethod apiMethod;
 
     private DiscountGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

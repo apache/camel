@@ -134,8 +134,8 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock:result");
             }
         };
     }

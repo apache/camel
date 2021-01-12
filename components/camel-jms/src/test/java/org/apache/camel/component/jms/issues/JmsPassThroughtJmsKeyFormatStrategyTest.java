@@ -75,13 +75,13 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(exchange -> {
-                        Map<String, Object> headers = exchange.getIn().getHeaders();
-                        assertEquals("VALUE_1", headers.get("HEADER_1"));
-                        assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
-                    })
-                    .setHeader("HEADER_2", constant("VALUE_2"))
-                    .to("mock:result");
+                        .process(exchange -> {
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
+                            assertEquals("VALUE_1", headers.get("HEADER_1"));
+                            assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
+                        })
+                        .setHeader("HEADER_2", constant("VALUE_2"))
+                        .to("mock:result");
             }
         };
     }

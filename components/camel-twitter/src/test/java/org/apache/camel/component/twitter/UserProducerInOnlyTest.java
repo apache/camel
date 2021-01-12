@@ -51,7 +51,6 @@ public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
         // send tweet to the twitter endpoint
         producerTemplate.sendBodyAndHeader("direct:tweets", tweet, "customHeader", 12312);
 
-
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodyReceived().body(String.class);
         // Message headers should be preserved

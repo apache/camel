@@ -61,7 +61,8 @@ public class ObjectSerializationTest extends BaseNettyTest {
     @Test
     public void testObjectSerializationAllowedViaDecoder() throws Exception {
         Date date = new Date();
-        Date receivedDate = template.requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date, Date.class);
+        Date receivedDate = template
+                .requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date, Date.class);
         assertEquals(date, receivedDate);
     }
 
@@ -97,20 +98,20 @@ public class ObjectSerializationTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Object obj = exchange.getIn().getBody();
-                            exchange.getOut().setBody(obj);
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Object obj = exchange.getIn().getBody();
+                                exchange.getOut().setBody(obj);
+                            }
+                        });
 
                 from("netty:tcp://localhost:{{port2}}?sync=true&decoders=#decoder&encoders=#encoder")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Object obj = exchange.getIn().getBody();
-                            exchange.getOut().setBody(obj);
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Object obj = exchange.getIn().getBody();
+                                exchange.getOut().setBody(obj);
+                            }
+                        });
             }
         };
     }

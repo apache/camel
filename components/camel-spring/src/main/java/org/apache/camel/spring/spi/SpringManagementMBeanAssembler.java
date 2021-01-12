@@ -37,9 +37,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 /**
- * An spring assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
- * to register the object in JMX. The spring assembler is capable of using the Spring JMX annotations to
- * gather the list of JMX operations and attributes.
+ * An spring assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used to register the
+ * object in JMX. The spring assembler is capable of using the Spring JMX annotations to gather the list of JMX
+ * operations and attributes.
  */
 public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssembler {
 
@@ -93,7 +93,7 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
 
         // Allows the managed object to send notifications
         if (obj instanceof NotificationSenderAware) {
-            ((NotificationSenderAware)obj).setNotificationSender(new NotificationSenderAdapter(mbean));
+            ((NotificationSenderAware) obj).setNotificationSender(new NotificationSenderAdapter(mbean));
         }
 
         return mbean;

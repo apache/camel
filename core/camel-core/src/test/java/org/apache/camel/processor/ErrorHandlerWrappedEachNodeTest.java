@@ -25,8 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test for verifying that error handler is wrapped each individual node in
- * a pipeline. Based on CAMEL-1548.
+ * Unit test for verifying that error handler is wrapped each individual node in a pipeline. Based on CAMEL-1548.
  */
 public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
 

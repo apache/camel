@@ -48,15 +48,19 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder additionalProperties(
                 String key,
@@ -70,15 +74,18 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder additionalProperties(Map values) {
             doSetMultiValueProperties("additionalProperties", "additionalProperties.", values);
@@ -93,10 +100,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -112,10 +122,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -126,10 +140,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalKeyConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder internalKeyConverter(
                 String internalKeyConverter) {
@@ -140,10 +157,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalValueConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder internalValueConverter(
                 String internalValueConverter) {
@@ -157,11 +177,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
+         * 
+         * @param offsetCommitPolicy the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetCommitPolicy(
                 String offsetCommitPolicy) {
@@ -174,10 +197,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetCommitTimeoutMs(
                 long offsetCommitTimeoutMs) {
@@ -190,10 +216,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetCommitTimeoutMs(
                 String offsetCommitTimeoutMs) {
@@ -203,10 +232,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetFlushIntervalMs(
                 long offsetFlushIntervalMs) {
@@ -216,10 +248,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetFlushIntervalMs(
                 String offsetFlushIntervalMs) {
@@ -230,10 +265,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
+         * 
+         * @param offsetStorage the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStorage(
                 String offsetStorage) {
@@ -244,9 +282,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageFileName the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStorageFileName(
                 String offsetStorageFileName) {
@@ -257,9 +298,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStoragePartitions(
                 int offsetStoragePartitions) {
@@ -270,9 +314,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStoragePartitions(
                 String offsetStoragePartitions) {
@@ -283,9 +330,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStorageReplicationFactor(
                 int offsetStorageReplicationFactor) {
@@ -296,9 +346,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStorageReplicationFactor(
                 String offsetStorageReplicationFactor) {
@@ -309,9 +362,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder offsetStorageTopic(
                 String offsetStorageTopic) {
@@ -319,28 +375,35 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'collection.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * collection names for which changes are to be excluded.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param collectionExcludeList the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder collectionBlacklist(
-                String collectionBlacklist) {
-            doSetProperty("collectionBlacklist", collectionBlacklist);
+        default DebeziumMongodbEndpointBuilder collectionExcludeList(
+                String collectionExcludeList) {
+            doSetProperty("collectionExcludeList", collectionExcludeList);
             return this;
         }
         /**
-         * The collections for which changes are to be captured.
+         * A comma-separated list of regular expressions that match the
+         * collection names for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param collectionIncludeList the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder collectionWhitelist(
-                String collectionWhitelist) {
-            doSetProperty("collectionWhitelist", collectionWhitelist);
+        default DebeziumMongodbEndpointBuilder collectionIncludeList(
+                String collectionIncludeList) {
+            doSetProperty("collectionIncludeList", collectionIncludeList);
             return this;
         }
         /**
@@ -348,10 +411,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * connection cannot be made or when no primary is available. Defaults
          * to 1 second (1000 ms).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: mongodb
+         * 
+         * @param connectBackoffInitialDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder connectBackoffInitialDelayMs(
                 long connectBackoffInitialDelayMs) {
@@ -363,10 +429,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * connection cannot be made or when no primary is available. Defaults
          * to 1 second (1000 ms).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: mongodb
+         * 
+         * @param connectBackoffInitialDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder connectBackoffInitialDelayMs(
                 String connectBackoffInitialDelayMs) {
@@ -378,10 +447,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * connection cannot be made or when no primary is available. Defaults
          * to 120 second (120,000 ms).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2m
          * Group: mongodb
+         * 
+         * @param connectBackoffMaxDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder connectBackoffMaxDelayMs(
                 long connectBackoffMaxDelayMs) {
@@ -393,10 +465,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * connection cannot be made or when no primary is available. Defaults
          * to 120 second (120,000 ms).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2m
          * Group: mongodb
+         * 
+         * @param connectBackoffMaxDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder connectBackoffMaxDelayMs(
                 String connectBackoffMaxDelayMs) {
@@ -410,10 +485,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 'connect.backoff.max.delay.ms' results in just over 20 minutes of
          * attempts before failing.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: mongodb
+         * 
+         * @param connectMaxAttempts the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder connectMaxAttempts(
                 int connectMaxAttempts) {
@@ -427,10 +505,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 'connect.backoff.max.delay.ms' results in just over 20 minutes of
          * attempts before failing.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: mongodb
+         * 
+         * @param connectMaxAttempts the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder connectMaxAttempts(
                 String connectMaxAttempts) {
@@ -442,33 +523,43 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param converters the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder converters(String converters) {
             doSetProperty("converters", converters);
             return this;
         }
         /**
-         * The databases for which changes are to be excluded.
+         * A comma-separated list of regular expressions that match the database
+         * names for which changes are to be excluded.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder databaseBlacklist(
-                String databaseBlacklist) {
-            doSetProperty("databaseBlacklist", databaseBlacklist);
+        default DebeziumMongodbEndpointBuilder databaseExcludeList(
+                String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
             return this;
         }
         /**
          * The path to the file that will be used to record the database
          * history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param databaseHistoryFileFilename the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder databaseHistoryFileFilename(
                 String databaseHistoryFileFilename) {
@@ -476,15 +567,19 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The databases for which changes are to be captured.
+         * A comma-separated list of regular expressions that match the database
+         * names for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder databaseWhitelist(
-                String databaseWhitelist) {
-            doSetProperty("databaseWhitelist", databaseWhitelist);
+        default DebeziumMongodbEndpointBuilder databaseIncludeList(
+                String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -495,10 +590,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped;'ignore' the problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: mongodb
+         * 
+         * @param eventProcessingFailureHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder eventProcessingFailureHandlingMode(
                 String eventProcessingFailureHandlingMode) {
@@ -506,25 +604,31 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'field.blacklist' description.
+         * A comma-separated list of the fully-qualified names of fields that
+         * should be excluded from change event message values.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param fieldExcludeList the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder fieldBlacklist(
-                String fieldBlacklist) {
-            doSetProperty("fieldBlacklist", fieldBlacklist);
+        default DebeziumMongodbEndpointBuilder fieldExcludeList(
+                String fieldExcludeList) {
+            doSetProperty("fieldExcludeList", fieldExcludeList);
             return this;
         }
         /**
          * Description is not available here, please check Debezium website for
          * corresponding key 'field.renames' description.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param fieldRenames the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder fieldRenames(String fieldRenames) {
             doSetProperty("fieldRenames", fieldRenames);
@@ -535,10 +639,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
                 int heartbeatIntervalMs) {
@@ -550,10 +657,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
                 String heartbeatIntervalMs) {
@@ -564,10 +674,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: __debezium-heartbeat
          * Group: mongodb
+         * 
+         * @param heartbeatTopicsPrefix the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder heartbeatTopicsPrefix(
                 String heartbeatTopicsPrefix) {
@@ -575,40 +688,15 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of threads used to perform an initial sync of the
-         * collections in a replica set. Defaults to 1.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: mongodb
-         */
-        default DebeziumMongodbEndpointBuilder initialSyncMaxThreads(
-                int initialSyncMaxThreads) {
-            doSetProperty("initialSyncMaxThreads", initialSyncMaxThreads);
-            return this;
-        }
-        /**
-         * Maximum number of threads used to perform an initial sync of the
-         * collections in a replica set. Defaults to 1.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: mongodb
-         */
-        default DebeziumMongodbEndpointBuilder initialSyncMaxThreads(
-                String initialSyncMaxThreads) {
-            doSetProperty("initialSyncMaxThreads", initialSyncMaxThreads);
-            return this;
-        }
-        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: mongodb
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder maxBatchSize(int maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -617,10 +705,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: mongodb
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder maxBatchSize(String maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -631,10 +722,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: mongodb
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder maxQueueSize(int maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
@@ -645,22 +739,64 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: mongodb
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder maxQueueSize(String maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
             return this;
         }
         /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder maxQueueSizeInBytes(
+                long maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
+            return this;
+        }
+        /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder maxQueueSizeInBytes(
+                String maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
+            return this;
+        }
+        /**
          * Database containing user credentials.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: admin
          * Group: mongodb
+         * 
+         * @param mongodbAuthsource the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbAuthsource(
                 String mongodbAuthsource) {
@@ -668,12 +804,47 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The connection timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param mongodbConnectTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder mongodbConnectTimeoutMs(
+                int mongodbConnectTimeoutMs) {
+            doSetProperty("mongodbConnectTimeoutMs", mongodbConnectTimeoutMs);
+            return this;
+        }
+        /**
+         * The connection timeout in milliseconds.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param mongodbConnectTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder mongodbConnectTimeoutMs(
+                String mongodbConnectTimeoutMs) {
+            doSetProperty("mongodbConnectTimeoutMs", mongodbConnectTimeoutMs);
+            return this;
+        }
+        /**
          * The hostname and port pairs (in the form 'host' or 'host:port') of
          * the MongoDB server(s) in the replica set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param mongodbHosts the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbHosts(String mongodbHosts) {
             doSetProperty("mongodbHosts", mongodbHosts);
@@ -685,10 +856,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * or whether the address(es) in 'hosts' should be used as is ('false').
          * The default is 'true'.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mongodb
+         * 
+         * @param mongodbMembersAutoDiscover the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbMembersAutoDiscover(
                 boolean mongodbMembersAutoDiscover) {
@@ -701,10 +875,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * or whether the address(es) in 'hosts' should be used as is ('false').
          * The default is 'true'.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: mongodb
+         * 
+         * @param mongodbMembersAutoDiscover the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbMembersAutoDiscover(
                 String mongodbMembersAutoDiscover) {
@@ -717,10 +895,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * topics. Each distinct MongoDB installation should have a separate
          * namespace and monitored by at most one Debezium connector.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: mongodb
+         * 
+         * @param mongodbName the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbName(String mongodbName) {
             doSetProperty("mongodbName", mongodbName);
@@ -729,10 +910,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Password to be used when connecting to MongoDB, if necessary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: mongodb
+         * 
+         * @param mongodbPassword the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbPassword(
                 String mongodbPassword) {
@@ -740,40 +924,113 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in seconds to look for new, removed, or changed replica
-         * sets. Defaults to 30 seconds.
+         * Frequency in milliseconds to look for new, removed, or changed
+         * replica sets. Defaults to 30000 milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 30
+         * Default: 30s
          * Group: mongodb
+         * 
+         * @param mongodbPollIntervalMs the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder mongodbPollIntervalSec(
-                int mongodbPollIntervalSec) {
-            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
+        default DebeziumMongodbEndpointBuilder mongodbPollIntervalMs(
+                long mongodbPollIntervalMs) {
+            doSetProperty("mongodbPollIntervalMs", mongodbPollIntervalMs);
             return this;
         }
         /**
-         * Frequency in seconds to look for new, removed, or changed replica
-         * sets. Defaults to 30 seconds.
+         * Frequency in milliseconds to look for new, removed, or changed
+         * replica sets. Defaults to 30000 milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: 30
+         * Default: 30s
          * Group: mongodb
+         * 
+         * @param mongodbPollIntervalMs the value to set
+         * @return the dsl builder
          */
-        default DebeziumMongodbEndpointBuilder mongodbPollIntervalSec(
-                String mongodbPollIntervalSec) {
-            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
+        default DebeziumMongodbEndpointBuilder mongodbPollIntervalMs(
+                String mongodbPollIntervalMs) {
+            doSetProperty("mongodbPollIntervalMs", mongodbPollIntervalMs);
+            return this;
+        }
+        /**
+         * The server selection timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30s
+         * Group: mongodb
+         * 
+         * @param mongodbServerSelectionTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder mongodbServerSelectionTimeoutMs(
+                int mongodbServerSelectionTimeoutMs) {
+            doSetProperty("mongodbServerSelectionTimeoutMs", mongodbServerSelectionTimeoutMs);
+            return this;
+        }
+        /**
+         * The server selection timeout in milliseconds.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30s
+         * Group: mongodb
+         * 
+         * @param mongodbServerSelectionTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder mongodbServerSelectionTimeoutMs(
+                String mongodbServerSelectionTimeoutMs) {
+            doSetProperty("mongodbServerSelectionTimeoutMs", mongodbServerSelectionTimeoutMs);
+            return this;
+        }
+        /**
+         * The socket timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         * 
+         * @param mongodbSocketTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder mongodbSocketTimeoutMs(
+                int mongodbSocketTimeoutMs) {
+            doSetProperty("mongodbSocketTimeoutMs", mongodbSocketTimeoutMs);
+            return this;
+        }
+        /**
+         * The socket timeout in milliseconds.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         * 
+         * @param mongodbSocketTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder mongodbSocketTimeoutMs(
+                String mongodbSocketTimeoutMs) {
+            doSetProperty("mongodbSocketTimeoutMs", mongodbSocketTimeoutMs);
             return this;
         }
         /**
          * Should connector use SSL to connect to MongoDB instances.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param mongodbSslEnabled the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbSslEnabled(
                 boolean mongodbSslEnabled) {
@@ -783,10 +1040,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Should connector use SSL to connect to MongoDB instances.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param mongodbSslEnabled the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbSslEnabled(
                 String mongodbSslEnabled) {
@@ -797,10 +1058,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Whether invalid host names are allowed when using SSL. If true the
          * connection will not prevent man-in-the-middle attacks.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param mongodbSslInvalidHostnameAllowed the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbSslInvalidHostnameAllowed(
                 boolean mongodbSslInvalidHostnameAllowed) {
@@ -811,10 +1075,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Whether invalid host names are allowed when using SSL. If true the
          * connection will not prevent man-in-the-middle attacks.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param mongodbSslInvalidHostnameAllowed the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbSslInvalidHostnameAllowed(
                 String mongodbSslInvalidHostnameAllowed) {
@@ -824,9 +1092,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Database user for connecting to MongoDB, if necessary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param mongodbUser the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder mongodbUser(String mongodbUser) {
             doSetProperty("mongodbUser", mongodbUser);
@@ -836,10 +1107,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: mongodb
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
                 long pollIntervalMs) {
@@ -850,10 +1124,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: mongodb
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
@@ -863,10 +1140,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
@@ -876,10 +1156,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder provideTransactionMetadata(
                 String provideTransactionMetadata) {
@@ -887,12 +1171,82 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder queryFetchSize(int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder queryFetchSize(
+                String queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder retriableRestartConnectorWaitMs(
+                String retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder sanitizeFieldNames(
                 boolean sanitizeFieldNames) {
@@ -902,10 +1256,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder sanitizeFieldNames(
                 String sanitizeFieldNames) {
@@ -917,9 +1275,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
          * default, no operations will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param skippedOperations the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder skippedOperations(
                 String skippedOperations) {
@@ -927,12 +1288,33 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * This property contains a comma-separated list of ., for which the
+         * initial snapshot may be a subset of data present in the data source.
+         * The subset would be defined by mongodb filter query specified as
+         * value for property snapshot.collection.filter.override..
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotCollectionFilterOverrides the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotCollectionFilterOverrides(
+                String snapshotCollectionFilterOverrides) {
+            doSetProperty("snapshotCollectionFilterOverrides", snapshotCollectionFilterOverrides);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder snapshotDelayMs(
                 long snapshotDelayMs) {
@@ -942,10 +1324,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder snapshotDelayMs(
                 String snapshotDelayMs) {
@@ -956,9 +1341,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
@@ -969,13 +1357,66 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder snapshotFetchSize(
                 String snapshotFetchSize) {
             doSetProperty("snapshotFetchSize", snapshotFetchSize);
+            return this;
+        }
+        /**
+         * this setting must be set to specify a list of tables/collections
+         * whose snapshot must be taken on creating or restarting the connector.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotIncludeCollectionList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotIncludeCollectionList(
+                String snapshotIncludeCollectionList) {
+            doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: mongodb
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotMaxThreads(
+                int snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: mongodb
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotMaxThreads(
+                String snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
             return this;
         }
         /**
@@ -984,10 +1425,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * should always perform an initial sync when required; 'never' to
          * specify the connector should never perform an initial sync.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: initial
          * Group: mongodb
+         * 
+         * @param snapshotMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder snapshotMode(String snapshotMode) {
             doSetProperty("snapshotMode", snapshotMode);
@@ -997,10 +1441,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A version of the format of the publicly visible source part in the
          * message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: v2
          * Group: mongodb
+         * 
+         * @param sourceStructVersion the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder sourceStructVersion(
                 String sourceStructVersion) {
@@ -1014,10 +1461,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder tombstonesOnDelete(
                 boolean tombstonesOnDelete) {
@@ -1031,10 +1481,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
@@ -1059,10 +1513,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumMongodbEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1076,9 +1533,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumMongodbEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1088,9 +1548,13 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumMongodbEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1101,9 +1565,12 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumMongodbEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -1111,41 +1578,16 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDebeziumMongodbEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDebeziumMongodbEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumMongodbEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1156,10 +1598,14 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumMongodbEndpointBuilder synchronous(
                 String synchronous) {
@@ -1184,6 +1630,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * same name will fail.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
             return DebeziumMongodbEndpointBuilderFactory.endpointBuilder("debezium-mongodb", path);
@@ -1205,6 +1652,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder debeziumMongodb(
                 String componentName,

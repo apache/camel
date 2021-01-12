@@ -83,7 +83,7 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
 
         InputStream is = getClass().getResourceAsStream("/nested-multipart.elm");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
-        Message[] messages = new Message[] {hurzMsg};
+        Message[] messages = new Message[] { hurzMsg };
 
         // insert one signed message
         folder.appendMessages(messages);

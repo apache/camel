@@ -66,8 +66,8 @@ public class CustomListAggregationStrategyEmptySplitTest extends ContextTestSupp
     }
 
     /**
-     * Our strategy is irrelevant as getValue will not be called on an empty
-     * list, however this strategy will group a list of integers.
+     * Our strategy is irrelevant as getValue will not be called on an empty list, however this strategy will group a
+     * list of integers.
      */
     public final class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
 

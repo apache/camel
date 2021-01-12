@@ -20,7 +20,6 @@ public class TestEntity {
     private String foo;
 
     public TestEntity(final String foo) {
-        super();
         this.foo = foo;
     }
 

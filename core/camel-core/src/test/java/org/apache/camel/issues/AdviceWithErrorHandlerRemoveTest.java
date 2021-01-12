@@ -17,9 +17,9 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +42,7 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:d").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
-        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 getOriginalRoute().errorHandler(noErrorHandler());
@@ -72,7 +72,7 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:dead2").expectedMessageCount(1);
 
-        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // override errorHandler by using on exception
@@ -94,7 +94,8 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo").errorHandler(deadLetterChannel("mock:dead")).to("mock:a").throwException(new IllegalArgumentException("Forced")).to("mock:b");
+                from("direct:foo").routeId("foo").errorHandler(deadLetterChannel("mock:dead")).to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced")).to("mock:b");
             }
         };
     }

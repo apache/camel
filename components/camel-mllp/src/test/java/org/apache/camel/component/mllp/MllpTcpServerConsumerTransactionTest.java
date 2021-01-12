@@ -86,25 +86,25 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
-                    .onCompleteOnly()
-                    .log(LoggingLevel.INFO, routeId, "Test route complete")
-                    .to(complete);
+                        .onCompleteOnly()
+                        .log(LoggingLevel.INFO, routeId, "Test route complete")
+                        .to(complete);
 
                 onCompletion()
-                    .onFailureOnly()
-                    .log(LoggingLevel.INFO, routeId, "Test route failed")
-                    .to(failure);
+                        .onFailureOnly()
+                        .log(LoggingLevel.INFO, routeId, "Test route failed")
+                        .to(failure);
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                    .routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Test route received message")
-                    .to("target://test-queue?transacted=true");
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
+                                .routeId(routeId)
+                                .log(LoggingLevel.INFO, routeId, "Test route received message")
+                                .to("target://test-queue?transacted=true");
 
                 from("target://test-queue")
-                    .routeId("jms-consumer")
-                    .log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
-                    .to(result);
+                        .routeId("jms-consumer")
+                        .log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
+                        .to(result);
 
             }
         };
@@ -138,4 +138,3 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
     }
 }
-

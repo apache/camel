@@ -37,6 +37,8 @@ public interface SparkComponentBuilderFactory {
      * Category: bigdata,iot
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-spark
+     * 
+     * @return the dsl builder
      */
     static SparkComponentBuilder spark() {
         return new SparkComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface SparkComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SparkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -70,10 +75,13 @@ public interface SparkComponentBuilderFactory {
         /**
          * RDD to compute against.
          * 
-         * The option is a: <code>org.apache.spark.api.java.JavaRDDLike</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.spark.api.java.JavaRDDLike&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param rdd the value to set
+         * @return the dsl builder
          */
         default SparkComponentBuilder rdd(
                 org.apache.spark.api.java.JavaRDDLike rdd) {
@@ -84,9 +92,13 @@ public interface SparkComponentBuilderFactory {
          * Function performing action against an RDD.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.spark.RddCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.spark.RddCallback&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param rddCallback the value to set
+         * @return the dsl builder
          */
         default SparkComponentBuilder rddCallback(
                 org.apache.camel.component.spark.RddCallback rddCallback) {
@@ -94,17 +106,23 @@ public interface SparkComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default SparkComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SparkComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -127,7 +145,7 @@ public interface SparkComponentBuilderFactory {
             case "lazyStartProducer": ((SparkComponent) component).setLazyStartProducer((boolean) value); return true;
             case "rdd": ((SparkComponent) component).setRdd((org.apache.spark.api.java.JavaRDDLike) value); return true;
             case "rddCallback": ((SparkComponent) component).setRddCallback((org.apache.camel.component.spark.RddCallback) value); return true;
-            case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SparkComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

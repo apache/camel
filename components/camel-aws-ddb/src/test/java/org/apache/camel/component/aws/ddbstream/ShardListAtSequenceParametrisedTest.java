@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws.ddbstream;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,16 +30,15 @@ public class ShardListAtSequenceParametrisedTest {
 
     public static Stream<Arguments> parameters() {
         return Stream.of(
-            Arguments.of("0", "a"),
-            Arguments.of("3", "a"),
-            Arguments.of("6", "b"),
-            Arguments.of("8", "b"),
-            Arguments.of("15", "b"),
-            Arguments.of("16", "c"),
-            Arguments.of("18", "d"),
-            Arguments.of("25", "d"),
-            Arguments.of("30", "d")
-        );
+                Arguments.of("0", "a"),
+                Arguments.of("3", "a"),
+                Arguments.of("6", "b"),
+                Arguments.of("8", "b"),
+                Arguments.of("15", "b"),
+                Arguments.of("16", "c"),
+                Arguments.of("18", "d"),
+                Arguments.of("25", "d"),
+                Arguments.of("30", "d"));
     }
 
     @BeforeEach
@@ -52,8 +48,7 @@ public class ShardListAtSequenceParametrisedTest {
                 "a", "1", "5",
                 "b", "8", "15",
                 "c", "16", "16",
-                "d", "20", null
-        ));
+                "d", "20", null));
     }
 
     @ParameterizedTest

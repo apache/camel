@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.djl.model;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.Classifications;
+import ai.djl.modality.cv.Image;
+import ai.djl.modality.cv.ImageFactory;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
 import org.apache.camel.Exchange;
@@ -69,7 +65,8 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
 
     private Map<String, Float> classify(Model model, Translator translator, File input) throws Exception {
         try {
-            return classify(model, translator, ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+            return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
@@ -78,18 +75,20 @@ public class CustomImageClassificationPredictor extends AbstractPredictor {
 
     private Map<String, Float> classify(Model model, Translator translator, InputStream input) throws Exception {
         try {
-            return classify(model, translator, ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(input);
+            return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
-    private Map<String, Float> classify(Model model, Translator translator, BufferedImage input) throws Exception {
-        try (Predictor<BufferedImage, Classifications> predictor = model.newPredictor(translator)) {
-            Classifications classifications = predictor.predict(input);
+    private Map<String, Float> classify(Model model, Translator translator, Image image) throws Exception {
+        try (Predictor<Image, Classifications> predictor = model.newPredictor(translator)) {
+            Classifications classifications = predictor.predict(image);
             List<Classifications.Classification> list = classifications.items();
-            return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
+            return list.stream()
+                    .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
             throw new RuntimeException("Could not process input or output", e);

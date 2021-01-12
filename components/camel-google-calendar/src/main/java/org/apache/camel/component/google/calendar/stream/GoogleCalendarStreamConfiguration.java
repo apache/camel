@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -33,39 +34,35 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private static final List<String> DEFAULT_SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     @UriPath
+    @Metadata(required = true)
     private String index;
-
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-
     @UriParam
     private String clientId;
-
-    @UriParam
-    private String clientSecret;
-
-    @UriParam
-    private String accessToken;
-
-    @UriParam
-    private String refreshToken;
-
     @UriParam
     private String applicationName;
-
+    @UriParam(label = "security", secret = true)
+    private String clientSecret;
+    @UriParam(label = "security", secret = true)
+    private String accessToken;
+    @UriParam(label = "security", secret = true)
+    private String refreshToken;
+    @UriParam(label = "security", secret = true)
+    private String p12FileName;
+    @UriParam(label = "security", secret = true)
+    private String emailAddress;
+    @UriParam(label = "security", secret = true)
+    private String user;
     @UriParam
     private String query;
-
     @UriParam(defaultValue = "10")
     private int maxResults = 10;
-
     @UriParam(defaultValue = "primary")
     private String calendarId = "primary";
-
     @UriParam(defaultValue = "true")
     private boolean consumeFromNow = true;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean considerLastUpdate;
 
     public String getClientId() {
@@ -77,6 +74,17 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    /**
+     * The emailAddress of the Google Service Account.
+     */
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getClientSecret() {
@@ -95,8 +103,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 access token. This typically expires after an hour so
-     * refreshToken is recommended for long term usage.
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -107,9 +114,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can
-     * obtain a new accessToken whenever the current one expires - a necessity
-     * if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -131,9 +137,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the level of permissions you want a calendar application to have to
-     * a user account. See https://developers.google.com/calendar/auth
-     * for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account. See
+     * https://developers.google.com/calendar/auth for more info.
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
@@ -148,6 +153,28 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
      */
     public void setIndex(String index) {
         this.index = index;
+    }
+
+    public String getP12FileName() {
+        return p12FileName;
+    }
+
+    /**
+     * The name of the p12 file which has the private key to use with the Google Service Account.
+     */
+    public void setP12FileName(String p12FileName) {
+        this.p12FileName = p12FileName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * The email address of the user the application is trying to impersonate in the service account flow.
+     */
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getQuery() {
@@ -210,7 +237,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     // *************************************************
     public GoogleCalendarStreamConfiguration copy() {
         try {
-            return (GoogleCalendarStreamConfiguration)super.clone();
+            return (GoogleCalendarStreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

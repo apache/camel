@@ -38,7 +38,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Schematron Producer Unit Test.
@@ -52,7 +52,8 @@ public class SchematronProducerTest extends CamelTestSupport {
         SchematronEndpoint endpoint = new SchematronEndpoint();
         TransformerFactory fac = new TransformerFactoryImpl();
         fac.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, endpoint.getUriResolver()));
-        Templates templates = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-1.sch"), fac);
+        Templates templates = TemplatesFactory.newInstance()
+                .getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-1.sch"), fac);
         endpoint.setRules(templates);
         producer = new SchematronProducer(endpoint);
     }
@@ -66,7 +67,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertEquals(Constants.SUCCESS, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
     }
 
     @Test
@@ -78,32 +79,34 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertEquals(Constants.FAILED, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
 
     }
 
     @Test
     public void testProcessValidXMLAsSource() throws Exception {
         Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
-        exc.getIn().setBody(new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"))));
+        exc.getIn().setBody(
+                new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"))));
 
         // process xml payload
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertEquals(Constants.SUCCESS, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
     }
 
     @Test
     public void testProcessInValidXMLAsSource() throws Exception {
         Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
-        exc.getIn().setBody(new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"))));
+        exc.getIn().setBody(
+                new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"))));
 
         // process xml payload
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertEquals(Constants.FAILED, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
 
     }
 

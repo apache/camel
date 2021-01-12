@@ -27,8 +27,11 @@ import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebsocketConsumerRouteTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(WebsocketConsumerRouteTest.class);
 
     private int port;
 
@@ -44,42 +47,43 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
+                            @Override
+                            public void onPingFrame(byte[] payload) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
+                            @Override
+                            public void onPongFrame(byte[] payload) {
 
-                    }
-                }).build()).get();
+                            }
+                        }).build())
+                .get();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Test");
@@ -87,7 +91,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
         websocket.sendTextFrame("Test");
 
         result.assertIsSatisfied();
-        
+
         websocket.sendCloseFrame();
         c.close();
     }
@@ -97,37 +101,38 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
-                    }
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-                    }
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                    }
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
-                    }
+                            @Override
+                            public void onPingFrame(byte[] payload) {
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
-                    }
-                }).build()).get();
+                            @Override
+                            public void onPongFrame(byte[] payload) {
+                            }
+                        }).build())
+                .get();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         final byte[] testmessage = "Test".getBytes("utf-8");
@@ -151,8 +156,8 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
                 websocketComponent.setMinThreads(1);
 
                 from("websocket://echo")
-                    .log(">>> Message received from WebSocket Client : ${body}")
-                    .to("mock:result");
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .to("mock:result");
             }
         };
     }

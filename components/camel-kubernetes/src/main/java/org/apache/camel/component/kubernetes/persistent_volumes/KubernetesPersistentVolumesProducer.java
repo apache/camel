@@ -43,7 +43,7 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -84,7 +84,8 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
     protected void doListPersistentVolumesByLabels(Exchange exchange, String operation) throws Exception {
         PersistentVolumeList pvList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
         NonNamespaceOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, Resource<PersistentVolume, DoneablePersistentVolume>> pvs;
         pvs = getEndpoint().getKubernetesClient().persistentVolumes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {

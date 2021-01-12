@@ -31,34 +31,28 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleDrive component.
  */
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public class GoogleDriveConfiguration {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
-            DriveScopes.DRIVE);
+    private static final List<String> DEFAULT_SCOPES
+            = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
+                    DriveScopes.DRIVE);
 
-    @UriPath(enums = "drive-about,drive-apps,drive-changes,drive-channels,drive-children,drive-comments,drive-files,drive-parents"
-            + ",drive-permissions,drive-properties,drive-realtime,drive-replies,drive-revisions") @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private GoogleDriveApiName apiName;
-
     @UriPath(enums = "copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch")
     @Metadata(required = true)
     private String methodName;
-    
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-    
     @UriParam
     private String clientId;
-
     @UriParam(label = "security", secret = true)
     private String clientSecret;
-
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
 
@@ -122,7 +116,8 @@ public class GoogleDriveConfiguration {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -138,13 +133,14 @@ public class GoogleDriveConfiguration {
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
-    
+
     public List<String> getScopes() {
         return scopes;
     }
 
     /**
-     * Specifies the level of permissions you want a drive application to have to a user account. See https://developers.google.com/drive/web/scopes for more info.
+     * Specifies the level of permissions you want a drive application to have to a user account. See
+     * https://developers.google.com/drive/web/scopes for more info.
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;

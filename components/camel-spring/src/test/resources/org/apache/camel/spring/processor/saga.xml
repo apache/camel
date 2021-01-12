@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="sagaService" class="org.apache.camel.impl.saga.InMemorySagaService" init-method="start" destroy-method="stop" />
+  <bean id="sagaService" class="org.apache.camel.saga.InMemorySagaService" init-method="start" destroy-method="stop" />
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">

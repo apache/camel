@@ -7,7 +7,7 @@ Camel provides support to probe the state of an integration via a pluggable Heal
 - *HealthCheckResponse:* represents a health check invocation response.
 - *HealthCheckConfiguration:* a basic configuration object that holds some basic settings like the minimum delay between calls, the number of times a service may be reported as unhealthy before marking the check as failed; besides these simple options, the check implementation is responsible for implementing further limitations where needed.
 - *HealthCheckRegistry:* a registry for health checks. There is a single default implementation and end users should really not implement their own.
-- *HealthCheckRepository:* a simple interface to define health check providers. By default there is one that grabs all the checks available in the registry so you can add your own check i.e. istantiating your bean in spring/spring-boot; components can provide their own repository.
+- *HealthCheckRepository:* a simple interface to define health check providers. By default there is one that grabs all the checks available in the registry so you can add your own check i.e. instantiating your bean in spring/spring-boot; components can provide their own repository.
 
 == Health checks out of the box
 
@@ -23,7 +23,7 @@ Camel provides three standard health checks out of the box
 == IDs
 
 A `HealthCheck` and `HealthCheckRegistry` has an ID. The ID has the name syntax `*name*-health-check`, or `*name*-health-check-repository`.
-With the prefix `-health-check` or `-health-check-repository`. When looking up or resolving by IDs then the shorthand name can be used.
+With the suffix `-health-check` or `-health-check-repository`. When looking up or resolving by IDs then the shorthand name can be used.
 
 For example `context-health-check` is the ID but can also be used by its shorthand `context`.
 
@@ -37,7 +37,7 @@ you would need to turn off readiness, by overriding the `isReadiness` method and
 [source,java]
 ----
     @Override
-    public boolean isLiveness() {
+    public boolean isReadiness() {
         return false;
     }
 ----

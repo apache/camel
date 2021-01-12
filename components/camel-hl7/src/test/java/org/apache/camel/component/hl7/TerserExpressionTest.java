@@ -60,13 +60,13 @@ public class TerserExpressionTest extends CamelTestSupport {
     @Test
     public void testTerserInvalidExpression() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:test4", createADT01Message()));
+                () -> template.sendBody("direct:test4", createADT01Message()));
     }
 
     @Test
     public void testTerserInvalidMessage() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:test4", "text instead of message"));
+                () -> template.sendBody("direct:test4", "text instead of message"));
     }
 
     @Test

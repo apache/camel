@@ -40,12 +40,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link BoxTasksManager}
- * APIs.
+ * Test class for {@link BoxTasksManager} APIs.
  */
 public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -114,7 +113,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         requestBody("direct://DELETETASK", testTask.getID());
 
         List<BoxTask.Info> tasks = testFile.getTasks();
-        assertFalse(tasks.size() != 0, "deleteTask task still exists.");
+        assertNotEquals(0, tasks.size(), "deleteTask task still exists.");
     }
 
     @Disabled // Receiving "not found" exception from Box API
@@ -126,7 +125,7 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         requestBody("direct://DELETETASKASSIGNMENT", info.getID());
 
         List<BoxTaskAssignment.Info> assignments = testTask.getAssignments();
-        assertFalse(assignments.size() != 0, "deleteTaskAssignment assignment still exists.");
+        assertNotEquals(0, assignments.size(), "deleteTaskAssignment assignment still exists.");
     }
 
     @Test

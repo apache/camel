@@ -4,8 +4,10 @@ package org.apache.camel.component.redis;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RedisEndpoint target = (RedisEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channels": target.getConfiguration().setChannels(property(camelContext, java.lang.String.class, value)); return true;
@@ -44,29 +44,34 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channels", java.lang.String.class);
-        answer.put("command", org.apache.camel.component.redis.Command.class);
-        answer.put("connectionFactory", org.springframework.data.redis.connection.RedisConnectionFactory.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("listenerContainer", org.springframework.data.redis.listener.RedisMessageListenerContainer.class);
-        answer.put("redisTemplate", org.springframework.data.redis.core.RedisTemplate.class);
-        answer.put("serializer", org.springframework.data.redis.serializer.RedisSerializer.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channels": return java.lang.String.class;
+        case "command": return org.apache.camel.component.redis.Command.class;
+        case "connectionfactory":
+        case "connectionFactory": return org.springframework.data.redis.connection.RedisConnectionFactory.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listenercontainer":
+        case "listenerContainer": return org.springframework.data.redis.listener.RedisMessageListenerContainer.class;
+        case "redistemplate":
+        case "redisTemplate": return org.springframework.data.redis.core.RedisTemplate.class;
+        case "serializer": return org.springframework.data.redis.serializer.RedisSerializer.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RedisEndpoint target = (RedisEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channels": return target.getConfiguration().getChannels();

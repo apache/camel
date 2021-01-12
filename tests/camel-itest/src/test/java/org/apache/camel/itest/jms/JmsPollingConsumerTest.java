@@ -23,9 +23,11 @@ import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,23 +35,24 @@ import org.springframework.test.context.ContextConfiguration;
 @CamelSpringTest
 @ContextConfiguration
 public class JmsPollingConsumerTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    @Produce("activemq:startConsumer")
+    @Produce("activemq:JmsPollingConsumerTestStartConsumer")
     protected ProducerTemplate startConsumer;
 
-    @Produce("direct:startConsumer")
+    @Produce("direct:JmsPollingConsumerTestStartConsumer")
     protected ProducerTemplate startDirectConsumer;
 
-    @Produce("activemq:queue")
+    @Produce("activemq:JmsPollingConsumerTestQueue")
     protected ProducerTemplate queue;
 
-    @EndpointInject("mock:result")
+    @EndpointInject("mock:JmsPollingConsumerTestResult")
     protected MockEndpoint result;
 
     /**
-     * Fails:
-     * Consumer is expected to read two messages from activemq:queue and concatenate their bodies.
-     * In this test, consumer bean is invoked from an activemq: route.
+     * Fails: Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this test,
+     * consumer bean is invoked from an activemq: route.
      */
     @Test
     @DirtiesContext
@@ -66,9 +69,8 @@ public class JmsPollingConsumerTest {
     }
 
     /**
-     * Succeeds:
-     * Consumer is expected to read two messages from activemq:queue and concatenate their bodies.
-     * In this test, consumer bean is invoked from a direct: route.
+     * Succeeds: Consumer is expected to read two messages from activemq:queue and concatenate their bodies. In this
+     * test, consumer bean is invoked from a direct: route.
      */
     @Test
     @DirtiesContext
@@ -93,7 +95,7 @@ public class JmsPollingConsumerTest {
             StringBuilder result = new StringBuilder();
 
             Exchange exchange;
-            while ((exchange = consumer.receive("activemq:queue", 2000)) != null) {
+            while ((exchange = consumer.receive("activemq:JmsPollingConsumerTestQueue", 2000)) != null) {
                 result.append(exchange.getIn().getBody(String.class));
             }
 

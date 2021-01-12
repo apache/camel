@@ -38,6 +38,8 @@ public interface Aws2SnsComponentBuilderFactory {
      * Category: cloud,messaging,mobile
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sns
+     * 
+     * @return the dsl builder
      */
     static Aws2SnsComponentBuilder aws2Sns() {
         return new Aws2SnsComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface Aws2SnsComponentBuilderFactory {
          * To use the AmazonSNS as the client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.sns.SnsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sns.SnsClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSNSClient the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder amazonSNSClient(
                 software.amazon.awssdk.services.sns.SnsClient amazonSNSClient) {
@@ -63,38 +68,28 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * Setting the autocreation of the topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param autoCreateTopic the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder autoCreateTopic(boolean autoCreateTopic) {
             doSetProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2SnsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sns.Sns2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sns.Sns2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder configuration(
                 org.apache.camel.component.aws2.sns.Sns2Configuration configuration) {
@@ -105,9 +100,12 @@ public interface Aws2SnsComponentBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
          * a custom CMK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kmsMasterKeyId the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder kmsMasterKeyId(
                 java.lang.String kmsMasterKeyId) {
@@ -125,10 +123,13 @@ public interface Aws2SnsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -136,11 +137,51 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The message structure to use such as json.
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         * 
+         * @param messageDeduplicationIdStrategy the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder messageDeduplicationIdStrategy(
+                java.lang.String messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageGroupIdStrategy the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder messageGroupIdStrategy(
+                java.lang.String messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            return this;
+        }
+        /**
+         * The message structure to use such as json.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param messageStructure the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder messageStructure(
                 java.lang.String messageStructure) {
@@ -148,11 +189,16 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. Is loaded by default from classpath, but
+         * you can prefix with classpath:, file:, or http: to load the resource
+         * from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder policy(java.lang.String policy) {
             doSetProperty("policy", policy);
@@ -161,9 +207,12 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the SNS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -172,9 +221,12 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the SNS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -183,11 +235,14 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SNS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -197,9 +252,12 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * The queueUrl to subscribe to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder queueUrl(java.lang.String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -211,9 +269,12 @@ public interface Aws2SnsComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -222,10 +283,13 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
@@ -236,9 +300,12 @@ public interface Aws2SnsComponentBuilderFactory {
          * The subject which is used if the message header 'CamelAwsSnsSubject'
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder subject(java.lang.String subject) {
             doSetProperty("subject", subject);
@@ -248,10 +315,13 @@ public interface Aws2SnsComponentBuilderFactory {
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param subscribeSNStoSQS the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder subscribeSNStoSQS(
                 boolean subscribeSNStoSQS) {
@@ -262,10 +332,13 @@ public interface Aws2SnsComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -273,25 +346,52 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Set whether the SNS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: producer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
          */
-        default Aws2SnsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2SnsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
+         */
+        default Aws2SnsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -300,9 +400,12 @@ public interface Aws2SnsComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2SnsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -334,10 +437,11 @@ public interface Aws2SnsComponentBuilderFactory {
             switch (name) {
             case "amazonSNSClient": getOrCreateConfiguration((Sns2Component) component).setAmazonSNSClient((software.amazon.awssdk.services.sns.SnsClient) value); return true;
             case "autoCreateTopic": getOrCreateConfiguration((Sns2Component) component).setAutoCreateTopic((boolean) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Sns2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Sns2Component) component).setConfiguration((org.apache.camel.component.aws2.sns.Sns2Configuration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((Sns2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "lazyStartProducer": ((Sns2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
+            case "messageGroupIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
             case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;
@@ -349,7 +453,8 @@ public interface Aws2SnsComponentBuilderFactory {
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
             case "subscribeSNStoSQS": getOrCreateConfiguration((Sns2Component) component).setSubscribeSNStoSQS((boolean) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sns2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((Sns2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sns2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "autowiredEnabled": ((Sns2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

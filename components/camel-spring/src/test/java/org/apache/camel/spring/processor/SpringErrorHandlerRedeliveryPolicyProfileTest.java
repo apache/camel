@@ -27,7 +27,8 @@ public class SpringErrorHandlerRedeliveryPolicyProfileTest extends SpringTestSup
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringErrorHandlerRedeliveryPolicyProfileTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringErrorHandlerRedeliveryPolicyProfileTest.xml");
     }
 
     @Test

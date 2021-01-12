@@ -4,14 +4,20 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for com.google.api.services.calendar.Calendar$Colors
+ * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar.Colors}.
  */
+@ApiParams(apiName = "colors", 
+           description = "The colors collection of methods",
+           apiMethods = {@ApiMethod(methodName = "get", description="Returns the color definitions for calendars and events", signatures={"com.google.api.services.calendar.Calendar$Colors$Get get()"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class CalendarColorsEndpointConfiguration extends GoogleCalendarConfiguration {
 }

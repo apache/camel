@@ -4,8 +4,10 @@ package org.apache.camel.component.aws2.cw;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,10 +25,6 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazoncwclient":
         case "amazonCwClient": target.getConfiguration().setAmazonCwClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "name": target.getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
@@ -50,25 +48,37 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonCwClient", software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("name", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timestamp", java.time.Instant.class);
-        answer.put("trustAllCertificates", boolean.class);
-        answer.put("unit", java.lang.String.class);
-        answer.put("value", java.lang.Double.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonCwClient"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazoncwclient":
+        case "amazonCwClient": return software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "name": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timestamp": return java.time.Instant.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "unit": return java.lang.String.class;
+        case "value": return java.lang.Double.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -79,10 +89,6 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazoncwclient":
         case "amazonCwClient": return target.getConfiguration().getAmazonCwClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "name": return target.getConfiguration().getName();

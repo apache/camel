@@ -41,10 +41,12 @@ public interface Ddb2EndpointBuilderFactory {
          * To use the AmazonDynamoDB as the client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonDDBClient the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder amazonDDBClient(Object amazonDDBClient) {
             doSetProperty("amazonDDBClient", amazonDDBClient);
@@ -54,52 +56,28 @@ public interface Ddb2EndpointBuilderFactory {
          * To use the AmazonDynamoDB as the client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.dynamodb.DynamoDbClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonDDBClient the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder amazonDDBClient(String amazonDDBClient) {
             doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Ddb2EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Ddb2EndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Determines whether or not strong consistency should be enforced when
          * data is read.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param consistentRead the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder consistentRead(boolean consistentRead) {
             doSetProperty("consistentRead", consistentRead);
@@ -109,10 +87,14 @@ public interface Ddb2EndpointBuilderFactory {
          * Determines whether or not strong consistency should be enforced when
          * data is read.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param consistentRead the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder consistentRead(String consistentRead) {
             doSetProperty("consistentRead", consistentRead);
@@ -121,9 +103,12 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Attribute name when creating table.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyAttributeName the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder keyAttributeName(String keyAttributeName) {
             doSetProperty("keyAttributeName", keyAttributeName);
@@ -132,9 +117,12 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Attribute type when creating table.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyAttributeType the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder keyAttributeType(String keyAttributeType) {
             doSetProperty("keyAttributeType", keyAttributeType);
@@ -151,10 +139,13 @@ public interface Ddb2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -171,10 +162,14 @@ public interface Ddb2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -184,10 +179,13 @@ public interface Ddb2EndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddb.Ddb2Operations&lt;/code&gt; type.
          * 
          * Default: PutItem
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder operation(Ddb2Operations operation) {
             doSetProperty("operation", operation);
@@ -197,10 +195,13 @@ public interface Ddb2EndpointBuilderFactory {
          * What operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ddb.Ddb2Operations&lt;/code&gt; type.
          * 
          * Default: PutItem
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -209,9 +210,12 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the DDB client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -223,9 +227,12 @@ public interface Ddb2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -237,10 +244,13 @@ public interface Ddb2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -249,11 +259,14 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the DDB client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -263,10 +276,13 @@ public interface Ddb2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the DDB client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -276,9 +292,12 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param readCapacity the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder readCapacity(Long readCapacity) {
             doSetProperty("readCapacity", readCapacity);
@@ -288,9 +307,13 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserve for reading resources from your
          * table.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param readCapacity the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder readCapacity(String readCapacity) {
             doSetProperty("readCapacity", readCapacity);
@@ -299,9 +322,12 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * The region in which DDB client needs to work.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -311,10 +337,13 @@ public interface Ddb2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -325,10 +354,14 @@ public interface Ddb2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -339,9 +372,12 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param writeCapacity the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder writeCapacity(Long writeCapacity) {
             doSetProperty("writeCapacity", writeCapacity);
@@ -351,9 +387,13 @@ public interface Ddb2EndpointBuilderFactory {
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param writeCapacity the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder writeCapacity(String writeCapacity) {
             doSetProperty("writeCapacity", writeCapacity);
@@ -362,9 +402,12 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -373,9 +416,12 @@ public interface Ddb2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -393,41 +439,16 @@ public interface Ddb2EndpointBuilderFactory {
             return (Ddb2EndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDdb2EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDdb2EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -437,10 +458,14 @@ public interface Ddb2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDdb2EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -489,6 +514,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The name of the table currently worked with.
          * 
          * @param path tableName
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder aws2Ddb(String path) {
             return Ddb2EndpointBuilderFactory.endpointBuilder("aws2-ddb", path);
@@ -510,6 +536,7 @@ public interface Ddb2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path tableName
+         * @return the dsl builder
          */
         default Ddb2EndpointBuilder aws2Ddb(String componentName, String path) {
             return Ddb2EndpointBuilderFactory.endpointBuilder(componentName, path);

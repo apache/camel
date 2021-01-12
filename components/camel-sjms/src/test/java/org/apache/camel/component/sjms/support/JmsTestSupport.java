@@ -40,25 +40,26 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
- * A support class that builds up and tears down an ActiveMQ instance to be used
- * for unit testing.
+ * A support class that builds up and tears down an ActiveMQ instance to be used for unit testing.
  */
 public class JmsTestSupport extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    protected boolean addSjmsComponent = true;
 
     @Produce
     protected ProducerTemplate template;
     protected String brokerUri;
     protected boolean externalAmq;
     protected Properties properties;
+    protected ActiveMQConnectionFactory connectionFactory;
 
     private BrokerService broker;
     private Connection connection;
@@ -67,10 +68,6 @@ public class JmsTestSupport extends CamelTestSupport {
 
     /**
      * Set up the Broker
-     *
-     * @see org.apache.camel.test.junit5.CamelTestSupport#doPreSetup()
-     *
-     * @throws Exception
      */
     @Override
     protected void doPreSetup() throws Exception {
@@ -100,8 +97,13 @@ public class JmsTestSupport extends CamelTestSupport {
         }
     }
 
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
     protected void configureBroker(BrokerService broker) throws Exception {
-        broker.setUseJmx(true);
+        broker.setUseJmx(false);
         broker.setPersistent(false);
         broker.deleteAllMessages();
         broker.addConnector(brokerUri);
@@ -123,7 +125,7 @@ public class JmsTestSupport extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        DefaultCamelContext dcc = (DefaultCamelContext)context;
+        DefaultCamelContext dcc = (DefaultCamelContext) context;
         while (broker != null && !dcc.isStopped()) {
             log.info("Waiting on the Camel Context to stop");
         }
@@ -144,34 +146,32 @@ public class JmsTestSupport extends CamelTestSupport {
         }
     }
 
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
-     * @return
-     * @throws Exception
-     */
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        connectionFactory = new ActiveMQConnectionFactory(brokerUri);
         setupFactoryExternal(connectionFactory);
         connection = connectionFactory.createConnection();
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionCount(1);
-        component.setConnectionFactory(connectionFactory);
-        camelContext.addComponent("sjms", component);
+        if (addSjmsComponent) {
+            SjmsComponent component = new SjmsComponent();
+            component.setConnectionFactory(connectionFactory);
+            camelContext.addComponent("sjms", component);
+        }
         return camelContext;
     }
 
     public DestinationViewMBean getQueueMBean(String queueName) throws MalformedObjectNameException {
         return getDestinationMBean(queueName, false);
     }
+
     public DestinationViewMBean getDestinationMBean(String destinationName, boolean topic) throws MalformedObjectNameException {
         String domain = "org.apache.activemq";
         String destinationType = topic ? "Topic" : "Queue";
-        ObjectName name = new ObjectName(String.format("%s:type=Broker,brokerName=localhost,destinationType=%s,destinationName=%s",
-                domain, destinationType, destinationName));
+        ObjectName name = new ObjectName(
+                String.format("%s:type=Broker,brokerName=localhost,destinationType=%s,destinationName=%s",
+                        domain, destinationType, destinationName));
         return (DestinationViewMBean) broker.getManagementContext().newProxyInstance(name, DestinationViewMBean.class, true);
     }
 
@@ -184,11 +184,14 @@ public class JmsTestSupport extends CamelTestSupport {
     }
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null, true, false);
+        return new Jms11ObjectFactory().createMessageConsumer(session,
+                destinationCreationStrategy.createDestination(session, destination, false), null, false, null, true, false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
-        return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true, false);
+        return new Jms11ObjectFactory().createMessageConsumer(session,
+                destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true,
+                false);
     }
 
     public void reconnect() throws Exception {

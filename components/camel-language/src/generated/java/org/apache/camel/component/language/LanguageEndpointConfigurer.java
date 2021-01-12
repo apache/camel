@@ -4,8 +4,10 @@ package org.apache.camel.component.language;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binary": target.setBinary(property(camelContext, boolean.class, value)); return true;
         case "cachescript":
         case "cacheScript": target.setCacheScript(property(camelContext, boolean.class, value)); return true;
@@ -38,18 +38,22 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("binary", boolean.class);
-        answer.put("cacheScript", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("script", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transform", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "binary": return boolean.class;
+        case "cachescript":
+        case "cacheScript": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "script": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "transform": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -58,8 +62,6 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return target.isAllowContextMapAll();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binary": return target.isBinary();
         case "cachescript":
         case "cacheScript": return target.isCacheScript();

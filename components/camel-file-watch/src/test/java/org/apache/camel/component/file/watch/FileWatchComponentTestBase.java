@@ -100,9 +100,9 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
     protected String testPath() {
         try {
             return folder.toRealPath()
-                    + folder.getFileSystem().getSeparator()
-                    + getClass().getSimpleName() + "_" + testMethod
-                    + folder.getFileSystem().getSeparator();
+                   + folder.getFileSystem().getSeparator()
+                   + getClass().getSimpleName() + "_" + testMethod
+                   + folder.getFileSystem().getSeparator();
         } catch (IOException e) {
             throw new IOError(e);
         }

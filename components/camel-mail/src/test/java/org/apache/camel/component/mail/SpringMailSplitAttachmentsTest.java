@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *  Spring XML version of {@link MailSplitAttachmentsTest}
+ * Spring XML version of {@link MailSplitAttachmentsTest}
  */
 public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
 

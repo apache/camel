@@ -60,7 +60,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             InputStream in = ECDSASignatureTest.class.getResourceAsStream("/org/apache/camel/component/crypto/ecdsa.jks");
             keyStore.load(in, "security".toCharArray());
             privateKey = (PrivateKey) keyStore.getKey("ECDSA", "security".toCharArray());
-            x509 = (X509Certificate)keyStore.getCertificate("ECDSA");
+            x509 = (X509Certificate) keyStore.getCertificate("ECDSA");
         } catch (Throwable e) {
             LOG.warn("Cannot setup keystore for running this test due " + e.getMessage() + ". This test is skipped.", e);
             canRun = false;
@@ -73,7 +73,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             return new RouteBuilder[] {};
         }
 
-        return new RouteBuilder[]{new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ecdsa-sha1
 
@@ -84,12 +84,12 @@ public class ECDSASignatureTest extends CamelTestSupport {
                         .setPublicKey(x509.getPublicKey());
 
                 from("direct:ecdsa-sha1")
-                    .to("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA")
-                    .to("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA")
-                    .to("mock:result");
+                        .to("crypto:sign:ecdsa-sha1?algorithm=SHA1withECDSA")
+                        .to("crypto:verify:ecdsa-sha1?algorithm=SHA1withECDSA")
+                        .to("mock:result");
                 // END SNIPPET: ecdsa-sha1
             }
-        }};
+        } };
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
     }
 
     public Exchange doTestSignatureRoute(RouteBuilder builder) throws Exception {
-        return doSignatureRouteTest(builder, null, Collections.<String, Object>emptyMap());
+        return doSignatureRouteTest(builder, null, Collections.<String, Object> emptyMap());
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {

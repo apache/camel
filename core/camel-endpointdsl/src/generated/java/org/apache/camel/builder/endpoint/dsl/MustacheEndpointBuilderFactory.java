@@ -44,10 +44,13 @@ public interface MustacheEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -61,10 +64,14 @@ public interface MustacheEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -78,10 +85,13 @@ public interface MustacheEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -95,10 +105,14 @@ public interface MustacheEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -108,10 +122,13 @@ public interface MustacheEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -120,10 +137,14 @@ public interface MustacheEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -132,9 +153,12 @@ public interface MustacheEndpointBuilderFactory {
         /**
          * Character encoding of the resource content.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -143,10 +167,13 @@ public interface MustacheEndpointBuilderFactory {
         /**
          * Characters used to mark template code end.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: }}
          * Group: producer
+         * 
+         * @param endDelimiter the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder endDelimiter(String endDelimiter) {
             doSetProperty("endDelimiter", endDelimiter);
@@ -163,10 +190,13 @@ public interface MustacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -184,10 +214,14 @@ public interface MustacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -197,10 +231,13 @@ public interface MustacheEndpointBuilderFactory {
         /**
          * Characters used to mark template code beginning.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: {{
          * Group: producer
+         * 
+         * @param startDelimiter the value to set
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder startDelimiter(String startDelimiter) {
             doSetProperty("startDelimiter", startDelimiter);
@@ -218,41 +255,16 @@ public interface MustacheEndpointBuilderFactory {
             return (MustacheEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMustacheEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMustacheEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMustacheEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -262,10 +274,14 @@ public interface MustacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMustacheEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -293,6 +309,7 @@ public interface MustacheEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder mustache(String path) {
             return MustacheEndpointBuilderFactory.endpointBuilder("mustache", path);
@@ -318,6 +335,7 @@ public interface MustacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder mustache(
                 String componentName,

@@ -19,16 +19,16 @@ package org.apache.camel.language.simple.ast;
 /**
  * A model which is a block, containing other nodes.
  * <p/>
- * This node will keep adding other nodes until no longer
- * accepted, by returning <tt>false</tt> in the {@link #acceptAndAddNode(SimpleNode)} method.
+ * This node will keep adding other nodes until no longer accepted, by returning <tt>false</tt> in the
+ * {@link #acceptAndAddNode(SimpleNode)} method.
  */
 public interface Block extends SimpleNode {
 
     /**
      * Whether to accept and add the given node in this block.
      *
-     * @param node the other node.
-     * @return <tt>true</tt> to accept and add to this block, <tt>false</tt> to end this block.
+     * @param  node the other node.
+     * @return      <tt>true</tt> to accept and add to this block, <tt>false</tt> to end this block.
      */
     boolean acceptAndAddNode(SimpleNode node);
 

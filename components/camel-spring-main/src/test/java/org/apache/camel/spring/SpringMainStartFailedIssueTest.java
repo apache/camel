@@ -30,7 +30,7 @@ public class SpringMainStartFailedIssueTest extends CamelTestSupport {
     public void testStartupFailed() throws Exception {
         Main main = new Main();
 
-        String[] args = new String[]{"-ac", "org/apache/camel/spring/SpringMainStartFailedIssueTest.xml"};
+        String[] args = new String[] { "-ac", "org/apache/camel/spring/SpringMainStartFailedIssueTest.xml" };
         try {
             main.run(args);
             fail("Should have thrown an exception");

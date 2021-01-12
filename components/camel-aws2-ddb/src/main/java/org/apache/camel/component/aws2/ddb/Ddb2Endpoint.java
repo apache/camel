@@ -51,7 +51,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Store and retrieve data from AWS DynamoDB service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName", producerOnly = true, category = {Category.CLOUD, Category.DATABASE, Category.NOSQL})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName",
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL })
 public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Endpoint.class);
@@ -118,8 +119,10 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     private TableDescription createTable(String tableName) {
         CreateTableRequest.Builder createTableRequest = CreateTableRequest.builder().tableName(tableName)
-            .keySchema(KeySchemaElement.builder().attributeName(configuration.getKeyAttributeName()).keyType(configuration.getKeyAttributeType()).build())
-            .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity()).writeCapacityUnits(configuration.getWriteCapacity()).build());
+                .keySchema(KeySchemaElement.builder().attributeName(configuration.getKeyAttributeName())
+                        .keyType(configuration.getKeyAttributeType()).build())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity())
+                        .writeCapacityUnits(configuration.getWriteCapacity()).build());
         return getDdbClient().createTable(createTableRequest.build()).tableDescription();
     }
 
@@ -139,7 +142,8 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -147,7 +151,8 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -164,8 +169,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

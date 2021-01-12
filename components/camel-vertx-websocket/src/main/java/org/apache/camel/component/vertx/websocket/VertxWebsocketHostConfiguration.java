@@ -27,7 +27,8 @@ public class VertxWebsocketHostConfiguration {
     private final HttpServerOptions serverOptions;
     private final SSLContextParameters sslContextParameters;
 
-    public VertxWebsocketHostConfiguration(Vertx vertx, Router router, HttpServerOptions serverOptions, SSLContextParameters sslContextParameters) {
+    public VertxWebsocketHostConfiguration(Vertx vertx, Router router, HttpServerOptions serverOptions,
+                                           SSLContextParameters sslContextParameters) {
         this.vertx = vertx;
         this.router = router;
         this.serverOptions = serverOptions;

@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.LambdaRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 
 /**
  * Global configuration for Camel Main to setup context name, stream caching and other global configurations.
  */
-@Configurer
-public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties> {
+@Configurer(bootstrap = true)
+public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties>
+        implements BootstrapCloseable {
 
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
     private boolean autoConfigurationFailFast = true;
     private boolean autoConfigurationLogSummary = true;
-    private boolean autowireComponentProperties = true;
-    private boolean autowireComponentPropertiesDeep;
-    private boolean autowireComponentPropertiesNonNullOnly;
-    private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
     private String packageScanRouteBuilders;
 
@@ -46,13 +46,49 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private List<Object> configurations = new ArrayList<>();
 
     // extended configuration
-    private final HealthConfigurationProperties healthConfigurationProperties = new HealthConfigurationProperties(this);
-    private final LraConfigurationProperties lraConfigurationProperties = new LraConfigurationProperties(this);
-    private final ThreadPoolConfigurationProperties threadPool = new ThreadPoolConfigurationProperties(this);
-    private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
-    private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
-    private final FaultToleranceConfigurationProperties faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
-    private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
+    private HealthConfigurationProperties healthConfigurationProperties;
+    private LraConfigurationProperties lraConfigurationProperties;
+    private ThreadPoolConfigurationProperties threadPool;
+    private HystrixConfigurationProperties hystrixConfigurationProperties;
+    private Resilience4jConfigurationProperties resilience4jConfigurationProperties;
+    private FaultToleranceConfigurationProperties faultToleranceConfigurationProperties;
+    private RestConfigurationProperties restConfigurationProperties;
+
+    @Override
+    public void close() {
+        if (healthConfigurationProperties != null) {
+            healthConfigurationProperties.close();
+            healthConfigurationProperties = null;
+        }
+        if (lraConfigurationProperties != null) {
+            lraConfigurationProperties.close();
+            lraConfigurationProperties = null;
+        }
+        if (threadPool != null) {
+            threadPool.close();
+            threadPool = null;
+        }
+        if (hystrixConfigurationProperties != null) {
+            hystrixConfigurationProperties.close();
+            hystrixConfigurationProperties = null;
+        }
+        if (resilience4jConfigurationProperties != null) {
+            resilience4jConfigurationProperties.close();
+            resilience4jConfigurationProperties = null;
+        }
+        if (faultToleranceConfigurationProperties != null) {
+            faultToleranceConfigurationProperties.close();
+            faultToleranceConfigurationProperties = null;
+        }
+        if (restConfigurationProperties != null) {
+            restConfigurationProperties.close();
+            restConfigurationProperties = null;
+        }
+        routesBuilders.clear();
+        routesBuilders = null;
+        configurations.clear();
+        configurations = null;
+    }
 
     // extended
     // --------------------------------------------------------------
@@ -61,6 +97,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Health Check
      */
     public HealthConfigurationProperties health() {
+        if (healthConfigurationProperties == null) {
+            healthConfigurationProperties = new HealthConfigurationProperties(this);
+        }
         return healthConfigurationProperties;
     }
 
@@ -68,6 +107,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Saga LRA
      */
     public LraConfigurationProperties lra() {
+        if (lraConfigurationProperties == null) {
+            lraConfigurationProperties = new LraConfigurationProperties(this);
+        }
         return lraConfigurationProperties;
     }
 
@@ -75,6 +117,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure thread pools
      */
     public ThreadPoolConfigurationProperties threadPool() {
+        if (threadPool == null) {
+            threadPool = new ThreadPoolConfigurationProperties(this);
+        }
         return threadPool;
     }
 
@@ -83,6 +128,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     @Deprecated
     public HystrixConfigurationProperties hystrix() {
+        if (hystrixConfigurationProperties == null) {
+            hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
+        }
         return hystrixConfigurationProperties;
     }
 
@@ -90,6 +138,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Circuit Breaker EIP with Resilience4j
      */
     public Resilience4jConfigurationProperties resilience4j() {
+        if (resilience4jConfigurationProperties == null) {
+            resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
+        }
         return resilience4jConfigurationProperties;
     }
 
@@ -97,6 +148,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Circuit Breaker EIP with MicroProfile Fault Tolerance
      */
     public FaultToleranceConfigurationProperties faultTolerance() {
+        if (faultToleranceConfigurationProperties == null) {
+            faultToleranceConfigurationProperties = new FaultToleranceConfigurationProperties(this);
+        }
         return faultToleranceConfigurationProperties;
     }
 
@@ -104,6 +158,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * To configure Rest DSL
      */
     public RestConfigurationProperties rest() {
+        if (restConfigurationProperties == null) {
+            restConfigurationProperties = new RestConfigurationProperties(this);
+        }
         return restConfigurationProperties;
     }
 
@@ -115,22 +172,18 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration of components, dataformats, languages is enabled or not.
-     * When enabled the configuration parameters are loaded from the properties component
-     * and optionally from the classpath file META-INF/services/org/apache/camel/autowire.properties.
-     * You can prefix the parameters in the properties file with:
-     * - camel.component.name.option1=value1
-     * - camel.component.name.option2=value2
-     * - camel.dataformat.name.option1=value1
-     * - camel.dataformat.name.option2=value2
-     * - camel.language.name.option1=value1
-     * - camel.language.name.option2=value2
-     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the
+     * configuration parameters are loaded from the properties component and optionally from the classpath file
+     * META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file
+     * with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 -
+     * camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1
+     * - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as
+     * seda,direct,jaxb.
      * <p/>
-     * The auto configuration also works for any options on components
-     * that is a complex type (not standard Java type) and there has been an explicit single
-     * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
-     * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
+     * The auto configuration also works for any options on components that is a complex type (not standard Java type)
+     * and there has been an explicit single bean instance registered to the Camel registry via the
+     * {@link org.apache.camel.spi.Registry#bind(String, Object)} method or by using the
+     * {@link org.apache.camel.BindToRegistry} annotation style.
      * <p/>
      * This option is default enabled.
      */
@@ -143,9 +196,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration should include OS environment variables as well. When enabled this
-     * allows to overrule any configuration using an OS environment variable. For example to set
-     * a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
+     * Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule
+     * any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds:
+     * CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
      * <p/>
      * This option is default enabled.
      */
@@ -180,69 +233,15 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autoConfigurationLogSummary = autoConfigurationLogSummary;
     }
 
-    public boolean isAutowireComponentProperties() {
-        return autowireComponentProperties;
-    }
-
-    /**
-     * Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
-     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
-     * <p/>
-     * This option is default enabled.
-     */
-    public void setAutowireComponentProperties(boolean autowireComponentProperties) {
-        this.autowireComponentProperties = autowireComponentProperties;
-    }
-
-    public boolean isAutowireComponentPropertiesDeep() {
-        return autowireComponentPropertiesDeep;
-    }
-
-    /**
-     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
-     * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
-     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
-     * <p/>
-     * This option is default disabled.
-     */
-    public void setAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
-        this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
-    }
-
-    public boolean isAutowireComponentPropertiesNonNullOnly() {
-        return autowireComponentPropertiesNonNullOnly;
-    }
-
-    /**
-     * Whether to only autowire if the property has no default value or has not been configured explicit.
-     * <p/>
-     * This option is default disabled.
-     */
-    public void setAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
-        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
-    }
-
-    public boolean isAutowireComponentPropertiesAllowPrivateSetter() {
-        return autowireComponentPropertiesAllowPrivateSetter;
-    }
-
-    /**
-     * Whether autowiring components allows to use private setter method when setting the value. This may be needed
-     * in some rare situations when some configuration classes may configure via constructors over setters. But
-     * constructor configuration is more cumbersome to use via .properties files etc.
-     */
-    public void setAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
-        this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
-    }
-
     public String getPackageScanRouteBuilders() {
         return packageScanRouteBuilders;
     }
 
     /**
-     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be included.
-     * If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder
-     * classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be
+     * included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and
+     * annotate your route builder classes with `@Component`. In other words only use this for Camel Main in standalone
+     * mode.
      */
     public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
         this.packageScanRouteBuilders = packageScanRouteBuilders;
@@ -267,8 +266,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Sets classes names that will be used to configure the camel context as example by providing custom beans
-     * through {@link org.apache.camel.BindToRegistry} annotation.
+     * Sets classes names that will be used to configure the camel context as example by providing custom beans through
+     * {@link org.apache.camel.BindToRegistry} annotation.
      */
     public void setConfigurationClasses(String configurations) {
         this.configurationClasses = configurations;
@@ -352,7 +351,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             existing = "";
         }
         if (routeBuilder != null) {
-            for (Class clazz : routeBuilder) {
+            for (Class<?> clazz : routeBuilder) {
                 if (!existing.isEmpty()) {
                     existing = existing + ",";
                 }
@@ -362,26 +361,33 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         setRoutesBuilderClasses(existing);
     }
 
+    /**
+     * Add an additional {@link LambdaRouteBuilder} object to the known list of builders.
+     */
+    public void addLambdaRouteBuilder(LambdaRouteBuilder routeBuilder) {
+        this.routesBuilders.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeBuilder.accept(this);
+            }
+        });
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
     /**
-     * Whether auto configuration of components/dataformats/languages is enabled or not.
-     * When enabled the configuration parameters are loaded from the properties component
-     * and configured as defaults (similar to spring-boot auto-configuration). You can prefix
-     * the parameters in the properties file with:
-     * - camel.component.name.option1=value1
-     * - camel.component.name.option2=value2
-     * - camel.dataformat.name.option1=value1
-     * - camel.dataformat.name.option2=value2
-     * - camel.language.name.option1=value1
-     * - camel.language.name.option2=value2
+     * Whether auto configuration of components/dataformats/languages is enabled or not. When enabled the configuration
+     * parameters are loaded from the properties component and configured as defaults (similar to spring-boot
+     * auto-configuration). You can prefix the parameters in the properties file with: -
+     * camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1
+     * - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2
      * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
      * <p/>
-     * The auto configuration also works for any options on components
-     * that is a complex type (not standard Java type) and there has been an explicit single
-     * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
-     * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
+     * The auto configuration also works for any options on components that is a complex type (not standard Java type)
+     * and there has been an explicit single bean instance registered to the Camel registry via the
+     * {@link org.apache.camel.spi.Registry#bind(String, Object)} method or by using the
+     * {@link org.apache.camel.BindToRegistry} annotation style.
      * <p/>
      * This option is default enabled.
      */
@@ -391,13 +397,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration should include OS environment variables as well. When enabled this
-     * allows to overrule any configuration using an OS environment variable. For example to set
-     * a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
+     * Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule
+     * any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds:
+     * CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
      * <p/>
      * This option is default enabled.
      */
-    public MainConfigurationProperties withAutoConfigurationEnvironmentVariablesEnabled(boolean autoConfigurationEnvironmentVariablesEnabled) {
+    public MainConfigurationProperties withAutoConfigurationEnvironmentVariablesEnabled(
+            boolean autoConfigurationEnvironmentVariablesEnabled) {
         this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
         return this;
     }
@@ -424,51 +431,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
-     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
-     * <p/>
-     * This option is default enabled.
-     */
-    public MainConfigurationProperties withAutowireComponentProperties(boolean autowireComponentProperties) {
-        this.autowireComponentProperties = autowireComponentProperties;
-        return this;
-    }
-
-    /**
-     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
-     * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
-     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
-     * <p/>
-     * This option is default disabled.
-     */
-    public MainConfigurationProperties withAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
-        this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
-        return this;
-    }
-
-    /**
-     * Whether to only autowire if the property has no default value or has not been configured explicit.
-     * <p/>
-     * This option is default disabled.
-     */
-    public MainConfigurationProperties withAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
-        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
-        return this;
-    }
-
-    /**
-     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
-     * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
-     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
-     * <p/>
-     * This option is default enabled.
-     */
-    public MainConfigurationProperties withAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
-        this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
-        return this;
-    }
-
-    /**
      * Sets the exit code for the application if duration was hit
      */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
@@ -477,9 +439,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be included.
-     * If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder
-     * classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be
+     * included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and
+     * annotate your route builder classes with `@Component`. In other words only use this for Camel Main in standalone
+     * mode.
      */
     public MainConfigurationProperties withPackageScanRouteBuilders(String packageScanRouteBuilders) {
         this.packageScanRouteBuilders = packageScanRouteBuilders;
@@ -490,8 +453,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     // --------------------------------------------------------------
 
     /**
-     * Sets classes names that will be used to configure the camel context as example by providing custom beans
-     * through {@link org.apache.camel.BindToRegistry} annotation.
+     * Sets classes names that will be used to configure the camel context as example by providing custom beans through
+     * {@link org.apache.camel.BindToRegistry} annotation.
      */
     public MainConfigurationProperties withConfigurationClasses(String configurations) {
         setConfigurationClasses(configurations);
@@ -554,6 +517,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAdditionalRoutesBuilder(Class... builders) {
         addRoutesBuilder(builders);
+        return this;
+    }
+
+    /**
+     * Add an additional {@link LambdaRouteBuilder} object to the known list of builders.
+     */
+    public MainConfigurationProperties withAdditionalLambdaRouteBuilder(LambdaRouteBuilder builder) {
+        addLambdaRouteBuilder(builder);
         return this;
     }
 }

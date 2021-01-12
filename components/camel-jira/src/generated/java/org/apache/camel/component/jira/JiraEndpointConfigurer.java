@@ -4,8 +4,10 @@ package org.apache.camel.component.jira;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumerkey":
@@ -42,34 +42,52 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekey":
         case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendonlyupdatedfield":
+        case "sendOnlyUpdatedField": target.setSendOnlyUpdatedField(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "verificationcode":
         case "verificationCode": target.getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
+        case "watchedfields":
+        case "watchedFields": target.setWatchedFields(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("delay", java.lang.Integer.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("jiraUrl", java.lang.String.class);
-        answer.put("jql", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxResults", java.lang.Integer.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("privateKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("verificationCode", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "delay": return java.lang.Integer.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "jiraurl":
+        case "jiraUrl": return java.lang.String.class;
+        case "jql": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
+        case "password": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return java.lang.String.class;
+        case "sendonlyupdatedfield":
+        case "sendOnlyUpdatedField": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "verificationcode":
+        case "verificationCode": return java.lang.String.class;
+        case "watchedfields":
+        case "watchedFields": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -78,8 +96,6 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getConfiguration().getAccessToken();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumerkey":
@@ -99,10 +115,14 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": return target.getConfiguration().getPassword();
         case "privatekey":
         case "privateKey": return target.getConfiguration().getPrivateKey();
+        case "sendonlyupdatedfield":
+        case "sendOnlyUpdatedField": return target.isSendOnlyUpdatedField();
         case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
         case "verificationcode":
         case "verificationCode": return target.getConfiguration().getVerificationCode();
+        case "watchedfields":
+        case "watchedFields": return target.getWatchedFields();
         default: return null;
         }
     }

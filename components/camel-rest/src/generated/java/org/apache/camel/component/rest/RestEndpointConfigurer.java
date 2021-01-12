@@ -4,8 +4,10 @@ package org.apache.camel.component.rest;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": target.setApiDoc(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bindingmode":
         case "bindingMode": target.setBindingMode(property(camelContext, org.apache.camel.spi.RestConfiguration.RestBindingMode.class, value)); return true;
         case "bridgeerrorhandler":
@@ -55,27 +55,39 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiDoc", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bindingMode", org.apache.camel.spi.RestConfiguration.RestBindingMode.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerComponentName", java.lang.String.class);
-        answer.put("consumes", java.lang.String.class);
-        answer.put("description", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("inType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outType", java.lang.String.class);
-        answer.put("producerComponentName", java.lang.String.class);
-        answer.put("produces", java.lang.String.class);
-        answer.put("queryParameters", java.lang.String.class);
-        answer.put("routeId", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apidoc":
+        case "apiDoc": return java.lang.String.class;
+        case "bindingmode":
+        case "bindingMode": return org.apache.camel.spi.RestConfiguration.RestBindingMode.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumercomponentname":
+        case "consumerComponentName": return java.lang.String.class;
+        case "consumes": return java.lang.String.class;
+        case "description": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "host": return java.lang.String.class;
+        case "intype":
+        case "inType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outtype":
+        case "outType": return java.lang.String.class;
+        case "producercomponentname":
+        case "producerComponentName": return java.lang.String.class;
+        case "produces": return java.lang.String.class;
+        case "queryparameters":
+        case "queryParameters": return java.lang.String.class;
+        case "routeid":
+        case "routeId": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -84,8 +96,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": return target.getApiDoc();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bindingmode":
         case "bindingMode": return target.getBindingMode();
         case "bridgeerrorhandler":

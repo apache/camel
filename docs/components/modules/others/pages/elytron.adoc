@@ -1,0 +1,55 @@
+[[elytron-other]]
+= Elytron Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-elytron/src/main/docs/elytron.adoc
+:docTitle: Elytron
+:artifactId: camel-elytron
+:description: Elytron Security Provider for camel-undertow
+:since: 3.1
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/elytron.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The Elytron Security Provider provides Elytron security over camel-undertow component.
+It enables camel-undertow component use Elytron security capabilities.
+To force camel-undertow to use elytron security provider, add elytron security provider library
+on classpath and provide instance of ElytronSercurityConfiguration as `securityConfiguration`
+parameter into camel-undertow component or provide both  `securityConfiguration` and `securityProvider`
+into camel-undertow component.
+
+Configuration has to provide all 3 security attributes:
+
+[width="100%",cols="2,5,^3",options="header"]
+|===
+| Name | Description | Type
+| *domainBuilder* | Builder for security domain. | SecurityDomain.Builder
+| *mechanismName* | MechanismName should be selected with regard to default securityRealm. For
+example to use bearer_token security, mechanism name has to be `BEARER_TOKEN` and realm has to be `TokenSecurityReal` | String
+| *elytronProvider* | Instance of WildFlyElytronBaseProvider with respect of mechanismName | WildFlyElytronBaseProvider
+|===
+
+Each exchange created by Undertow endpoint with Elytron security contains header `securityIdentity`
+with current Elytron's security identity as value.
+(`org.wildfly.security.auth.server.SecurityIdentity`) or is FORBIDDEN (status code 403)
+
+NOTE: OSGi is not supported
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-elytron</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Other Elytron capabilities
+
+This seurity provider contains only basic Elytron dependencies (without any transitive dependency
+from org.wildfly.security:wildfly-elytron).
+Ignored libraries should be added among application's dependencies for their usage.

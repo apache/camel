@@ -65,7 +65,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest",
+             lenientProperties = true)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
@@ -74,6 +75,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     protected Bus bus;
 
     private final InterceptorHolder interceptorHolder = new InterceptorHolder();
+    private CxfRsConfigurer chainedConfigurer;
 
     private Map<String, String> parameters;
     private Map<String, Object> properties;
@@ -162,8 +164,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service.
-     * If it is false, the CxfRsProducer will use the ProxyClientAPI to invoke the service
+     * If it is true, the CxfRsProducer will use the HttpClientAPI to invoke the service. If it is false, the
+     * CxfRsProducer will use the ProxyClientAPI to invoke the service
      */
     public void setHttpClientAPI(boolean clientAPI) {
         httpClientAPI = clientAPI;
@@ -206,7 +208,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
     }
 
-/**
+    /**
      * To use a custom CxfBinding to control the binding between Camel Message and CXF Message.
      */
     public void setBinding(CxfRsBinding binding) {
@@ -222,11 +224,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public CxfRsConfigurer getChainedCxfRsEndpointConfigurer() {
-        return ChainedCxfRsConfigurer
-                .create(getNullSafeCxfRsEndpointConfigurer(),
-                        SslCxfRsConfigurer.create(sslContextParameters, getCamelContext()))
-                .addChild(HostnameVerifierCxfRsConfigurer.create(hostnameVerifier));
+        return chainedConfigurer;
     }
+
     /**
      * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
      */
@@ -446,8 +446,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * The service beans (the bean ids to lookup in the registry) which you want to export as REST service.
-     * Multiple beans can be separated by comma
+     * The service beans (the bean ids to lookup in the registry) which you want to export as REST service. Multiple
+     * beans can be separated by comma
      */
     public void setServiceBeans(String beans) {
         this.serviceBeansRef = beans;
@@ -473,8 +473,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * This option is used to specify the model file which is useful for the resource class without annotation.
-     * When using this option, then the service class can be omitted, to emulate document-only endpoints
+     * This option is used to specify the model file which is useful for the resource class without annotation. When
+     * using this option, then the service class can be omitted, to emulate document-only endpoints
      */
     public void setModelRef(String ref) {
         this.modelRef = ref;
@@ -489,7 +489,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus ?_wadl
+     * This option can override the endpointUrl that published from the WADL which can be accessed with resource address
+     * url plus ?_wadl
      */
     public void setPublishedEndpointUrl(String publishedEndpointUrl) {
         this.publishedEndpointUrl = publishedEndpointUrl;
@@ -522,15 +523,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is larger than 207.
+     * This option tells the CxfRsProducer to inspect return codes and will generate an Exception if the return code is
+     * larger than 207.
      */
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
 
     /**
-     * This option allows you to configure the maximum size of the cache.
-     * The implementation caches CXF clients or ClientFactoryBean in CxfProvider and CxfRsProvider.
+     * This option allows you to configure the maximum size of the cache. The implementation caches CXF clients or
+     * ClientFactoryBean in CxfProvider and CxfRsProvider.
      */
     public void setMaxClientCacheSize(int maxClientCacheSize) {
         this.maxClientCacheSize = maxClientCacheSize;
@@ -586,15 +588,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * Set custom JAX-RS provider(s) list to the CxfRs endpoint.
-     * You can specify a string with a list of providers to lookup in the registy separated by comma.
+     * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can specify a string with a list of providers to
+     * lookup in the registy separated by comma.
      */
     public void setProviders(List<?> providers) {
         this.providers.addAll(providers);
     }
 
     /**
-     * Set custom JAX-RS provider(s) list which is looked up in the registry. Multiple entries can be separated by comma.
+     * Set custom JAX-RS provider(s) list which is looked up in the registry. Multiple entries can be separated by
+     * comma.
      */
     public void setProviders(String providers) {
         this.providersRef = providers;
@@ -693,19 +696,18 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     *  Sets how requests and responses will be mapped to/from Camel. Two values are possible:
-     *  <ul>
-     *      <li>SimpleConsumer: This binding style processes request parameters, multiparts, etc. and maps them to IN headers, IN attachments and to the message body.
-     *                          It aims to eliminate low-level processing of {@link org.apache.cxf.message.MessageContentsList}.
-     *                          It also also adds more flexibility and simplicity to the response mapping.
-     *                          Only available for consumers.
-     *      </li>
-     *      <li>Default: The default style. For consumers this passes on a MessageContentsList to the route, requiring low-level processing in the route.
-     *                   This is the traditional binding style, which simply dumps the {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack
-     *                   onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature.
-     *      </li>
-     *      <li>Custom: allows you to specify a custom binding through the binding option.</li>
-     *  </ul>
+     * Sets how requests and responses will be mapped to/from Camel. Two values are possible:
+     * <ul>
+     * <li>SimpleConsumer: This binding style processes request parameters, multiparts, etc. and maps them to IN
+     * headers, IN attachments and to the message body. It aims to eliminate low-level processing of
+     * {@link org.apache.cxf.message.MessageContentsList}. It also also adds more flexibility and simplicity to the
+     * response mapping. Only available for consumers.</li>
+     * <li>Default: The default style. For consumers this passes on a MessageContentsList to the route, requiring
+     * low-level processing in the route. This is the traditional binding style, which simply dumps the
+     * {@link org.apache.cxf.message.MessageContentsList} coming in from the CXF stack onto the IN message body. The
+     * user is then responsible for processing it according to the contract defined by the JAX-RS method signature.</li>
+     * <li>Custom: allows you to specify a custom binding through the binding option.</li>
+     * </ul>
      */
     public void setBindingStyle(BindingStyle bindingStyle) {
         this.bindingStyle = bindingStyle;
@@ -757,6 +759,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 setProvider(provider);
             }
         }
+
+        chainedConfigurer = ChainedCxfRsConfigurer
+                .create(getNullSafeCxfRsEndpointConfigurer(),
+                        SslCxfRsConfigurer.create(sslContextParameters, getCamelContext()))
+                .addChild(HostnameVerifierCxfRsConfigurer.create(hostnameVerifier));
     }
 
     @Override
@@ -764,13 +771,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // noop
     }
 
-
     public long getContinuationTimeout() {
         return continuationTimeout;
     }
 
     /**
-     * This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport.
+     * This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the
+     * CXF server is using Jetty or Servlet transport.
      */
     public void setContinuationTimeout(long continuationTimeout) {
         this.continuationTimeout = continuationTimeout;
@@ -781,7 +788,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * When the option is true, Camel will perform the invocation of the resource class instance and put the response object into the exchange for further processing.
+     * When the option is true, Camel will perform the invocation of the resource class instance and put the response
+     * object into the exchange for further processing.
      */
     public void setPerformInvocation(boolean performInvocation) {
         this.performInvocation = performInvocation;
@@ -793,8 +801,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     /**
      * When the option is true, JAXRS UriInfo, HttpHeaders, Request and SecurityContext contexts will be available to
-     * custom CXFRS processors as typed Camel exchange properties.
-     * These contexts can be used to analyze the current requests using JAX-RS API.
+     * custom CXFRS processors as typed Camel exchange properties. These contexts can be used to analyze the current
+     * requests using JAX-RS API.
      */
     public void setPropagateContexts(boolean propagateContexts) {
         this.propagateContexts = propagateContexts;
@@ -819,8 +827,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * The hostname verifier to be used. Use the # notation to reference a HostnameVerifier
-     * from the registry.
+     * The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry.
      */
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
@@ -831,8 +838,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     /**
-     * This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint
-     * in  programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer.
+     * This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which
+     * supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by
+     * implementing configure{Server/Client} method of CxfEndpointConfigurer.
      */
     public void setCxfRsConfigurer(CxfRsConfigurer configurer) {
         this.cxfRsConfigurer = configurer;

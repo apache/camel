@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.ext.web.Route;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport {
@@ -50,6 +53,9 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
             @Override
             public void handle(RoutingContext context) {
                 HttpServerRequest request = context.request();
+                String subProtocols = request.getHeader("Sec-WebSocket-Protocol");
+                assertEquals("foo,bar,cheese", subProtocols);
+
                 ServerWebSocket webSocket = request.upgrade();
                 webSocket.textMessageHandler(new Handler<String>() {
                     @Override
@@ -60,9 +66,12 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
             }
         });
 
-        VertxWebsocketHostConfiguration configuration = new VertxWebsocketHostConfiguration(vertx, router, null, null);
+        HttpServerOptions options = new HttpServerOptions();
+        options.setWebSocketSubProtocols(Arrays.asList("foo", "bar", "cheese"));
+
+        VertxWebsocketHostConfiguration configuration = new VertxWebsocketHostConfiguration(vertx, router, options, null);
         VertxWebsocketHostKey key = new VertxWebsocketHostKey("localhost", 0);
-        VertxWebsocketHost host =  new VertxWebsocketHost(configuration, key);
+        VertxWebsocketHost host = new VertxWebsocketHost(configuration, key);
         host.start();
 
         CamelContext context = new DefaultCamelContext();
@@ -70,10 +79,10 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .toD("vertx-websocket:localhost:${header.port}/ws");
+                        .toD("vertx-websocket:localhost:${header.port}/ws?clientSubProtocols=foo,bar,cheese");
 
                 from("vertx-websocket:localhost:" + port + "/test")
-                        .toF("vertx-websocket:localhost:%d/ws", host.getPort());
+                        .toF("vertx-websocket:localhost:%d/ws?clientSubProtocols=foo,bar,cheese", host.getPort());
             }
         });
 

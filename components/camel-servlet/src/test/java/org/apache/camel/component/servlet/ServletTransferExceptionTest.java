@@ -31,13 +31,14 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
 
     @Test
     public void testTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/hello",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/hello",
                 new ByteArrayInputStream("".getBytes()), "text/plain");
         WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, response.getContentType());
-        Object object = HttpHelper.deserializeJavaObjectFromStream(response.getInputStream());
+        Object object = HttpHelper.deserializeJavaObjectFromStream(response.getInputStream(), null);
         assertNotNull(object);
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, object);
@@ -50,7 +51,7 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
             @Override
             public void configure() throws Exception {
                 from("servlet:hello?transferException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

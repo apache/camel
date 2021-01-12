@@ -24,26 +24,38 @@ import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
+public class BeanProcessor extends ServiceSupport implements AsyncProcessor, ErrorHandlerAware {
 
     private final DelegateBeanProcessor delegate;
+
+    public BeanProcessor(Object pojo, CamelContext camelContext) {
+        this(new ConstantBeanHolder(
+                pojo, camelContext, ParameterMappingStrategyHelper.createParameterMappingStrategy(camelContext),
+                camelContext.getComponent("bean", BeanComponent.class)));
+    }
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this.delegate = new DelegateBeanProcessor(pojo, beanInfo);
     }
 
-    public BeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
-        this.delegate = new DelegateBeanProcessor(pojo, camelContext, parameterMappingStrategy);
-    }
-
-    public BeanProcessor(Object pojo, CamelContext camelContext) {
-        this.delegate = new DelegateBeanProcessor(pojo, camelContext);
-    }
-
     public BeanProcessor(BeanHolder beanHolder) {
         this.delegate = new DelegateBeanProcessor(beanHolder);
+    }
+
+    @Override
+    public Processor getErrorHandler() {
+        return null;
+    }
+
+    @Override
+    public void setErrorHandler(Processor errorHandler) {
+        BeanHolder holder = delegate.getBeanHolder();
+        if (holder != null) {
+            holder.setErrorHandler(errorHandler);
+        }
     }
 
     @Override
@@ -116,14 +128,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
         public DelegateBeanProcessor(Object pojo, BeanInfo beanInfo) {
             super(pojo, beanInfo);
-        }
-
-        public DelegateBeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
-            super(pojo, camelContext, parameterMappingStrategy);
-        }
-
-        public DelegateBeanProcessor(Object pojo, CamelContext camelContext) {
-            super(pojo, camelContext);
         }
 
         public DelegateBeanProcessor(BeanHolder beanHolder) {

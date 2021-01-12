@@ -50,10 +50,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to allow using StAX mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder allowStAX(boolean allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -62,10 +65,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to allow using StAX mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder allowStAX(String allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -75,9 +82,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a Camel Message header as the input source instead of Message
          * body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param headerName the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder headerName(String headerName) {
             doSetProperty("headerName", headerName);
@@ -87,10 +97,13 @@ public interface XQueryEndpointBuilderFactory {
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param namespacePrefixes the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
@@ -102,10 +115,13 @@ public interface XQueryEndpointBuilderFactory {
          * namespace mappings.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param namespacePrefixes the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder namespacePrefixes(
                 String namespacePrefixes) {
@@ -116,10 +132,13 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.xquery.ResultFormat&lt;/code&gt; type.
          * 
          * Default: DOM
          * Group: common
+         * 
+         * @param resultsFormat the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder resultsFormat(
                 ResultFormat resultsFormat) {
@@ -130,10 +149,13 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.xquery.ResultFormat&lt;/code&gt; type.
          * 
          * Default: DOM
          * Group: common
+         * 
+         * @param resultsFormat the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder resultsFormat(String resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
@@ -142,10 +164,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * What output result to use defined as a class.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder resultType(
                 Class<Object> resultType) {
@@ -156,9 +181,12 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder resultType(String resultType) {
             doSetProperty("resultType", resultType);
@@ -167,10 +195,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to strip all whitespaces.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stripsAllWhiteSpace the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
@@ -180,10 +211,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to strip all whitespaces.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stripsAllWhiteSpace the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
@@ -199,10 +234,13 @@ public interface XQueryEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -218,10 +256,14 @@ public interface XQueryEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -232,10 +274,13 @@ public interface XQueryEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -246,10 +291,14 @@ public interface XQueryEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -260,9 +309,12 @@ public interface XQueryEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -273,9 +325,12 @@ public interface XQueryEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -286,9 +341,12 @@ public interface XQueryEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -299,9 +357,12 @@ public interface XQueryEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -316,9 +377,12 @@ public interface XQueryEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -333,9 +397,12 @@ public interface XQueryEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -345,10 +412,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -357,10 +427,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -370,10 +443,13 @@ public interface XQueryEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -383,10 +459,14 @@ public interface XQueryEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -395,10 +475,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -407,10 +490,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -421,10 +507,13 @@ public interface XQueryEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -435,10 +524,13 @@ public interface XQueryEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -448,10 +540,14 @@ public interface XQueryEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -463,10 +559,13 @@ public interface XQueryEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -479,9 +578,12 @@ public interface XQueryEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -494,9 +596,12 @@ public interface XQueryEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -505,12 +610,32 @@ public interface XQueryEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -520,13 +645,17 @@ public interface XQueryEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -538,13 +667,16 @@ public interface XQueryEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -553,10 +685,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -566,10 +701,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -579,10 +718,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -592,10 +735,13 @@ public interface XQueryEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -605,10 +751,13 @@ public interface XQueryEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -619,10 +768,14 @@ public interface XQueryEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -645,10 +798,13 @@ public interface XQueryEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -662,9 +818,12 @@ public interface XQueryEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -674,9 +833,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -687,9 +850,12 @@ public interface XQueryEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -703,9 +869,12 @@ public interface XQueryEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -719,9 +888,12 @@ public interface XQueryEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -729,39 +901,15 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder configuration(
                 Object configuration) {
@@ -772,9 +920,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a custom Saxon configuration.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.Configuration</code> type.
+         * &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder configuration(
                 String configuration) {
@@ -784,10 +935,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
@@ -798,10 +952,13 @@ public interface XQueryEndpointBuilderFactory {
          * To set custom Saxon configuration properties.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
                 String configurationProperties) {
@@ -811,10 +968,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To use the custom ModuleURIResolver.
          * 
-         * The option is a: <code>net.sf.saxon.lib.ModuleURIResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
                 Object moduleURIResolver) {
@@ -825,9 +985,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use the custom ModuleURIResolver.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
                 String moduleURIResolver) {
@@ -837,10 +1000,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Additional parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
@@ -851,10 +1017,13 @@ public interface XQueryEndpointBuilderFactory {
          * Additional parameters.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder parameters(
                 String parameters) {
@@ -864,9 +1033,12 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Properties to configure the serialization parameters.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder properties(
                 Properties properties) {
@@ -876,10 +1048,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Properties to configure the serialization parameters.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder properties(
                 String properties) {
@@ -889,10 +1064,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To use a custom Saxon StaticQueryContext.
          * 
-         * The option is a: <code>net.sf.saxon.query.StaticQueryContext</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.query.StaticQueryContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param staticQueryContext the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
                 Object staticQueryContext) {
@@ -903,9 +1081,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a custom Saxon StaticQueryContext.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.query.StaticQueryContext</code> type.
+         * &lt;code&gt;net.sf.saxon.query.StaticQueryContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param staticQueryContext the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
                 String staticQueryContext) {
@@ -916,10 +1097,13 @@ public interface XQueryEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -930,10 +1114,14 @@ public interface XQueryEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -954,10 +1142,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to allow using StAX mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder allowStAX(boolean allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -966,10 +1157,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to allow using StAX mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder allowStAX(String allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -979,9 +1174,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a Camel Message header as the input source instead of Message
          * body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param headerName the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder headerName(String headerName) {
             doSetProperty("headerName", headerName);
@@ -991,10 +1189,13 @@ public interface XQueryEndpointBuilderFactory {
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param namespacePrefixes the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
@@ -1006,10 +1207,13 @@ public interface XQueryEndpointBuilderFactory {
          * namespace mappings.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param namespacePrefixes the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder namespacePrefixes(
                 String namespacePrefixes) {
@@ -1020,10 +1224,13 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.xquery.ResultFormat&lt;/code&gt; type.
          * 
          * Default: DOM
          * Group: common
+         * 
+         * @param resultsFormat the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder resultsFormat(
                 ResultFormat resultsFormat) {
@@ -1034,10 +1241,13 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.xquery.ResultFormat&lt;/code&gt; type.
          * 
          * Default: DOM
          * Group: common
+         * 
+         * @param resultsFormat the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder resultsFormat(String resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
@@ -1046,10 +1256,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * What output result to use defined as a class.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder resultType(
                 Class<Object> resultType) {
@@ -1060,9 +1273,12 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder resultType(String resultType) {
             doSetProperty("resultType", resultType);
@@ -1071,10 +1287,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to strip all whitespaces.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stripsAllWhiteSpace the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
@@ -1084,10 +1303,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to strip all whitespaces.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stripsAllWhiteSpace the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
@@ -1105,10 +1328,13 @@ public interface XQueryEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1126,10 +1352,14 @@ public interface XQueryEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1148,39 +1378,15 @@ public interface XQueryEndpointBuilderFactory {
             return (XQueryEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder configuration(
                 Object configuration) {
@@ -1191,9 +1397,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a custom Saxon configuration.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.Configuration</code> type.
+         * &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder configuration(
                 String configuration) {
@@ -1203,10 +1412,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
@@ -1217,10 +1429,13 @@ public interface XQueryEndpointBuilderFactory {
          * To set custom Saxon configuration properties.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder configurationProperties(
                 String configurationProperties) {
@@ -1230,10 +1445,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To use the custom ModuleURIResolver.
          * 
-         * The option is a: <code>net.sf.saxon.lib.ModuleURIResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
                 Object moduleURIResolver) {
@@ -1244,9 +1462,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use the custom ModuleURIResolver.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
                 String moduleURIResolver) {
@@ -1256,10 +1477,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Additional parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
@@ -1270,10 +1494,13 @@ public interface XQueryEndpointBuilderFactory {
          * Additional parameters.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder parameters(
                 String parameters) {
@@ -1283,9 +1510,12 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Properties to configure the serialization parameters.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder properties(
                 Properties properties) {
@@ -1295,10 +1525,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Properties to configure the serialization parameters.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder properties(
                 String properties) {
@@ -1308,10 +1541,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To use a custom Saxon StaticQueryContext.
          * 
-         * The option is a: <code>net.sf.saxon.query.StaticQueryContext</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.query.StaticQueryContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param staticQueryContext the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
                 Object staticQueryContext) {
@@ -1322,9 +1558,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a custom Saxon StaticQueryContext.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.query.StaticQueryContext</code> type.
+         * &lt;code&gt;net.sf.saxon.query.StaticQueryContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param staticQueryContext the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
                 String staticQueryContext) {
@@ -1335,10 +1574,13 @@ public interface XQueryEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1349,10 +1591,14 @@ public interface XQueryEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1374,10 +1620,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to allow using StAX mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder allowStAX(boolean allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -1386,10 +1635,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to allow using StAX mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder allowStAX(String allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -1399,9 +1652,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a Camel Message header as the input source instead of Message
          * body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param headerName the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder headerName(String headerName) {
             doSetProperty("headerName", headerName);
@@ -1411,10 +1667,13 @@ public interface XQueryEndpointBuilderFactory {
          * Allows to control which namespace prefixes to use for a set of
          * namespace mappings.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param namespacePrefixes the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
@@ -1426,10 +1685,13 @@ public interface XQueryEndpointBuilderFactory {
          * namespace mappings.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param namespacePrefixes the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder namespacePrefixes(String namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
@@ -1439,10 +1701,13 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.xquery.ResultFormat&lt;/code&gt; type.
          * 
          * Default: DOM
          * Group: common
+         * 
+         * @param resultsFormat the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder resultsFormat(ResultFormat resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
@@ -1452,10 +1717,13 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.xquery.ResultFormat&lt;/code&gt; type.
          * 
          * Default: DOM
          * Group: common
+         * 
+         * @param resultsFormat the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder resultsFormat(String resultsFormat) {
             doSetProperty("resultsFormat", resultsFormat);
@@ -1464,10 +1732,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * What output result to use defined as a class.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder resultType(Class<Object> resultType) {
             doSetProperty("resultType", resultType);
@@ -1477,9 +1748,12 @@ public interface XQueryEndpointBuilderFactory {
          * What output result to use defined as a class.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder resultType(String resultType) {
             doSetProperty("resultType", resultType);
@@ -1488,10 +1762,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to strip all whitespaces.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stripsAllWhiteSpace the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
@@ -1501,10 +1778,14 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Whether to strip all whitespaces.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stripsAllWhiteSpace the value to set
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
@@ -1524,39 +1805,15 @@ public interface XQueryEndpointBuilderFactory {
             return (XQueryEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXQueryEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXQueryEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder configuration(Object configuration) {
             doSetProperty("configuration", configuration);
@@ -1566,9 +1823,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a custom Saxon configuration.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.Configuration</code> type.
+         * &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder configuration(String configuration) {
             doSetProperty("configuration", configuration);
@@ -1577,10 +1837,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
@@ -1591,10 +1854,13 @@ public interface XQueryEndpointBuilderFactory {
          * To set custom Saxon configuration properties.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder configurationProperties(
                 String configurationProperties) {
@@ -1604,10 +1870,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To use the custom ModuleURIResolver.
          * 
-         * The option is a: <code>net.sf.saxon.lib.ModuleURIResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder moduleURIResolver(
                 Object moduleURIResolver) {
@@ -1618,9 +1887,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use the custom ModuleURIResolver.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder moduleURIResolver(
                 String moduleURIResolver) {
@@ -1630,10 +1902,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Additional parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder parameters(
                 Map<String, Object> parameters) {
@@ -1644,10 +1919,13 @@ public interface XQueryEndpointBuilderFactory {
          * Additional parameters.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder parameters(String parameters) {
             doSetProperty("parameters", parameters);
@@ -1656,9 +1934,12 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Properties to configure the serialization parameters.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder properties(Properties properties) {
             doSetProperty("properties", properties);
@@ -1667,10 +1948,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * Properties to configure the serialization parameters.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder properties(String properties) {
             doSetProperty("properties", properties);
@@ -1679,10 +1963,13 @@ public interface XQueryEndpointBuilderFactory {
         /**
          * To use a custom Saxon StaticQueryContext.
          * 
-         * The option is a: <code>net.sf.saxon.query.StaticQueryContext</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.query.StaticQueryContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param staticQueryContext the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder staticQueryContext(
                 Object staticQueryContext) {
@@ -1693,9 +1980,12 @@ public interface XQueryEndpointBuilderFactory {
          * To use a custom Saxon StaticQueryContext.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.query.StaticQueryContext</code> type.
+         * &lt;code&gt;net.sf.saxon.query.StaticQueryContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param staticQueryContext the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder staticQueryContext(
                 String staticQueryContext) {
@@ -1706,10 +1996,13 @@ public interface XQueryEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1719,10 +2012,14 @@ public interface XQueryEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXQueryEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1759,6 +2056,7 @@ public interface XQueryEndpointBuilderFactory {
          * The name of the template to load from classpath or file system
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder xquery(String path) {
             return XQueryEndpointBuilderFactory.endpointBuilder("xquery", path);
@@ -1779,6 +2077,7 @@ public interface XQueryEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder xquery(String componentName, String path) {
             return XQueryEndpointBuilderFactory.endpointBuilder(componentName, path);

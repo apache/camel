@@ -36,9 +36,12 @@ public class DefaultPackageScanResourceResolverTest {
     public void testFileResourcesScan() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
 
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/**/*.xml")).containsOnly("dummy-a", "scan-a", "dummy-b", "scan-b");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml")).containsOnly("dummy-a", "scan-a");
-        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml")).containsOnly("dummy-b", "scan-b");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/**/*.xml")).containsOnly("dummy-a",
+                "scan-a", "dummy-b", "scan-b");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/a?/*.xml")).containsOnly("dummy-a",
+                "scan-a");
+        assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/b?/*.xml")).containsOnly("dummy-b",
+                "scan-b");
         assertThat(loadRouteIDs(ctx, "file:src/test/resources/org/apache/camel/impl/engine/c?/*.xml")).isEmpty();
     }
 

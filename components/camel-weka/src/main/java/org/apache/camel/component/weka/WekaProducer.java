@@ -48,7 +48,7 @@ public class WekaProducer extends DefaultProducer {
 
     @Override
     public WekaEndpoint getEndpoint() {
-        return (WekaEndpoint)super.getEndpoint();
+        return (WekaEndpoint) super.getEndpoint();
     }
 
     public WekaConfiguration getConfiguration() {
@@ -80,31 +80,31 @@ public class WekaProducer extends DefaultProducer {
 
             Dataset dataset = handleFilterCmd(exchange);
             exchange.getMessage().setBody(dataset);
-            
+
         } else if (Command.model == cmd) {
 
             Dataset dataset = handleModelCmd(exchange);
             exchange.getMessage().setBody(dataset);
-            
+
         } else if (Command.push == cmd) {
 
             Dataset dataset = handlePushCmd(exchange);
             exchange.getMessage().setBody(dataset);
-            
+
         } else if (Command.pop == cmd) {
 
             Dataset dataset = handlePopCmd(exchange);
             exchange.getMessage().setBody(dataset);
-            
+
         } else {
-            
+
             // Not really needed here, because all commands are supported 
             throw new UnsupportedOperationException("Unsupported on Producer: " + cmd);
         }
     }
 
     Dataset handlePushCmd(Exchange exchange) throws Exception {
-        
+
         String dsname = getConfiguration().getDsname();
 
         Dataset dataset = assertDatasetBody(exchange);
@@ -113,12 +113,12 @@ public class WekaProducer extends DefaultProducer {
         } else {
             dataset.push();
         }
-        
+
         return dataset;
     }
 
     Dataset handlePopCmd(Exchange exchange) throws Exception {
-        
+
         String dsname = getConfiguration().getDsname();
 
         Dataset dataset = assertDatasetBody(exchange);
@@ -127,41 +127,41 @@ public class WekaProducer extends DefaultProducer {
         } else {
             dataset.pop();
         }
-        
+
         return dataset;
     }
 
     Dataset handleReadCmd(Exchange exchange) throws Exception {
-        
+
         String fpath = getConfiguration().getPath();
-        
+
         if (fpath != null) {
             Dataset dataset = Dataset.create(fpath);
             return dataset;
         }
-        
+
         Dataset dataset = assertDatasetBody(exchange);
         return dataset;
     }
 
     Object handleWriteCmd(Exchange exchange) throws Exception {
-        
+
         Dataset dataset = assertDatasetBody(exchange);
         String fpath = getConfiguration().getPath();
-        
+
         if (fpath != null) {
-            
+
             dataset.write(Paths.get(fpath));
             return dataset;
-            
+
         } else {
-            
+
             // The internal implementation of DataSink does this.. 
             // Instances.toString().getBytes()
             //
             // Therefore, we avoid creating yet another copy of the
             // instance data and call Instances.toString() as well
-            
+
             Instances instances = dataset.getInstances();
             byte[] bytes = instances.toString().getBytes();
             return new ByteArrayInputStream(bytes);
@@ -169,88 +169,88 @@ public class WekaProducer extends DefaultProducer {
     }
 
     Dataset handleFilterCmd(Exchange exchange) throws Exception {
-        
+
         String applyValue = getConfiguration().getApply();
 
         Dataset dataset = assertDatasetBody(exchange);
         dataset = dataset.apply(applyValue);
-        
+
         return dataset;
     }
 
     Dataset handleModelCmd(Exchange exchange) throws Exception {
-        
+
         Dataset dataset = assertDatasetBody(exchange);
-        
+
         String dsname = getConfiguration().getDsname();
         boolean crossValidate = getConfiguration().isXval();
         String buildSpec = getConfiguration().getBuild();
         String loadFrom = getConfiguration().getLoadFrom();
         String saveTo = getConfiguration().getSaveTo();
-        
+
         // Load the Model
-        
+
         if (loadFrom != null) {
-            
+
             Classifier cl = dataset
                     .loadClassifier(new ModelLoader(loadFrom))
                     .getClassifier();
-            
+
             AssertState.notNull(cl, "Cannot load the classifier from: " + loadFrom);
             LOG.debug("{}", cl);
         }
-        
+
         // Build a classifier
-        
+
         else if (buildSpec != null) {
-            
+
             dataset.buildClassifier(buildSpec);
-            
+
             // Cross Validate the Model
-            
+
             if (crossValidate) {
                 int seed = getConfiguration().getSeed();
                 int folds = getConfiguration().getFolds();
                 dataset.crossValidateModel(folds, seed);
             }
-            
+
             // Validate the Model using explicit/current instances
-            
+
             else {
-                
+
                 // Use the named data set training
                 if (dsname != null) {
                     dataset.pop(dsname);
                 }
-                
+
                 // Train with current instances
                 dataset.evaluateModel();
             }
-            
+
             Classifier cl = dataset.getClassifier();
             AssertState.notNull(cl, "Model command requires 'load' or 'apply'");
             LOG.debug("{}", cl);
-            
+
             Evaluation ev = dataset.getEvaluation();
             LOG.debug("{}", ev.toSummaryString());
         }
-        
+
         // Save the Model
-        
+
         if (saveTo != null) {
             dataset.consumeClassifier(new ModelPersister(saveTo));
         }
-        
+
         return dataset;
     }
 
     private Dataset assertDatasetBody(Exchange exchange) throws Exception {
-        
+
         Message msg = exchange.getMessage();
         Dataset dataset = msg.getBody(Dataset.class);
-        
+
         AssertState.notNull(dataset, "Cannot obtain dataset from body: " + msg.getBody());
-        
+
         return dataset;
     }
 }

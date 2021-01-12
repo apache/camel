@@ -4,8 +4,10 @@ package org.apache.camel.support.processor;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 
@@ -58,26 +60,44 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("MaxChars", int.class);
-        answer.put("Multiline", boolean.class);
-        answer.put("ShowAll", boolean.class);
-        answer.put("ShowBody", boolean.class);
-        answer.put("ShowBodyType", boolean.class);
-        answer.put("ShowCaughtException", boolean.class);
-        answer.put("ShowException", boolean.class);
-        answer.put("ShowExchangeId", boolean.class);
-        answer.put("ShowExchangePattern", boolean.class);
-        answer.put("ShowFiles", boolean.class);
-        answer.put("ShowFuture", boolean.class);
-        answer.put("ShowHeaders", boolean.class);
-        answer.put("ShowProperties", boolean.class);
-        answer.put("ShowStackTrace", boolean.class);
-        answer.put("ShowStreams", boolean.class);
-        answer.put("SkipBodyLineSeparator", boolean.class);
-        answer.put("Style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "maxchars":
+        case "MaxChars": return int.class;
+        case "multiline":
+        case "Multiline": return boolean.class;
+        case "showall":
+        case "ShowAll": return boolean.class;
+        case "showbody":
+        case "ShowBody": return boolean.class;
+        case "showbodytype":
+        case "ShowBodyType": return boolean.class;
+        case "showcaughtexception":
+        case "ShowCaughtException": return boolean.class;
+        case "showexception":
+        case "ShowException": return boolean.class;
+        case "showexchangeid":
+        case "ShowExchangeId": return boolean.class;
+        case "showexchangepattern":
+        case "ShowExchangePattern": return boolean.class;
+        case "showfiles":
+        case "ShowFiles": return boolean.class;
+        case "showfuture":
+        case "ShowFuture": return boolean.class;
+        case "showheaders":
+        case "ShowHeaders": return boolean.class;
+        case "showproperties":
+        case "ShowProperties": return boolean.class;
+        case "showstacktrace":
+        case "ShowStackTrace": return boolean.class;
+        case "showstreams":
+        case "ShowStreams": return boolean.class;
+        case "skipbodylineseparator":
+        case "SkipBodyLineSeparator": return boolean.class;
+        case "style":
+        case "Style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -48,9 +48,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The unique URL of the achievement.
          * 
-         * The option is a: <code>java.net.URL</code> type.
+         * The option is a: &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param achievementURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder achievementURL(
                 URL achievementURL) {
@@ -60,9 +63,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The unique URL of the achievement.
          * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param achievementURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder achievementURL(
                 String achievementURL) {
@@ -72,9 +79,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The album ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param albumId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder albumId(String albumId) {
             doSetProperty("albumId", albumId);
@@ -83,9 +93,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Album to be created or updated.
          * 
-         * The option is a: <code>facebook4j.AlbumUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.AlbumUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param albumUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder albumUpdate(Object albumUpdate) {
             doSetProperty("albumUpdate", albumUpdate);
@@ -94,10 +108,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Album to be created or updated.
          * 
-         * The option will be converted to a <code>facebook4j.AlbumUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.AlbumUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param albumUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder albumUpdate(String albumUpdate) {
             doSetProperty("albumUpdate", albumUpdate);
@@ -106,9 +123,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the Facebook Application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param appId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder appId(String appId) {
             doSetProperty("appId", appId);
@@ -117,9 +137,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Location latitude and longitude.
          * 
-         * The option is a: <code>facebook4j.GeoLocation</code> type.
+         * The option is a: &lt;code&gt;facebook4j.GeoLocation&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param center the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder center(Object center) {
             doSetProperty("center", center);
@@ -128,10 +152,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Location latitude and longitude.
          * 
-         * The option will be converted to a <code>facebook4j.GeoLocation</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.GeoLocation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param center the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder center(String center) {
             doSetProperty("center", center);
@@ -140,9 +167,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The checkin ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param checkinId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder checkinId(String checkinId) {
             doSetProperty("checkinId", checkinId);
@@ -152,9 +182,13 @@ public interface FacebookEndpointBuilderFactory {
          * The checkin to be created. Deprecated, instead create a Post with an
          * attached location.
          * 
-         * The option is a: <code>facebook4j.CheckinUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.CheckinUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param checkinUpdate the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default FacebookEndpointConsumerBuilder checkinUpdate(
@@ -167,9 +201,12 @@ public interface FacebookEndpointBuilderFactory {
          * attached location.
          * 
          * The option will be converted to a
-         * <code>facebook4j.CheckinUpdate</code> type.
+         * &lt;code&gt;facebook4j.CheckinUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param checkinUpdate the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default FacebookEndpointConsumerBuilder checkinUpdate(
@@ -180,9 +217,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Facebook4J API client URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder clientURL(String clientURL) {
             doSetProperty("clientURL", clientURL);
@@ -191,9 +231,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Facebook4J client API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientVersion the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder clientVersion(
                 String clientVersion) {
@@ -203,9 +246,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The comment ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param commentId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder commentId(String commentId) {
             doSetProperty("commentId", commentId);
@@ -214,9 +260,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Comment to be created or updated.
          * 
-         * The option is a: <code>facebook4j.CommentUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.CommentUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param commentUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder commentUpdate(
                 Object commentUpdate) {
@@ -227,9 +277,12 @@ public interface FacebookEndpointBuilderFactory {
          * The facebook Comment to be created or updated.
          * 
          * The option will be converted to a
-         * <code>facebook4j.CommentUpdate</code> type.
+         * &lt;code&gt;facebook4j.CommentUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param commentUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder commentUpdate(
                 String commentUpdate) {
@@ -239,10 +292,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder debugEnabled(
                 Boolean debugEnabled) {
@@ -252,11 +308,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder debugEnabled(String debugEnabled) {
             doSetProperty("debugEnabled", debugEnabled);
@@ -265,9 +324,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The description text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param description the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder description(String description) {
             doSetProperty("description", description);
@@ -276,9 +338,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Distance in meters.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param distance the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder distance(Integer distance) {
             doSetProperty("distance", distance);
@@ -287,10 +352,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Distance in meters.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param distance the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder distance(String distance) {
             doSetProperty("distance", distance);
@@ -299,9 +367,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder domainId(String domainId) {
             doSetProperty("domainId", domainId);
@@ -310,9 +381,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder domainName(String domainName) {
             doSetProperty("domainName", domainName);
@@ -321,10 +395,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain names.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainNames the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder domainNames(
                 List<String> domainNames) {
@@ -335,9 +412,12 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainNames the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder domainNames(String domainNames) {
             doSetProperty("domainNames", domainNames);
@@ -346,9 +426,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder eventId(String eventId) {
             doSetProperty("eventId", eventId);
@@ -357,9 +440,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event to be created or updated.
          * 
-         * The option is a: <code>facebook4j.EventUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.EventUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param eventUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder eventUpdate(Object eventUpdate) {
             doSetProperty("eventUpdate", eventUpdate);
@@ -368,10 +455,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event to be created or updated.
          * 
-         * The option will be converted to a <code>facebook4j.EventUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.EventUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder eventUpdate(String eventUpdate) {
             doSetProperty("eventUpdate", eventUpdate);
@@ -380,9 +470,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder friendId(String friendId) {
             doSetProperty("friendId", friendId);
@@ -391,9 +484,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend list ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendlistId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder friendlistId(String friendlistId) {
             doSetProperty("friendlistId", friendlistId);
@@ -402,9 +498,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend list Name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendlistName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder friendlistName(
                 String friendlistName) {
@@ -414,9 +513,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend user ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder friendUserId(String friendUserId) {
             doSetProperty("friendUserId", friendUserId);
@@ -425,9 +527,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The group ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param groupId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder groupId(String groupId) {
             doSetProperty("groupId", groupId);
@@ -436,10 +541,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder gzipEnabled(Boolean gzipEnabled) {
             doSetProperty("gzipEnabled", gzipEnabled);
@@ -448,11 +556,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder gzipEnabled(String gzipEnabled) {
             doSetProperty("gzipEnabled", gzipEnabled);
@@ -461,10 +572,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
@@ -474,11 +588,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
@@ -488,10 +605,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
@@ -501,11 +621,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
@@ -515,10 +638,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
@@ -528,11 +654,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
@@ -542,10 +671,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -555,11 +687,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -569,10 +704,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpRetryCount(
                 Integer httpRetryCount) {
@@ -582,11 +720,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpRetryCount(
                 String httpRetryCount) {
@@ -596,10 +737,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
@@ -609,11 +753,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
@@ -623,10 +770,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
@@ -636,11 +786,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
@@ -650,10 +803,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ids of users.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ids the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder ids(List<String> ids) {
             doSetProperty("ids", ids);
@@ -663,9 +819,12 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ids the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder ids(String ids) {
             doSetProperty("ids", ids);
@@ -674,9 +833,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -686,9 +848,12 @@ public interface FacebookEndpointBuilderFactory {
          * Enables notifications that the user has already read in addition to
          * unread ones.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeRead the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder includeRead(Boolean includeRead) {
             doSetProperty("includeRead", includeRead);
@@ -698,10 +863,13 @@ public interface FacebookEndpointBuilderFactory {
          * Enables notifications that the user has already read in addition to
          * unread ones.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeRead the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder includeRead(String includeRead) {
             doSetProperty("includeRead", includeRead);
@@ -710,9 +878,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Whether hidden.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param isHidden the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder isHidden(Boolean isHidden) {
             doSetProperty("isHidden", isHidden);
@@ -721,10 +892,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Whether hidden.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param isHidden the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder isHidden(String isHidden) {
             doSetProperty("isHidden", isHidden);
@@ -733,10 +907,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
@@ -746,11 +923,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder jsonStoreEnabled(
                 String jsonStoreEnabled) {
@@ -760,9 +940,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link URL.
          * 
-         * The option is a: <code>java.net.URL</code> type.
+         * The option is a: &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param link the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder link(URL link) {
             doSetProperty("link", link);
@@ -771,9 +954,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link URL.
          * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param link the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder link(String link) {
             doSetProperty("link", link);
@@ -782,9 +969,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param linkId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder linkId(String linkId) {
             doSetProperty("linkId", linkId);
@@ -793,9 +983,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Desired FQL locale.
          * 
-         * The option is a: <code>java.util.Locale</code> type.
+         * The option is a: &lt;code&gt;java.util.Locale&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param locale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder locale(Locale locale) {
             doSetProperty("locale", locale);
@@ -804,9 +997,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Desired FQL locale.
          * 
-         * The option will be converted to a <code>java.util.Locale</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Locale&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param locale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder locale(String locale) {
             doSetProperty("locale", locale);
@@ -815,10 +1012,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder mbeanEnabled(
                 Boolean mbeanEnabled) {
@@ -828,11 +1028,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder mbeanEnabled(String mbeanEnabled) {
             doSetProperty("mbeanEnabled", mbeanEnabled);
@@ -841,9 +1044,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The message text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param message the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder message(String message) {
             doSetProperty("message", message);
@@ -852,9 +1058,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The message ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder messageId(String messageId) {
             doSetProperty("messageId", messageId);
@@ -863,9 +1072,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The metric name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metric the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder metric(String metric) {
             doSetProperty("metric", metric);
@@ -874,9 +1086,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The milestone id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param milestoneId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder milestoneId(String milestoneId) {
             doSetProperty("milestoneId", milestoneId);
@@ -885,9 +1100,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user name, must be of the form 'first last'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder name(String name) {
             doSetProperty("name", name);
@@ -896,9 +1114,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The note ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param noteId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder noteId(String noteId) {
             doSetProperty("noteId", noteId);
@@ -907,9 +1128,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The notification ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notificationId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder notificationId(
                 String notificationId) {
@@ -919,9 +1143,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The insight object ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param objectId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder objectId(String objectId) {
             doSetProperty("objectId", objectId);
@@ -930,9 +1157,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The offer id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param offerId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder offerId(String offerId) {
             doSetProperty("offerId", offerId);
@@ -941,9 +1171,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The question's answer option description.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param optionDescription the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder optionDescription(
                 String optionDescription) {
@@ -953,9 +1186,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The page id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pageId(String pageId) {
             doSetProperty("pageId", pageId);
@@ -964,9 +1200,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The permission name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param permissionName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder permissionName(
                 String permissionName) {
@@ -976,9 +1215,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user permissions in the format perm1,perm2,...
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param permissions the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder permissions(String permissions) {
             doSetProperty("permissions", permissions);
@@ -987,9 +1229,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The photo ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param photoId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder photoId(String photoId) {
             doSetProperty("photoId", photoId);
@@ -998,9 +1243,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture id.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pictureId(Integer pictureId) {
             doSetProperty("pictureId", pictureId);
@@ -1009,10 +1257,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture id.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pictureId(String pictureId) {
             doSetProperty("pictureId", pictureId);
@@ -1021,9 +1272,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture2 id.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pictureId2(Integer pictureId2) {
             doSetProperty("pictureId2", pictureId2);
@@ -1032,10 +1286,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture2 id.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pictureId2(String pictureId2) {
             doSetProperty("pictureId2", pictureId2);
@@ -1044,9 +1301,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size.
          * 
-         * The option is a: <code>facebook4j.PictureSize</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PictureSize&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param pictureSize the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pictureSize(
                 PictureSize pictureSize) {
@@ -1056,10 +1317,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size.
          * 
-         * The option will be converted to a <code>facebook4j.PictureSize</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PictureSize&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureSize the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder pictureSize(String pictureSize) {
             doSetProperty("pictureSize", pictureSize);
@@ -1068,9 +1332,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The place ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param placeId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder placeId(String placeId) {
             doSetProperty("placeId", placeId);
@@ -1079,9 +1346,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder postId(String postId) {
             doSetProperty("postId", postId);
@@ -1090,9 +1360,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post to create or update.
          * 
-         * The option is a: <code>facebook4j.PostUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PostUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder postUpdate(Object postUpdate) {
             doSetProperty("postUpdate", postUpdate);
@@ -1101,10 +1374,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post to create or update.
          * 
-         * The option will be converted to a <code>facebook4j.PostUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PostUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder postUpdate(String postUpdate) {
             doSetProperty("postUpdate", postUpdate);
@@ -1113,10 +1389,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
@@ -1126,11 +1405,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
@@ -1140,10 +1422,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL queries.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queries the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder queries(
                 Map<String, String> queries) {
@@ -1154,10 +1439,13 @@ public interface FacebookEndpointBuilderFactory {
          * FQL queries.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queries the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder queries(String queries) {
             doSetProperty("queries", queries);
@@ -1166,9 +1454,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL query or search terms for search endpoints.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder query(String query) {
             doSetProperty("query", query);
@@ -1177,9 +1468,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The question id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param questionId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder questionId(String questionId) {
             doSetProperty("questionId", questionId);
@@ -1188,9 +1482,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Optional reading parameters. See Reading Options(#reading).
          * 
-         * The option is a: <code>facebook4j.Reading</code> type.
+         * The option is a: &lt;code&gt;facebook4j.Reading&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reading the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder reading(Object reading) {
             doSetProperty("reading", reading);
@@ -1199,10 +1496,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Optional reading parameters. See Reading Options(#reading).
          * 
-         * The option will be converted to a <code>facebook4j.Reading</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.Reading&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reading the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder reading(String reading) {
             doSetProperty("reading", reading);
@@ -1211,13 +1511,17 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder readingOptions(
                 String key,
@@ -1228,13 +1532,16 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder readingOptions(Map values) {
             doSetMultiValueProperties("readingOptions", "reading.", values);
@@ -1243,10 +1550,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/
          * Group: common
+         * 
+         * @param restBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder restBaseURL(String restBaseURL) {
             doSetProperty("restBaseURL", restBaseURL);
@@ -1255,9 +1565,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The numeric score with value.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scoreValue the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder scoreValue(Integer scoreValue) {
             doSetProperty("scoreValue", scoreValue);
@@ -1266,10 +1579,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The numeric score with value.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scoreValue the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder scoreValue(String scoreValue) {
             doSetProperty("scoreValue", scoreValue);
@@ -1278,9 +1594,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size, one of large, normal, small or square.
          * 
-         * The option is a: <code>facebook4j.PictureSize</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PictureSize&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder size(PictureSize size) {
             doSetProperty("size", size);
@@ -1289,10 +1609,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size, one of large, normal, small or square.
          * 
-         * The option will be converted to a <code>facebook4j.PictureSize</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PictureSize&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder size(String size) {
             doSetProperty("size", size);
@@ -1301,9 +1624,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The media content from either a java.io.File or java.io.Inputstream.
          * 
-         * The option is a: <code>facebook4j.Media</code> type.
+         * The option is a: &lt;code&gt;facebook4j.Media&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder source(Object source) {
             doSetProperty("source", source);
@@ -1312,9 +1638,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The media content from either a java.io.File or java.io.Inputstream.
          * 
-         * The option will be converted to a <code>facebook4j.Media</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.Media&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder source(String source) {
             doSetProperty("source", source);
@@ -1323,9 +1653,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The note of the subject.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -1334,9 +1667,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The tab id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tabId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder tabId(String tabId) {
             doSetProperty("tabId", tabId);
@@ -1345,9 +1681,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Photo tag information.
          * 
-         * The option is a: <code>facebook4j.TagUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TagUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder tagUpdate(Object tagUpdate) {
             doSetProperty("tagUpdate", tagUpdate);
@@ -1356,10 +1695,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Photo tag information.
          * 
-         * The option will be converted to a <code>facebook4j.TagUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TagUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder tagUpdate(String tagUpdate) {
             doSetProperty("tagUpdate", tagUpdate);
@@ -1368,9 +1710,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 1.
          * 
-         * The option is a: <code>facebook4j.TestUser</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder testUser1(Object testUser1) {
             doSetProperty("testUser1", testUser1);
@@ -1379,10 +1724,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 1.
          * 
-         * The option will be converted to a <code>facebook4j.TestUser</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder testUser1(String testUser1) {
             doSetProperty("testUser1", testUser1);
@@ -1391,9 +1739,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 2.
          * 
-         * The option is a: <code>facebook4j.TestUser</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder testUser2(Object testUser2) {
             doSetProperty("testUser2", testUser2);
@@ -1402,10 +1753,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 2.
          * 
-         * The option will be converted to a <code>facebook4j.TestUser</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder testUser2(String testUser2) {
             doSetProperty("testUser2", testUser2);
@@ -1414,9 +1768,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the test user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder testUserId(String testUserId) {
             doSetProperty("testUserId", testUserId);
@@ -1425,9 +1782,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The title text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param title the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder title(String title) {
             doSetProperty("title", title);
@@ -1436,9 +1796,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the user to tag.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder toUserId(String toUserId) {
             doSetProperty("toUserId", toUserId);
@@ -1447,10 +1810,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The IDs of the users to tag.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder toUserIds(List<String> toUserIds) {
             doSetProperty("toUserIds", toUserIds);
@@ -1460,9 +1826,12 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder toUserIds(String toUserIds) {
             doSetProperty("toUserIds", toUserIds);
@@ -1471,9 +1840,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The Facebook user ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -1482,9 +1854,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of a user 1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder userId1(String userId1) {
             doSetProperty("userId1", userId1);
@@ -1493,9 +1868,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of a user 2.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder userId2(String userId2) {
             doSetProperty("userId2", userId2);
@@ -1504,10 +1882,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The IDs of users to invite to event.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder userIds(List<String> userIds) {
             doSetProperty("userIds", userIds);
@@ -1517,9 +1898,12 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder userIds(String userIds) {
             doSetProperty("userIds", userIds);
@@ -1528,9 +1912,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The test user locale.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userLocale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder userLocale(String userLocale) {
             doSetProperty("userLocale", userLocale);
@@ -1539,10 +1926,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder useSSL(Boolean useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -1551,11 +1941,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder useSSL(String useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -1564,10 +1957,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Video API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph-video.facebook.com/
          * Group: common
+         * 
+         * @param videoBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder videoBaseURL(String videoBaseURL) {
             doSetProperty("videoBaseURL", videoBaseURL);
@@ -1576,9 +1972,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The video ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param videoId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder videoId(String videoId) {
             doSetProperty("videoId", videoId);
@@ -1593,10 +1992,13 @@ public interface FacebookEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -1612,10 +2014,14 @@ public interface FacebookEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -1625,9 +2031,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -1637,9 +2046,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -1649,9 +2061,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -1661,10 +2076,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -1674,9 +2092,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server user name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -1686,9 +2107,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The user access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAccessToken the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder oAuthAccessToken(
                 String oAuthAccessToken) {
@@ -1698,10 +2122,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * OAuth access token URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/oauth/access_token
          * Group: security
+         * 
+         * @param oAuthAccessTokenURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
@@ -1711,9 +2138,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The application Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder oAuthAppId(String oAuthAppId) {
             doSetProperty("oAuthAppId", oAuthAppId);
@@ -1722,9 +2152,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The application Secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppSecret the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder oAuthAppSecret(
                 String oAuthAppSecret) {
@@ -1734,10 +2167,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * OAuth authorization URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.facebook.com/dialog/oauth
          * Group: security
+         * 
+         * @param oAuthAuthorizationURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
@@ -1749,9 +2185,12 @@ public interface FacebookEndpointBuilderFactory {
          * https://developers.facebook.com/docs/reference/login/#permissions for
          * the detail.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthPermissions the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointConsumerBuilder oAuthPermissions(
                 String oAuthPermissions) {
@@ -1775,10 +2214,13 @@ public interface FacebookEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1792,9 +2234,12 @@ public interface FacebookEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1804,9 +2249,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1817,9 +2266,12 @@ public interface FacebookEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1827,41 +2279,16 @@ public interface FacebookEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1872,10 +2299,14 @@ public interface FacebookEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1896,9 +2327,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The unique URL of the achievement.
          * 
-         * The option is a: <code>java.net.URL</code> type.
+         * The option is a: &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param achievementURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder achievementURL(
                 URL achievementURL) {
@@ -1908,9 +2342,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The unique URL of the achievement.
          * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param achievementURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder achievementURL(
                 String achievementURL) {
@@ -1920,9 +2358,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The album ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param albumId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder albumId(String albumId) {
             doSetProperty("albumId", albumId);
@@ -1931,9 +2372,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Album to be created or updated.
          * 
-         * The option is a: <code>facebook4j.AlbumUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.AlbumUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param albumUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder albumUpdate(Object albumUpdate) {
             doSetProperty("albumUpdate", albumUpdate);
@@ -1942,10 +2387,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Album to be created or updated.
          * 
-         * The option will be converted to a <code>facebook4j.AlbumUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.AlbumUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param albumUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder albumUpdate(String albumUpdate) {
             doSetProperty("albumUpdate", albumUpdate);
@@ -1954,9 +2402,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the Facebook Application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param appId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder appId(String appId) {
             doSetProperty("appId", appId);
@@ -1965,9 +2416,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Location latitude and longitude.
          * 
-         * The option is a: <code>facebook4j.GeoLocation</code> type.
+         * The option is a: &lt;code&gt;facebook4j.GeoLocation&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param center the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder center(Object center) {
             doSetProperty("center", center);
@@ -1976,10 +2431,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Location latitude and longitude.
          * 
-         * The option will be converted to a <code>facebook4j.GeoLocation</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.GeoLocation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param center the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder center(String center) {
             doSetProperty("center", center);
@@ -1988,9 +2446,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The checkin ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param checkinId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder checkinId(String checkinId) {
             doSetProperty("checkinId", checkinId);
@@ -2000,9 +2461,13 @@ public interface FacebookEndpointBuilderFactory {
          * The checkin to be created. Deprecated, instead create a Post with an
          * attached location.
          * 
-         * The option is a: <code>facebook4j.CheckinUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.CheckinUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param checkinUpdate the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default FacebookEndpointProducerBuilder checkinUpdate(
@@ -2015,9 +2480,12 @@ public interface FacebookEndpointBuilderFactory {
          * attached location.
          * 
          * The option will be converted to a
-         * <code>facebook4j.CheckinUpdate</code> type.
+         * &lt;code&gt;facebook4j.CheckinUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param checkinUpdate the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default FacebookEndpointProducerBuilder checkinUpdate(
@@ -2028,9 +2496,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Facebook4J API client URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder clientURL(String clientURL) {
             doSetProperty("clientURL", clientURL);
@@ -2039,9 +2510,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Facebook4J client API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientVersion the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder clientVersion(
                 String clientVersion) {
@@ -2051,9 +2525,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The comment ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param commentId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder commentId(String commentId) {
             doSetProperty("commentId", commentId);
@@ -2062,9 +2539,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Comment to be created or updated.
          * 
-         * The option is a: <code>facebook4j.CommentUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.CommentUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param commentUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder commentUpdate(
                 Object commentUpdate) {
@@ -2075,9 +2556,12 @@ public interface FacebookEndpointBuilderFactory {
          * The facebook Comment to be created or updated.
          * 
          * The option will be converted to a
-         * <code>facebook4j.CommentUpdate</code> type.
+         * &lt;code&gt;facebook4j.CommentUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param commentUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder commentUpdate(
                 String commentUpdate) {
@@ -2087,10 +2571,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder debugEnabled(
                 Boolean debugEnabled) {
@@ -2100,11 +2587,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder debugEnabled(String debugEnabled) {
             doSetProperty("debugEnabled", debugEnabled);
@@ -2113,9 +2603,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The description text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param description the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder description(String description) {
             doSetProperty("description", description);
@@ -2124,9 +2617,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Distance in meters.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param distance the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder distance(Integer distance) {
             doSetProperty("distance", distance);
@@ -2135,10 +2631,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Distance in meters.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param distance the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder distance(String distance) {
             doSetProperty("distance", distance);
@@ -2147,9 +2646,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder domainId(String domainId) {
             doSetProperty("domainId", domainId);
@@ -2158,9 +2660,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder domainName(String domainName) {
             doSetProperty("domainName", domainName);
@@ -2169,10 +2674,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain names.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainNames the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder domainNames(
                 List<String> domainNames) {
@@ -2183,9 +2691,12 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainNames the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder domainNames(String domainNames) {
             doSetProperty("domainNames", domainNames);
@@ -2194,9 +2705,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder eventId(String eventId) {
             doSetProperty("eventId", eventId);
@@ -2205,9 +2719,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event to be created or updated.
          * 
-         * The option is a: <code>facebook4j.EventUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.EventUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param eventUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder eventUpdate(Object eventUpdate) {
             doSetProperty("eventUpdate", eventUpdate);
@@ -2216,10 +2734,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event to be created or updated.
          * 
-         * The option will be converted to a <code>facebook4j.EventUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.EventUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder eventUpdate(String eventUpdate) {
             doSetProperty("eventUpdate", eventUpdate);
@@ -2228,9 +2749,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder friendId(String friendId) {
             doSetProperty("friendId", friendId);
@@ -2239,9 +2763,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend list ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendlistId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder friendlistId(String friendlistId) {
             doSetProperty("friendlistId", friendlistId);
@@ -2250,9 +2777,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend list Name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendlistName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder friendlistName(
                 String friendlistName) {
@@ -2262,9 +2792,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend user ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder friendUserId(String friendUserId) {
             doSetProperty("friendUserId", friendUserId);
@@ -2273,9 +2806,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The group ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param groupId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder groupId(String groupId) {
             doSetProperty("groupId", groupId);
@@ -2284,10 +2820,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder gzipEnabled(Boolean gzipEnabled) {
             doSetProperty("gzipEnabled", gzipEnabled);
@@ -2296,11 +2835,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder gzipEnabled(String gzipEnabled) {
             doSetProperty("gzipEnabled", gzipEnabled);
@@ -2309,10 +2851,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
@@ -2322,11 +2867,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
@@ -2336,10 +2884,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
@@ -2349,11 +2900,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
@@ -2363,10 +2917,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
@@ -2376,11 +2933,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
@@ -2390,10 +2950,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -2403,11 +2966,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -2417,10 +2983,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpRetryCount(
                 Integer httpRetryCount) {
@@ -2430,11 +2999,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpRetryCount(
                 String httpRetryCount) {
@@ -2444,10 +3016,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
@@ -2457,11 +3032,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
@@ -2471,10 +3049,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
@@ -2484,11 +3065,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
@@ -2498,10 +3082,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ids of users.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ids the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder ids(List<String> ids) {
             doSetProperty("ids", ids);
@@ -2511,9 +3098,12 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ids the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder ids(String ids) {
             doSetProperty("ids", ids);
@@ -2522,9 +3112,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -2534,9 +3127,12 @@ public interface FacebookEndpointBuilderFactory {
          * Enables notifications that the user has already read in addition to
          * unread ones.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeRead the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder includeRead(Boolean includeRead) {
             doSetProperty("includeRead", includeRead);
@@ -2546,10 +3142,13 @@ public interface FacebookEndpointBuilderFactory {
          * Enables notifications that the user has already read in addition to
          * unread ones.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeRead the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder includeRead(String includeRead) {
             doSetProperty("includeRead", includeRead);
@@ -2558,9 +3157,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Whether hidden.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param isHidden the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder isHidden(Boolean isHidden) {
             doSetProperty("isHidden", isHidden);
@@ -2569,10 +3171,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Whether hidden.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param isHidden the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder isHidden(String isHidden) {
             doSetProperty("isHidden", isHidden);
@@ -2581,10 +3186,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
@@ -2594,11 +3202,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder jsonStoreEnabled(
                 String jsonStoreEnabled) {
@@ -2608,9 +3219,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link URL.
          * 
-         * The option is a: <code>java.net.URL</code> type.
+         * The option is a: &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param link the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder link(URL link) {
             doSetProperty("link", link);
@@ -2619,9 +3233,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link URL.
          * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param link the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder link(String link) {
             doSetProperty("link", link);
@@ -2630,9 +3248,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param linkId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder linkId(String linkId) {
             doSetProperty("linkId", linkId);
@@ -2641,9 +3262,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Desired FQL locale.
          * 
-         * The option is a: <code>java.util.Locale</code> type.
+         * The option is a: &lt;code&gt;java.util.Locale&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param locale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder locale(Locale locale) {
             doSetProperty("locale", locale);
@@ -2652,9 +3276,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Desired FQL locale.
          * 
-         * The option will be converted to a <code>java.util.Locale</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Locale&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param locale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder locale(String locale) {
             doSetProperty("locale", locale);
@@ -2663,10 +3291,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder mbeanEnabled(
                 Boolean mbeanEnabled) {
@@ -2676,11 +3307,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder mbeanEnabled(String mbeanEnabled) {
             doSetProperty("mbeanEnabled", mbeanEnabled);
@@ -2689,9 +3323,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The message text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param message the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder message(String message) {
             doSetProperty("message", message);
@@ -2700,9 +3337,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The message ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder messageId(String messageId) {
             doSetProperty("messageId", messageId);
@@ -2711,9 +3351,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The metric name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metric the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder metric(String metric) {
             doSetProperty("metric", metric);
@@ -2722,9 +3365,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The milestone id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param milestoneId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder milestoneId(String milestoneId) {
             doSetProperty("milestoneId", milestoneId);
@@ -2733,9 +3379,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user name, must be of the form 'first last'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder name(String name) {
             doSetProperty("name", name);
@@ -2744,9 +3393,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The note ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param noteId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder noteId(String noteId) {
             doSetProperty("noteId", noteId);
@@ -2755,9 +3407,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The notification ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notificationId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder notificationId(
                 String notificationId) {
@@ -2767,9 +3422,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The insight object ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param objectId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder objectId(String objectId) {
             doSetProperty("objectId", objectId);
@@ -2778,9 +3436,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The offer id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param offerId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder offerId(String offerId) {
             doSetProperty("offerId", offerId);
@@ -2789,9 +3450,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The question's answer option description.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param optionDescription the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder optionDescription(
                 String optionDescription) {
@@ -2801,9 +3465,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The page id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pageId(String pageId) {
             doSetProperty("pageId", pageId);
@@ -2812,9 +3479,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The permission name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param permissionName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder permissionName(
                 String permissionName) {
@@ -2824,9 +3494,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user permissions in the format perm1,perm2,...
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param permissions the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder permissions(String permissions) {
             doSetProperty("permissions", permissions);
@@ -2835,9 +3508,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The photo ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param photoId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder photoId(String photoId) {
             doSetProperty("photoId", photoId);
@@ -2846,9 +3522,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture id.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pictureId(Integer pictureId) {
             doSetProperty("pictureId", pictureId);
@@ -2857,10 +3536,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture id.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pictureId(String pictureId) {
             doSetProperty("pictureId", pictureId);
@@ -2869,9 +3551,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture2 id.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pictureId2(Integer pictureId2) {
             doSetProperty("pictureId2", pictureId2);
@@ -2880,10 +3565,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture2 id.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pictureId2(String pictureId2) {
             doSetProperty("pictureId2", pictureId2);
@@ -2892,9 +3580,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size.
          * 
-         * The option is a: <code>facebook4j.PictureSize</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PictureSize&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param pictureSize the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pictureSize(
                 PictureSize pictureSize) {
@@ -2904,10 +3596,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size.
          * 
-         * The option will be converted to a <code>facebook4j.PictureSize</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PictureSize&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureSize the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder pictureSize(String pictureSize) {
             doSetProperty("pictureSize", pictureSize);
@@ -2916,9 +3611,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The place ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param placeId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder placeId(String placeId) {
             doSetProperty("placeId", placeId);
@@ -2927,9 +3625,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder postId(String postId) {
             doSetProperty("postId", postId);
@@ -2938,9 +3639,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post to create or update.
          * 
-         * The option is a: <code>facebook4j.PostUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PostUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder postUpdate(Object postUpdate) {
             doSetProperty("postUpdate", postUpdate);
@@ -2949,10 +3653,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post to create or update.
          * 
-         * The option will be converted to a <code>facebook4j.PostUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PostUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder postUpdate(String postUpdate) {
             doSetProperty("postUpdate", postUpdate);
@@ -2961,10 +3668,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
@@ -2974,11 +3684,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
@@ -2988,10 +3701,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL queries.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queries the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder queries(
                 Map<String, String> queries) {
@@ -3002,10 +3718,13 @@ public interface FacebookEndpointBuilderFactory {
          * FQL queries.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queries the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder queries(String queries) {
             doSetProperty("queries", queries);
@@ -3014,9 +3733,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL query or search terms for search endpoints.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder query(String query) {
             doSetProperty("query", query);
@@ -3025,9 +3747,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The question id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param questionId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder questionId(String questionId) {
             doSetProperty("questionId", questionId);
@@ -3036,9 +3761,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Optional reading parameters. See Reading Options(#reading).
          * 
-         * The option is a: <code>facebook4j.Reading</code> type.
+         * The option is a: &lt;code&gt;facebook4j.Reading&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reading the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder reading(Object reading) {
             doSetProperty("reading", reading);
@@ -3047,10 +3775,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Optional reading parameters. See Reading Options(#reading).
          * 
-         * The option will be converted to a <code>facebook4j.Reading</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.Reading&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reading the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder reading(String reading) {
             doSetProperty("reading", reading);
@@ -3059,13 +3790,17 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder readingOptions(
                 String key,
@@ -3076,13 +3811,16 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder readingOptions(Map values) {
             doSetMultiValueProperties("readingOptions", "reading.", values);
@@ -3091,10 +3829,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/
          * Group: common
+         * 
+         * @param restBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder restBaseURL(String restBaseURL) {
             doSetProperty("restBaseURL", restBaseURL);
@@ -3103,9 +3844,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The numeric score with value.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scoreValue the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder scoreValue(Integer scoreValue) {
             doSetProperty("scoreValue", scoreValue);
@@ -3114,10 +3858,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The numeric score with value.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scoreValue the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder scoreValue(String scoreValue) {
             doSetProperty("scoreValue", scoreValue);
@@ -3126,9 +3873,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size, one of large, normal, small or square.
          * 
-         * The option is a: <code>facebook4j.PictureSize</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PictureSize&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder size(PictureSize size) {
             doSetProperty("size", size);
@@ -3137,10 +3888,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size, one of large, normal, small or square.
          * 
-         * The option will be converted to a <code>facebook4j.PictureSize</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PictureSize&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder size(String size) {
             doSetProperty("size", size);
@@ -3149,9 +3903,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The media content from either a java.io.File or java.io.Inputstream.
          * 
-         * The option is a: <code>facebook4j.Media</code> type.
+         * The option is a: &lt;code&gt;facebook4j.Media&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder source(Object source) {
             doSetProperty("source", source);
@@ -3160,9 +3917,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The media content from either a java.io.File or java.io.Inputstream.
          * 
-         * The option will be converted to a <code>facebook4j.Media</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.Media&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder source(String source) {
             doSetProperty("source", source);
@@ -3171,9 +3932,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The note of the subject.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -3182,9 +3946,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The tab id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tabId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder tabId(String tabId) {
             doSetProperty("tabId", tabId);
@@ -3193,9 +3960,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Photo tag information.
          * 
-         * The option is a: <code>facebook4j.TagUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TagUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder tagUpdate(Object tagUpdate) {
             doSetProperty("tagUpdate", tagUpdate);
@@ -3204,10 +3974,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Photo tag information.
          * 
-         * The option will be converted to a <code>facebook4j.TagUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TagUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder tagUpdate(String tagUpdate) {
             doSetProperty("tagUpdate", tagUpdate);
@@ -3216,9 +3989,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 1.
          * 
-         * The option is a: <code>facebook4j.TestUser</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder testUser1(Object testUser1) {
             doSetProperty("testUser1", testUser1);
@@ -3227,10 +4003,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 1.
          * 
-         * The option will be converted to a <code>facebook4j.TestUser</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder testUser1(String testUser1) {
             doSetProperty("testUser1", testUser1);
@@ -3239,9 +4018,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 2.
          * 
-         * The option is a: <code>facebook4j.TestUser</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder testUser2(Object testUser2) {
             doSetProperty("testUser2", testUser2);
@@ -3250,10 +4032,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 2.
          * 
-         * The option will be converted to a <code>facebook4j.TestUser</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder testUser2(String testUser2) {
             doSetProperty("testUser2", testUser2);
@@ -3262,9 +4047,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the test user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder testUserId(String testUserId) {
             doSetProperty("testUserId", testUserId);
@@ -3273,9 +4061,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The title text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param title the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder title(String title) {
             doSetProperty("title", title);
@@ -3284,9 +4075,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the user to tag.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder toUserId(String toUserId) {
             doSetProperty("toUserId", toUserId);
@@ -3295,10 +4089,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The IDs of the users to tag.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder toUserIds(List<String> toUserIds) {
             doSetProperty("toUserIds", toUserIds);
@@ -3308,9 +4105,12 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder toUserIds(String toUserIds) {
             doSetProperty("toUserIds", toUserIds);
@@ -3319,9 +4119,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The Facebook user ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -3330,9 +4133,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of a user 1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder userId1(String userId1) {
             doSetProperty("userId1", userId1);
@@ -3341,9 +4147,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of a user 2.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder userId2(String userId2) {
             doSetProperty("userId2", userId2);
@@ -3352,10 +4161,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The IDs of users to invite to event.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder userIds(List<String> userIds) {
             doSetProperty("userIds", userIds);
@@ -3365,9 +4177,12 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder userIds(String userIds) {
             doSetProperty("userIds", userIds);
@@ -3376,9 +4191,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The test user locale.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userLocale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder userLocale(String userLocale) {
             doSetProperty("userLocale", userLocale);
@@ -3387,10 +4205,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder useSSL(Boolean useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -3399,11 +4220,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder useSSL(String useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -3412,10 +4236,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Video API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph-video.facebook.com/
          * Group: common
+         * 
+         * @param videoBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder videoBaseURL(String videoBaseURL) {
             doSetProperty("videoBaseURL", videoBaseURL);
@@ -3424,9 +4251,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The video ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param videoId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder videoId(String videoId) {
             doSetProperty("videoId", videoId);
@@ -3443,10 +4273,13 @@ public interface FacebookEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -3464,10 +4297,14 @@ public interface FacebookEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -3477,9 +4314,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -3489,9 +4329,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -3501,9 +4344,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -3513,10 +4359,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -3526,9 +4375,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server user name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -3538,9 +4390,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The user access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAccessToken the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder oAuthAccessToken(
                 String oAuthAccessToken) {
@@ -3550,10 +4405,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * OAuth access token URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/oauth/access_token
          * Group: security
+         * 
+         * @param oAuthAccessTokenURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
@@ -3563,9 +4421,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The application Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder oAuthAppId(String oAuthAppId) {
             doSetProperty("oAuthAppId", oAuthAppId);
@@ -3574,9 +4435,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The application Secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppSecret the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder oAuthAppSecret(
                 String oAuthAppSecret) {
@@ -3586,10 +4450,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * OAuth authorization URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.facebook.com/dialog/oauth
          * Group: security
+         * 
+         * @param oAuthAuthorizationURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
@@ -3601,9 +4468,12 @@ public interface FacebookEndpointBuilderFactory {
          * https://developers.facebook.com/docs/reference/login/#permissions for
          * the detail.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthPermissions the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointProducerBuilder oAuthPermissions(
                 String oAuthPermissions) {
@@ -3622,41 +4492,16 @@ public interface FacebookEndpointBuilderFactory {
             return (FacebookEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -3667,10 +4512,14 @@ public interface FacebookEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -3692,9 +4541,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The unique URL of the achievement.
          * 
-         * The option is a: <code>java.net.URL</code> type.
+         * The option is a: &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param achievementURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder achievementURL(URL achievementURL) {
             doSetProperty("achievementURL", achievementURL);
@@ -3703,9 +4555,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The unique URL of the achievement.
          * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param achievementURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder achievementURL(String achievementURL) {
             doSetProperty("achievementURL", achievementURL);
@@ -3714,9 +4570,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The album ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param albumId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder albumId(String albumId) {
             doSetProperty("albumId", albumId);
@@ -3725,9 +4584,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Album to be created or updated.
          * 
-         * The option is a: <code>facebook4j.AlbumUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.AlbumUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param albumUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder albumUpdate(Object albumUpdate) {
             doSetProperty("albumUpdate", albumUpdate);
@@ -3736,10 +4599,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Album to be created or updated.
          * 
-         * The option will be converted to a <code>facebook4j.AlbumUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.AlbumUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param albumUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder albumUpdate(String albumUpdate) {
             doSetProperty("albumUpdate", albumUpdate);
@@ -3748,9 +4614,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the Facebook Application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param appId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder appId(String appId) {
             doSetProperty("appId", appId);
@@ -3759,9 +4628,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Location latitude and longitude.
          * 
-         * The option is a: <code>facebook4j.GeoLocation</code> type.
+         * The option is a: &lt;code&gt;facebook4j.GeoLocation&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param center the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder center(Object center) {
             doSetProperty("center", center);
@@ -3770,10 +4643,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Location latitude and longitude.
          * 
-         * The option will be converted to a <code>facebook4j.GeoLocation</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.GeoLocation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param center the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder center(String center) {
             doSetProperty("center", center);
@@ -3782,9 +4658,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The checkin ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param checkinId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder checkinId(String checkinId) {
             doSetProperty("checkinId", checkinId);
@@ -3794,9 +4673,13 @@ public interface FacebookEndpointBuilderFactory {
          * The checkin to be created. Deprecated, instead create a Post with an
          * attached location.
          * 
-         * The option is a: <code>facebook4j.CheckinUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.CheckinUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param checkinUpdate the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default FacebookEndpointBuilder checkinUpdate(Object checkinUpdate) {
@@ -3808,9 +4691,12 @@ public interface FacebookEndpointBuilderFactory {
          * attached location.
          * 
          * The option will be converted to a
-         * <code>facebook4j.CheckinUpdate</code> type.
+         * &lt;code&gt;facebook4j.CheckinUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param checkinUpdate the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default FacebookEndpointBuilder checkinUpdate(String checkinUpdate) {
@@ -3820,9 +4706,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Facebook4J API client URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder clientURL(String clientURL) {
             doSetProperty("clientURL", clientURL);
@@ -3831,9 +4720,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Facebook4J client API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientVersion the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder clientVersion(String clientVersion) {
             doSetProperty("clientVersion", clientVersion);
@@ -3842,9 +4734,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The comment ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param commentId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder commentId(String commentId) {
             doSetProperty("commentId", commentId);
@@ -3853,9 +4748,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The facebook Comment to be created or updated.
          * 
-         * The option is a: <code>facebook4j.CommentUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.CommentUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param commentUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder commentUpdate(Object commentUpdate) {
             doSetProperty("commentUpdate", commentUpdate);
@@ -3865,9 +4764,12 @@ public interface FacebookEndpointBuilderFactory {
          * The facebook Comment to be created or updated.
          * 
          * The option will be converted to a
-         * <code>facebook4j.CommentUpdate</code> type.
+         * &lt;code&gt;facebook4j.CommentUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param commentUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder commentUpdate(String commentUpdate) {
             doSetProperty("commentUpdate", commentUpdate);
@@ -3876,10 +4778,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder debugEnabled(Boolean debugEnabled) {
             doSetProperty("debugEnabled", debugEnabled);
@@ -3888,11 +4793,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder debugEnabled(String debugEnabled) {
             doSetProperty("debugEnabled", debugEnabled);
@@ -3901,9 +4809,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The description text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param description the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder description(String description) {
             doSetProperty("description", description);
@@ -3912,9 +4823,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Distance in meters.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param distance the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder distance(Integer distance) {
             doSetProperty("distance", distance);
@@ -3923,10 +4837,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Distance in meters.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param distance the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder distance(String distance) {
             doSetProperty("distance", distance);
@@ -3935,9 +4852,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder domainId(String domainId) {
             doSetProperty("domainId", domainId);
@@ -3946,9 +4866,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder domainName(String domainName) {
             doSetProperty("domainName", domainName);
@@ -3957,10 +4880,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The domain names.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainNames the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder domainNames(List<String> domainNames) {
             doSetProperty("domainNames", domainNames);
@@ -3970,9 +4896,12 @@ public interface FacebookEndpointBuilderFactory {
          * The domain names.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainNames the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder domainNames(String domainNames) {
             doSetProperty("domainNames", domainNames);
@@ -3981,9 +4910,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder eventId(String eventId) {
             doSetProperty("eventId", eventId);
@@ -3992,9 +4924,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event to be created or updated.
          * 
-         * The option is a: <code>facebook4j.EventUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.EventUpdate&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param eventUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder eventUpdate(Object eventUpdate) {
             doSetProperty("eventUpdate", eventUpdate);
@@ -4003,10 +4939,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The event to be created or updated.
          * 
-         * The option will be converted to a <code>facebook4j.EventUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.EventUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder eventUpdate(String eventUpdate) {
             doSetProperty("eventUpdate", eventUpdate);
@@ -4015,9 +4954,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder friendId(String friendId) {
             doSetProperty("friendId", friendId);
@@ -4026,9 +4968,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend list ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendlistId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder friendlistId(String friendlistId) {
             doSetProperty("friendlistId", friendlistId);
@@ -4037,9 +4982,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend list Name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendlistName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder friendlistName(String friendlistName) {
             doSetProperty("friendlistName", friendlistName);
@@ -4048,9 +4996,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The friend user ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param friendUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder friendUserId(String friendUserId) {
             doSetProperty("friendUserId", friendUserId);
@@ -4059,9 +5010,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The group ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param groupId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder groupId(String groupId) {
             doSetProperty("groupId", groupId);
@@ -4070,10 +5024,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder gzipEnabled(Boolean gzipEnabled) {
             doSetProperty("gzipEnabled", gzipEnabled);
@@ -4082,11 +5039,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder gzipEnabled(String gzipEnabled) {
             doSetProperty("gzipEnabled", gzipEnabled);
@@ -4095,10 +5055,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
@@ -4108,11 +5071,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
@@ -4122,10 +5088,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
@@ -4135,11 +5104,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
@@ -4149,10 +5121,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
@@ -4162,11 +5137,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
@@ -4176,10 +5154,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpReadTimeout(Integer httpReadTimeout) {
             doSetProperty("httpReadTimeout", httpReadTimeout);
@@ -4188,11 +5169,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpReadTimeout(String httpReadTimeout) {
             doSetProperty("httpReadTimeout", httpReadTimeout);
@@ -4201,10 +5185,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpRetryCount(Integer httpRetryCount) {
             doSetProperty("httpRetryCount", httpRetryCount);
@@ -4213,11 +5200,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpRetryCount(String httpRetryCount) {
             doSetProperty("httpRetryCount", httpRetryCount);
@@ -4226,10 +5216,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
@@ -4239,11 +5232,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
@@ -4253,10 +5249,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
@@ -4266,11 +5265,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
@@ -4280,10 +5282,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ids of users.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ids the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder ids(List<String> ids) {
             doSetProperty("ids", ids);
@@ -4293,9 +5298,12 @@ public interface FacebookEndpointBuilderFactory {
          * The ids of users.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ids the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder ids(String ids) {
             doSetProperty("ids", ids);
@@ -4304,9 +5312,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -4316,9 +5327,12 @@ public interface FacebookEndpointBuilderFactory {
          * Enables notifications that the user has already read in addition to
          * unread ones.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeRead the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder includeRead(Boolean includeRead) {
             doSetProperty("includeRead", includeRead);
@@ -4328,10 +5342,13 @@ public interface FacebookEndpointBuilderFactory {
          * Enables notifications that the user has already read in addition to
          * unread ones.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeRead the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder includeRead(String includeRead) {
             doSetProperty("includeRead", includeRead);
@@ -4340,9 +5357,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Whether hidden.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param isHidden the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder isHidden(Boolean isHidden) {
             doSetProperty("isHidden", isHidden);
@@ -4351,10 +5371,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Whether hidden.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param isHidden the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder isHidden(String isHidden) {
             doSetProperty("isHidden", isHidden);
@@ -4363,10 +5386,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
@@ -4376,11 +5402,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder jsonStoreEnabled(String jsonStoreEnabled) {
             doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
@@ -4389,9 +5418,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link URL.
          * 
-         * The option is a: <code>java.net.URL</code> type.
+         * The option is a: &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param link the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder link(URL link) {
             doSetProperty("link", link);
@@ -4400,9 +5432,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link URL.
          * 
-         * The option will be converted to a <code>java.net.URL</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.net.URL&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param link the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder link(String link) {
             doSetProperty("link", link);
@@ -4411,9 +5447,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Link ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param linkId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder linkId(String linkId) {
             doSetProperty("linkId", linkId);
@@ -4422,9 +5461,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Desired FQL locale.
          * 
-         * The option is a: <code>java.util.Locale</code> type.
+         * The option is a: &lt;code&gt;java.util.Locale&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param locale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder locale(Locale locale) {
             doSetProperty("locale", locale);
@@ -4433,9 +5475,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Desired FQL locale.
          * 
-         * The option will be converted to a <code>java.util.Locale</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Locale&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param locale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder locale(String locale) {
             doSetProperty("locale", locale);
@@ -4444,10 +5490,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder mbeanEnabled(Boolean mbeanEnabled) {
             doSetProperty("mbeanEnabled", mbeanEnabled);
@@ -4456,11 +5505,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder mbeanEnabled(String mbeanEnabled) {
             doSetProperty("mbeanEnabled", mbeanEnabled);
@@ -4469,9 +5521,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The message text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param message the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder message(String message) {
             doSetProperty("message", message);
@@ -4480,9 +5535,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The message ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder messageId(String messageId) {
             doSetProperty("messageId", messageId);
@@ -4491,9 +5549,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The metric name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metric the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder metric(String metric) {
             doSetProperty("metric", metric);
@@ -4502,9 +5563,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The milestone id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param milestoneId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder milestoneId(String milestoneId) {
             doSetProperty("milestoneId", milestoneId);
@@ -4513,9 +5577,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user name, must be of the form 'first last'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder name(String name) {
             doSetProperty("name", name);
@@ -4524,9 +5591,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The note ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param noteId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder noteId(String noteId) {
             doSetProperty("noteId", noteId);
@@ -4535,9 +5605,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The notification ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notificationId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder notificationId(String notificationId) {
             doSetProperty("notificationId", notificationId);
@@ -4546,9 +5619,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The insight object ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param objectId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder objectId(String objectId) {
             doSetProperty("objectId", objectId);
@@ -4557,9 +5633,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The offer id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param offerId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder offerId(String offerId) {
             doSetProperty("offerId", offerId);
@@ -4568,9 +5647,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The question's answer option description.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param optionDescription the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder optionDescription(
                 String optionDescription) {
@@ -4580,9 +5662,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The page id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pageId(String pageId) {
             doSetProperty("pageId", pageId);
@@ -4591,9 +5676,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The permission name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param permissionName the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder permissionName(String permissionName) {
             doSetProperty("permissionName", permissionName);
@@ -4602,9 +5690,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user permissions in the format perm1,perm2,...
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param permissions the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder permissions(String permissions) {
             doSetProperty("permissions", permissions);
@@ -4613,9 +5704,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The photo ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param photoId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder photoId(String photoId) {
             doSetProperty("photoId", photoId);
@@ -4624,9 +5718,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture id.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pictureId(Integer pictureId) {
             doSetProperty("pictureId", pictureId);
@@ -4635,10 +5732,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture id.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pictureId(String pictureId) {
             doSetProperty("pictureId", pictureId);
@@ -4647,9 +5747,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture2 id.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pictureId2(Integer pictureId2) {
             doSetProperty("pictureId2", pictureId2);
@@ -4658,10 +5761,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture2 id.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pictureId2(String pictureId2) {
             doSetProperty("pictureId2", pictureId2);
@@ -4670,9 +5776,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size.
          * 
-         * The option is a: <code>facebook4j.PictureSize</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PictureSize&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param pictureSize the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pictureSize(PictureSize pictureSize) {
             doSetProperty("pictureSize", pictureSize);
@@ -4681,10 +5791,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size.
          * 
-         * The option will be converted to a <code>facebook4j.PictureSize</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PictureSize&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pictureSize the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder pictureSize(String pictureSize) {
             doSetProperty("pictureSize", pictureSize);
@@ -4693,9 +5806,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The place ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param placeId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder placeId(String placeId) {
             doSetProperty("placeId", placeId);
@@ -4704,9 +5820,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder postId(String postId) {
             doSetProperty("postId", postId);
@@ -4715,9 +5834,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post to create or update.
          * 
-         * The option is a: <code>facebook4j.PostUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PostUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder postUpdate(Object postUpdate) {
             doSetProperty("postUpdate", postUpdate);
@@ -4726,10 +5848,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The post to create or update.
          * 
-         * The option will be converted to a <code>facebook4j.PostUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PostUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param postUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder postUpdate(String postUpdate) {
             doSetProperty("postUpdate", postUpdate);
@@ -4738,10 +5863,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
@@ -4751,11 +5879,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
@@ -4765,10 +5896,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL queries.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queries the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder queries(Map<String, String> queries) {
             doSetProperty("queries", queries);
@@ -4778,10 +5912,13 @@ public interface FacebookEndpointBuilderFactory {
          * FQL queries.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queries the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder queries(String queries) {
             doSetProperty("queries", queries);
@@ -4790,9 +5927,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * FQL query or search terms for search endpoints.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder query(String query) {
             doSetProperty("query", query);
@@ -4801,9 +5941,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The question id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param questionId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder questionId(String questionId) {
             doSetProperty("questionId", questionId);
@@ -4812,9 +5955,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Optional reading parameters. See Reading Options(#reading).
          * 
-         * The option is a: <code>facebook4j.Reading</code> type.
+         * The option is a: &lt;code&gt;facebook4j.Reading&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reading the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder reading(Object reading) {
             doSetProperty("reading", reading);
@@ -4823,10 +5969,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Optional reading parameters. See Reading Options(#reading).
          * 
-         * The option will be converted to a <code>facebook4j.Reading</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.Reading&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reading the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder reading(String reading) {
             doSetProperty("reading", reading);
@@ -4835,13 +5984,17 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder readingOptions(String key, Object value) {
             doSetMultiValueProperty("readingOptions", "reading." + key, value);
@@ -4850,13 +6003,16 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * To configure Reading using key/value pairs from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the readingOptions(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder readingOptions(Map values) {
             doSetMultiValueProperties("readingOptions", "reading.", values);
@@ -4865,10 +6021,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/
          * Group: common
+         * 
+         * @param restBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder restBaseURL(String restBaseURL) {
             doSetProperty("restBaseURL", restBaseURL);
@@ -4877,9 +6036,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The numeric score with value.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scoreValue the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder scoreValue(Integer scoreValue) {
             doSetProperty("scoreValue", scoreValue);
@@ -4888,10 +6050,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The numeric score with value.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scoreValue the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder scoreValue(String scoreValue) {
             doSetProperty("scoreValue", scoreValue);
@@ -4900,9 +6065,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size, one of large, normal, small or square.
          * 
-         * The option is a: <code>facebook4j.PictureSize</code> type.
+         * The option is a: &lt;code&gt;facebook4j.PictureSize&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder size(PictureSize size) {
             doSetProperty("size", size);
@@ -4911,10 +6080,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The picture size, one of large, normal, small or square.
          * 
-         * The option will be converted to a <code>facebook4j.PictureSize</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.PictureSize&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder size(String size) {
             doSetProperty("size", size);
@@ -4923,9 +6095,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The media content from either a java.io.File or java.io.Inputstream.
          * 
-         * The option is a: <code>facebook4j.Media</code> type.
+         * The option is a: &lt;code&gt;facebook4j.Media&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder source(Object source) {
             doSetProperty("source", source);
@@ -4934,9 +6109,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The media content from either a java.io.File or java.io.Inputstream.
          * 
-         * The option will be converted to a <code>facebook4j.Media</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.Media&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder source(String source) {
             doSetProperty("source", source);
@@ -4945,9 +6124,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The note of the subject.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -4956,9 +6138,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The tab id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tabId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder tabId(String tabId) {
             doSetProperty("tabId", tabId);
@@ -4967,9 +6152,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Photo tag information.
          * 
-         * The option is a: <code>facebook4j.TagUpdate</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TagUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder tagUpdate(Object tagUpdate) {
             doSetProperty("tagUpdate", tagUpdate);
@@ -4978,10 +6166,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Photo tag information.
          * 
-         * The option will be converted to a <code>facebook4j.TagUpdate</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TagUpdate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagUpdate the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder tagUpdate(String tagUpdate) {
             doSetProperty("tagUpdate", tagUpdate);
@@ -4990,9 +6181,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 1.
          * 
-         * The option is a: <code>facebook4j.TestUser</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder testUser1(Object testUser1) {
             doSetProperty("testUser1", testUser1);
@@ -5001,10 +6195,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 1.
          * 
-         * The option will be converted to a <code>facebook4j.TestUser</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder testUser1(String testUser1) {
             doSetProperty("testUser1", testUser1);
@@ -5013,9 +6210,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 2.
          * 
-         * The option is a: <code>facebook4j.TestUser</code> type.
+         * The option is a: &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder testUser2(Object testUser2) {
             doSetProperty("testUser2", testUser2);
@@ -5024,10 +6224,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Test user 2.
          * 
-         * The option will be converted to a <code>facebook4j.TestUser</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;facebook4j.TestUser&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUser2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder testUser2(String testUser2) {
             doSetProperty("testUser2", testUser2);
@@ -5036,9 +6239,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the test user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param testUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder testUserId(String testUserId) {
             doSetProperty("testUserId", testUserId);
@@ -5047,9 +6253,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The title text.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param title the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder title(String title) {
             doSetProperty("title", title);
@@ -5058,9 +6267,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of the user to tag.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder toUserId(String toUserId) {
             doSetProperty("toUserId", toUserId);
@@ -5069,10 +6281,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The IDs of the users to tag.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder toUserIds(List<String> toUserIds) {
             doSetProperty("toUserIds", toUserIds);
@@ -5082,9 +6297,12 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of the users to tag.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUserIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder toUserIds(String toUserIds) {
             doSetProperty("toUserIds", toUserIds);
@@ -5093,9 +6311,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The Facebook user ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -5104,9 +6325,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of a user 1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId1 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder userId1(String userId1) {
             doSetProperty("userId1", userId1);
@@ -5115,9 +6339,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The ID of a user 2.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId2 the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder userId2(String userId2) {
             doSetProperty("userId2", userId2);
@@ -5126,10 +6353,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The IDs of users to invite to event.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder userIds(List<String> userIds) {
             doSetProperty("userIds", userIds);
@@ -5139,9 +6369,12 @@ public interface FacebookEndpointBuilderFactory {
          * The IDs of users to invite to event.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder userIds(String userIds) {
             doSetProperty("userIds", userIds);
@@ -5150,9 +6383,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The test user locale.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userLocale the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder userLocale(String userLocale) {
             doSetProperty("userLocale", userLocale);
@@ -5161,10 +6397,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder useSSL(Boolean useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -5173,11 +6412,14 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder useSSL(String useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -5186,10 +6428,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * Video API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph-video.facebook.com/
          * Group: common
+         * 
+         * @param videoBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder videoBaseURL(String videoBaseURL) {
             doSetProperty("videoBaseURL", videoBaseURL);
@@ -5198,9 +6443,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The video ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param videoId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder videoId(String videoId) {
             doSetProperty("videoId", videoId);
@@ -5209,9 +6457,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpProxyHost(String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
@@ -5220,9 +6471,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -5232,9 +6486,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -5243,10 +6500,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpProxyPort(String httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -5255,9 +6515,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * HTTP proxy server user name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder httpProxyUser(String httpProxyUser) {
             doSetProperty("httpProxyUser", httpProxyUser);
@@ -5266,9 +6529,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The user access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAccessToken the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder oAuthAccessToken(String oAuthAccessToken) {
             doSetProperty("oAuthAccessToken", oAuthAccessToken);
@@ -5277,10 +6543,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * OAuth access token URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/oauth/access_token
          * Group: security
+         * 
+         * @param oAuthAccessTokenURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
@@ -5290,9 +6559,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The application Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppId the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder oAuthAppId(String oAuthAppId) {
             doSetProperty("oAuthAppId", oAuthAppId);
@@ -5301,9 +6573,12 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * The application Secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppSecret the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder oAuthAppSecret(String oAuthAppSecret) {
             doSetProperty("oAuthAppSecret", oAuthAppSecret);
@@ -5312,10 +6587,13 @@ public interface FacebookEndpointBuilderFactory {
         /**
          * OAuth authorization URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.facebook.com/dialog/oauth
          * Group: security
+         * 
+         * @param oAuthAuthorizationURL the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
@@ -5327,9 +6605,12 @@ public interface FacebookEndpointBuilderFactory {
          * https://developers.facebook.com/docs/reference/login/#permissions for
          * the detail.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthPermissions the value to set
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder oAuthPermissions(String oAuthPermissions) {
             doSetProperty("oAuthPermissions", oAuthPermissions);
@@ -5348,41 +6629,16 @@ public interface FacebookEndpointBuilderFactory {
             return (FacebookEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFacebookEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFacebookEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -5392,10 +6648,14 @@ public interface FacebookEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFacebookEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -5430,6 +6690,7 @@ public interface FacebookEndpointBuilderFactory {
          * What operation to perform
          * 
          * @param path methodName
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder facebook(String path) {
             return FacebookEndpointBuilderFactory.endpointBuilder("facebook", path);
@@ -5450,6 +6711,7 @@ public interface FacebookEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path methodName
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder facebook(
                 String componentName,

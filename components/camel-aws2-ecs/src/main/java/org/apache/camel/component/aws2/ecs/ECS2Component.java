@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.ecs;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.ecs.EcsClient;
 
 /**
  * For working with Amazon ECS SDK v2.
@@ -36,7 +33,7 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 public class ECS2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(ECS2Component.class);
-    
+
     @Metadata
     private ECS2Configuration configuration = new ECS2Configuration();
 
@@ -55,10 +52,8 @@ public class ECS2Component extends DefaultComponent {
         ECS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new ECS2Configuration();
         ECS2Endpoint endpoint = new ECS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
-        if (configuration.getEcsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getEcsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
         }
 
@@ -74,20 +69,5 @@ public class ECS2Component extends DefaultComponent {
      */
     public void setConfiguration(ECS2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(ECS2Configuration configuration, ECS2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getEcsClient())) {
-            LOG.debug("Looking for an EcsClient instance in the registry");
-            Set<EcsClient> clients = getCamelContext().getRegistry().findByType(EcsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one EcsClient instance in the registry");
-                configuration.setEcsClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No EcsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("EcsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

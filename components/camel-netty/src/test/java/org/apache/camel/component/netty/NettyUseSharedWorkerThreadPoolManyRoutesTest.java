@@ -66,8 +66,10 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
             public void configure() throws Exception {
 
                 for (int i = 0; i < 60; i++) {
-                    from("netty:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false" + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
-                        .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result").transform(body().regexReplaceAll("Hello", "Bye"));
+                    from("netty:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false"
+                         + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
+                                 .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                                 .transform(body().regexReplaceAll("Hello", "Bye"));
                 }
             }
         };

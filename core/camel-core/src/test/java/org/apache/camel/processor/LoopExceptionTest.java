@@ -39,7 +39,8 @@ public class LoopExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").loop(3).to("mock:loop").throwException(new IllegalArgumentException("Forced")).end().to("mock:result");
+                from("direct:start").loop(3).to("mock:loop").throwException(new IllegalArgumentException("Forced")).end()
+                        .to("mock:result");
             }
         };
     }

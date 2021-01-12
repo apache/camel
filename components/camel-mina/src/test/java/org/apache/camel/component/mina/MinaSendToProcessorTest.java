@@ -29,7 +29,8 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
+                from("direct:start")
+                        .to(String.format("mina:tcp://localhost:%1$s?sync=false&lazySessionCreation=false", getPort()));
             }
         });
 

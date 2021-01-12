@@ -37,14 +37,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class NagiosTest extends CamelTestSupport {
-    @Mock @BindToRegistry("mySender")
+    @Mock
+    @BindToRegistry("mySender")
     protected static PassiveCheckSender nagiosPassiveCheckSender;
 
     protected boolean canRun;
 
     @BeforeAll
     public static void setSender() {
-        nagiosPassiveCheckSender =  Mockito.mock(NagiosPassiveCheckSender.class);
+        nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
     }
 
     @BeforeEach
@@ -60,7 +61,7 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
-        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(), "Hello Nagios");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -80,8 +81,8 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
-        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.OK, context.getName(),  "Hello Nagios");
-        MessagePayload expectedPayload2 = new MessagePayload("localhost", Level.OK, context.getName(),  "Bye Nagios");
+        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.OK, context.getName(), "Hello Nagios");
+        MessagePayload expectedPayload2 = new MessagePayload("localhost", Level.OK, context.getName(), "Bye Nagios");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -103,7 +104,7 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
-        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.WARNING, context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.WARNING, context.getName(), "Hello Nagios");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -121,7 +122,7 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
-        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.WARNING, context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.WARNING, context.getName(), "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Nagios");
@@ -139,7 +140,7 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
-        MessagePayload expectedPayload1 = new MessagePayload("myHost", Level.CRITICAL, "myService",  "Hello Nagios");
+        MessagePayload expectedPayload1 = new MessagePayload("myHost", Level.CRITICAL, "myService", "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Nagios");

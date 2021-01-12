@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -70,7 +71,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
 
     @Test
     public void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/charset/output.txt");
         assertTrue(file.exists(), "File should exist");
@@ -79,7 +80,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
-        assertTrue(len != -1, "Should read data: " + len);
+        assertNotEquals(-1, len, "Should read data: " + len);
         byte[] data = new byte[len];
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();
@@ -103,10 +104,11 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
             public void configure() throws Exception {
                 // the input file is in utf-8
                 from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true&charset=utf-8")
-                    // now convert the input file from utf-8 to iso-8859-1
-                    .convertBodyTo(byte[].class, "iso-8859-1")
-                    // and write the file using that encoding
-                    .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader")).to("file:target/data/charset/?fileName=output.txt");
+                        // now convert the input file from utf-8 to iso-8859-1
+                        .convertBodyTo(byte[].class, "iso-8859-1")
+                        // and write the file using that encoding
+                        .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
+                        .to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

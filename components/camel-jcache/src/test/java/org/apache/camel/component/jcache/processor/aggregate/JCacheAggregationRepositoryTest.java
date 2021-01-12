@@ -35,7 +35,7 @@ public class JCacheAggregationRepositoryTest extends JCacheAggregationRepository
             Exchange oldOne = new DefaultExchange(context());
             Exchange newOne = new DefaultExchange(context());
             assertThrows(UnsupportedOperationException.class,
-                () -> repo.add(context(), "myKey", oldOne, newOne));
+                    () -> repo.add(context(), "myKey", oldOne, newOne));
         } finally {
             repo.stop();
         }
@@ -49,7 +49,7 @@ public class JCacheAggregationRepositoryTest extends JCacheAggregationRepository
         try {
             Exchange ex = new DefaultExchange(context());
             assertThrows(UnsupportedOperationException.class,
-                () -> repo.add(context(), "myKey", ex));
+                    () -> repo.add(context(), "myKey", ex));
         } finally {
             repo.stop();
         }

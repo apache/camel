@@ -39,12 +39,12 @@ public class TarSplitterRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data?delay=1000&noop=true")
-                    .log("Start processing big file: ${header.CamelFileName}")
-                    .split(new TarSplitter()).streaming()
+                        .log("Start processing big file: ${header.CamelFileName}")
+                        .split(new TarSplitter()).streaming()
                         .convertBodyTo(String.class).to("mock:processTarEntry")
                         .to("log:entry")
-                    .end()
-                    .log("Done processing big file: ${header.CamelFileName}");
+                        .end()
+                        .log("Done processing big file: ${header.CamelFileName}");
             }
         };
 

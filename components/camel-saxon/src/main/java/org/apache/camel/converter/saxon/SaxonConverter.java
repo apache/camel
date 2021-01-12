@@ -108,7 +108,7 @@ public final class SaxonConverter {
                         lion.add((NodeInfo) o);
                     }
                 }
-                if (lion.size() > 0) {
+                if (!lion.isEmpty()) {
                     NodeList nl = toDOMNodeList(lion);
                     return tc.convertTo(type, exchange, nl);
                 }

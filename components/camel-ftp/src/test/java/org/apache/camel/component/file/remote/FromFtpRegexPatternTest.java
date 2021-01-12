@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpRegexPatternTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/regexp?password=admin&include=report.*";
+        return "ftp://admin@localhost:{{ftp.server.port}}/regexp?password=admin&include=report.*";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/regexp/?password=admin";
+        String ftpUrl = "ftp://admin@localhost:{{ftp.server.port}}/regexp/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(ftpUrl, "Reports", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(ftpUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");

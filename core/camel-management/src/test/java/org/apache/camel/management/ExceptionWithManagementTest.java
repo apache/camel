@@ -36,12 +36,12 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
     public void testExceptionHandler() throws Exception {
         MockEndpoint error = this.resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);
-        
+
         MockEndpoint out = this.resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
         out.expectedMessageCount(0);
-        
+
         template.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("hello"));
-        
+
         error.assertIsSatisfied();
         out.assertIsSatisfied();
     }

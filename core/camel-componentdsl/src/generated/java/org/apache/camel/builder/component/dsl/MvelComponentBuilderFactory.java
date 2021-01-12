@@ -37,6 +37,8 @@ public interface MvelComponentBuilderFactory {
      * Category: transformation,script
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mvel
+     * 
+     * @return the dsl builder
      */
     static MvelComponentBuilder mvel() {
         return new MvelComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface MvelComponentBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default MvelComponentBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -70,10 +75,13 @@ public interface MvelComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default MvelComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -91,27 +99,36 @@ public interface MvelComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MvelComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MvelComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MvelComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -134,7 +151,7 @@ public interface MvelComponentBuilderFactory {
             case "allowContextMapAll": ((MvelComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((MvelComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((MvelComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MvelComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MvelComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

@@ -53,9 +53,12 @@ public interface CoAPEndpointBuilderFactory {
          * configuration parameter does not apply to configuring TLS via a Raw
          * Public Key or a Pre-Shared Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder alias(String alias) {
             doSetProperty("alias", alias);
@@ -66,9 +69,12 @@ public interface CoAPEndpointBuilderFactory {
          * ciphersuites to configure. If it is not specified, then it falls back
          * to getting the ciphersuites from the sslContextParameters object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cipherSuites the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder cipherSuites(String cipherSuites) {
             doSetProperty("cipherSuites", cipherSuites);
@@ -81,9 +87,12 @@ public interface CoAPEndpointBuilderFactory {
          * sslContextParameters.getServerParameters().getClientAuthentication()
          * value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder clientAuthentication(
                 String clientAuthentication) {
@@ -93,9 +102,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Set the configured private key for use with Raw Public Key.
          * 
-         * The option is a: <code>java.security.PrivateKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -105,9 +118,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the configured private key for use with Raw Public Key.
          * 
          * The option will be converted to a
-         * <code>java.security.PrivateKey</code> type.
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -117,10 +133,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the PskStore to use for pre-shared key.
          * 
          * The option is a:
-         * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
-         * type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
             doSetProperty("pskStore", pskStore);
@@ -130,10 +148,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the PskStore to use for pre-shared key.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
-         * type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
             doSetProperty("pskStore", pskStore);
@@ -142,9 +162,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Set the configured public key for use with Raw Public Key.
          * 
-         * The option is a: <code>java.security.PublicKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -154,9 +178,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the configured public key for use with Raw Public Key.
          * 
          * The option will be converted to a
-         * <code>java.security.PublicKey</code> type.
+         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -167,10 +194,13 @@ public interface CoAPEndpointBuilderFactory {
          * you first need to set the recommendedCipherSuitesOnly option to
          * false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
                 boolean recommendedCipherSuitesOnly) {
@@ -182,10 +212,14 @@ public interface CoAPEndpointBuilderFactory {
          * you first need to set the recommendedCipherSuitesOnly option to
          * false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
                 String recommendedCipherSuitesOnly) {
@@ -198,9 +232,12 @@ public interface CoAPEndpointBuilderFactory {
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -213,9 +250,12 @@ public interface CoAPEndpointBuilderFactory {
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -226,9 +266,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the TrustedRpkStore to use to determine trust in raw public keys.
          * 
          * The option is a:
-         * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
                 Object trustedRpkStore) {
@@ -239,9 +282,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the TrustedRpkStore to use to determine trust in raw public keys.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
                 String trustedRpkStore) {
@@ -257,10 +303,13 @@ public interface CoAPEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -276,10 +325,14 @@ public interface CoAPEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -290,9 +343,12 @@ public interface CoAPEndpointBuilderFactory {
          * Comma separated list of methods that the CoAP consumer will bind to.
          * The default is to bind to all methods (DELETE, GET, POST, PUT).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param coapMethodRestrict the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointConsumerBuilder coapMethodRestrict(
                 String coapMethodRestrict) {
@@ -316,10 +372,13 @@ public interface CoAPEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -333,9 +392,12 @@ public interface CoAPEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -345,9 +407,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -358,9 +424,12 @@ public interface CoAPEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -368,41 +437,16 @@ public interface CoAPEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -413,10 +457,14 @@ public interface CoAPEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -444,9 +492,12 @@ public interface CoAPEndpointBuilderFactory {
          * configuration parameter does not apply to configuring TLS via a Raw
          * Public Key or a Pre-Shared Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder alias(String alias) {
             doSetProperty("alias", alias);
@@ -457,9 +508,12 @@ public interface CoAPEndpointBuilderFactory {
          * ciphersuites to configure. If it is not specified, then it falls back
          * to getting the ciphersuites from the sslContextParameters object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cipherSuites the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder cipherSuites(String cipherSuites) {
             doSetProperty("cipherSuites", cipherSuites);
@@ -472,9 +526,12 @@ public interface CoAPEndpointBuilderFactory {
          * sslContextParameters.getServerParameters().getClientAuthentication()
          * value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder clientAuthentication(
                 String clientAuthentication) {
@@ -484,9 +541,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Set the configured private key for use with Raw Public Key.
          * 
-         * The option is a: <code>java.security.PrivateKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -496,9 +557,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the configured private key for use with Raw Public Key.
          * 
          * The option will be converted to a
-         * <code>java.security.PrivateKey</code> type.
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -508,10 +572,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the PskStore to use for pre-shared key.
          * 
          * The option is a:
-         * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
-         * type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
             doSetProperty("pskStore", pskStore);
@@ -521,10 +587,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the PskStore to use for pre-shared key.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
-         * type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder pskStore(String pskStore) {
             doSetProperty("pskStore", pskStore);
@@ -533,9 +601,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Set the configured public key for use with Raw Public Key.
          * 
-         * The option is a: <code>java.security.PublicKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -545,9 +617,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the configured public key for use with Raw Public Key.
          * 
          * The option will be converted to a
-         * <code>java.security.PublicKey</code> type.
+         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder publicKey(String publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -558,10 +633,13 @@ public interface CoAPEndpointBuilderFactory {
          * you first need to set the recommendedCipherSuitesOnly option to
          * false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
                 boolean recommendedCipherSuitesOnly) {
@@ -573,10 +651,14 @@ public interface CoAPEndpointBuilderFactory {
          * you first need to set the recommendedCipherSuitesOnly option to
          * false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
                 String recommendedCipherSuitesOnly) {
@@ -589,9 +671,12 @@ public interface CoAPEndpointBuilderFactory {
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -604,9 +689,12 @@ public interface CoAPEndpointBuilderFactory {
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -617,9 +705,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the TrustedRpkStore to use to determine trust in raw public keys.
          * 
          * The option is a:
-         * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
                 Object trustedRpkStore) {
@@ -630,9 +721,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the TrustedRpkStore to use to determine trust in raw public keys.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
                 String trustedRpkStore) {
@@ -650,10 +744,13 @@ public interface CoAPEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -671,10 +768,14 @@ public interface CoAPEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -693,41 +794,16 @@ public interface CoAPEndpointBuilderFactory {
             return (CoAPEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -738,10 +814,14 @@ public interface CoAPEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -770,9 +850,12 @@ public interface CoAPEndpointBuilderFactory {
          * configuration parameter does not apply to configuring TLS via a Raw
          * Public Key or a Pre-Shared Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder alias(String alias) {
             doSetProperty("alias", alias);
@@ -783,9 +866,12 @@ public interface CoAPEndpointBuilderFactory {
          * ciphersuites to configure. If it is not specified, then it falls back
          * to getting the ciphersuites from the sslContextParameters object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cipherSuites the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder cipherSuites(String cipherSuites) {
             doSetProperty("cipherSuites", cipherSuites);
@@ -798,9 +884,12 @@ public interface CoAPEndpointBuilderFactory {
          * sslContextParameters.getServerParameters().getClientAuthentication()
          * value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientAuthentication the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder clientAuthentication(
                 String clientAuthentication) {
@@ -810,9 +899,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Set the configured private key for use with Raw Public Key.
          * 
-         * The option is a: <code>java.security.PrivateKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder privateKey(PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -822,9 +915,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the configured private key for use with Raw Public Key.
          * 
          * The option will be converted to a
-         * <code>java.security.PrivateKey</code> type.
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -834,10 +930,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the PskStore to use for pre-shared key.
          * 
          * The option is a:
-         * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
-         * type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder pskStore(Object pskStore) {
             doSetProperty("pskStore", pskStore);
@@ -847,10 +945,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the PskStore to use for pre-shared key.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.californium.scandium.dtls.pskstore.PskStore</code>
-         * type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.pskstore.PskStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pskStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder pskStore(String pskStore) {
             doSetProperty("pskStore", pskStore);
@@ -859,9 +959,13 @@ public interface CoAPEndpointBuilderFactory {
         /**
          * Set the configured public key for use with Raw Public Key.
          * 
-         * The option is a: <code>java.security.PublicKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder publicKey(PublicKey publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -871,9 +975,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the configured public key for use with Raw Public Key.
          * 
          * The option will be converted to a
-         * <code>java.security.PublicKey</code> type.
+         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder publicKey(String publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -884,10 +991,13 @@ public interface CoAPEndpointBuilderFactory {
          * you first need to set the recommendedCipherSuitesOnly option to
          * false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder recommendedCipherSuitesOnly(
                 boolean recommendedCipherSuitesOnly) {
@@ -899,10 +1009,14 @@ public interface CoAPEndpointBuilderFactory {
          * you first need to set the recommendedCipherSuitesOnly option to
          * false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param recommendedCipherSuitesOnly the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder recommendedCipherSuitesOnly(
                 String recommendedCipherSuitesOnly) {
@@ -915,9 +1029,12 @@ public interface CoAPEndpointBuilderFactory {
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -930,9 +1047,12 @@ public interface CoAPEndpointBuilderFactory {
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -943,9 +1063,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the TrustedRpkStore to use to determine trust in raw public keys.
          * 
          * The option is a:
-         * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder trustedRpkStore(Object trustedRpkStore) {
             doSetProperty("trustedRpkStore", trustedRpkStore);
@@ -955,9 +1078,12 @@ public interface CoAPEndpointBuilderFactory {
          * Set the TrustedRpkStore to use to determine trust in raw public keys.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
+         * &lt;code&gt;org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param trustedRpkStore the value to set
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder trustedRpkStore(String trustedRpkStore) {
             doSetProperty("trustedRpkStore", trustedRpkStore);
@@ -976,41 +1102,16 @@ public interface CoAPEndpointBuilderFactory {
             return (CoAPEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCoAPEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCoAPEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1020,10 +1121,14 @@ public interface CoAPEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCoAPEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1046,6 +1151,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coap(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coap", path);
@@ -1066,6 +1172,7 @@ public interface CoAPEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coap(String componentName, String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1084,6 +1191,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coapTcp(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coap+tcp", path);
@@ -1102,6 +1210,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coaps(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coaps", path);
@@ -1120,6 +1229,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coapsTcp(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coaps+tcp", path);

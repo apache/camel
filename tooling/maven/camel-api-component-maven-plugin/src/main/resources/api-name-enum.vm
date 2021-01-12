@@ -49,8 +49,6 @@ public enum $apiNameEnum implements ApiName {
 
 #end
 
-    private static final ${apiNameEnum}[] VALUES = values();
-    
     private final String name;
 
     private ${apiNameEnum}(String name) {
@@ -62,12 +60,4 @@ public enum $apiNameEnum implements ApiName {
         return name;
     }
 
-    public static $apiNameEnum fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

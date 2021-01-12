@@ -48,7 +48,7 @@ public class TestPublisher<T> implements Publisher<T> {
 
             private Iterator<T> it = data.iterator();
 
-            private AtomicLong requested = new AtomicLong(0);
+            private AtomicLong requested = new AtomicLong();
 
             private Object monitor = new Object();
 

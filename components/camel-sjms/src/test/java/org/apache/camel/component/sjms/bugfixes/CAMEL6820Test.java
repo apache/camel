@@ -29,9 +29,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Unit test for CAMEL_6820Test.  This test is to verify the ability to 
- * support the Camel File Component more cleanly along with better support 
- * for ByteMessages. 
+ * Unit test for CAMEL_6820Test. This test is to verify the ability to support the Camel File Component more cleanly
+ * along with better support for ByteMessages.
  */
 public class CAMEL6820Test extends JmsTestSupport {
 
@@ -44,24 +43,24 @@ public class CAMEL6820Test extends JmsTestSupport {
     @Test
     public void testCamelGenericFileConverterMessage() throws Exception {
         File f = new File(TEST_DATA_DIR);
-        
+
         // First make sure the directories are empty or purged so we don't get bad data on a 
         // test that is run against an uncleaned target directory
         if (f.exists()) {
             FileUtils.deleteDirectory(new File(TEST_DATA_DIR));
-        
+
         }
-        
+
         // Then add the directory back
         f.mkdirs();
-        
+
         // Make sure the SjmsComponent is available
         SjmsComponent component = context.getComponent("sjms", SjmsComponent.class);
         assertNotNull(component);
 
         // Create the test String
         final String expectedBody = "Hello World";
-        
+
         // Create the Mock endpoint
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT_URI);
         mock.expectedMessageCount(1);
@@ -79,12 +78,12 @@ public class CAMEL6820Test extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(FILE_INPUT_URI)
-                    .convertBodyTo(InputStream.class)
-                    .to(SJMS_QUEUE_URI);
+                        .convertBodyTo(InputStream.class)
+                        .to(SJMS_QUEUE_URI);
 
                 from(SJMS_QUEUE_URI)
-                    .convertBodyTo(String.class)
-                    .to(MOCK_RESULT_URI);
+                        .convertBodyTo(String.class)
+                        .to(MOCK_RESULT_URI);
             }
         };
     }

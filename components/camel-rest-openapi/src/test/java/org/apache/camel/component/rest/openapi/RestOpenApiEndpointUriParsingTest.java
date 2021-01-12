@@ -31,8 +31,9 @@ public class RestOpenApiEndpointUriParsingTest {
     public void shouldParseEndpointUri(String uri, String remaining, String specificationUri, String operationId) {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(specificationUri, remaining, component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                specificationUri, remaining, component,
+                Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri().toString()).isEqualTo(specificationUri);
         assertThat(endpoint.getOperationId()).isEqualTo(operationId);
@@ -40,11 +41,12 @@ public class RestOpenApiEndpointUriParsingTest {
 
     public static Iterable<Object[]> parameters() {
         return Arrays.asList(params("rest-openapi:operation", "operation", "openapi.json", "operation"),
-            params("rest-openapi:my-api.json#operation", "my-api.json#operation", "my-api.json", "operation"),
-            params("rest-openapi:http://api.example.com/swagger.json#operation", "http://api.example.com/swagger.json#operation", "http://api.example.com/swagger.json", "operation"));
+                params("rest-openapi:my-api.json#operation", "my-api.json#operation", "my-api.json", "operation"),
+                params("rest-openapi:http://api.example.com/swagger.json#operation",
+                        "http://api.example.com/swagger.json#operation", "http://api.example.com/swagger.json", "operation"));
     }
 
     static Object[] params(final String uri, final String remaining, final String specificationUri, final String operationId) {
-        return new Object[] {uri, remaining, specificationUri, operationId};
+        return new Object[] { uri, remaining, specificationUri, operationId };
     }
 }

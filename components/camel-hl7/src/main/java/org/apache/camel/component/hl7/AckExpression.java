@@ -31,7 +31,7 @@ public class AckExpression extends ExpressionAdapter {
     private ErrorCode errorCode;
 
     public AckExpression() {
-        this((AcknowledgmentCode)null, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
+        this((AcknowledgmentCode) null, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
     }
 
     public AckExpression(AcknowledgmentCode acknowledgementCode) {
@@ -68,10 +68,11 @@ public class AckExpression extends ExpressionAdapter {
             }
         } else {
             if (t instanceof HL7Exception) {
-                hl7Exception = (HL7Exception)t;
+                hl7Exception = (HL7Exception) t;
             } else {
-                hl7Exception = new HL7Exception(errorMessage != null ? errorMessage : t.getMessage(),
-                                                errorCode, t);
+                hl7Exception = new HL7Exception(
+                        errorMessage != null ? errorMessage : t.getMessage(),
+                        errorCode, t);
             }
         }
         return hl7Exception;

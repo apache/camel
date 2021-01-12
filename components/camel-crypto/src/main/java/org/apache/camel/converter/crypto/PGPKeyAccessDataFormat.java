@@ -69,13 +69,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This PGP Data Format uses the interfaces {@link PGPPublicKeyAccessor} and
- * {@link PGPSecretKeyAccessor} to access the keys for encryption/signing and
- * decryption/signature verification. These interfaces allow caching of the keys
- * which can improve the performance.
+ * This PGP Data Format uses the interfaces {@link PGPPublicKeyAccessor} and {@link PGPSecretKeyAccessor} to access the
+ * keys for encryption/signing and decryption/signature verification. These interfaces allow caching of the keys which
+ * can improve the performance.
  * <p>
- * If you want to provide the key access via keyrings in the format of a byte
- * array or file, then you should use the class {@link PGPDataFormat}.
+ * If you want to provide the key access via keyrings in the format of a byte array or file, then you should use the
+ * class {@link PGPDataFormat}.
  */
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
@@ -88,51 +87,48 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     public static final String COMPRESSION_ALGORITHM = "CamelPGPDataFormatCompressionAlgorithm";
 
     /**
-     * Signature verification option "optional": Used during unmarshaling. The
-     * PGP message can or cannot contain signatures. If it does contain
-     * signatures then one of them is verified. This is the default option.
+     * Signature verification option "optional": Used during unmarshaling. The PGP message can or cannot contain
+     * signatures. If it does contain signatures then one of them is verified. This is the default option.
      */
     public static final String SIGNATURE_VERIFICATION_OPTION_OPTIONAL = "optional";
 
     /**
-     * Signature verification option "required": Used during unmarshaling. It is
-     * checked that the PGP message does contain at least one signature. If this
-     * is not the case a {@link PGPException} is thrown. One of the contained 
+     * Signature verification option "required": Used during unmarshaling. It is checked that the PGP message does
+     * contain at least one signature. If this is not the case a {@link PGPException} is thrown. One of the contained
      * signatures is verified.
      */
     public static final String SIGNATURE_VERIFICATION_OPTION_REQUIRED = "required";
-    
+
     /**
-     * Signature verification option "required": Used during unmarshaling. If 
-     * the PGP message contains signatures then they are ignored. No 
-     * verification takes place.
+     * Signature verification option "required": Used during unmarshaling. If the PGP message contains signatures then
+     * they are ignored. No verification takes place.
      */
     public static final String SIGNATURE_VERIFICATION_OPTION_IGNORE = "ignore";
 
     /**
-     * Signature verification option "no signature allowed": Used during
-     * unmarshaling. It is checked that the PGP message does contain not any
-     * signatures. If this is not the case a {@link PGPException} is thrown.
+     * Signature verification option "no signature allowed": Used during unmarshaling. It is checked that the PGP
+     * message does contain not any signatures. If this is not the case a {@link PGPException} is thrown.
      */
     public static final String SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED = "no_signature_allowed";
 
     /**
-     * During encryption the number of asymmetric encryption keys is set to this
-     * header parameter. The Value is of type Integer.
+     * During encryption the number of asymmetric encryption keys is set to this header parameter. The Value is of type
+     * Integer.
      */
     public static final String NUMBER_OF_ENCRYPTION_KEYS = "CamelPGPDataFormatNumberOfEncryptionKeys";
 
     /**
-     * During signing the number of signing keys is set to this header
-     * parameter. This corresponds to the number of signatures. The Value is of
-     * type Integer.
+     * During signing the number of signing keys is set to this header parameter. This corresponds to the number of
+     * signatures. The Value is of type Integer.
      */
     public static final String NUMBER_OF_SIGNING_KEYS = "CamelPGPDataFormatNumberOfSigningKeys";
 
     private static final Logger LOG = LoggerFactory.getLogger(PGPKeyAccessDataFormat.class);
 
-    private static final List<String> SIGNATURE_VERIFICATION_OPTIONS = Arrays.asList(new String[] {SIGNATURE_VERIFICATION_OPTION_OPTIONAL,
-        SIGNATURE_VERIFICATION_OPTION_REQUIRED, SIGNATURE_VERIFICATION_OPTION_IGNORE, SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED });
+    private static final List<String> SIGNATURE_VERIFICATION_OPTIONS = Arrays.asList(new String[] {
+            SIGNATURE_VERIFICATION_OPTION_OPTIONAL,
+            SIGNATURE_VERIFICATION_OPTION_REQUIRED, SIGNATURE_VERIFICATION_OPTION_IGNORE,
+            SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED });
 
     private static final String BC = "BC";
     private static final int BUFFER_SIZE = 16 * 1024;
@@ -162,7 +158,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
 
     private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
-    
+
     private boolean withCompressedDataPacket = true; // for encryption
 
     private String signatureVerificationOption = "optional";
@@ -221,8 +217,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
         if (keys.isEmpty()) {
-            throw new IllegalArgumentException("Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
-                    + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
+            throw new IllegalArgumentException(
+                    "Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
+                                               + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
         }
         exchange.getOut().setHeader(NUMBER_OF_ENCRYPTION_KEYS, Integer.valueOf(keys.size()));
 
@@ -232,8 +229,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(findAlgorithm(exchange))
-                .setWithIntegrityPacket(integrity).setSecureRandom(new SecureRandom()).setProvider(getProvider()));
+        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
+                new JcePGPDataEncryptorBuilder(findAlgorithm(exchange))
+                        .setWithIntegrityPacket(integrity).setSecureRandom(new SecureRandom()).setProvider(getProvider()));
         // several keys can be added
         for (PGPPublicKey key : keys) {
             encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
@@ -246,9 +244,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             comOut = new BufferedOutputStream(comData.open(encOut));
         } else {
             comOut = encOut;
-            LOG.debug("No Compressed Data packet is added");  
+            LOG.debug("No Compressed Data packet is added");
         }
-            
+
         List<PGPSignatureGenerator> sigGens = createSignatureGenerator(exchange, comOut);
 
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
@@ -331,8 +329,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         }
 
         List<String> sigKeyUserids = determineSignaturenUserIds(exchange);
-        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = secretKeyAccessor.getSignerKeys(exchange,
-                sigKeyUserids);
+        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId
+                = secretKeyAccessor.getSignerKeys(exchange,
+                        sigKeyUserids);
         if (sigSecretKeysWithPrivateKeyAndUserId.isEmpty()) {
             return null;
         }
@@ -427,7 +426,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return osb.build();
     }
 
-    private DecryptedDataAndPPublicKeyEncryptedData getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
+    private DecryptedDataAndPPublicKeyEncryptedData getDecryptedData(Exchange exchange, InputStream encryptedStream)
+            throws Exception, PGPException {
         PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 
@@ -455,7 +455,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             throw new PGPException("PGP message is encrypted with a key which could not be found in the Secret Keyring.");
         }
 
-        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
+        InputStream encData
+                = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
         return new DecryptedDataAndPPublicKeyEncryptedData(encData, pbe);
     }
 
@@ -474,11 +475,14 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return enc;
     }
 
-    private void verifySignature(PGPObjectFactory pgpFactory, PGPOnePassSignature signature) throws IOException, PGPException, SignatureException {
+    private void verifySignature(PGPObjectFactory pgpFactory, PGPOnePassSignature signature)
+            throws IOException, PGPException, SignatureException {
         if (signature != null) {
             PGPSignatureList sigList = (PGPSignatureList) pgpFactory.nextObject();
             if (!signature.verify(getSignatureWithKeyId(signature.getKeyID(), sigList))) {
-                throw new SignatureException("Verification of the PGP signature with the key ID " + signature.getKeyID() + " failed. The PGP message may have been tampered.");
+                throw new SignatureException(
+                        "Verification of the PGP signature with the key ID " + signature.getKeyID()
+                                             + " failed. The PGP message may have been tampered.");
             }
         }
     }
@@ -486,9 +490,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private IllegalArgumentException getFormatException() {
         return new IllegalArgumentException(
                 "The input message body has an invalid format. The PGP decryption/verification processor expects a sequence of PGP packets of the form "
-                        + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
-                        + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, (Compressed Data,) (One Pass Signature ...,) "
-                        + "Literal Data, (Signature ...,)");
+                                            + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
+                                            + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, (Compressed Data,) (One Pass Signature ...,) "
+                                            + "Literal Data, (Signature ...,)");
     }
 
     protected PGPSignature getSignatureWithKeyId(long keyID, PGPSignatureList sigList) {
@@ -524,15 +528,15 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         if (signatureList.isEmpty()) {
             return null;
         } else {
-            throw new IllegalArgumentException("Cannot verify the PGP signature: No public key found for the key ID(s) contained in the PGP signature(s). "
-                + "Either the received PGP message contains a signature from an unexpected sender or the Public Keyring does not contain the public key of the sender.");
+            throw new IllegalArgumentException(
+                    "Cannot verify the PGP signature: No public key found for the key ID(s) contained in the PGP signature(s). "
+                                               + "Either the received PGP message contains a signature from an unexpected sender or the Public Keyring does not contain the public key of the sender.");
         }
 
     }
 
     /**
-     * Sets if the encrypted file should be written in ascii visible text (for
-     * marshaling).
+     * Sets if the encrypted file should be written in ascii visible text (for marshaling).
      */
     public void setArmored(boolean armored) {
         this.armored = armored;
@@ -543,8 +547,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Whether or not to add an integrity check/sign to the encrypted file for
-     * marshaling.
+     * Whether or not to add an integrity check/sign to the encrypted file for marshaling.
      */
     public void setIntegrity(boolean integrity) {
         this.integrity = integrity;
@@ -555,8 +558,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * User ID, or more precisely user ID part, of the key used for encryption.
-     * See also {@link #setKeyUserids(List<String>)}.
+     * User ID, or more precisely user ID part, of the key used for encryption. See also
+     * {@link #setKeyUserids(List<String>)}.
      */
     public void setKeyUserid(String keyUserid) {
         this.keyUserid = keyUserid;
@@ -571,24 +574,20 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Keys User IDs, or more precisely user ID parts, used for determining the
-     * public keys for encryption. If you just have one User ID, then you can
-     * also use the method {@link #setKeyUserid(String)}. The User ID specified
-     * in {@link #setKeyUserid(String)} and in this method will be merged
-     * together and the public keys which have a User ID which contain a value
-     * of the specified User IDs the will be used for the encryption. Be aware
-     * that you may get several public keys even if you specify only one User
-     * Id, because there can be several public keys which have a User ID which
-     * contains the specified User ID.
+     * Keys User IDs, or more precisely user ID parts, used for determining the public keys for encryption. If you just
+     * have one User ID, then you can also use the method {@link #setKeyUserid(String)}. The User ID specified in
+     * {@link #setKeyUserid(String)} and in this method will be merged together and the public keys which have a User ID
+     * which contain a value of the specified User IDs the will be used for the encryption. Be aware that you may get
+     * several public keys even if you specify only one User Id, because there can be several public keys which have a
+     * User ID which contains the specified User ID.
      */
     public void setKeyUserids(List<String> keyUserids) {
         this.keyUserids = keyUserids;
     }
 
     /**
-     * Userid, or more precisely user ID part, of the signature key used for
-     * signing (marshal) and verifying (unmarshal). See also
-     * {@link #setSignatureKeyUserids(List)}.
+     * Userid, or more precisely user ID part, of the signature key used for signing (marshal) and verifying
+     * (unmarshal). See also {@link #setSignatureKeyUserids(List)}.
      */
     public void setSignatureKeyUserid(String signatureKeyUserid) {
         this.signatureKeyUserid = signatureKeyUserid;
@@ -603,34 +602,24 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * User IDs, or more precisely user ID parts, used for signing and
-     * verification.
+     * User IDs, or more precisely user ID parts, used for signing and verification.
      * <p>
-     * In the signing case, the User IDs specify the private keys which are used
-     * for signing. If the result are several private keys then several
-     * signatures will be created. If you just have one signature User ID, then
-     * you can also use the method {@link #setSignatureKeyUserid(String)} or
-     * this method. The User ID specified in
-     * {@link #setSignatureKeyUserid(String)} and in this method will be merged
-     * together and the private keys which have a User Id which contain one
-     * value out of the specified UserIds will be used for the signature
-     * creation. Be aware that you may get several private keys even if you
-     * specify only one User Id, because there can be several private keys which
-     * have a User ID which contains the specified User ID.
+     * In the signing case, the User IDs specify the private keys which are used for signing. If the result are several
+     * private keys then several signatures will be created. If you just have one signature User ID, then you can also
+     * use the method {@link #setSignatureKeyUserid(String)} or this method. The User ID specified in
+     * {@link #setSignatureKeyUserid(String)} and in this method will be merged together and the private keys which have
+     * a User Id which contain one value out of the specified UserIds will be used for the signature creation. Be aware
+     * that you may get several private keys even if you specify only one User Id, because there can be several private
+     * keys which have a User ID which contains the specified User ID.
      * <p>
-     * In the verification case the User IDs restrict the set of public keys
-     * which can be used for verification. The public keys used for verification
-     * must contain a User ID which contain one value of the User ID list. If
-     * you neither specify in this method and nor specify in the method
-     * {@link #setSignatureKeyUserid(String)} any value then any public key in
-     * the public key ring will be taken into consideration for the
-     * verification.
+     * In the verification case the User IDs restrict the set of public keys which can be used for verification. The
+     * public keys used for verification must contain a User ID which contain one value of the User ID list. If you
+     * neither specify in this method and nor specify in the method {@link #setSignatureKeyUserid(String)} any value
+     * then any public key in the public key ring will be taken into consideration for the verification.
      * <p>
-     * If you just have one User ID, then you can also use the method
-     * {@link #setSignatureKeyUserid(String)}. The User ID specified in
-     * {@link #setSignatureKeyUserid(String)} and in this method will be merged
-     * together and the corresponding public keys represent the potential keys
-     * for the verification of the message.
+     * If you just have one User ID, then you can also use the method {@link #setSignatureKeyUserid(String)}. The User
+     * ID specified in {@link #setSignatureKeyUserid(String)} and in this method will be merged together and the
+     * corresponding public keys represent the potential keys for the verification of the message.
      */
     public void setSignatureKeyUserids(List<String> signatureKeyUserids) {
         this.signatureKeyUserids = signatureKeyUserids;
@@ -641,11 +630,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Java Cryptography Extension (JCE) provider, default is Bouncy Castle
-     * ("BC"). Alternatively you can use, for example, the IAIK JCE provider; in
-     * this case the provider must be registered beforehand and the Bouncy
-     * Castle provider must not be registered beforehand. The Sun JCE provider
-     * does not work.
+     * Java Cryptography Extension (JCE) provider, default is Bouncy Castle ("BC"). Alternatively you can use, for
+     * example, the IAIK JCE provider; in this case the provider must be registered beforehand and the Bouncy Castle
+     * provider must not be registered beforehand. The Sun JCE provider does not work.
      */
     public void setProvider(String provider) {
         this.provider = provider;
@@ -656,8 +643,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Compression algorithm used during marshaling. Possible values are defined
-     * in {@link CompressionAlgorithmTags}. Default value is ZIP.
+     * Compression algorithm used during marshaling. Possible values are defined in {@link CompressionAlgorithmTags}.
+     * Default value is ZIP.
      */
     public void setCompressionAlgorithm(int compressionAlgorithm) {
         this.compressionAlgorithm = compressionAlgorithm;
@@ -668,8 +655,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Digest algorithm for signing (marshaling). Possible values are defined in
-     * {@link HashAlgorithmTags}. Default value is SHA1.
+     * Digest algorithm for signing (marshaling). Possible values are defined in {@link HashAlgorithmTags}. Default
+     * value is SHA1.
      */
     public void setHashAlgorithm(int hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
@@ -680,8 +667,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Symmetric key algorithm for encryption (marshaling). Possible values are
-     * defined in {@link SymmetricKeyAlgorithmTags}. Default value is CAST5.
+     * Symmetric key algorithm for encryption (marshaling). Possible values are defined in
+     * {@link SymmetricKeyAlgorithmTags}. Default value is CAST5.
      */
     public void setAlgorithm(int algorithm) {
         this.algorithm = algorithm;
@@ -711,27 +698,22 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return withCompressedDataPacket;
     }
 
-    /** Indicator that Compressed Data packet shall be added during encryption.
-     * The default value is true.
-     * If <tt>false</tt> then the compression algorithm (see {@link #setCompressionAlgorithm(int)} is ignored. 
+    /**
+     * Indicator that Compressed Data packet shall be added during encryption. The default value is true. If
+     * <tt>false</tt> then the compression algorithm (see {@link #setCompressionAlgorithm(int)} is ignored.
      */
     public void setWithCompressedDataPacket(boolean withCompressedDataPacket) {
         this.withCompressedDataPacket = withCompressedDataPacket;
     }
 
     /**
-     * Signature verification option. Controls the behavior for the signature
-     * verification during unmarshaling. Possible values are
-     * {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL},
-     * {@link #SIGNATURE_VERIFICATION_OPTION_REQUIRED},
-     * {@link #SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED}, and
-     * {@link #SIGNATURE_VERIFICATION_OPTION_IGNORE}. The default
-     * value is {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL}
+     * Signature verification option. Controls the behavior for the signature verification during unmarshaling. Possible
+     * values are {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL}, {@link #SIGNATURE_VERIFICATION_OPTION_REQUIRED},
+     * {@link #SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED}, and {@link #SIGNATURE_VERIFICATION_OPTION_IGNORE}.
+     * The default value is {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL}
      * 
-     * @param signatureVerificationOption
-     *            signature verification option
-     * @throws IllegalArgumentException
-     *            if an invalid value is entered
+     * @param  signatureVerificationOption signature verification option
+     * @throws IllegalArgumentException    if an invalid value is entered
      */
     public void setSignatureVerificationOption(String signatureVerificationOption) {
         if (SIGNATURE_VERIFICATION_OPTIONS.contains(signatureVerificationOption)) {
@@ -742,8 +724,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Returns the file name for the literal packet. Cannot be <code>null</code>
-     * .
+     * Returns the file name for the literal packet. Cannot be <code>null</code> .
      * 
      */
     public String getFileName() {
@@ -751,18 +732,15 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     /**
-     * Sets the file name for the literal data packet. Can be overwritten by the
-     * header {@link Exchange#FILE_NAME}. The default value is "_CONSOLE".
-     * "_CONSOLE" indicates that the message is considered to be
-     * "for your eyes only". This advises that the message data is unusually
-     * sensitive, and the receiving program should process it more carefully,
+     * Sets the file name for the literal data packet. Can be overwritten by the header {@link Exchange#FILE_NAME}. The
+     * default value is "_CONSOLE". "_CONSOLE" indicates that the message is considered to be "for your eyes only". This
+     * advises that the message data is unusually sensitive, and the receiving program should process it more carefully,
      * perhaps avoiding storing the received data to disk, for example.
      * <p>
      * Only used for marshaling.
      * 
-     * @param fileName
-     * @throws IllegalArgumentException
-     *             if <tt>fileName</tt> is <code>null</code>
+     * @param  fileName
+     * @throws IllegalArgumentException if <tt>fileName</tt> is <code>null</code>
      */
     public void setFileName(String fileName) {
         if (fileName == null) {
@@ -785,7 +763,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     protected void doStop() throws Exception { //NOPMD
         // noop
     }
-    
+
     private static class DecryptedDataAndPPublicKeyEncryptedData {
 
         private final InputStream decryptedData;

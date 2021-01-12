@@ -52,10 +52,13 @@ public interface PlatformHttpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -71,10 +74,14 @@ public interface PlatformHttpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -83,12 +90,15 @@ public interface PlatformHttpEndpointBuilderFactory {
         }
         /**
          * The content type this endpoint accepts as an input, such as
-         * application/xml or application/json. null or &#42;/&#42; mean no
-         * restriction.
+         * application/xml or application/json. null or
+         * &amp;amp;#42;/&amp;amp;#42; mean no restriction.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder consumes(String consumes) {
             doSetProperty("consumes", consumes);
@@ -98,9 +108,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * A comma separated list of HTTP methods to serve, e.g. GET,POST . If
          * no methods are specified, all methods will be served.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param httpMethodRestrict the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
@@ -111,10 +124,13 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
@@ -125,10 +141,14 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
@@ -139,9 +159,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The content type this endpoint produces, such as application/xml or
          * application/json.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder produces(String produces) {
             doSetProperty("produces", produces);
@@ -164,10 +187,13 @@ public interface PlatformHttpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -181,9 +207,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -193,9 +222,13 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -206,9 +239,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -220,9 +256,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * having these extensions will be stored locally. Null value or
          * asterisk () will allow all files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param fileNameExtWhitelist the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder fileNameExtWhitelist(
                 String fileNameExtWhitelist) {
@@ -230,41 +269,17 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPlatformHttpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPlatformHttpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to filter headers to and from
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -276,9 +291,13 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -290,9 +309,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
+         * &lt;code&gt;org.apache.camel.component.platform.http.spi.PlatformHttpEngine&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param platformHttpEngine the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder platformHttpEngine(
                 Object platformHttpEngine) {
@@ -304,9 +326,12 @@ public interface PlatformHttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
+         * &lt;code&gt;org.apache.camel.component.platform.http.spi.PlatformHttpEngine&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param platformHttpEngine the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder platformHttpEngine(
                 String platformHttpEngine) {
@@ -317,10 +342,13 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -331,10 +359,14 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPlatformHttpEndpointBuilder synchronous(
                 String synchronous) {
@@ -359,6 +391,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The path under which this endpoint serves the HTTP requests
          * 
          * @param path path
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder platformHttp(String path) {
             return PlatformHttpEndpointBuilderFactory.endpointBuilder("platform-http", path);
@@ -380,6 +413,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder platformHttp(
                 String componentName,

@@ -29,8 +29,6 @@ public enum TokenApiMethod implements ApiMethod {
         "creator",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private TokenApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -46,11 +46,13 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: common
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder compressionType(
                 ThriftCompressionType compressionType) {
@@ -61,11 +63,13 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: common
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder compressionType(
                 String compressionType) {
@@ -76,11 +80,13 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
          * 
          * Default: BINARY
          * Group: common
+         * 
+         * @param exchangeProtocol the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
                 ThriftExchangeProtocol exchangeProtocol) {
@@ -91,11 +97,13 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
          * 
          * Default: BINARY
          * Group: common
+         * 
+         * @param exchangeProtocol the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
                 String exchangeProtocol) {
@@ -111,10 +119,13 @@ public interface ThriftEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -130,10 +141,14 @@ public interface ThriftEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -143,9 +158,12 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Client timeout for consumers.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder clientTimeout(int clientTimeout) {
             doSetProperty("clientTimeout", clientTimeout);
@@ -154,9 +172,12 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Client timeout for consumers.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientTimeout the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder clientTimeout(String clientTimeout) {
             doSetProperty("clientTimeout", clientTimeout);
@@ -165,10 +186,13 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer max thread pool size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder maxPoolSize(int maxPoolSize) {
             doSetProperty("maxPoolSize", maxPoolSize);
@@ -177,10 +201,13 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer max thread pool size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxPoolSize the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder maxPoolSize(String maxPoolSize) {
             doSetProperty("maxPoolSize", maxPoolSize);
@@ -189,10 +216,13 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer initial thread pool size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -201,10 +231,13 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift server consumer initial thread pool size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -214,11 +247,13 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder negotiationType(
                 ThriftNegotiationType negotiationType) {
@@ -229,11 +264,13 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder negotiationType(
                 String negotiationType) {
@@ -244,9 +281,12 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslParameters the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder sslParameters(Object sslParameters) {
             doSetProperty("sslParameters", sslParameters);
@@ -256,9 +296,12 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslParameters the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointConsumerBuilder sslParameters(String sslParameters) {
             doSetProperty("sslParameters", sslParameters);
@@ -281,10 +324,13 @@ public interface ThriftEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -298,9 +344,12 @@ public interface ThriftEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -310,9 +359,13 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -323,9 +376,12 @@ public interface ThriftEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -333,41 +389,16 @@ public interface ThriftEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedThriftEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedThriftEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -378,10 +409,14 @@ public interface ThriftEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -403,11 +438,13 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: common
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder compressionType(
                 ThriftCompressionType compressionType) {
@@ -418,11 +455,13 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: common
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder compressionType(
                 String compressionType) {
@@ -433,11 +472,13 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
          * 
          * Default: BINARY
          * Group: common
+         * 
+         * @param exchangeProtocol the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
                 ThriftExchangeProtocol exchangeProtocol) {
@@ -448,11 +489,13 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
          * 
          * Default: BINARY
          * Group: common
+         * 
+         * @param exchangeProtocol the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
                 String exchangeProtocol) {
@@ -470,10 +513,13 @@ public interface ThriftEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -491,10 +537,14 @@ public interface ThriftEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -504,9 +554,12 @@ public interface ThriftEndpointBuilderFactory {
         /**
          * The Thrift invoked method name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param method the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder method(String method) {
             doSetProperty("method", method);
@@ -516,11 +569,13 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder negotiationType(
                 ThriftNegotiationType negotiationType) {
@@ -531,11 +586,13 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder negotiationType(
                 String negotiationType) {
@@ -546,9 +603,12 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslParameters the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder sslParameters(Object sslParameters) {
             doSetProperty("sslParameters", sslParameters);
@@ -558,9 +618,12 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslParameters the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointProducerBuilder sslParameters(String sslParameters) {
             doSetProperty("sslParameters", sslParameters);
@@ -578,41 +641,16 @@ public interface ThriftEndpointBuilderFactory {
             return (ThriftEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedThriftEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedThriftEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -623,10 +661,14 @@ public interface ThriftEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -649,11 +691,13 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: common
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder compressionType(
                 ThriftCompressionType compressionType) {
@@ -664,11 +708,13 @@ public interface ThriftEndpointBuilderFactory {
          * Protocol compression mechanism type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: common
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder compressionType(String compressionType) {
             doSetProperty("compressionType", compressionType);
@@ -678,11 +724,13 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
          * 
          * Default: BINARY
          * Group: common
+         * 
+         * @param exchangeProtocol the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder exchangeProtocol(
                 ThriftExchangeProtocol exchangeProtocol) {
@@ -693,11 +741,13 @@ public interface ThriftEndpointBuilderFactory {
          * Exchange protocol serialization type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftExchangeProtocol&lt;/code&gt; type.
          * 
          * Default: BINARY
          * Group: common
+         * 
+         * @param exchangeProtocol the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder exchangeProtocol(String exchangeProtocol) {
             doSetProperty("exchangeProtocol", exchangeProtocol);
@@ -707,11 +757,13 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder negotiationType(
                 ThriftNegotiationType negotiationType) {
@@ -722,11 +774,13 @@ public interface ThriftEndpointBuilderFactory {
          * Security negotiation type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.thrift.ThriftNegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder negotiationType(String negotiationType) {
             doSetProperty("negotiationType", negotiationType);
@@ -736,9 +790,12 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslParameters the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder sslParameters(Object sslParameters) {
             doSetProperty("sslParameters", sslParameters);
@@ -748,9 +805,12 @@ public interface ThriftEndpointBuilderFactory {
          * Configuration parameters for SSL/TLS security negotiation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslParameters the value to set
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder sslParameters(String sslParameters) {
             doSetProperty("sslParameters", sslParameters);
@@ -769,41 +829,16 @@ public interface ThriftEndpointBuilderFactory {
             return (ThriftEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedThriftEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedThriftEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -813,10 +848,14 @@ public interface ThriftEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedThriftEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -882,6 +921,7 @@ public interface ThriftEndpointBuilderFactory {
          * dot service definition name)
          * 
          * @param path host:port/service
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder thrift(String path) {
             return ThriftEndpointBuilderFactory.endpointBuilder("thrift", path);
@@ -912,6 +952,7 @@ public interface ThriftEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/service
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder thrift(String componentName, String path) {
             return ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);

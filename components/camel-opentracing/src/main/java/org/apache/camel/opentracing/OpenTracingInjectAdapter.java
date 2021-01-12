@@ -28,11 +28,13 @@ public class OpenTracingInjectAdapter implements TextMap {
         this.adapter = adapter;
     }
 
-    @Override public Iterator<Map.Entry<String, String>> iterator() {
+    @Override
+    public Iterator<Map.Entry<String, String>> iterator() {
         throw new UnsupportedOperationException("CamelHeadersInjectAdapter should only be used with Tracer.inject()");
     }
 
-    @Override public void put(String key, String value) {
+    @Override
+    public void put(String key, String value) {
         this.adapter.put(key, value);
     }
 }

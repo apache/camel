@@ -22,12 +22,12 @@ import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
 
 public class JMXMonitorTypeStringMatchesTest extends SimpleBeanFixture {
-    
+
     @Test
     public void matches() throws Exception {
 
         ISimpleMXBean simpleBean = getSimpleMXBean();
-        
+
         simpleBean.setStringValue("bogus");
         Thread.sleep(600);
         simpleBean.setStringValue("initial");
@@ -38,9 +38,9 @@ public class JMXMonitorTypeStringMatchesTest extends SimpleBeanFixture {
     @Override
     protected JMXUriBuilder buildFromURI() {
         return super.buildFromURI().withMonitorType("string")
-                                   .withGranularityPeriod(500)
-                                   .withObservedAttribute("StringValue")
-                                   .withStringToCompare("initial")
-                                   .withNotifyMatch(true);
+                .withGranularityPeriod(500)
+                .withObservedAttribute("StringValue")
+                .withStringToCompare("initial")
+                .withNotifyMatch(true);
     }
 }

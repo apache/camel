@@ -29,17 +29,17 @@ import org.apache.camel.support.DefaultComponent;
 
 @Component("aws-sns")
 public class SnsComponent extends DefaultComponent {
-    
-    @Metadata  
+
+    @Metadata
     private SnsConfiguration configuration = new SnsConfiguration();
-    
+
     public SnsComponent() {
         this(null);
     }
 
     public SnsComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new SnsComponentVerifierExtension());
     }
 
@@ -49,7 +49,7 @@ public class SnsComponent extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
-        SnsConfiguration configuration =  this.configuration != null ? this.configuration.copy() : new SnsConfiguration();
+        SnsConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SnsConfiguration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sns")) {
@@ -65,13 +65,14 @@ public class SnsComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSNSClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
     }
-    
+
     public SnsConfiguration getConfiguration() {
         return configuration;
     }
@@ -82,7 +83,7 @@ public class SnsComponent extends DefaultComponent {
     public void setConfiguration(SnsConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(SnsConfiguration configuration) {
         Set<AmazonSNS> clients = getCamelContext().getRegistry().findByType(AmazonSNS.class);
         if (clients.size() == 1) {

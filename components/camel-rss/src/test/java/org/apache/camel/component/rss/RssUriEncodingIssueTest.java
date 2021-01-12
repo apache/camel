@@ -33,7 +33,8 @@ public class RssUriEncodingIssueTest extends CamelTestSupport {
 
     @Test
     public void testUriIssue() throws Exception {
-        String uri = "rss:http://api.flickr.com/services/feeds/photos_public.gne?id=23353282@N05&tags=lowlands&lang=en-us&format=rss_200";
+        String uri
+                = "rss:http://api.flickr.com/services/feeds/photos_public.gne?id=23353282@N05&tags=lowlands&lang=en-us&format=rss_200";
 
         PollingConsumer consumer = context.getEndpoint(uri).createPollingConsumer();
         consumer.start();

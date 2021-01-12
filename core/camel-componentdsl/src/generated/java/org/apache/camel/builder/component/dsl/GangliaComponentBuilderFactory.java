@@ -37,6 +37,8 @@ public interface GangliaComponentBuilderFactory {
      * Category: monitoring
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-ganglia
+     * 
+     * @return the dsl builder
      */
     static GangliaComponentBuilder ganglia() {
         return new GangliaComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface GangliaComponentBuilderFactory {
          * it expires. Set to 0 and the value will remain in Ganglia
          * indefinitely until a gmond agent restart.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param dmax the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder dmax(int dmax) {
             doSetProperty("dmax", dmax);
@@ -65,10 +70,13 @@ public interface GangliaComponentBuilderFactory {
         /**
          * The group that the metric belongs to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: java
          * Group: producer
+         * 
+         * @param groupName the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder groupName(java.lang.String groupName) {
             doSetProperty("groupName", groupName);
@@ -85,10 +93,13 @@ public interface GangliaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,10 +109,13 @@ public interface GangliaComponentBuilderFactory {
         /**
          * The name to use for the metric.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: metric
          * Group: producer
+         * 
+         * @param metricName the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder metricName(java.lang.String metricName) {
             doSetProperty("metricName", metricName);
@@ -111,11 +125,13 @@ public interface GangliaComponentBuilderFactory {
          * Send the UDP metric packets using MULTICAST or UNICAST.
          * 
          * The option is a:
-         * <code>info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode</code>
-         * type.
+         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode&lt;/code&gt; type.
          * 
          * Default: MULTICAST
          * Group: producer
+         * 
+         * @param mode the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder mode(
                 info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode mode) {
@@ -125,9 +141,12 @@ public interface GangliaComponentBuilderFactory {
         /**
          * Prefix the metric name with this string and an underscore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder prefix(java.lang.String prefix) {
             doSetProperty("prefix", prefix);
@@ -137,10 +156,14 @@ public interface GangliaComponentBuilderFactory {
          * The slope.
          * 
          * The option is a:
-         * <code>info.ganglia.gmetric4j.gmetric.GMetricSlope</code> type.
+         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetricSlope&lt;/code&gt;
+         * type.
          * 
          * Default: BOTH
          * Group: producer
+         * 
+         * @param slope the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder slope(
                 info.ganglia.gmetric4j.gmetric.GMetricSlope slope) {
@@ -150,9 +173,12 @@ public interface GangliaComponentBuilderFactory {
         /**
          * Spoofing information IP:hostname.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param spoofHostname the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder spoofHostname(
                 java.lang.String spoofHostname) {
@@ -163,10 +189,13 @@ public interface GangliaComponentBuilderFactory {
          * Maximum time in seconds that the value can be considered current.
          * After this, Ganglia considers the value to have expired.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: producer
+         * 
+         * @param tmax the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder tmax(int tmax) {
             doSetProperty("tmax", tmax);
@@ -175,10 +204,13 @@ public interface GangliaComponentBuilderFactory {
         /**
          * If using multicast, set the TTL of the packets.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: producer
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder ttl(int ttl) {
             doSetProperty("ttl", ttl);
@@ -188,10 +220,14 @@ public interface GangliaComponentBuilderFactory {
          * The type of value.
          * 
          * The option is a:
-         * <code>info.ganglia.gmetric4j.gmetric.GMetricType</code> type.
+         * &lt;code&gt;info.ganglia.gmetric4j.gmetric.GMetricType&lt;/code&gt;
+         * type.
          * 
          * Default: STRING
          * Group: producer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder type(
                 info.ganglia.gmetric4j.gmetric.GMetricType type) {
@@ -203,9 +239,12 @@ public interface GangliaComponentBuilderFactory {
          * litres, bytes. Do not include a prefix such as k (kilo) or m (milli),
          * other tools may scale the units later. The value should be unscaled.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param units the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder units(java.lang.String units) {
             doSetProperty("units", units);
@@ -215,37 +254,49 @@ public interface GangliaComponentBuilderFactory {
          * Use the wire format of Ganglia 3.1.0 and later versions. Set this to
          * false to use Ganglia 3.0.x or earlier.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param wireFormat31x the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder wireFormat31x(boolean wireFormat31x) {
             doSetProperty("wireFormat31x", wireFormat31x);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GangliaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GangliaComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ganglia.GangliaConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ganglia.GangliaConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GangliaComponentBuilder configuration(
                 org.apache.camel.component.ganglia.GangliaConfiguration configuration) {
@@ -289,7 +340,7 @@ public interface GangliaComponentBuilderFactory {
             case "type": getOrCreateConfiguration((GangliaComponent) component).setType((info.ganglia.gmetric4j.gmetric.GMetricType) value); return true;
             case "units": getOrCreateConfiguration((GangliaComponent) component).setUnits((java.lang.String) value); return true;
             case "wireFormat31x": getOrCreateConfiguration((GangliaComponent) component).setWireFormat31x((boolean) value); return true;
-            case "basicPropertyBinding": ((GangliaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GangliaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((GangliaComponent) component).setConfiguration((org.apache.camel.component.ganglia.GangliaConfiguration) value); return true;
             default: return false;
             }

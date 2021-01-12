@@ -37,7 +37,8 @@ public class MavenArtifactProviderTest {
 
         int before = camelCatalog.findComponentNames().size();
 
-        Set<String> names = provider.addArtifactToCatalog(camelCatalog, "org.apache.camel", "dummy-component", camelCatalog.getCatalogVersion());
+        Set<String> names = provider.addArtifactToCatalog(camelCatalog, "org.apache.camel", "dummy-component",
+                camelCatalog.getCatalogVersion());
         assertTrue(names.contains("dummy"));
 
         int after = camelCatalog.findComponentNames().size();

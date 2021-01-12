@@ -68,7 +68,7 @@ public class AS2ServerConnection {
                                      Certificate[] signingCertificateChain,
                                      PrivateKey signingPrivateKey,
                                      PrivateKey decryptingPrivateKey)
-                throws IOException {
+                                                                      throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             serversocket = new ServerSocket(port);
 
@@ -153,7 +153,8 @@ public class AS2ServerConnection {
                         DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
                                 AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
                                 DispositionNotificationMultipartReportEntity.class);
-                        AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(as2Version,
+                        AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
+                                as2Version,
                                 originServer, serverFqdn, signingCertificateChain, signingPrivateKey);
                         asynchronousMDNManager.send(multipartReportEntity, recipientAddress);
                     }
@@ -164,8 +165,7 @@ public class AS2ServerConnection {
             } catch (final IOException ex) {
                 LOG.error("I/O error: {}", ex.getMessage());
             } catch (final HttpException ex) {
-                ex.printStackTrace();
-                LOG.error("Unrecoverable HTTP protocol violation: {}", ex.getMessage());
+                LOG.error("Unrecoverable HTTP protocol violation: {}", ex.getMessage(), ex);
             } finally {
                 try {
                     this.serverConnection.shutdown();
@@ -194,7 +194,7 @@ public class AS2ServerConnection {
                                Certificate[] signingCertificateChain,
                                PrivateKey signingPrivateKey,
                                PrivateKey decryptingPrivateKey)
-            throws IOException {
+                                                                throws IOException {
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.originServer = Args.notNull(originServer, "userAgent");
         this.serverFqdn = Args.notNull(serverFqdn, "serverFqdn");
@@ -204,8 +204,10 @@ public class AS2ServerConnection {
         this.signingPrivateKey = signingPrivateKey;
         this.decryptingPrivateKey = decryptingPrivateKey;
 
-        listenerThread = new RequestListenerThread(this.as2Version, this.originServer, this.serverFqdn,
-                this.serverPortNumber, this.signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey, this.decryptingPrivateKey);
+        listenerThread = new RequestListenerThread(
+                this.as2Version, this.originServer, this.serverFqdn,
+                this.serverPortNumber, this.signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey,
+                this.decryptingPrivateKey);
         listenerThread.setDaemon(true);
         listenerThread.start();
     }
@@ -247,16 +249,18 @@ public class AS2ServerConnection {
         }
     }
 
-    protected HttpProcessor initProtocolProcessor(String as2Version,
-                                                  String originServer,
-                                                  String serverFqdn,
-                                                  int port,
-                                                  AS2SignatureAlgorithm signatureAlgorithm,
-                                                  Certificate[] signingCertificateChain,
-                                                  PrivateKey signingPrivateKey,
-                                                  PrivateKey decryptingPrivateKey) {
+    protected HttpProcessor initProtocolProcessor(
+            String as2Version,
+            String originServer,
+            String serverFqdn,
+            int port,
+            AS2SignatureAlgorithm signatureAlgorithm,
+            Certificate[] signingCertificateChain,
+            PrivateKey signingPrivateKey,
+            PrivateKey decryptingPrivateKey) {
         return HttpProcessorBuilder.create().add(new ResponseContent(true)).add(new ResponseServer(originServer))
-                .add(new ResponseDate()).add(new ResponseConnControl()).add(new ResponseMDN(as2Version, serverFqdn,
+                .add(new ResponseDate()).add(new ResponseConnControl()).add(new ResponseMDN(
+                        as2Version, serverFqdn,
                         signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey))
                 .build();
     }

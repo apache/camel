@@ -31,8 +31,6 @@ public enum SettlementBatchSummaryGatewayApiMethod implements ApiMethod {
         arg("settlementDate", java.util.Calendar.class),
         arg("groupByCustomField", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private SettlementBatchSummaryGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

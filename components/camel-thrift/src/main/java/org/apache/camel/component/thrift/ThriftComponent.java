@@ -31,7 +31,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  */
 @Component("thrift")
 public class ThriftComponent extends DefaultComponent implements SSLContextParametersAware {
-    
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -56,7 +56,9 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
      * 
      * @return the parsed and valid configuration to use
      */
-    protected ThriftConfiguration parseConfiguration(ThriftConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+    protected ThriftConfiguration parseConfiguration(
+            ThriftConfiguration configuration, String remaining, Map<String, Object> parameters)
+            throws Exception {
         configuration.parseURI(new URI(remaining), parameters, this);
         return configuration;
     }

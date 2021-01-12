@@ -30,11 +30,10 @@ public final class BeanHelper {
     }
 
     /**
-     * Determines and maps the given value is valid according to the supported
-     * values by the bean component.
+     * Determines and maps the given value is valid according to the supported values by the bean component.
      *
-     * @param value the value
-     * @return the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
+     * @param  value the value
+     * @return       the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
      */
     public static Class<?> getValidParameterType(String value) {
         if (ObjectHelper.isEmpty(value)) {
@@ -86,11 +85,10 @@ public final class BeanHelper {
     }
 
     /**
-     * Determines if the given value is valid according to the supported
-     * values by the bean component.
+     * Determines if the given value is valid according to the supported values by the bean component.
      *
-     * @param value the value
-     * @return <tt>true</tt> if valid, <tt>false</tt> otherwise
+     * @param  value the value
+     * @return       <tt>true</tt> if valid, <tt>false</tt> otherwise
      */
     public static boolean isValidParameterValue(String value) {
         if (ObjectHelper.isEmpty(value)) {
@@ -106,15 +104,16 @@ public final class BeanHelper {
      * <p/>
      * This implementation will check if the given parameter type matches the expected type as class using either
      * <ul>
-     *     <li>FQN class name - com.foo.MyOrder</li>
-     *     <li>Simple class name - MyOrder</li>
+     * <li>FQN class name - com.foo.MyOrder</li>
+     * <li>Simple class name - MyOrder</li>
      * </ul>
      * If the given parameter type is <b>not</b> a class, then <tt>null</tt> is returned
      *
-     * @param resolver          the class resolver
-     * @param parameterType     the parameter type as a String, can be a FQN or a simple name of the class
-     * @param expectedType      the expected type
-     * @return <tt>null</tt> if parameter type is <b>not</b> a class, <tt>true</tt> if parameter type is assignable, <tt>false</tt> if not assignable
+     * @param  resolver      the class resolver
+     * @param  parameterType the parameter type as a String, can be a FQN or a simple name of the class
+     * @param  expectedType  the expected type
+     * @return               <tt>null</tt> if parameter type is <b>not</b> a class, <tt>true</tt> if parameter type is
+     *                       assignable, <tt>false</tt> if not assignable
      */
     public static Boolean isAssignableToExpectedType(ClassResolver resolver, String parameterType, Class<?> expectedType) {
         // if its a class, then it should be assignable

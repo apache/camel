@@ -24,8 +24,6 @@ public enum PlanGatewayApiMethod implements ApiMethod {
         java.util.List.class,
         "all");
 
-    
-
     private final ApiMethod apiMethod;
 
     private PlanGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

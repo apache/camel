@@ -26,27 +26,20 @@ import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.component.etcd.EtcdKeysComponent;
 import org.apache.camel.component.etcd.EtcdStatsComponent;
 import org.apache.camel.component.etcd.EtcdWatchComponent;
-import org.apache.camel.test.testcontainers.spring.junit5.ContainerAwareSpringTestSupport;
-import org.testcontainers.containers.GenericContainer;
+import org.apache.camel.test.infra.etcd.services.EtcDService;
+import org.apache.camel.test.infra.etcd.services.EtcDServiceFactory;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class SpringEtcdTestSupport extends ContainerAwareSpringTestSupport {
+public abstract class SpringEtcdTestSupport extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static EtcDService service = EtcDServiceFactory.createService();
+
     protected static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
     protected static final EtcdConfiguration CONFIGURATION = new EtcdConfiguration();
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return EtcdTestSupport.etcdContainer();
-    }
-
-    protected String getClientUri() {
-        return String.format(
-            "http://%s:%d",
-            getContainerHost(EtcdTestSupport.CONTAINER_NAME),
-            getContainerPort(EtcdTestSupport.CONTAINER_NAME, EtcdTestSupport.ETCD_CLIENT_PORT));
-    }
-
     protected EtcdClient getClient() {
-        return new EtcdClient(URI.create(getClientUri()));
+        return new EtcdClient(URI.create(service.getServiceAddress()));
     }
 
     // *************************************************************************
@@ -56,13 +49,13 @@ public abstract class SpringEtcdTestSupport extends ContainerAwareSpringTestSupp
     @Override
     protected CamelContext createCamelContext() throws Exception {
         EtcdKeysComponent keys = new EtcdKeysComponent();
-        keys.getConfiguration().setUris(getClientUri());
+        keys.getConfiguration().setUris(service.getServiceAddress());
 
         EtcdStatsComponent stats = new EtcdStatsComponent();
-        stats.getConfiguration().setUris(getClientUri());
+        stats.getConfiguration().setUris(service.getServiceAddress());
 
         EtcdWatchComponent watch = new EtcdWatchComponent();
-        watch.getConfiguration().setUris(getClientUri());
+        watch.getConfiguration().setUris(service.getServiceAddress());
 
         CamelContext context = super.createCamelContext();
         context.addComponent("etcd-keys", keys);

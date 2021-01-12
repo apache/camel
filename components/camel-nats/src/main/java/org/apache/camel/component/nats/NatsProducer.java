@@ -31,16 +31,16 @@ public class NatsProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NatsProducer.class);
 
     private Connection connection;
-    
+
     public NatsProducer(NatsEndpoint endpoint) {
         super(endpoint);
     }
-    
+
     @Override
     public NatsEndpoint getEndpoint() {
         return (NatsEndpoint) super.getEndpoint();
     }
-    
+
     @Override
     public void process(Exchange exchange) throws Exception {
         NatsConfiguration config = getEndpoint().getConfiguration();
@@ -51,7 +51,7 @@ public class NatsProducer extends DefaultProducer {
         }
 
         LOG.debug("Publishing to topic: {}", config.getTopic());
-        
+
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             String replySubject = config.getReplySubject();
             connection.publish(config.getTopic(), replySubject, body);
@@ -59,15 +59,15 @@ public class NatsProducer extends DefaultProducer {
             connection.publish(config.getTopic(), body);
         }
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         LOG.debug("Starting Nats Producer");
-        
+
         LOG.debug("Getting Nats Connection");
         connection = getEndpoint().getConfiguration().getConnection() != null
-            ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
+                ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
     }
 
     @Override

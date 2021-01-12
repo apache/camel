@@ -41,10 +41,13 @@ public interface NetWeaverEndpointBuilderFactory {
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param flatternMap the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
             doSetProperty("flatternMap", flatternMap);
@@ -54,10 +57,14 @@ public interface NetWeaverEndpointBuilderFactory {
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param flatternMap the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
             doSetProperty("flatternMap", flatternMap);
@@ -67,10 +74,13 @@ public interface NetWeaverEndpointBuilderFactory {
          * Whether to return data in JSON format. If this option is false, then
          * XML is returned in Atom format.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param json the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder json(boolean json) {
             doSetProperty("json", json);
@@ -80,10 +90,14 @@ public interface NetWeaverEndpointBuilderFactory {
          * Whether to return data in JSON format. If this option is false, then
          * XML is returned in Atom format.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param json the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder json(String json) {
             doSetProperty("json", json);
@@ -92,10 +106,13 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * To transform the JSON from a String to a Map in the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jsonAsMap the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
             doSetProperty("jsonAsMap", jsonAsMap);
@@ -104,10 +121,14 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * To transform the JSON from a String to a Map in the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jsonAsMap the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
             doSetProperty("jsonAsMap", jsonAsMap);
@@ -124,10 +145,13 @@ public interface NetWeaverEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -145,10 +169,14 @@ public interface NetWeaverEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -158,10 +186,13 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Password for account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -170,10 +201,13 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Username for account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -191,41 +225,16 @@ public interface NetWeaverEndpointBuilderFactory {
             return (NetWeaverEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -235,10 +244,14 @@ public interface NetWeaverEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -261,6 +274,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Url to the SAP net-weaver gateway server.
          * 
          * @param path url
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder sapNetweaver(String path) {
             return NetWeaverEndpointBuilderFactory.endpointBuilder("sap-netweaver", path);
@@ -281,6 +295,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path url
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder sapNetweaver(
                 String componentName,

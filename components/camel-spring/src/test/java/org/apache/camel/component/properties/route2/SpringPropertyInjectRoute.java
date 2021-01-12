@@ -27,8 +27,8 @@ public class SpringPropertyInjectRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:start")
-            .transform().constant(greeting)
-            .to("{{result}}");
+                .transform().constant(greeting)
+                .to("{{result}}");
     }
 
 }

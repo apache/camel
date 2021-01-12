@@ -31,7 +31,8 @@ public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTest
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(0);
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c", String.class);
+        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c",
+                String.class);
         assertEquals("Damn Forced", out);
 
         assertMockEndpointsSatisfied();

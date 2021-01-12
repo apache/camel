@@ -28,35 +28,38 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaxonXsltDTDTest extends CamelTestSupport {
-    
-    private static final String MESSAGE = 
-        "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
-    
+    private static final Logger LOG = LoggerFactory.getLogger(SaxonXsltDTDTest.class);
+
+    private static final String MESSAGE
+            = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
+
     @Test
     public void testSendingStringMessage() throws Exception {
         sendEntityMessage(MESSAGE);
     }
-    
+
     @Test
     public void testSendingInputStreamMessage() throws Exception {
         InputStream is = new ByteArrayInputStream(MESSAGE.getBytes());
-        sendEntityMessage(is);   
+        sendEntityMessage(is);
     }
-    
+
     private void sendEntityMessage(Object message) throws Exception {
-        
+
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.reset();
         endpoint.expectedMessageCount(1);
-        
+
         template.sendBody("direct:start1", message);
 
         assertMockEndpointsSatisfied();
-        
+
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
@@ -64,7 +67,7 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
 
         endpoint.reset();
         endpoint.expectedMessageCount(1);
-        
+
         // reset stream before trying again
         if (message instanceof InputStream) {
             ((InputStream) message).reset();
@@ -76,31 +79,29 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
             xml = exchange.getIn().getBody(String.class);
             assertTrue(xml.indexOf("<transformed subject=\"\">") > 0, "Get a wrong transformed message");
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Exception thrown during test (likely safe to ignore): {}", ex.getMessage(), ex);
             // expect an exception here
             assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
             // the file could not be found
             assertTrue(ex.getCause() instanceof TransformerException, "Get a wrong exception cause");
         }
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 from("direct:start1")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_dtd.xsl")
-                    .to("mock:result");
-                
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_dtd.xsl")
+                        .to("mock:result");
+
                 from("direct:start2")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_dtd.xsl?allowStAX=false")
-                    .to("mock:result");
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_dtd.xsl?allowStAX=false")
+                        .to("mock:result");
             }
         };
     }
 
-    
 }

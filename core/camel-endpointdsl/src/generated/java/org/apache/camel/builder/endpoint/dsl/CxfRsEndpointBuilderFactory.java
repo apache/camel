@@ -48,10 +48,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param features the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder features(List<Object> features) {
             doSetProperty("features", features);
@@ -61,10 +63,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param features the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder features(String features) {
             doSetProperty("features", features);
@@ -74,10 +78,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound REST messages to log.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
@@ -88,10 +95,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound REST messages to log.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
@@ -102,9 +113,12 @@ public interface CxfRsEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder loggingSizeLimit(
                 int loggingSizeLimit) {
@@ -115,9 +129,12 @@ public interface CxfRsEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
@@ -129,9 +146,12 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class without annotation. When using this option, then the
          * service class can be omitted, to emulate document-only endpoints.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param modelRef the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder modelRef(String modelRef) {
             doSetProperty("modelRef", modelRef);
@@ -142,10 +162,13 @@ public interface CxfRsEndpointBuilderFactory {
          * specify a string with a list of providers to lookup in the registy
          * separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param providers the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder providers(List<Object> providers) {
             doSetProperty("providers", providers);
@@ -157,9 +180,12 @@ public interface CxfRsEndpointBuilderFactory {
          * separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param providers the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder providers(String providers) {
             doSetProperty("providers", providers);
@@ -170,9 +196,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option is a:
-         * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceClasses the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
                 List<Class<Object>> resourceClasses) {
@@ -184,9 +213,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceClasses the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
                 String resourceClasses) {
@@ -197,10 +229,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets the locations of the schema(s) which can be used to validate the
          * incoming XML or JAXB-driven JSON.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param schemaLocations the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
                 List<String> schemaLocations) {
@@ -212,9 +247,12 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param schemaLocations the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
                 String schemaLocations) {
@@ -225,10 +263,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipFaultLogging the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
@@ -239,10 +280,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipFaultLogging the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder skipFaultLogging(
                 String skipFaultLogging) {
@@ -267,10 +312,13 @@ public interface CxfRsEndpointBuilderFactory {
          * binding option.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.BindingStyle&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: consumer
+         * 
+         * @param bindingStyle the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(
                 BindingStyle bindingStyle) {
@@ -295,10 +343,13 @@ public interface CxfRsEndpointBuilderFactory {
          * binding option.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.BindingStyle&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: consumer
+         * 
+         * @param bindingStyle the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(String bindingStyle) {
             doSetProperty("bindingStyle", bindingStyle);
@@ -313,10 +364,13 @@ public interface CxfRsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -332,10 +386,14 @@ public interface CxfRsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -346,9 +404,12 @@ public interface CxfRsEndpointBuilderFactory {
          * This option can override the endpointUrl that published from the WADL
          * which can be accessed with resource address url plus _wadl.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param publishedEndpointUrl the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointConsumerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
@@ -372,10 +433,13 @@ public interface CxfRsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -389,9 +453,12 @@ public interface CxfRsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -401,9 +468,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -414,9 +485,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -428,10 +502,13 @@ public interface CxfRsEndpointBuilderFactory {
          * want to export as REST service. Multiple beans can be separated by
          * comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param serviceBeans the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
                 List<Object> serviceBeans) {
@@ -444,9 +521,12 @@ public interface CxfRsEndpointBuilderFactory {
          * comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param serviceBeans the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
                 String serviceBeans) {
@@ -454,41 +534,16 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCxfRsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCxfRsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -499,9 +554,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -510,9 +568,12 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option is a: <code>org.apache.cxf.Bus</code> type.
+         * The option is a: &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param bus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder bus(Object bus) {
             doSetProperty("bus", bus);
@@ -521,10 +582,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option will be converted to a <code>org.apache.cxf.Bus</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param bus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder bus(String bus) {
             doSetProperty("bus", bus);
@@ -535,10 +599,13 @@ public interface CxfRsEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder continuationTimeout(
                 long continuationTimeout) {
@@ -550,10 +617,13 @@ public interface CxfRsEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -568,10 +638,12 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cxfRsConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
                 Object cxfRsConfigurer) {
@@ -586,10 +658,12 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cxfRsConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
                 String cxfRsConfigurer) {
@@ -599,10 +673,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param defaultBus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder defaultBus(
                 boolean defaultBus) {
@@ -612,10 +689,14 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param defaultBus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder defaultBus(
                 String defaultBus) {
@@ -627,9 +708,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -641,9 +726,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -655,10 +744,13 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class instance and put the response object into the exchange
          * for further processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param performInvocation the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder performInvocation(
                 boolean performInvocation) {
@@ -670,10 +762,14 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class instance and put the response object into the exchange
          * for further processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param performInvocation the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder performInvocation(
                 String performInvocation) {
@@ -686,10 +782,13 @@ public interface CxfRsEndpointBuilderFactory {
          * as typed Camel exchange properties. These contexts can be used to
          * analyze the current requests using JAX-RS API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param propagateContexts the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder propagateContexts(
                 boolean propagateContexts) {
@@ -702,10 +801,14 @@ public interface CxfRsEndpointBuilderFactory {
          * as typed Camel exchange properties. These contexts can be used to
          * analyze the current requests using JAX-RS API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param propagateContexts the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder propagateContexts(
                 String propagateContexts) {
@@ -716,10 +819,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -730,10 +836,14 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -755,10 +865,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param features the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder features(List<Object> features) {
             doSetProperty("features", features);
@@ -768,10 +880,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param features the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder features(String features) {
             doSetProperty("features", features);
@@ -781,10 +895,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound REST messages to log.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
@@ -795,10 +912,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound REST messages to log.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
@@ -809,9 +930,12 @@ public interface CxfRsEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder loggingSizeLimit(
                 int loggingSizeLimit) {
@@ -822,9 +946,12 @@ public interface CxfRsEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
@@ -836,9 +963,12 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class without annotation. When using this option, then the
          * service class can be omitted, to emulate document-only endpoints.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param modelRef the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder modelRef(String modelRef) {
             doSetProperty("modelRef", modelRef);
@@ -849,10 +979,13 @@ public interface CxfRsEndpointBuilderFactory {
          * specify a string with a list of providers to lookup in the registy
          * separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param providers the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder providers(List<Object> providers) {
             doSetProperty("providers", providers);
@@ -864,9 +997,12 @@ public interface CxfRsEndpointBuilderFactory {
          * separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param providers the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder providers(String providers) {
             doSetProperty("providers", providers);
@@ -877,9 +1013,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option is a:
-         * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceClasses the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
                 List<Class<Object>> resourceClasses) {
@@ -891,9 +1030,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceClasses the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
                 String resourceClasses) {
@@ -904,10 +1046,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets the locations of the schema(s) which can be used to validate the
          * incoming XML or JAXB-driven JSON.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param schemaLocations the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
                 List<String> schemaLocations) {
@@ -919,9 +1064,12 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param schemaLocations the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
                 String schemaLocations) {
@@ -932,10 +1080,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipFaultLogging the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
@@ -946,10 +1097,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipFaultLogging the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder skipFaultLogging(
                 String skipFaultLogging) {
@@ -960,9 +1115,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -972,9 +1130,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder cookieHandler(String cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -984,9 +1145,13 @@ public interface CxfRsEndpointBuilderFactory {
          * The hostname verifier to be used. Use the # notation to reference a
          * HostnameVerifier from the registry.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
                 Object hostnameVerifier) {
@@ -998,9 +1163,12 @@ public interface CxfRsEndpointBuilderFactory {
          * HostnameVerifier from the registry.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param hostnameVerifier the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
                 String hostnameVerifier) {
@@ -1018,10 +1186,13 @@ public interface CxfRsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1039,10 +1210,14 @@ public interface CxfRsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1054,9 +1229,12 @@ public interface CxfRsEndpointBuilderFactory {
          * SSL Context.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1068,9 +1246,12 @@ public interface CxfRsEndpointBuilderFactory {
          * SSL Context.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1081,10 +1262,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option tells the CxfRsProducer to inspect return codes and will
          * generate an Exception if the return code is larger than 207.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -1095,10 +1279,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option tells the CxfRsProducer to inspect return codes and will
          * generate an Exception if the return code is larger than 207.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -1121,10 +1309,13 @@ public interface CxfRsEndpointBuilderFactory {
          * the service. If it is false, the CxfRsProducer will use the
          * ProxyClientAPI to invoke the service.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param httpClientAPI the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder httpClientAPI(
                 boolean httpClientAPI) {
@@ -1136,10 +1327,14 @@ public interface CxfRsEndpointBuilderFactory {
          * the service. If it is false, the CxfRsProducer will use the
          * ProxyClientAPI to invoke the service.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param httpClientAPI the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder httpClientAPI(
                 String httpClientAPI) {
@@ -1150,10 +1345,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option is used to tell CxfRsProducer to ignore the message body
          * of the DELETE method when using HTTP API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param ignoreDeleteMethodMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder ignoreDeleteMethodMessageBody(
                 boolean ignoreDeleteMethodMessageBody) {
@@ -1164,10 +1362,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option is used to tell CxfRsProducer to ignore the message body
          * of the DELETE method when using HTTP API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param ignoreDeleteMethodMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder ignoreDeleteMethodMessageBody(
                 String ignoreDeleteMethodMessageBody) {
@@ -1179,10 +1381,13 @@ public interface CxfRsEndpointBuilderFactory {
          * The implementation caches CXF clients or ClientFactoryBean in
          * CxfProvider and CxfRsProvider.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer (advanced)
+         * 
+         * @param maxClientCacheSize the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder maxClientCacheSize(
                 int maxClientCacheSize) {
@@ -1194,10 +1399,13 @@ public interface CxfRsEndpointBuilderFactory {
          * The implementation caches CXF clients or ClientFactoryBean in
          * CxfProvider and CxfRsProvider.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer (advanced)
+         * 
+         * @param maxClientCacheSize the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder maxClientCacheSize(
                 String maxClientCacheSize) {
@@ -1205,41 +1413,16 @@ public interface CxfRsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCxfRsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCxfRsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -1250,9 +1433,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -1261,9 +1447,12 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option is a: <code>org.apache.cxf.Bus</code> type.
+         * The option is a: &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param bus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder bus(Object bus) {
             doSetProperty("bus", bus);
@@ -1272,10 +1461,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option will be converted to a <code>org.apache.cxf.Bus</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param bus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder bus(String bus) {
             doSetProperty("bus", bus);
@@ -1286,10 +1478,13 @@ public interface CxfRsEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder continuationTimeout(
                 long continuationTimeout) {
@@ -1301,10 +1496,13 @@ public interface CxfRsEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -1319,10 +1517,12 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cxfRsConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
                 Object cxfRsConfigurer) {
@@ -1337,10 +1537,12 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cxfRsConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
                 String cxfRsConfigurer) {
@@ -1350,10 +1552,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param defaultBus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder defaultBus(
                 boolean defaultBus) {
@@ -1363,10 +1568,14 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param defaultBus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder defaultBus(
                 String defaultBus) {
@@ -1378,9 +1587,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1392,9 +1605,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1406,10 +1623,13 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class instance and put the response object into the exchange
          * for further processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param performInvocation the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder performInvocation(
                 boolean performInvocation) {
@@ -1421,10 +1641,14 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class instance and put the response object into the exchange
          * for further processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param performInvocation the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder performInvocation(
                 String performInvocation) {
@@ -1437,10 +1661,13 @@ public interface CxfRsEndpointBuilderFactory {
          * as typed Camel exchange properties. These contexts can be used to
          * analyze the current requests using JAX-RS API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param propagateContexts the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder propagateContexts(
                 boolean propagateContexts) {
@@ -1453,10 +1680,14 @@ public interface CxfRsEndpointBuilderFactory {
          * as typed Camel exchange properties. These contexts can be used to
          * analyze the current requests using JAX-RS API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param propagateContexts the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder propagateContexts(
                 String propagateContexts) {
@@ -1467,10 +1698,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1481,10 +1715,14 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1507,10 +1745,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param features the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder features(List<Object> features) {
             doSetProperty("features", features);
@@ -1520,10 +1760,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.cxf.feature.Feature&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.cxf.feature.Feature&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param features the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder features(String features) {
             doSetProperty("features", features);
@@ -1533,10 +1775,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound REST messages to log.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
@@ -1547,10 +1792,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option enables CXF Logging Feature which writes inbound and
          * outbound REST messages to log.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param loggingFeatureEnabled the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
@@ -1561,9 +1810,12 @@ public interface CxfRsEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
             doSetProperty("loggingSizeLimit", loggingSizeLimit);
@@ -1573,9 +1825,12 @@ public interface CxfRsEndpointBuilderFactory {
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggingSizeLimit the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
             doSetProperty("loggingSizeLimit", loggingSizeLimit);
@@ -1586,9 +1841,12 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class without annotation. When using this option, then the
          * service class can be omitted, to emulate document-only endpoints.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param modelRef the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder modelRef(String modelRef) {
             doSetProperty("modelRef", modelRef);
@@ -1599,10 +1857,13 @@ public interface CxfRsEndpointBuilderFactory {
          * specify a string with a list of providers to lookup in the registy
          * separated by comma.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param providers the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder providers(List<Object> providers) {
             doSetProperty("providers", providers);
@@ -1614,9 +1875,12 @@ public interface CxfRsEndpointBuilderFactory {
          * separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param providers the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder providers(String providers) {
             doSetProperty("providers", providers);
@@ -1627,9 +1891,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option is a:
-         * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceClasses the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder resourceClasses(
                 List<Class<Object>> resourceClasses) {
@@ -1641,9 +1908,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Multiple classes can be separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceClasses the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder resourceClasses(String resourceClasses) {
             doSetProperty("resourceClasses", resourceClasses);
@@ -1653,10 +1923,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets the locations of the schema(s) which can be used to validate the
          * incoming XML or JAXB-driven JSON.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param schemaLocations the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder schemaLocations(
                 List<String> schemaLocations) {
@@ -1668,9 +1941,12 @@ public interface CxfRsEndpointBuilderFactory {
          * incoming XML or JAXB-driven JSON.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param schemaLocations the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder schemaLocations(String schemaLocations) {
             doSetProperty("schemaLocations", schemaLocations);
@@ -1680,10 +1956,13 @@ public interface CxfRsEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipFaultLogging the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder skipFaultLogging(boolean skipFaultLogging) {
             doSetProperty("skipFaultLogging", skipFaultLogging);
@@ -1693,10 +1972,14 @@ public interface CxfRsEndpointBuilderFactory {
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipFaultLogging the value to set
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder skipFaultLogging(String skipFaultLogging) {
             doSetProperty("skipFaultLogging", skipFaultLogging);
@@ -1715,41 +1998,16 @@ public interface CxfRsEndpointBuilderFactory {
             return (CxfRsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCxfRsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedCxfRsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -1760,9 +2018,12 @@ public interface CxfRsEndpointBuilderFactory {
          * Message and CXF Message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -1771,9 +2032,12 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option is a: <code>org.apache.cxf.Bus</code> type.
+         * The option is a: &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param bus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder bus(Object bus) {
             doSetProperty("bus", bus);
@@ -1782,10 +2046,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * To use a custom configured CXF Bus.
          * 
-         * The option will be converted to a <code>org.apache.cxf.Bus</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.cxf.Bus&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param bus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder bus(String bus) {
             doSetProperty("bus", bus);
@@ -1796,10 +2063,13 @@ public interface CxfRsEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder continuationTimeout(
                 long continuationTimeout) {
@@ -1811,10 +2081,13 @@ public interface CxfRsEndpointBuilderFactory {
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -1829,10 +2102,12 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cxfRsConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
                 Object cxfRsConfigurer) {
@@ -1847,10 +2122,12 @@ public interface CxfRsEndpointBuilderFactory {
          * configure{Server/Client} method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cxfRsConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
                 String cxfRsConfigurer) {
@@ -1860,10 +2137,13 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param defaultBus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder defaultBus(boolean defaultBus) {
             doSetProperty("defaultBus", defaultBus);
@@ -1872,10 +2152,14 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param defaultBus the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder defaultBus(String defaultBus) {
             doSetProperty("defaultBus", defaultBus);
@@ -1886,9 +2170,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1900,9 +2188,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1914,10 +2206,13 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class instance and put the response object into the exchange
          * for further processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param performInvocation the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder performInvocation(
                 boolean performInvocation) {
@@ -1929,10 +2224,14 @@ public interface CxfRsEndpointBuilderFactory {
          * resource class instance and put the response object into the exchange
          * for further processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param performInvocation the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder performInvocation(
                 String performInvocation) {
@@ -1945,10 +2244,13 @@ public interface CxfRsEndpointBuilderFactory {
          * as typed Camel exchange properties. These contexts can be used to
          * analyze the current requests using JAX-RS API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param propagateContexts the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder propagateContexts(
                 boolean propagateContexts) {
@@ -1961,10 +2263,14 @@ public interface CxfRsEndpointBuilderFactory {
          * as typed Camel exchange properties. These contexts can be used to
          * analyze the current requests using JAX-RS API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param propagateContexts the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder propagateContexts(
                 String propagateContexts) {
@@ -1975,10 +2281,13 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1988,10 +2297,14 @@ public interface CxfRsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCxfRsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2029,6 +2342,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The service publish address.
          * 
          * @param path beanId:address
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder cxfrs(String path) {
             return CxfRsEndpointBuilderFactory.endpointBuilder("cxfrs", path);
@@ -2054,6 +2368,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path beanId:address
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder cxfrs(String componentName, String path) {
             return CxfRsEndpointBuilderFactory.endpointBuilder(componentName, path);

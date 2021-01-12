@@ -42,10 +42,10 @@ public final class ExampleClient {
             @Override
             public void configure() throws Exception {
                 // bridge item1 to item2
-                final String item1 = NodeIds.nodeValue("urn:org:apache:camel", "items-MyItem");
-                final String item2 = NodeIds.nodeValue("urn:org:apache:camel", "items-MyItem2");
+                final String item1 = NodeIds.nodeValue("urn:org:apache:camel", "MyItem");
+                final String item2 = NodeIds.nodeValue("urn:org:apache:camel", "MyItem2");
                 from("milo-client:tcp://foo:bar@localhost:12685?node=" + item1).log("From OPC UA: ${body}")
-                    .to("milo-client:tcp://foo:bar@localhost:12685?node" + item2);
+                        .to("milo-client:tcp://foo:bar@localhost:12685?node" + item2);
             }
         });
 

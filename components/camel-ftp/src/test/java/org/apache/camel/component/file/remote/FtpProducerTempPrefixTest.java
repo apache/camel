@@ -25,20 +25,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test to verify that Camel can build remote directory on FTP server if
- * missing (full or part of).
+ * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
  */
 public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";
     }
 
     @Test
     public void testProduceTempPrefixTest() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/upload/user/claus/claus.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/user/claus/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

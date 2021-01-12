@@ -42,7 +42,8 @@ public final class PulsarUtils {
                     if (e instanceof PulsarClientException.AlreadyClosedException) {
                         // ignore
                     } else {
-                        LOG.debug("Error stopping consumer: " + consumer + " due to " + e.getMessage() + ". This exception is ignored", e);
+                        LOG.debug("Error stopping consumer: {} due to {}. This exception is ignored", consumer,
+                                e.getMessage(), e);
                     }
                 }
             }

@@ -29,8 +29,6 @@ public enum UsageRecordMonthlyApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private UsageRecordMonthlyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

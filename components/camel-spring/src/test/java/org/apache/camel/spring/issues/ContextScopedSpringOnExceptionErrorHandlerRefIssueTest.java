@@ -28,7 +28,8 @@ public class ContextScopedSpringOnExceptionErrorHandlerRefIssueTest extends Cont
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/ContextScopedSpringOnExceptionErrorHandlerRefIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/ContextScopedSpringOnExceptionErrorHandlerRefIssueTest.xml");
     }
 
 }

@@ -17,7 +17,7 @@ The Weighted EIP supports 3 options which are listed below:
 | Name | Description | Default | Type
 | *roundRobin* | To enable round robin mode. By default the weighted distribution mode is used. The default value is false. |  | String
 | *distributionRatio* | *Required* The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list. |  | String
-| *distributionRatioDelimiter* | Delimiter used to specify the distribution ratio. The default value is , | , | String
+| *distributionRatioDelimiter* | Delimiter used to specify the distribution ratio. The default value is , (comma) | , | String
 |===
 // eip options: END
 

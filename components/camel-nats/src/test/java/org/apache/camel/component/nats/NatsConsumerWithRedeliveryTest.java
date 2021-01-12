@@ -53,8 +53,9 @@ public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(REDELIVERY_COUNT).retryAttemptedLogLevel(LoggingLevel.INFO).retriesExhaustedLogLevel(LoggingLevel.ERROR)
-                    .redeliveryDelay(10).to("mock:exception").handled(true);
+                onException(Exception.class).maximumRedeliveries(REDELIVERY_COUNT).retryAttemptedLogLevel(LoggingLevel.INFO)
+                        .retriesExhaustedLogLevel(LoggingLevel.ERROR)
+                        .redeliveryDelay(10).to("mock:exception").handled(true);
 
                 from("direct:send").to("nats:test?flushConnection=true");
 

@@ -28,7 +28,8 @@ public class SpringHystrixRouteFallbackTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteFallbackTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/hystrix/processor/SpringHystrixRouteFallbackTest.xml");
     }
 
     @Test

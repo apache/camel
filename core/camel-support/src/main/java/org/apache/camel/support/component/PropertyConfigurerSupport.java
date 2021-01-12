@@ -24,18 +24,18 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.TimeUtils;
 
 /**
- * Base class used by Camel Package Maven Plugin when it generates source code for fast
- * property configurations via {@link org.apache.camel.spi.PropertyConfigurer}.
+ * Base class used by Camel Package Maven Plugin when it generates source code for fast property configurations via
+ * {@link org.apache.camel.spi.PropertyConfigurer}.
  */
 public abstract class PropertyConfigurerSupport {
 
     /**
      * Converts the property to the expected type
      *
-     * @param camelContext   the camel context
-     * @param type           the expected type
-     * @param value          the value
-     * @return  the value converted to the expected type
+     * @param  camelContext the camel context
+     * @param  type         the expected type
+     * @param  value        the value
+     * @return              the value converted to the expected type
      */
     public static <T> T property(CamelContext camelContext, Class<T> type, Object value) {
         // if the type is not string based and the value is a bean reference, then we need to lookup
@@ -82,8 +82,9 @@ public abstract class PropertyConfigurerSupport {
         if ((type == Boolean.class || type == boolean.class) && value instanceof String) {
             String text = (String) value;
             if (!text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
-                throw new IllegalArgumentException("Cannot convert the String value: " + value + " to type: " + type
-                        + " as the value is not true or false");
+                throw new IllegalArgumentException(
+                        "Cannot convert the String value: " + value + " to type: " + type
+                                                   + " as the value is not true or false");
             }
         }
 

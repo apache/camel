@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.spi.OnCamelContextInitialized;
+import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStop;
 import org.junit.jupiter.api.Test;
@@ -36,19 +37,26 @@ public class ContextEventsTest {
         main.configure().addConfiguration(config);
         main.run();
 
-        assertEquals(1, config.onInit.get());
+        assertEquals(1, config.onInitializing.get());
+        assertEquals(1, config.onInitialized.get());
         assertEquals(1, config.onStart.get());
         assertEquals(1, config.onStop.get());
     }
 
     public static class MyConfig {
-        final AtomicInteger onInit = new AtomicInteger();
+        final AtomicInteger onInitializing = new AtomicInteger();
+        final AtomicInteger onInitialized = new AtomicInteger();
         final AtomicInteger onStart = new AtomicInteger();
         final AtomicInteger onStop = new AtomicInteger();
 
         @BindToRegistry
+        public OnCamelContextInitializing onContextInitializing() {
+            return context -> onInitializing.incrementAndGet();
+        }
+
+        @BindToRegistry
         public OnCamelContextInitialized onContextInitialized() {
-            return context -> onInit.incrementAndGet();
+            return context -> onInitialized.incrementAndGet();
         }
 
         @BindToRegistry

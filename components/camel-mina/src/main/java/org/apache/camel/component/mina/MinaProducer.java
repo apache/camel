@@ -131,7 +131,8 @@ public class MinaProducer extends DefaultProducer {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+            exchange.setProperty(Exchange.CHARSET_NAME,
+                    IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
         Object body = MinaPayloadHelper.getIn(getEndpoint(), exchange);
@@ -322,7 +323,9 @@ public class MinaProducer extends DefaultProducer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
+            SslFilter filter = new SslFilter(
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
+                    configuration.isAutoStartTls());
             filter.setUseClientMode(true);
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
@@ -386,8 +389,9 @@ public class MinaProducer extends DefaultProducer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            LOG.warn("Using datagram protocol, " + configuration.getProtocol()
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+            LOG.warn("Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
+                     + "SSLContextParameters is only supported on the TCP protocol.",
+                    configuration.getProtocol());
         }
         configureDataGramCodecFactory("MinaProducer", connector, configuration);
         // set connect timeout to mina in seconds
@@ -395,10 +399,11 @@ public class MinaProducer extends DefaultProducer {
     }
 
     /**
-     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default
-     * and try converting whatever they payload is into IoBuffer unless some custom converter is specified
+     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default and
+     * try converting whatever they payload is into IoBuffer unless some custom converter is specified
      */
-    protected void configureDataGramCodecFactory(final String type, final IoService service, final MinaConfiguration configuration) {
+    protected void configureDataGramCodecFactory(
+            final String type, final IoService service, final MinaConfiguration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
             codecFactory = new MinaUdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
@@ -440,7 +445,7 @@ public class MinaProducer extends DefaultProducer {
     }
 
     private void appendIoFiltersToChain(List<IoFilter> filters, DefaultIoFilterChainBuilder filterChain) {
-        if (filters != null && filters.size() > 0) {
+        if (filters != null && !filters.isEmpty()) {
             for (IoFilter ioFilter : filters) {
                 filterChain.addLast(ioFilter.getClass().getCanonicalName(), ioFilter);
             }

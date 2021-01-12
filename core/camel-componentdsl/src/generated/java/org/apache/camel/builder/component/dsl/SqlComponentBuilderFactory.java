@@ -37,6 +37,8 @@ public interface SqlComponentBuilderFactory {
      * Category: database,sql
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-sql
+     * 
+     * @return the dsl builder
      */
     static SqlComponentBuilder sql() {
         return new SqlComponentBuilderImpl();
@@ -49,9 +51,12 @@ public interface SqlComponentBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -66,10 +71,13 @@ public interface SqlComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -87,37 +95,49 @@ public interface SqlComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default SqlComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SqlComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param usePlaceholder the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder usePlaceholder(boolean usePlaceholder) {
             doSetProperty("usePlaceholder", usePlaceholder);
@@ -143,7 +163,7 @@ public interface SqlComponentBuilderFactory {
             case "dataSource": ((SqlComponent) component).setDataSource((javax.sql.DataSource) value); return true;
             case "bridgeErrorHandler": ((SqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SqlComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((SqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "usePlaceholder": ((SqlComponent) component).setUsePlaceholder((boolean) value); return true;
             default: return false;
             }

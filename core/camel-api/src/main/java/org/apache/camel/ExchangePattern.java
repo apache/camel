@@ -25,7 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlEnum
 public enum ExchangePattern {
-    InOnly, InOut, InOptionalOut;
+    InOnly,
+    InOut,
+    InOptionalOut;
 
     /**
      * Return true if there can be an IN message

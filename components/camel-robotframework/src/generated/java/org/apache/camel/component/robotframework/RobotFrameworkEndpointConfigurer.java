@@ -4,8 +4,10 @@ package org.apache.camel.component.robotframework;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -31,8 +33,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "combinedtagstats":
@@ -99,7 +99,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "runMode": target.getConfiguration().setRunMode(property(camelContext, java.lang.String.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
@@ -144,79 +144,128 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("allowTemplateFromHeader", boolean.class);
-        answer.put("argumentFile", java.io.File.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("combinedTagStats", java.lang.String.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("criticalTags", java.lang.String.class);
-        answer.put("debugFile", java.io.File.class);
-        answer.put("delay", long.class);
-        answer.put("document", java.lang.String.class);
-        answer.put("dryrun", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("excludes", java.lang.String.class);
-        answer.put("exitOnFailure", boolean.class);
-        answer.put("greedy", boolean.class);
-        answer.put("includes", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("listener", java.lang.String.class);
-        answer.put("listeners", java.lang.String.class);
-        answer.put("log", java.io.File.class);
-        answer.put("logLevel", java.lang.String.class);
-        answer.put("logTitle", java.lang.String.class);
-        answer.put("metadata", java.lang.String.class);
-        answer.put("monitorColors", java.lang.String.class);
-        answer.put("monitorWidth", java.lang.String.class);
-        answer.put("name", java.lang.String.class);
-        answer.put("noStatusReturnCode", boolean.class);
-        answer.put("nonCriticalTags", java.lang.String.class);
-        answer.put("output", java.io.File.class);
-        answer.put("outputDirectory", java.io.File.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("randomize", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("report", java.io.File.class);
-        answer.put("reportBackground", java.lang.String.class);
-        answer.put("reportTitle", java.lang.String.class);
-        answer.put("runEmptySuite", boolean.class);
-        answer.put("runFailed", java.io.File.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("runMode", java.lang.String.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("skipTeardownOnExit", boolean.class);
-        answer.put("splitOutputs", java.lang.String.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("suiteStatLevel", java.lang.String.class);
-        answer.put("suites", java.lang.String.class);
-        answer.put("summaryTitle", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tagDocs", java.lang.String.class);
-        answer.put("tagStatExcludes", java.lang.String.class);
-        answer.put("tagStatIncludes", java.lang.String.class);
-        answer.put("tagStatLinks", java.lang.String.class);
-        answer.put("tags", java.lang.String.class);
-        answer.put("tests", java.lang.String.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("timestampOutputs", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("variableFiles", java.lang.String.class);
-        answer.put("variables", java.lang.String.class);
-        answer.put("warnOnSkippedFiles", boolean.class);
-        answer.put("xunitFile", java.io.File.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "argumentfile":
+        case "argumentFile": return java.io.File.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "combinedtagstats":
+        case "combinedTagStats": return java.lang.String.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "criticaltags":
+        case "criticalTags": return java.lang.String.class;
+        case "debugfile":
+        case "debugFile": return java.io.File.class;
+        case "delay": return long.class;
+        case "document": return java.lang.String.class;
+        case "dryrun": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "excludes": return java.lang.String.class;
+        case "exitonfailure":
+        case "exitOnFailure": return boolean.class;
+        case "greedy": return boolean.class;
+        case "includes": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listener": return java.lang.String.class;
+        case "listeners": return java.lang.String.class;
+        case "log": return java.io.File.class;
+        case "loglevel":
+        case "logLevel": return java.lang.String.class;
+        case "logtitle":
+        case "logTitle": return java.lang.String.class;
+        case "metadata": return java.lang.String.class;
+        case "monitorcolors":
+        case "monitorColors": return java.lang.String.class;
+        case "monitorwidth":
+        case "monitorWidth": return java.lang.String.class;
+        case "name": return java.lang.String.class;
+        case "nostatusreturncode":
+        case "noStatusReturnCode": return boolean.class;
+        case "noncriticaltags":
+        case "nonCriticalTags": return java.lang.String.class;
+        case "output": return java.io.File.class;
+        case "outputdirectory":
+        case "outputDirectory": return java.io.File.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "randomize": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "report": return java.io.File.class;
+        case "reportbackground":
+        case "reportBackground": return java.lang.String.class;
+        case "reporttitle":
+        case "reportTitle": return java.lang.String.class;
+        case "runemptysuite":
+        case "runEmptySuite": return boolean.class;
+        case "runfailed":
+        case "runFailed": return java.io.File.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "runmode":
+        case "runMode": return java.lang.String.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "skipteardownonexit":
+        case "skipTeardownOnExit": return boolean.class;
+        case "splitoutputs":
+        case "splitOutputs": return java.lang.String.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "suitestatlevel":
+        case "suiteStatLevel": return java.lang.String.class;
+        case "suites": return java.lang.String.class;
+        case "summarytitle":
+        case "summaryTitle": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tagdocs":
+        case "tagDocs": return java.lang.String.class;
+        case "tagstatexcludes":
+        case "tagStatExcludes": return java.lang.String.class;
+        case "tagstatincludes":
+        case "tagStatIncludes": return java.lang.String.class;
+        case "tagstatlinks":
+        case "tagStatLinks": return java.lang.String.class;
+        case "tags": return java.lang.String.class;
+        case "tests": return java.lang.String.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "timestampoutputs":
+        case "timestampOutputs": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "variablefiles":
+        case "variableFiles": return java.lang.String.class;
+        case "variables": return java.lang.String.class;
+        case "warnonskippedfiles":
+        case "warnOnSkippedFiles": return boolean.class;
+        case "xunitfile":
+        case "xunitFile": return java.io.File.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -235,8 +284,6 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "combinedtagstats":
@@ -343,6 +390,15 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "warnOnSkippedFiles": return target.getConfiguration().isWarnOnSkippedFiles();
         case "xunitfile":
         case "xunitFile": return target.getConfiguration().getXunitFile();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

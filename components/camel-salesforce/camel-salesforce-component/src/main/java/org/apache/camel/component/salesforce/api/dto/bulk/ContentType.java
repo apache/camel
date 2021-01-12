@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for ContentType.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -45,7 +44,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ContentType {
 
-    XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON;
+    XML,
+    CSV,
+    JSON,
+    ZIP_XML,
+    ZIP_CSV,
+    ZIP_JSON;
 
     public String value() {
         return name();

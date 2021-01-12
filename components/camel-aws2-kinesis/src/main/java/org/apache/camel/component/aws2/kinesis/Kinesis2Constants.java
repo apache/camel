@@ -23,8 +23,7 @@ public interface Kinesis2Constants {
     String PARTITION_KEY = "CamelAwsKinesisPartitionKey";
 
     /**
-     * in a Kinesis Record object, the shard ID is used on writes to indicate
-     * where the data was stored
+     * in a Kinesis Record object, the shard ID is used on writes to indicate where the data was stored
      */
     String SHARD_ID = "CamelAwsKinesisShardId";
 }

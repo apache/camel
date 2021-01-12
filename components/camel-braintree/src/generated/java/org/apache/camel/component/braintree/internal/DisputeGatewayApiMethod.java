@@ -25,25 +25,25 @@ public enum DisputeGatewayApiMethod implements ApiMethod {
         "accept",
         arg("id", String.class)),
 
-    ADDFILEEVIDENCE(
+    ADD_FILE_EVIDENCE(
         com.braintreegateway.Result.class,
         "addFileEvidence",
         arg("disputeId", String.class),
         arg("documentId", String.class)),
 
-    ADDFILEEVIDENCE_1(
+    ADD_FILE_EVIDENCE_1(
         com.braintreegateway.Result.class,
         "addFileEvidence",
         arg("disputeId", String.class),
         arg("fileEvidenceRequest", com.braintreegateway.FileEvidenceRequest.class)),
 
-    ADDTEXTEVIDENCE(
+    ADD_TEXT_EVIDENCE(
         com.braintreegateway.Result.class,
         "addTextEvidence",
         arg("id", String.class),
         arg("content", String.class)),
 
-    ADDTEXTEVIDENCE_1(
+    ADD_TEXT_EVIDENCE_1(
         com.braintreegateway.Result.class,
         "addTextEvidence",
         arg("id", String.class),
@@ -59,7 +59,7 @@ public enum DisputeGatewayApiMethod implements ApiMethod {
         "find",
         arg("id", String.class)),
 
-    REMOVEEVIDENCE(
+    REMOVE_EVIDENCE(
         com.braintreegateway.Result.class,
         "removeEvidence",
         arg("disputeId", String.class),
@@ -69,8 +69,6 @@ public enum DisputeGatewayApiMethod implements ApiMethod {
         com.braintreegateway.PaginatedCollection.class,
         "search",
         arg("query", com.braintreegateway.DisputeSearchRequest.class));
-
-    
 
     private final ApiMethod apiMethod;
 

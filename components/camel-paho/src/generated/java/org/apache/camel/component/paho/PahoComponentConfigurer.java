@@ -4,8 +4,10 @@ package org.apache.camel.component.paho;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -28,8 +30,8 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "automaticreconnect":
         case "automaticReconnect": getOrCreateConfiguration(target).setAutomaticReconnect(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "brokerurl":
@@ -87,40 +89,66 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("automaticReconnect", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("brokerUrl", java.lang.String.class);
-        answer.put("cleanSession", boolean.class);
-        answer.put("client", org.eclipse.paho.client.mqttv3.MqttClient.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.paho.PahoConfiguration.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("customWebSocketHeaders", java.util.Properties.class);
-        answer.put("executorServiceTimeout", int.class);
-        answer.put("filePersistenceDirectory", java.lang.String.class);
-        answer.put("httpsHostnameVerificationEnabled", boolean.class);
-        answer.put("keepAliveInterval", int.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxInflight", int.class);
-        answer.put("maxReconnectDelay", int.class);
-        answer.put("mqttVersion", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("persistence", org.apache.camel.component.paho.PahoPersistence.class);
-        answer.put("qos", int.class);
-        answer.put("retained", boolean.class);
-        answer.put("serverURIs", java.lang.String.class);
-        answer.put("socketFactory", javax.net.SocketFactory.class);
-        answer.put("sslClientProps", java.util.Properties.class);
-        answer.put("sslHostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        answer.put("userName", java.lang.String.class);
-        answer.put("willPayload", java.lang.String.class);
-        answer.put("willQos", int.class);
-        answer.put("willRetained", boolean.class);
-        answer.put("willTopic", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "automaticreconnect":
+        case "automaticReconnect": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "brokerurl":
+        case "brokerUrl": return java.lang.String.class;
+        case "cleansession":
+        case "cleanSession": return boolean.class;
+        case "client": return org.eclipse.paho.client.mqttv3.MqttClient.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.paho.PahoConfiguration.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "customwebsocketheaders":
+        case "customWebSocketHeaders": return java.util.Properties.class;
+        case "executorservicetimeout":
+        case "executorServiceTimeout": return int.class;
+        case "filepersistencedirectory":
+        case "filePersistenceDirectory": return java.lang.String.class;
+        case "httpshostnameverificationenabled":
+        case "httpsHostnameVerificationEnabled": return boolean.class;
+        case "keepaliveinterval":
+        case "keepAliveInterval": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxinflight":
+        case "maxInflight": return int.class;
+        case "maxreconnectdelay":
+        case "maxReconnectDelay": return int.class;
+        case "mqttversion":
+        case "mqttVersion": return int.class;
+        case "password": return java.lang.String.class;
+        case "persistence": return org.apache.camel.component.paho.PahoPersistence.class;
+        case "qos": return int.class;
+        case "retained": return boolean.class;
+        case "serveruris":
+        case "serverURIs": return java.lang.String.class;
+        case "socketfactory":
+        case "socketFactory": return javax.net.SocketFactory.class;
+        case "sslclientprops":
+        case "sslClientProps": return java.util.Properties.class;
+        case "sslhostnameverifier":
+        case "sslHostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "willpayload":
+        case "willPayload": return java.lang.String.class;
+        case "willqos":
+        case "willQos": return int.class;
+        case "willretained":
+        case "willRetained": return boolean.class;
+        case "willtopic":
+        case "willTopic": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -129,8 +157,8 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "automaticreconnect":
         case "automaticReconnect": return getOrCreateConfiguration(target).isAutomaticReconnect();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "brokerurl":

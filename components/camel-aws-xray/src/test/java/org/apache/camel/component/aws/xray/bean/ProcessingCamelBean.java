@@ -24,7 +24,7 @@ import org.apache.camel.component.aws.xray.XRayTrace;
 @XRayTrace
 public class ProcessingCamelBean {
 
-    private static final AtomicInteger INVOKED = new AtomicInteger(0);
+    private static final AtomicInteger INVOKED = new AtomicInteger();
 
     @Handler
     public void performTask() {

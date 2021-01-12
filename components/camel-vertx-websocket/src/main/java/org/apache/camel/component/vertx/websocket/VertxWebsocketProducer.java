@@ -59,7 +59,8 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
             }
 
             Map<String, WebSocketBase> connectedPeers = getConnectedPeers(exchange);
-            VertxWebsocketResultHandler vertxWebsocketResultHandler = new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
+            VertxWebsocketResultHandler vertxWebsocketResultHandler
+                    = new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
 
             if (connectedPeers.isEmpty()) {
                 callback.done(true);
@@ -131,7 +132,8 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
     }
 
     private boolean isSendToAll(Message message) {
-        Boolean value = message.getHeader(VertxWebsocketContants.SEND_TO_ALL, getEndpoint().getConfiguration().isSendToAll(), Boolean.class);
+        Boolean value = message.getHeader(VertxWebsocketContants.SEND_TO_ALL, getEndpoint().getConfiguration().isSendToAll(),
+                Boolean.class);
         return value == null ? false : value;
     }
 }

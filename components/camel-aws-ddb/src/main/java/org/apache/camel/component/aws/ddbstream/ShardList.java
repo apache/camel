@@ -104,12 +104,12 @@ class ShardList {
         if (shards.size() > 0) {
             return sorted.get(sorted.size() - 1);
         }
-        throw new IllegalStateException("Unable to find a shard with appropriate sequence numbers for " + sequenceNumber + " in " + shards);
+        throw new IllegalStateException(
+                "Unable to find a shard with appropriate sequence numbers for " + sequenceNumber + " in " + shards);
     }
 
     /**
-     * Removes shards that are older than the provided shard. Does not remove
-     * the provided shard.
+     * Removes shards that are older than the provided shard. Does not remove the provided shard.
      *
      * @param removeBefore
      */

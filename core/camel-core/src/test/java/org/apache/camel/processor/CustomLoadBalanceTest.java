@@ -46,8 +46,8 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // using our custom load balancer
-                    .loadBalance(new MyLoadBalancer()).to("mock:x", "mock:y", "mock:z");
+                        // using our custom load balancer
+                        .loadBalance(new MyLoadBalancer()).to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: e1
             }
         };

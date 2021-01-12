@@ -20,14 +20,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * Unit test to verify remotefile sortby option.
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/sortbyignore?password=admin&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/sortbyignore?password=admin&delay=5000";
     }
 
     @Override

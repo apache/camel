@@ -53,7 +53,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         return new RouteBuilder() {
             public void configure() {
                 from("quartz://groupName/timerName?cron=0/1+*+*+*+*+?").routeId("trigger")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

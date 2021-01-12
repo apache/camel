@@ -37,6 +37,8 @@ public interface ZendeskComponentBuilderFactory {
      * Category: cloud,api,support
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
+     * 
+     * @return the dsl builder
      */
     static ZendeskComponentBuilder zendesk() {
         return new ZendeskComponentBuilderImpl();
@@ -49,6 +51,20 @@ public interface ZendeskComponentBuilderFactory {
             extends
                 ComponentBuilder<ZendeskComponent> {
         /**
+         * The server URL to connect.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
+         */
+        default ZendeskComponentBuilder serverUrl(java.lang.String serverUrl) {
+            doSetProperty("serverUrl", serverUrl);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -57,10 +73,13 @@ public interface ZendeskComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +97,13 @@ public interface ZendeskComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,27 +111,36 @@ public interface ZendeskComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ZendeskComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ZendeskComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.zendesk.ZendeskConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.zendesk.ZendeskConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder configuration(
                 org.apache.camel.component.zendesk.ZendeskConfiguration configuration) {
@@ -119,13 +150,73 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * To use a shared Zendesk instance.
          * 
-         * The option is a: <code>org.zendesk.client.v2.Zendesk</code> type.
+         * The option is a:
+         * &lt;code&gt;org.zendesk.client.v2.Zendesk&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param zendesk the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder zendesk(
                 org.zendesk.client.v2.Zendesk zendesk) {
             doSetProperty("zendesk", zendesk);
+            return this;
+        }
+        /**
+         * The OAuth token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
+         */
+        default ZendeskComponentBuilder oauthToken(java.lang.String oauthToken) {
+            doSetProperty("oauthToken", oauthToken);
+            return this;
+        }
+        /**
+         * The password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default ZendeskComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The security token.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default ZendeskComponentBuilder token(java.lang.String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
+         * The user name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        default ZendeskComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -145,11 +236,16 @@ public interface ZendeskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "serverUrl": ((ZendeskComponent) component).setServerUrl((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((ZendeskComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((ZendeskComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((ZendeskComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ZendeskComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ZendeskComponent) component).setConfiguration((org.apache.camel.component.zendesk.ZendeskConfiguration) value); return true;
             case "zendesk": ((ZendeskComponent) component).setZendesk((org.zendesk.client.v2.Zendesk) value); return true;
+            case "oauthToken": ((ZendeskComponent) component).setOauthToken((java.lang.String) value); return true;
+            case "password": ((ZendeskComponent) component).setPassword((java.lang.String) value); return true;
+            case "token": ((ZendeskComponent) component).setToken((java.lang.String) value); return true;
+            case "username": ((ZendeskComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

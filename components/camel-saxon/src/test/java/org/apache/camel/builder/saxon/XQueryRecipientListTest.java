@@ -61,10 +61,9 @@ public class XQueryRecipientListTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // TODO is there a nicer way to do this with XQuery?
-                
+
                 // START SNIPPET: example
-                from("direct:start").
-                        recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
+                from("direct:start").recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
                 // END SNIPPET: example
             }
         };

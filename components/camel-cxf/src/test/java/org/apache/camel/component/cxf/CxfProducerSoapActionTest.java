@@ -37,7 +37,8 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
     private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
     private static final String OPERATION_NAME = "order";
     private static final String DIRECT_START = "direct:start";
-    private static final String CXF_ENDPOINT = "cxf:http://localhost:" + port + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+    private static final String CXF_ENDPOINT
+            = "cxf:http://localhost:" + port + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
     private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                   + "<Body/>" + "</Envelope>";
 
@@ -53,32 +54,32 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from(DIRECT_START).setHeader(CxfConstants.OPERATION_NAME, constant(OPERATION_NAME))
-                    .setHeader(CxfConstants.OPERATION_NAMESPACE, constant(OPERATION_NAMESPACE))
-                    .process(new Processor() {
+                        .setHeader(CxfConstants.OPERATION_NAMESPACE, constant(OPERATION_NAMESPACE))
+                        .process(new Processor() {
 
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            final List<Object> params = new ArrayList<>();
-                            params.add("foo");
-                            params.add(10);
-                            params.add("bar");
-    
-                            exchange.getIn().setBody(params);
-    
-                        }
-                    }).to("log:org.apache.camel?level=DEBUG")
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                final List<Object> params = new ArrayList<>();
+                                params.add("foo");
+                                params.add(10);
+                                params.add("bar");
+
+                                exchange.getIn().setBody(params);
+
+                            }
+                        }).to("log:org.apache.camel?level=DEBUG")
                         .to(CXF_ENDPOINT + "&serviceClass=org.apache.camel.order.OrderEndpoint");
 
                 from(CXF_ENDPOINT + "&dataFormat=POJO&serviceClass=org.apache.camel.order.OrderEndpoint")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String soapAction = exchange.getIn().getHeader(SoapBindingConstants.SOAP_ACTION,
-                                                                           String.class);
-                            assertEquals(SOAP_ACTION, soapAction);
-    
-                        }
-                    });
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String soapAction = exchange.getIn().getHeader(SoapBindingConstants.SOAP_ACTION,
+                                        String.class);
+                                assertEquals(SOAP_ACTION, soapAction);
+
+                            }
+                        });
             }
 
         };

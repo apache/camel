@@ -354,7 +354,7 @@ the method option
 * It can be evaluated using the xref:components:languages:simple-language.adoc[Simple] language, which
 means you can use, e.g., body, header.foo and other
 xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
-$\{ }.
+${ }.
 
 Any other value is consider to be a type declaration instead - see the
 next section about specifying types for overloaded methods.
@@ -399,7 +399,7 @@ body as shown:
 ----
 
 The syntax of the parameters is using the xref:components:languages:simple-language.adoc[Simple]
-expression language so we have to use $\{ } placeholders in the body to
+expression language so we have to use ${ } placeholders in the body to
 refer to the message body.
 
 If you want to pass in a `null` value, then you can explicit define this

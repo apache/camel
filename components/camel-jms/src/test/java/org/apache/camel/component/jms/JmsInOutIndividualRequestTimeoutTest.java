@@ -20,6 +20,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -66,7 +67,8 @@ public class JmsInOutIndividualRequestTimeoutTest extends CamelTestSupport {
     public void testIndividualTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        String out = template.requestBodyAndHeader("direct:start", "World", JmsConstants.JMS_REQUEST_TIMEOUT, 8000L, String.class);
+        String out
+                = template.requestBodyAndHeader("direct:start", "World", JmsConstants.JMS_REQUEST_TIMEOUT, 8000L, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -87,7 +89,7 @@ public class JmsInOutIndividualRequestTimeoutTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                        .inOut("activemq:queue:foo?replyTo=queue:bar&requestTimeout=2000")
+                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=queue:bar&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:foo")

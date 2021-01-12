@@ -43,44 +43,45 @@ public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    zookeeperUri = "zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/node?create=true";
-                    from("direct:roundtrip")
-                        .to(zookeeperUri)
-                        .to("mock:producer-out");
-                    from(zookeeperUri)
-                        .to("mock:consumed-from-node");
+                new RouteBuilder() {
+                    public void configure() throws Exception {
+                        zookeeperUri
+                                = "zookeeper://{{zookeeper.connection.string}}/node?create=true";
+                        from("direct:roundtrip")
+                                .to(zookeeperUri)
+                                .to("mock:producer-out");
+                        from(zookeeperUri)
+                                .to("mock:consumed-from-node");
+                    }
+                },
+                new RouteBuilder() {
+                    public void configure() throws Exception {
+                        from("direct:no-create-fails-set")
+                                .to("zookeeper://{{zookeeper.connection.string}}/doesnotexist");
+                    }
+                },
+                new RouteBuilder() {
+                    public void configure() throws Exception {
+                        from("direct:node-from-header")
+                                .to("zookeeper://{{zookeeper.connection.string}}/notset?create=true");
+                        from("zookeeper://{{zookeeper.connection.string}}/set?create=true")
+                                .to("mock:consumed-from-set-node");
+                    }
+                },
+                new RouteBuilder() {
+                    public void configure() throws Exception {
+                        from("direct:create-mode")
+                                .to("zookeeper://{{zookeeper.connection.string}}/persistent?create=true&createMode=PERSISTENT")
+                                .to("mock:create-mode");
+                    }
+                },
+                new RouteBuilder() {
+                    public void configure() throws Exception {
+                        from("direct:delete")
+                                .to("zookeeper://{{zookeeper.connection.string}}/to-be-deleted")
+                                .to("mock:delete");
+                    }
                 }
-            },
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("direct:no-create-fails-set")
-                        .to("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/doesnotexist");
-                }
-            },
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("direct:node-from-header")
-                        .to("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/notset?create=true");
-                    from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/set?create=true")
-                        .to("mock:consumed-from-set-node");
-                }
-            },
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("direct:create-mode")
-                        .to("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/persistent?create=true&createMode=PERSISTENT")
-                        .to("mock:create-mode");
-                }
-            },
-            new RouteBuilder() {
-                public void configure() throws Exception {
-                    from("direct:delete")
-                        .to("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/to-be-deleted")
-                        .to("mock:delete");
-                }
-            }
         };
     }
 
@@ -136,7 +137,7 @@ public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
         assertMockEndpointsSatisfied();
 
         Stat s = mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
-        assertEquals(s.getEphemeralOwner(), 0);
+        assertEquals(0, s.getEphemeralOwner());
     }
 
     @Test
@@ -162,7 +163,9 @@ public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
         Exchange exchange = createExchangeWithBody(testPayload);
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/set-listing/firstborn");
         exchange.setPattern(ExchangePattern.InOut);
-        template.send("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/set-listing?create=true&listChildren=true", exchange);
+        template.send(
+                "zookeeper://{{zookeeper.connection.string}}/set-listing?create=true&listChildren=true",
+                exchange);
         List<?> children = exchange.getMessage().getMandatoryBody(List.class);
         assertEquals(1, children.size());
         assertEquals("firstborn", children.get(0));

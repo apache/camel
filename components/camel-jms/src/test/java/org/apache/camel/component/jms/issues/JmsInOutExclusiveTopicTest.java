@@ -52,8 +52,8 @@ public class JmsInOutExclusiveTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:back")
-                    .to("mock:result");
+                        .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:back")
+                        .to("mock:result");
 
                 from("activemq:topic:news?disableReplyTo=true")
                         .transform(body().prepend("Bye "))
@@ -67,7 +67,8 @@ public class JmsInOutExclusiveTopicTest extends CamelTestSupport {
                                 // wait a bit before sending back
                                 Thread.sleep(1000);
                                 log.info("Sending back reply message on {}", replyTo);
-                                template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(), "JMSCorrelationID", cid);
+                                template.sendBodyAndHeader("activemq:" + replyTo, exchange.getIn().getBody(),
+                                        "JMSCorrelationID", cid);
                             }
                         });
             }

@@ -31,7 +31,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/data/idempotent/?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10")
-                    .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -44,7 +44,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset mock and set new expectations
         mock.reset();

@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -61,7 +61,7 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
     public void testReturnNullExchange() throws Exception {
         Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
-        assertTrue(reply.hasOut());
+        assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
         Message out = reply.getMessage();
         assertNotNull(out);
         Object body = out.getBody();
@@ -82,7 +82,7 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
+                        .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
             }
         };
     }

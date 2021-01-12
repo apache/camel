@@ -36,10 +36,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
 
 @Ignore
 @RunWith(Arquillian.class)
@@ -48,20 +48,20 @@ public class CamelEventEndpointTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test class
-            .addClass(CamelEventRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test class
+                .addClass(CamelEventRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void camelStartedEvent(@Uri("mock:started") MockEndpoint started) {
         assertThat("Event fired is incorrect!", started.getExchanges(),
-            contains(
-                hasProperty("in",
-                    hasProperty("body", instanceOf(CamelContextStartedEvent.class)))));
+                contains(
+                        hasProperty("in",
+                                hasProperty("body", instanceOf(CamelContextStartedEvent.class)))));
     }
 
 }

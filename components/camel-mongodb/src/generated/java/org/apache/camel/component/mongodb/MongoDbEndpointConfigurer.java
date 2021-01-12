@@ -4,8 +4,10 @@ package org.apache.camel.component.mongodb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
@@ -71,43 +71,61 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("collection", java.lang.String.class);
-        answer.put("collectionIndex", java.lang.String.class);
-        answer.put("consumerType", java.lang.String.class);
-        answer.put("createCollection", boolean.class);
-        answer.put("cursorRegenerationDelay", long.class);
-        answer.put("database", java.lang.String.class);
-        answer.put("dynamicity", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mongoConnection", com.mongodb.client.MongoClient.class);
-        answer.put("operation", org.apache.camel.component.mongodb.MongoDbOperation.class);
-        answer.put("outputType", org.apache.camel.component.mongodb.MongoDbOutputType.class);
-        answer.put("persistentId", java.lang.String.class);
-        answer.put("persistentTailTracking", boolean.class);
-        answer.put("readPreference", java.lang.String.class);
-        answer.put("streamFilter", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tailTrackCollection", java.lang.String.class);
-        answer.put("tailTrackDb", java.lang.String.class);
-        answer.put("tailTrackField", java.lang.String.class);
-        answer.put("tailTrackIncreasingField", java.lang.String.class);
-        answer.put("writeConcern", java.lang.String.class);
-        answer.put("writeResultAsHeader", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "collection": return java.lang.String.class;
+        case "collectionindex":
+        case "collectionIndex": return java.lang.String.class;
+        case "consumertype":
+        case "consumerType": return java.lang.String.class;
+        case "createcollection":
+        case "createCollection": return boolean.class;
+        case "cursorregenerationdelay":
+        case "cursorRegenerationDelay": return long.class;
+        case "database": return java.lang.String.class;
+        case "dynamicity": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mongoconnection":
+        case "mongoConnection": return com.mongodb.client.MongoClient.class;
+        case "operation": return org.apache.camel.component.mongodb.MongoDbOperation.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.mongodb.MongoDbOutputType.class;
+        case "persistentid":
+        case "persistentId": return java.lang.String.class;
+        case "persistenttailtracking":
+        case "persistentTailTracking": return boolean.class;
+        case "readpreference":
+        case "readPreference": return java.lang.String.class;
+        case "streamfilter":
+        case "streamFilter": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tailtrackcollection":
+        case "tailTrackCollection": return java.lang.String.class;
+        case "tailtrackdb":
+        case "tailTrackDb": return java.lang.String.class;
+        case "tailtrackfield":
+        case "tailTrackField": return java.lang.String.class;
+        case "tailtrackincreasingfield":
+        case "tailTrackIncreasingField": return java.lang.String.class;
+        case "writeconcern":
+        case "writeConcern": return java.lang.String.class;
+        case "writeresultasheader":
+        case "writeResultAsHeader": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "collection": return target.getCollection();

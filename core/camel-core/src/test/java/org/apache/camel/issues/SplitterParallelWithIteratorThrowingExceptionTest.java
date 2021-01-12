@@ -28,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Tests the issue stated in
- * <a href="https://issues.apache.org/jira/browse/CAMEL-12441">CAMEL-12441</a>.
+ * Tests the issue stated in <a href="https://issues.apache.org/jira/browse/CAMEL-12441">CAMEL-12441</a>.
  */
 public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTestSupport {
 
@@ -70,8 +69,9 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body()).aggregationStrategy(new UseLatestAggregationStrategy()).streaming().stopOnException().parallelProcessing().parallelAggregate()
-                    .to("mock:line").end().to("mock:end");
+                from("direct:start").split(body()).aggregationStrategy(new UseLatestAggregationStrategy()).streaming()
+                        .stopOnException().parallelProcessing().parallelAggregate()
+                        .to("mock:line").end().to("mock:end");
             }
         };
     }

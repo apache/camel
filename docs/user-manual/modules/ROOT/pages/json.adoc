@@ -15,10 +15,10 @@ http://jettison.codehaus.org/[Jettsion]
 
 Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
-XStream library.
+Jackson library.
 
-[[JSON-UsingJSONdataformatwiththeXStreamlibrary]]
-== Using JSON data format with the XStream library
+[[JSON-UsingJSONdataformatwiththeJacksonlibrary]]
+== Using JSON data format with the Jackson library
 
 [source,java]
 ------------------------------------------------------------
@@ -28,14 +28,14 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 ------------------------------------------------------------
 
-[[JSON-UsingJSONdataformatwiththeJacksonlibrary]]
-== Using JSON data format with the Jackson library
+[[JSON-UsingJSONdataformatwiththeXStreamlibrary]]
+== Using JSON data format with the XStream library
 
 [source,java]
 ------------------------------------------------------------
 // lets turn Object messages into json then send to MQSeries
 from("activemq:My.Queue").
-  marshal().json(JsonLibrary.Jackson).
+  marshal().json(JsonLibrary.XStream).
   to("mqseries:Another.Queue");
 ------------------------------------------------------------
 
@@ -530,25 +530,6 @@ The `camel-jackson` type converter integrates with JAXB which means you
 can annotate POJO class with JAXB annotations that Jackson can
 leverage. 
 
-[[JSON-DependenciesforXStream]]
-== Dependencies for XStream
-
-To use JSON in your camel routes you need to add the a dependency on
-*camel-xstream* which implements this data format.
-
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
-the download page for the latest versions).
-
-[source,xml]
-----------------------------------------
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-xstream</artifactId>
-  <version>x.x.x</version>
-</dependency>
-----------------------------------------
-
 [[JSON-DependenciesforJackson]]
 == Dependencies for Jackson
 
@@ -564,6 +545,25 @@ the download page for the latest versions).
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-jackson</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
+
+[[JSON-DependenciesforXStream]]
+== Dependencies for XStream
+
+To use JSON in your camel routes you need to add the a dependency on
+*camel-xstream* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xstream</artifactId>
   <version>x.x.x</version>
 </dependency>
 ----------------------------------------

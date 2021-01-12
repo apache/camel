@@ -40,15 +40,15 @@ import org.slf4j.LoggerFactory;
 /**
  * This is Quartz based RoutePolicy implementation that re-use almost identical to "camel-quartz" component.
  *
- * The following has been updated:
- *  - Changed and used Quartz 2.x API call on all the area affected.
- *  - Stored JobKey and TriggerKey instead of JobDetail and Trigger objects in ScheduledRouteDetails.
- *  - ScheduledJobState is stored using full JobKey.toString() instead of just jobName.
+ * The following has been updated: - Changed and used Quartz 2.x API call on all the area affected. - Stored JobKey and
+ * TriggerKey instead of JobDetail and Trigger objects in ScheduledRouteDetails. - ScheduledJobState is stored using
+ * full JobKey.toString() instead of just jobName.
  *
  * See org.apache.camel.component.quartz.QuartzComponent
  *
  */
-public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants, NonManagedService {
+public abstract class ScheduledRoutePolicy extends RoutePolicySupport
+        implements ScheduledRoutePolicyConstants, NonManagedService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<>();
     private Scheduler scheduler;
@@ -57,7 +57,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
 
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
-    protected void onJobExecute(Action action, Route route) throws Exception {
+    public void onJobExecute(Action action, Route route) throws Exception {
         LOG.debug("Scheduled Event notification received. Performing action: {} on route: {}", action, route.getId());
 
         ServiceStatus routeStatus = route.getCamelContext().getRouteController().getRouteStatus(route.getId());
@@ -72,7 +72,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             if ((routeStatus == ServiceStatus.Started) || (routeStatus == ServiceStatus.Suspended)) {
                 stopRoute(route, getRouteStopGracePeriod(), getTimeUnit());
             } else {
-                LOG.warn("Route is not in a started/suspended state and cannot be stopped. The current route state is {}", routeStatus);
+                LOG.warn("Route is not in a started/suspended state and cannot be stopped. The current route state is {}",
+                        routeStatus);
             }
         } else if (action == Action.SUSPEND) {
             if (routeStatus == ServiceStatus.Started) {
@@ -116,8 +117,9 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getKey());
             if (jobDetail.equals(existingJobDetail)) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
-                             new Object[] {jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey()});
+                    LOG.info(
+                            "Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing inside the cluster",
+                            new Object[] { jobDetail.getKey(), action, route.getId(), existingJobDetail.getKey() });
                 }
 
                 // skip scheduling the same job again as one is already existing for the same routeId and action
@@ -180,19 +182,24 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         JobDetail jobDetail = null;
 
         if (action == Action.START) {
-            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_START + route.getId(), JOB_GROUP + route.getId()).build();
+            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_START + route.getId(), JOB_GROUP + route.getId())
+                    .build();
         } else if (action == Action.STOP) {
-            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_STOP + route.getId(), JOB_GROUP + route.getId()).build();
+            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_STOP + route.getId(), JOB_GROUP + route.getId())
+                    .build();
         } else if (action == Action.SUSPEND) {
-            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_SUSPEND + route.getId(), JOB_GROUP + route.getId()).build();
+            jobDetail = JobBuilder.newJob(ScheduledJob.class)
+                    .withIdentity(JOB_SUSPEND + route.getId(), JOB_GROUP + route.getId()).build();
         } else if (action == Action.RESUME) {
-            jobDetail = JobBuilder.newJob(ScheduledJob.class).withIdentity(JOB_RESUME + route.getId(), JOB_GROUP + route.getId()).build();
+            jobDetail = JobBuilder.newJob(ScheduledJob.class)
+                    .withIdentity(JOB_RESUME + route.getId(), JOB_GROUP + route.getId()).build();
         }
 
         return jobDetail;
     }
 
-    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route) throws Exception {
+    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route)
+            throws Exception {
         ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(route.getId());
         if (action == Action.START) {
             scheduledRouteDetails.setStartJobKey(jobDetail.getKey());
@@ -209,7 +216,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         }
     }
 
-    protected void loadCallbackDataIntoSchedulerContext(JobDetail jobDetail, Action action, Route route) throws SchedulerException {
+    protected void loadCallbackDataIntoSchedulerContext(JobDetail jobDetail, Action action, Route route)
+            throws SchedulerException {
         getScheduler().getContext().put(jobDetail.getKey().toString(), new ScheduledJobState(action, route));
     }
 

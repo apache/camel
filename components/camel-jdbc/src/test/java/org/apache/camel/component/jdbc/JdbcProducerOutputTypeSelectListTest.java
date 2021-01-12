@@ -32,7 +32,7 @@ public class JdbcProducerOutputTypeSelectListTest extends AbstractJdbcTestSuppor
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void testOutputTypeSelectList() throws Exception {
         mock.expectedMessageCount(1);

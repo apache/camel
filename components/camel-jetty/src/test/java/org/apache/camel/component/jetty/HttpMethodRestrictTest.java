@@ -69,7 +69,7 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);
-                        exchange.getOut().setBody(request + " response");
+                        exchange.getMessage().setBody(request + " response");
                     }
                 });
             }

@@ -72,6 +72,6 @@ public class ProducerMaxConnectionRetryReachedTest extends SoroushBotTestSupport
         mockEndpoint.setAssertPeriod(1000);
         mockEndpoint.setExpectedMessageCount(0);
         mockEndpoint.assertIsSatisfied();
-        assertEquals(SoroushBotWS.getReceivedMessages().size(), 0, "message did not send");
+        assertEquals(0, SoroushBotWS.getReceivedMessages().size(), "message did not send");
     }
 }

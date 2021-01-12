@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&localWorkDirectory=target/lwd&noop=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/lwd/?password=admin&localWorkDirectory=target/lwd&noop=true";
     }
 
     @Override
@@ -77,7 +77,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");

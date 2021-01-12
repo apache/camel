@@ -37,7 +37,8 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
     public void testValidStartingPath() {
-        context.getEndpoint("file://target/path/?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
+        context.getEndpoint(
+                "file://target/path/?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
     }
 
 }

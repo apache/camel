@@ -37,6 +37,8 @@ public interface AwsEksComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-eks
+     * 
+     * @return the dsl builder
      */
     static AwsEksComponentBuilder awsEks() {
         return new AwsEksComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface AwsEksComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -64,9 +69,12 @@ public interface AwsEksComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -76,10 +84,12 @@ public interface AwsEksComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.eks.EKSConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder configuration(
                 org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
@@ -89,10 +99,13 @@ public interface AwsEksComponentBuilderFactory {
         /**
          * To use a existing configured AWS EKS as client.
          * 
-         * The option is a: <code>com.amazonaws.services.eks.AmazonEKS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.eks.AmazonEKS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param eksClient the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder eksClient(
                 com.amazonaws.services.eks.AmazonEKS eksClient) {
@@ -110,10 +123,13 @@ public interface AwsEksComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -124,9 +140,12 @@ public interface AwsEksComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.eks.EKSOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.eks.EKSOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder operation(
                 org.apache.camel.component.aws.eks.EKSOperations operation) {
@@ -136,9 +155,12 @@ public interface AwsEksComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the EKS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -147,9 +169,12 @@ public interface AwsEksComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the EKS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -158,10 +183,14 @@ public interface AwsEksComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the EKS client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -174,9 +203,12 @@ public interface AwsEksComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -185,26 +217,35 @@ public interface AwsEksComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsEksComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default AwsEksComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AwsEksComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -242,7 +283,7 @@ public interface AwsEksComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((EKSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((EKSComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((EKSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((EKSComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

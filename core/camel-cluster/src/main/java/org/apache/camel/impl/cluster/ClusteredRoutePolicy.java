@@ -38,8 +38,8 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
-import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.apache.camel.util.ObjectHelper;
@@ -47,7 +47,7 @@ import org.apache.camel.util.ReferenceCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ManagedResource(description = "Clustered Route policy using")
+@ManagedResource(description = "Clustered Route policy")
 public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
@@ -64,13 +64,16 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final CamelClusterService.Selector clusterServiceSelector;
     private CamelClusterService clusterService;
     private CamelClusterView clusterView;
+    private volatile boolean clusterViewAddListenerDone;
+    private volatile boolean startManagedRoutesEarly;
 
     private Duration initialDelay;
     private ScheduledExecutorService executorService;
 
     private CamelContext camelContext;
 
-    private ClusteredRoutePolicy(CamelClusterService clusterService, CamelClusterService.Selector clusterServiceSelector, String namespace) {
+    private ClusteredRoutePolicy(CamelClusterService clusterService, CamelClusterService.Selector clusterServiceSelector,
+                                 String namespace) {
         this.namespace = namespace;
         this.clusterService = clusterService;
         this.clusterServiceSelector = clusterServiceSelector;
@@ -81,8 +84,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         this.stoppedRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
-        this.leader = new AtomicBoolean(false);
-        this.contextStarted = new AtomicBoolean(false);
+        this.leader = new AtomicBoolean();
+        this.contextStarted = new AtomicBoolean();
         this.initialDelay = Duration.ofMillis(0);
 
         try {
@@ -104,11 +107,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
             try {
                 // Remove event listener
-                clusterView.removeEventListener(leadershipEventListener);
+                if (clusterView != null) {
+                    clusterView.removeEventListener(leadershipEventListener);
 
-                // If all the routes have been shut down then the view and its
-                // resources can eventually be released.
-                clusterView.getClusterService().releaseView(clusterView);
+                    // If all the routes have been shut down then the view and its
+                    // resources can eventually be released.
+                    clusterView.getClusterService().releaseView(clusterView);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
@@ -129,14 +134,16 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
 
         if (this.camelContext != null && this.camelContext != camelContext) {
-            throw new IllegalStateException("CamelContext should not be changed: current=" + this.camelContext + ", new=" + camelContext);
+            throw new IllegalStateException(
+                    "CamelContext should not be changed: current=" + this.camelContext + ", new=" + camelContext);
         }
 
         try {
             this.camelContext = camelContext;
             this.camelContext.addStartupListener(this.listener);
             this.camelContext.getManagementStrategy().addEventNotifier(this.listener);
-            this.executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ClusteredRoutePolicy");
+            this.executorService
+                    = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ClusteredRoutePolicy");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -169,26 +176,41 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     public void onInit(Route route) {
         super.onInit(route);
 
-        LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.setAutoStartup(false);
-
         this.refCount.retain();
-        this.stoppedRoutes.add(route);
+
+        if (camelContext.isStarted() && isLeader()) {
+            // when camel context is already started, and we add new routes
+            // then let the route controller start the route as usual (no need to mark as auto startup false)
+            startedRoutes.add(route);
+        } else {
+            LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
+            route.setAutoStartup(false);
+            this.stoppedRoutes.add(route);
+        }
 
         startManagedRoutes();
     }
 
     @Override
-    public void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (clusterService == null) {
             clusterService = ClusterServiceHelper.lookupService(camelContext, clusterServiceSelector)
-                .orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
+                    .orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})", this, clusterService,
+                    clusterService.getId(),
+                    clusterService.getClass().getName());
+        }
+    }
 
-        LOG.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})", this, clusterService, clusterService.getId(),
-                  clusterService.getClass().getName());
-
-        clusterView = clusterService.getView(namespace);
+    @Override
+    public void doStart() throws Exception {
+        this.clusterView = clusterService.getView(namespace);
+        if (!clusterViewAddListenerDone) {
+            clusterView.addEventListener(leadershipEventListener);
+            clusterViewAddListenerDone = true;
+        }
     }
 
     @Override
@@ -230,6 +252,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void doStartManagedRoutes() {
+        // if we are currently starting up Camel context then defer starting routes till its fully started
+        if (camelContext.isStarting()) {
+            LOG.debug("Will defer starting managed routes until camel context is fully started");
+            startManagedRoutesEarly = true;
+            return;
+        }
+
         if (!isRunAllowed()) {
             return;
         }
@@ -284,10 +313,26 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void onCamelContextStarted() {
-        LOG.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')", stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
-                  startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
+                    stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
+                    startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
+        }
 
-        clusterView.addEventListener(leadershipEventListener);
+        if (clusterView != null && !clusterViewAddListenerDone) {
+            clusterView.addEventListener(leadershipEventListener);
+            clusterViewAddListenerDone = true;
+        } else {
+            // cluster view is not initialized yet, so lets add its listener in doStart
+            clusterViewAddListenerDone = false;
+        }
+
+        if (startManagedRoutesEarly) {
+            LOG.debug(
+                    "CamelContext is now fully started, can now start managed routes eager as we were appointed leader during early startup");
+            startManagedRoutesEarly = false;
+            startManagedRoutes();
+        }
     }
 
     // ****************************************************
@@ -301,7 +346,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
     }
 
-    private class CamelContextStartupListener extends EventNotifierSupport implements ExtendedStartupListener {
+    private class CamelContextStartupListener extends SimpleEventNotifierSupport implements ExtendedStartupListener {
         @Override
         public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();
@@ -343,7 +388,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                 // Eventually delay the startup of the routes a later time
                 if (initialDelay.toMillis() > 0) {
                     LOG.debug("Policy will be effective in {}", initialDelay);
-                    executorService.schedule(ClusteredRoutePolicy.this::onCamelContextStarted, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
+                    executorService.schedule(ClusteredRoutePolicy.this::onCamelContextStarted, initialDelay.toMillis(),
+                            TimeUnit.MILLISECONDS);
                 } else {
                     ClusteredRoutePolicy.this.onCamelContextStarted();
                 }
@@ -355,7 +401,9 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // Static helpers
     // ****************************************************
 
-    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, CamelClusterService.Selector selector, String namespace) throws Exception {
+    public static ClusteredRoutePolicy forNamespace(
+            CamelContext camelContext, CamelClusterService.Selector selector, String namespace)
+            throws Exception {
         ClusteredRoutePolicy policy = new ClusteredRoutePolicy(null, selector, namespace);
         policy.setCamelContext(camelContext);
 

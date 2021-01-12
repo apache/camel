@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&delay=5000" + "&preMove=done/${file:name}";
+        return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&binary=false&delay=5000"
+               + "&preMove=done/${file:name}";
     }
 
     @Override
@@ -53,7 +54,7 @@ public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
 
         // assert the file is moved
-        File file = new File(FTP_ROOT_DIR + "/movefile/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/movefile/done/hello.txt");
         assertTrue(file.exists(), "The file should have been moved");
     }
 
@@ -71,7 +72,7 @@ public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/movefile/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

@@ -19,10 +19,12 @@ package org.apache.camel.itest.jetty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -31,9 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class JettyMulticastJmsFileTest {
-    
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    private static final String URL = "http://localhost:" + port + "/JettyMulticastJmsFileTest";
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
@@ -55,7 +59,7 @@ public class JettyMulticastJmsFileTest {
         template.stop();
 
         ConsumerTemplate consumer = camelContext.createConsumerTemplate();
-        String in = consumer.receiveBody("jms:queue:foo", 5000, String.class);
+        String in = consumer.receiveBody("jms:queue:JettyMulticastJmsFileTestFoo", 5000, String.class);
         assertEquals("Hello World", in);
 
         String in2 = consumer.receiveBody("file://target/jetty?noop=true&readLock=none", 5000, String.class);

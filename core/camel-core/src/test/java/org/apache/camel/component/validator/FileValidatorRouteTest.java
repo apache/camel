@@ -43,13 +43,14 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/validator", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>", Exchange.FILE_NAME,
-                                   "valid.xml");
+        template.sendBodyAndHeader("file:target/data/validator",
+                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>", Exchange.FILE_NAME,
+                "valid.xml");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
         assertTrue(FileUtil.deleteFile(new File("target/data/validator/valid.xml")), "Should be able to delete the file");
     }
 
@@ -58,12 +59,13 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/data/validator", "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>", Exchange.FILE_NAME, "invalid.xml");
+        template.sendBodyAndHeader("file:target/data/validator",
+                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>", Exchange.FILE_NAME, "invalid.xml");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
         assertTrue(FileUtil.deleteFile(new File("target/data/validator/invalid.xml")), "Should be able to delete the file");
     }
 
@@ -82,8 +84,9 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/validator?noop=true").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid")
-                    .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally").end();
+                from("file:target/data/validator?noop=true").doTry()
+                        .to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid")
+                        .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally").end();
             }
         };
     }

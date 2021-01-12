@@ -46,10 +46,12 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
             public void notify(CamelEvent event) throws Exception {
                 // Empty.
             }
+
             @Override
             protected void doStart() throws Exception {
                 starts++;
             }
+
             @Override
             protected void doStop() throws Exception {
                 stops++;
@@ -85,7 +87,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
 
         // restart Camel
@@ -98,7 +101,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
-        reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello Camel"}, new String[]{"java.lang.String", "java.lang.Object"});
+        reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello Camel" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
     }
 

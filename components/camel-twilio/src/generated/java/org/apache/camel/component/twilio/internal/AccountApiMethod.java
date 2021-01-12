@@ -46,8 +46,6 @@ public enum AccountApiMethod implements ApiMethod {
         "updater",
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AccountApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -29,17 +29,20 @@ public class ConnectionSettingsTest {
     @Test
     void parseUriTest() {
         final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
-        assertEquals(new ConnectionSettings("host.domain.tld", 11300, "someTube"), factory.parseUri("host.domain.tld:11300/someTube"), "Full URI");
-        assertEquals(new ConnectionSettings("host.domain.tld", Client.DEFAULT_PORT, "someTube"), factory.parseUri("host.domain.tld/someTube"), "No port");
-        assertEquals(new ConnectionSettings(Client.DEFAULT_HOST, Client.DEFAULT_PORT, "someTube"), factory.parseUri("someTube"), "Only tube");
+        assertEquals(new ConnectionSettings("host.domain.tld", 11300, "someTube"),
+                factory.parseUri("host.domain.tld:11300/someTube"), "Full URI");
+        assertEquals(new ConnectionSettings("host.domain.tld", Client.DEFAULT_PORT, "someTube"),
+                factory.parseUri("host.domain.tld/someTube"), "No port");
+        assertEquals(new ConnectionSettings(Client.DEFAULT_HOST, Client.DEFAULT_PORT, "someTube"), factory.parseUri("someTube"),
+                "Only tube");
     }
 
     @Test
     void parseTubesTest() {
         final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
-        assertArrayEquals(new String[]{"tube1", "tube2"}, factory.parseUri("host:90/tube1+tube2").tubes, "Full URI");
-        assertArrayEquals(new String[]{"tube1", "tube2"}, factory.parseUri("host/tube1+tube2").tubes, "No port");
-        assertArrayEquals(new String[]{"tube1", "tube2"}, factory.parseUri("tube1+tube2").tubes, "Only tubes");
+        assertArrayEquals(new String[] { "tube1", "tube2" }, factory.parseUri("host:90/tube1+tube2").tubes, "Full URI");
+        assertArrayEquals(new String[] { "tube1", "tube2" }, factory.parseUri("host/tube1+tube2").tubes, "No port");
+        assertArrayEquals(new String[] { "tube1", "tube2" }, factory.parseUri("tube1+tube2").tubes, "Only tubes");
         assertArrayEquals(new String[0], factory.parseUri("").tubes, "Empty URI");
     }
 

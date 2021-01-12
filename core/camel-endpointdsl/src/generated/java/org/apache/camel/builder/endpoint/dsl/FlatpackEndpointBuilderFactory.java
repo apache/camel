@@ -50,10 +50,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowShortLines the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder allowShortLines(
                 boolean allowShortLines) {
@@ -64,10 +67,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowShortLines the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder allowShortLines(
                 String allowShortLines) {
@@ -77,10 +84,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The default character delimiter for delimited files.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Default: ,
          * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder delimiter(char delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -89,10 +99,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The default character delimiter for delimited files.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Default: ,
          * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder delimiter(String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -102,10 +115,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be longer than expected and ignores the extra
          * characters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param ignoreExtraColumns the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
@@ -116,10 +132,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be longer than expected and ignores the extra
          * characters.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param ignoreExtraColumns the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
@@ -130,10 +150,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Whether the first line is ignored for delimited files (for the column
          * headers).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param ignoreFirstRecord the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
@@ -144,10 +167,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Whether the first line is ignored for delimited files (for the column
          * headers).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param ignoreFirstRecord the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
@@ -158,10 +185,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the Component to send each row as a separate exchange once
          * parsed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param splitRows the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder splitRows(boolean splitRows) {
             doSetProperty("splitRows", splitRows);
@@ -171,10 +201,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the Component to send each row as a separate exchange once
          * parsed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param splitRows the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder splitRows(String splitRows) {
             doSetProperty("splitRows", splitRows);
@@ -183,9 +217,12 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The text qualifier for delimited files.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param textQualifier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder textQualifier(char textQualifier) {
             doSetProperty("textQualifier", textQualifier);
@@ -194,9 +231,12 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The text qualifier for delimited files.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param textQualifier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder textQualifier(
                 String textQualifier) {
@@ -212,10 +252,13 @@ public interface FlatpackEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -231,10 +274,14 @@ public interface FlatpackEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -245,10 +292,13 @@ public interface FlatpackEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -259,10 +309,14 @@ public interface FlatpackEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -273,9 +327,12 @@ public interface FlatpackEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -286,9 +343,12 @@ public interface FlatpackEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -299,9 +359,12 @@ public interface FlatpackEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -312,9 +375,12 @@ public interface FlatpackEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -329,9 +395,12 @@ public interface FlatpackEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -346,9 +415,12 @@ public interface FlatpackEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -358,10 +430,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -370,10 +445,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -383,10 +461,13 @@ public interface FlatpackEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -396,10 +477,14 @@ public interface FlatpackEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -408,10 +493,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -420,10 +508,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -434,10 +525,13 @@ public interface FlatpackEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -448,10 +542,13 @@ public interface FlatpackEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -461,10 +558,14 @@ public interface FlatpackEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -476,10 +577,13 @@ public interface FlatpackEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -492,9 +596,12 @@ public interface FlatpackEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -507,9 +614,12 @@ public interface FlatpackEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -518,12 +628,32 @@ public interface FlatpackEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default FlatpackEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -533,13 +663,17 @@ public interface FlatpackEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -551,13 +685,16 @@ public interface FlatpackEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -566,10 +703,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -579,10 +719,14 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -592,10 +736,14 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -605,10 +753,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -618,10 +769,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -632,10 +786,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -659,10 +817,13 @@ public interface FlatpackEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -676,9 +837,12 @@ public interface FlatpackEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -688,9 +852,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -701,9 +869,12 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -717,9 +888,12 @@ public interface FlatpackEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -733,9 +907,12 @@ public interface FlatpackEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -743,41 +920,16 @@ public interface FlatpackEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -788,10 +940,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -813,10 +969,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowShortLines the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder allowShortLines(
                 boolean allowShortLines) {
@@ -827,10 +986,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowShortLines the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder allowShortLines(
                 String allowShortLines) {
@@ -840,10 +1003,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The default character delimiter for delimited files.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Default: ,
          * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder delimiter(char delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -852,10 +1018,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The default character delimiter for delimited files.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Default: ,
          * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder delimiter(String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -865,10 +1034,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be longer than expected and ignores the extra
          * characters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param ignoreExtraColumns the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
@@ -879,10 +1051,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be longer than expected and ignores the extra
          * characters.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param ignoreExtraColumns the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
@@ -893,10 +1069,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Whether the first line is ignored for delimited files (for the column
          * headers).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param ignoreFirstRecord the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
@@ -907,10 +1086,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Whether the first line is ignored for delimited files (for the column
          * headers).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param ignoreFirstRecord the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
@@ -921,10 +1104,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the Component to send each row as a separate exchange once
          * parsed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param splitRows the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder splitRows(boolean splitRows) {
             doSetProperty("splitRows", splitRows);
@@ -934,10 +1120,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the Component to send each row as a separate exchange once
          * parsed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param splitRows the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder splitRows(String splitRows) {
             doSetProperty("splitRows", splitRows);
@@ -946,9 +1136,12 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The text qualifier for delimited files.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param textQualifier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder textQualifier(char textQualifier) {
             doSetProperty("textQualifier", textQualifier);
@@ -957,9 +1150,12 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The text qualifier for delimited files.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param textQualifier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder textQualifier(
                 String textQualifier) {
@@ -977,10 +1173,13 @@ public interface FlatpackEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -998,10 +1197,14 @@ public interface FlatpackEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1020,41 +1223,16 @@ public interface FlatpackEndpointBuilderFactory {
             return (FlatpackEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1065,10 +1243,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1091,10 +1273,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowShortLines the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder allowShortLines(boolean allowShortLines) {
             doSetProperty("allowShortLines", allowShortLines);
@@ -1104,10 +1289,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowShortLines the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder allowShortLines(String allowShortLines) {
             doSetProperty("allowShortLines", allowShortLines);
@@ -1116,10 +1305,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The default character delimiter for delimited files.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Default: ,
          * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder delimiter(char delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -1128,10 +1320,13 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The default character delimiter for delimited files.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Default: ,
          * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder delimiter(String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -1141,10 +1336,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be longer than expected and ignores the extra
          * characters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param ignoreExtraColumns the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
@@ -1155,10 +1353,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Allows for lines to be longer than expected and ignores the extra
          * characters.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param ignoreExtraColumns the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
@@ -1169,10 +1371,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Whether the first line is ignored for delimited files (for the column
          * headers).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param ignoreFirstRecord the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
@@ -1183,10 +1388,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Whether the first line is ignored for delimited files (for the column
          * headers).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param ignoreFirstRecord the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
@@ -1197,10 +1406,13 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the Component to send each row as a separate exchange once
          * parsed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param splitRows the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder splitRows(boolean splitRows) {
             doSetProperty("splitRows", splitRows);
@@ -1210,10 +1422,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets the Component to send each row as a separate exchange once
          * parsed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param splitRows the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder splitRows(String splitRows) {
             doSetProperty("splitRows", splitRows);
@@ -1222,9 +1438,12 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The text qualifier for delimited files.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param textQualifier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder textQualifier(char textQualifier) {
             doSetProperty("textQualifier", textQualifier);
@@ -1233,9 +1452,12 @@ public interface FlatpackEndpointBuilderFactory {
         /**
          * The text qualifier for delimited files.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param textQualifier the value to set
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder textQualifier(String textQualifier) {
             doSetProperty("textQualifier", textQualifier);
@@ -1254,41 +1476,16 @@ public interface FlatpackEndpointBuilderFactory {
             return (FlatpackEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1298,10 +1495,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlatpackEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1323,13 +1524,14 @@ public interface FlatpackEndpointBuilderFactory {
          * Path parameter: type
          * Whether to use fixed or delimiter
          * Default value: delim
-         * The value can be one of: fixed, delim
+         * There are 2 enums and the value can be one of: fixed, delim
          * 
          * Path parameter: resourceUri (required)
          * URL for loading the flatpack mapping file from classpath or file
          * system
          * 
          * @param path type:resourceUri
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder flatpack(String path) {
             return FlatpackEndpointBuilderFactory.endpointBuilder("flatpack", path);
@@ -1347,7 +1549,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Path parameter: type
          * Whether to use fixed or delimiter
          * Default value: delim
-         * The value can be one of: fixed, delim
+         * There are 2 enums and the value can be one of: fixed, delim
          * 
          * Path parameter: resourceUri (required)
          * URL for loading the flatpack mapping file from classpath or file
@@ -1356,6 +1558,7 @@ public interface FlatpackEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type:resourceUri
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder flatpack(
                 String componentName,

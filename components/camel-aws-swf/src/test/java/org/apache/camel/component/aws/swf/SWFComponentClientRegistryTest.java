@@ -34,12 +34,12 @@ public class SWFComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonSWClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalSWFClientMisconfiguration() throws Exception {
 
         SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-swf://workflow"));
+                () -> component.createEndpoint("aws-swf://workflow"));
     }
 }

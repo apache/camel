@@ -4,43 +4,49 @@
  */
 package org.apache.camel.component.fhir;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirUpdate
+ * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirUpdate}.
  */
+@ApiParams(apiName = "update", 
+           description = "API for the update operation, which performs a logical delete on a server resource",
+           apiMethods = {@ApiMethod(methodName = "resource", signatures={"ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource, org.hl7.fhir.instance.model.api.IIdType id, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource, String stringId, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resource(String resourceAsString, org.hl7.fhir.instance.model.api.IIdType id, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resource(String resourceAsString, String stringId, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "resourceBySearchUrl", signatures={"ca.uhn.fhir.rest.api.MethodOutcome resourceBySearchUrl(org.hl7.fhir.instance.model.api.IBaseResource resource, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resourceBySearchUrl(String resourceAsString, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), }, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class FhirUpdateEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
-    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resourceBySearchUrl"), @ApiMethod(methodName = "resourceBySearchUrl")})
+    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters;
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource")})
     private org.hl7.fhir.instance.model.api.IIdType id;
-
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resourceBySearchUrl"), @ApiMethod(methodName = "resourceBySearchUrl")})
     private ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn;
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resourceBySearchUrl")})
     private org.hl7.fhir.instance.model.api.IBaseResource resource;
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resourceBySearchUrl")})
     private String resourceAsString;
-
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource")})
     private String stringId;
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resourceBySearchUrl")})
     private String url;
 
-    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {
+    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {
         return extraParameters;
     }
 
-    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters) {
+    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters) {
         this.extraParameters = extraParameters;
     }
 

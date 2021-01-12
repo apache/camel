@@ -32,6 +32,10 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
         if (method instanceof String) {
             return (String) method;
+        } else if (method instanceof Enum) {
+            return ((Enum<?>) method).name();
+        } else if (method != null) {
+            return exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, method);
         }
 
         // 2. GET if query string is provided in header.

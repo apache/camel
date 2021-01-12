@@ -44,10 +44,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -57,10 +60,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -70,10 +76,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder flushConnection(
                 boolean flushConnection) {
@@ -83,10 +92,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder flushConnection(
                 String flushConnection) {
@@ -96,10 +109,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder flushTimeout(int flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
@@ -108,10 +124,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder flushTimeout(String flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
@@ -121,10 +140,13 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder maxPingsOut(int maxPingsOut) {
             doSetProperty("maxPingsOut", maxPingsOut);
@@ -134,10 +156,13 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder maxPingsOut(String maxPingsOut) {
             doSetProperty("maxPingsOut", maxPingsOut);
@@ -146,10 +171,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
@@ -159,10 +187,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
@@ -175,10 +206,13 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder noEcho(boolean noEcho) {
             doSetProperty("noEcho", noEcho);
@@ -190,10 +224,14 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder noEcho(String noEcho) {
             doSetProperty("noEcho", noEcho);
@@ -203,10 +241,13 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
@@ -217,10 +258,14 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder noRandomizeServers(
                 String noRandomizeServers) {
@@ -230,10 +275,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder pedantic(boolean pedantic) {
             doSetProperty("pedantic", pedantic);
@@ -242,10 +290,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder pedantic(String pedantic) {
             doSetProperty("pedantic", pedantic);
@@ -255,10 +307,13 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder pingInterval(int pingInterval) {
             doSetProperty("pingInterval", pingInterval);
@@ -268,10 +323,13 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder pingInterval(String pingInterval) {
             doSetProperty("pingInterval", pingInterval);
@@ -280,10 +338,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder reconnect(boolean reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -292,10 +353,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder reconnect(String reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -304,10 +369,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder reconnectTimeWait(
                 int reconnectTimeWait) {
@@ -317,10 +385,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder reconnectTimeWait(
                 String reconnectTimeWait) {
@@ -330,10 +401,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
@@ -343,10 +417,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
@@ -357,9 +434,12 @@ public interface NatsEndpointBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder servers(String servers) {
             doSetProperty("servers", servers);
@@ -368,10 +448,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder verbose(boolean verbose) {
             doSetProperty("verbose", verbose);
@@ -380,10 +463,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder verbose(String verbose) {
             doSetProperty("verbose", verbose);
@@ -398,10 +485,13 @@ public interface NatsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -417,10 +507,14 @@ public interface NatsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -431,9 +525,12 @@ public interface NatsEndpointBuilderFactory {
          * Stop receiving messages from a topic we are subscribing to after
          * maxMessages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -442,10 +539,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Consumer thread pool size (default is 10).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -454,10 +554,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Consumer thread pool size (default is 10).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -466,9 +569,12 @@ public interface NatsEndpointBuilderFactory {
         /**
          * The Queue name if we are using nats for a queue configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param queueName the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder queueName(String queueName) {
             doSetProperty("queueName", queueName);
@@ -477,10 +583,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Can be used to turn off sending back reply message in the consumer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param replyToDisabled the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder replyToDisabled(
                 boolean replyToDisabled) {
@@ -490,10 +599,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Can be used to turn off sending back reply message in the consumer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param replyToDisabled the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder replyToDisabled(
                 String replyToDisabled) {
@@ -503,10 +616,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -515,10 +631,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -528,9 +648,12 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -541,9 +664,12 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -567,10 +693,13 @@ public interface NatsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -584,9 +713,12 @@ public interface NatsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -596,9 +728,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -609,9 +745,12 @@ public interface NatsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -619,39 +758,15 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
+         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder connection(Object connection) {
             doSetProperty("connection", connection);
@@ -661,9 +776,12 @@ public interface NatsEndpointBuilderFactory {
          * Reference an already instantiated connection to Nats server.
          * 
          * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
+         * &lt;code&gt;io.nats.client.Connection&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder connection(String connection) {
             doSetProperty("connection", connection);
@@ -673,10 +791,13 @@ public interface NatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -687,14 +808,53 @@ public interface NatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }
@@ -711,10 +871,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -724,10 +887,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -737,10 +903,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder flushConnection(
                 boolean flushConnection) {
@@ -750,10 +919,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder flushConnection(
                 String flushConnection) {
@@ -763,10 +936,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder flushTimeout(int flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
@@ -775,10 +951,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder flushTimeout(String flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
@@ -788,10 +967,13 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder maxPingsOut(int maxPingsOut) {
             doSetProperty("maxPingsOut", maxPingsOut);
@@ -801,10 +983,13 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder maxPingsOut(String maxPingsOut) {
             doSetProperty("maxPingsOut", maxPingsOut);
@@ -813,10 +998,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
@@ -826,10 +1014,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
@@ -842,10 +1033,13 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder noEcho(boolean noEcho) {
             doSetProperty("noEcho", noEcho);
@@ -857,10 +1051,14 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder noEcho(String noEcho) {
             doSetProperty("noEcho", noEcho);
@@ -870,10 +1068,13 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
@@ -884,10 +1085,14 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder noRandomizeServers(
                 String noRandomizeServers) {
@@ -897,10 +1102,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder pedantic(boolean pedantic) {
             doSetProperty("pedantic", pedantic);
@@ -909,10 +1117,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder pedantic(String pedantic) {
             doSetProperty("pedantic", pedantic);
@@ -922,10 +1134,13 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder pingInterval(int pingInterval) {
             doSetProperty("pingInterval", pingInterval);
@@ -935,10 +1150,13 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder pingInterval(String pingInterval) {
             doSetProperty("pingInterval", pingInterval);
@@ -947,10 +1165,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder reconnect(boolean reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -959,10 +1180,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder reconnect(String reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -971,10 +1196,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder reconnectTimeWait(
                 int reconnectTimeWait) {
@@ -984,10 +1212,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder reconnectTimeWait(
                 String reconnectTimeWait) {
@@ -997,10 +1228,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
@@ -1010,10 +1244,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
@@ -1024,9 +1261,12 @@ public interface NatsEndpointBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder servers(String servers) {
             doSetProperty("servers", servers);
@@ -1035,10 +1275,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder verbose(boolean verbose) {
             doSetProperty("verbose", verbose);
@@ -1047,10 +1290,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder verbose(String verbose) {
             doSetProperty("verbose", verbose);
@@ -1067,10 +1314,13 @@ public interface NatsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1088,10 +1338,14 @@ public interface NatsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1101,9 +1355,12 @@ public interface NatsEndpointBuilderFactory {
         /**
          * the subject to which subscribers should send response.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replySubject the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder replySubject(String replySubject) {
             doSetProperty("replySubject", replySubject);
@@ -1112,10 +1369,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -1124,10 +1384,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -1137,9 +1401,12 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1150,9 +1417,12 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1171,39 +1441,15 @@ public interface NatsEndpointBuilderFactory {
             return (NatsEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
+         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointProducerBuilder connection(Object connection) {
             doSetProperty("connection", connection);
@@ -1213,9 +1459,12 @@ public interface NatsEndpointBuilderFactory {
          * Reference an already instantiated connection to Nats server.
          * 
          * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
+         * &lt;code&gt;io.nats.client.Connection&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointProducerBuilder connection(String connection) {
             doSetProperty("connection", connection);
@@ -1225,10 +1474,13 @@ public interface NatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1239,14 +1491,53 @@ public interface NatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointProducerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointProducerBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }
@@ -1264,10 +1555,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1276,10 +1570,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Timeout for connection attempts. (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder connectionTimeout(String connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1288,10 +1585,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder flushConnection(boolean flushConnection) {
             doSetProperty("flushConnection", flushConnection);
@@ -1300,10 +1600,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Define if we want to flush connection when stopping or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder flushConnection(String flushConnection) {
             doSetProperty("flushConnection", flushConnection);
@@ -1312,10 +1616,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder flushTimeout(int flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
@@ -1324,10 +1631,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set the flush timeout (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder flushTimeout(String flushTimeout) {
             doSetProperty("flushTimeout", flushTimeout);
@@ -1337,10 +1647,13 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder maxPingsOut(int maxPingsOut) {
             doSetProperty("maxPingsOut", maxPingsOut);
@@ -1350,10 +1663,13 @@ public interface NatsEndpointBuilderFactory {
          * maximum number of pings have not received a response allowed by the
          * client.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder maxPingsOut(String maxPingsOut) {
             doSetProperty("maxPingsOut", maxPingsOut);
@@ -1362,10 +1678,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
@@ -1375,10 +1694,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Max reconnection attempts.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
@@ -1391,10 +1713,13 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder noEcho(boolean noEcho) {
             doSetProperty("noEcho", noEcho);
@@ -1406,10 +1731,14 @@ public interface NatsEndpointBuilderFactory {
          * the connection if it has subscriptions on the subject being published
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder noEcho(String noEcho) {
             doSetProperty("noEcho", noEcho);
@@ -1419,10 +1748,13 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
@@ -1433,10 +1765,14 @@ public interface NatsEndpointBuilderFactory {
          * Whether or not randomizing the order of servers for the connection
          * attempts.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder noRandomizeServers(String noRandomizeServers) {
             doSetProperty("noRandomizeServers", noRandomizeServers);
@@ -1445,10 +1781,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder pedantic(boolean pedantic) {
             doSetProperty("pedantic", pedantic);
@@ -1457,10 +1796,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in pedantic mode (this affects performance).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder pedantic(String pedantic) {
             doSetProperty("pedantic", pedantic);
@@ -1470,10 +1813,13 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder pingInterval(int pingInterval) {
             doSetProperty("pingInterval", pingInterval);
@@ -1483,10 +1829,13 @@ public interface NatsEndpointBuilderFactory {
          * Ping interval to be aware if connection is still alive (in
          * milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder pingInterval(String pingInterval) {
             doSetProperty("pingInterval", pingInterval);
@@ -1495,10 +1844,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder reconnect(boolean reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -1507,10 +1859,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not using reconnection feature.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder reconnect(String reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -1519,10 +1875,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder reconnectTimeWait(int reconnectTimeWait) {
             doSetProperty("reconnectTimeWait", reconnectTimeWait);
@@ -1531,10 +1890,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Waiting time before attempts reconnection (in milliseconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder reconnectTimeWait(String reconnectTimeWait) {
             doSetProperty("reconnectTimeWait", reconnectTimeWait);
@@ -1543,10 +1905,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
@@ -1556,10 +1921,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Interval to clean up cancelled/timed out requests.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
@@ -1570,9 +1938,12 @@ public interface NatsEndpointBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder servers(String servers) {
             doSetProperty("servers", servers);
@@ -1581,10 +1952,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder verbose(boolean verbose) {
             doSetProperty("verbose", verbose);
@@ -1593,10 +1967,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder verbose(String verbose) {
             doSetProperty("verbose", verbose);
@@ -1605,10 +1983,13 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -1617,10 +1998,14 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -1630,9 +2015,12 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1643,9 +2031,12 @@ public interface NatsEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1665,39 +2056,15 @@ public interface NatsEndpointBuilderFactory {
             return (NatsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
+         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointBuilder connection(Object connection) {
             doSetProperty("connection", connection);
@@ -1707,9 +2074,12 @@ public interface NatsEndpointBuilderFactory {
          * Reference an already instantiated connection to Nats server.
          * 
          * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
+         * &lt;code&gt;io.nats.client.Connection&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointBuilder connection(String connection) {
             doSetProperty("connection", connection);
@@ -1719,10 +2089,13 @@ public interface NatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1732,13 +2105,52 @@ public interface NatsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNatsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }
@@ -1758,6 +2170,7 @@ public interface NatsEndpointBuilderFactory {
          * The name of topic we want to use
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default NatsEndpointBuilder nats(String path) {
             return NatsEndpointBuilderFactory.endpointBuilder("nats", path);
@@ -1778,6 +2191,7 @@ public interface NatsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default NatsEndpointBuilder nats(String componentName, String path) {
             return NatsEndpointBuilderFactory.endpointBuilder(componentName, path);

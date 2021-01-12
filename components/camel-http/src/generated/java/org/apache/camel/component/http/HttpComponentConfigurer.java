@@ -4,8 +4,10 @@ package org.apache.camel.component.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "clientconnectionmanager":
         case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.http.conn.HttpClientConnectionManager.class, value)); return true;
         case "connecttimeout":
@@ -49,6 +51,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": target.setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthhost":
+        case "proxyAuthHost": target.setProxyAuthHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": target.setProxyAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": target.setProxyAuthNtHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyauthport":
+        case "proxyAuthPort": target.setProxyAuthPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyauthusername":
+        case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
@@ -62,28 +78,62 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowJavaSerializedObject", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clientConnectionManager", org.apache.http.conn.HttpClientConnectionManager.class);
-        answer.put("connectTimeout", int.class);
-        answer.put("connectionRequestTimeout", int.class);
-        answer.put("connectionTimeToLive", long.class);
-        answer.put("connectionsPerRoute", int.class);
-        answer.put("cookieStore", org.apache.http.client.CookieStore.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpClientConfigurer", org.apache.camel.component.http.HttpClientConfigurer.class);
-        answer.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        answer.put("httpContext", org.apache.http.protocol.HttpContext.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxTotalConnections", int.class);
-        answer.put("socketTimeout", int.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("x509HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "clientconnectionmanager":
+        case "clientConnectionManager": return org.apache.http.conn.HttpClientConnectionManager.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "connectionrequesttimeout":
+        case "connectionRequestTimeout": return int.class;
+        case "connectiontimetolive":
+        case "connectionTimeToLive": return long.class;
+        case "connectionsperroute":
+        case "connectionsPerRoute": return int.class;
+        case "cookiestore":
+        case "cookieStore": return org.apache.http.client.CookieStore.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpclientconfigurer":
+        case "httpClientConfigurer": return org.apache.camel.component.http.HttpClientConfigurer.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "httpcontext":
+        case "httpContext": return org.apache.http.protocol.HttpContext.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return int.class;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return java.lang.String.class;
+        case "proxyauthhost":
+        case "proxyAuthHost": return java.lang.String.class;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return java.lang.String.class;
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthport":
+        case "proxyAuthPort": return java.lang.Integer.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "x509hostnameverifier":
+        case "x509HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -92,8 +142,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "clientconnectionmanager":
         case "clientConnectionManager": return target.getClientConnectionManager();
         case "connecttimeout":
@@ -120,6 +170,20 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return target.getProxyAuthDomain();
+        case "proxyauthhost":
+        case "proxyAuthHost": return target.getProxyAuthHost();
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return target.getProxyAuthMethod();
+        case "proxyauthnthost":
+        case "proxyAuthNtHost": return target.getProxyAuthNtHost();
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return target.getProxyAuthPassword();
+        case "proxyauthport":
+        case "proxyAuthPort": return target.getProxyAuthPort();
+        case "proxyauthusername":
+        case "proxyAuthUsername": return target.getProxyAuthUsername();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":

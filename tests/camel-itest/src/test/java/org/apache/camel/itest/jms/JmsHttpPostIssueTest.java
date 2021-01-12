@@ -16,23 +16,21 @@
  */
 package org.apache.camel.itest.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.Exchange.CONTENT_TYPE;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Based on user forum.
  */
 public class JmsHttpPostIssueTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private int port;
 
@@ -49,13 +50,13 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "Hello World");
 
-        assertTrue(notify.matchesMockWaitTime(), "Should complete the JMS route");
+        assertTrue(notify.matchesWaitTime(), "Should complete the JMS route");
     }
 
     @Test
     void testJmsInOutHttpPostIssue() {
         String out = template.requestBody("jms:queue:in", "Hello World", String.class);
-        assertEquals(out, "OK");
+        assertEquals("OK", out);
     }
 
     @Override
@@ -65,23 +66,23 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jms:queue:in")
-                    .setBody().simple("name=${body}")
-                    .setHeader(CONTENT_TYPE).constant("application/x-www-form-urlencoded")
-                    .setHeader(HTTP_METHOD).constant("POST")
-                    .to("http://localhost:" + port + "/myservice");
+                        .setBody().simple("name=${body}")
+                        .setHeader(CONTENT_TYPE).constant("application/x-www-form-urlencoded")
+                        .setHeader(HTTP_METHOD).constant("POST")
+                        .to("http://localhost:" + port + "/myservice");
 
                 from("jetty:http://0.0.0.0:" + port + "/myservice")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) {
-                            String body = exchange.getIn().getBody(String.class);
-                            assertEquals("name=Hello World", body);
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertEquals("name=Hello World", body);
 
-                            exchange.getMessage().setBody("OK");
-                            exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
-                            exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
-                        }
-                    });
+                                exchange.getMessage().setBody("OK");
+                                exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
+                                exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
+                            }
+                        });
             }
         };
     }
@@ -89,8 +90,8 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
 
         registry.bind("jms", amq);

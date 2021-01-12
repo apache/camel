@@ -42,20 +42,20 @@ public class CxfRsSslAsyncProducerTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {     
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringSslAsyncProducer.xml");
     }
-    
+
     @Test
     public void testCorrectTrustStore() {
         Exchange exchange = template.send("direct://trust", new MyProcessor());
-     
+
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
-        
+
         assertNotNull(response, "The response should not be null");
-        assertEquals(String.valueOf(response.getId()), "123", "Get a wrong customer id");
-        assertEquals(response.getName(), "John", "Get a wrong customer name");
+        assertEquals("123", String.valueOf(response.getId()), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
         assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
         assertEquals("value", exchange.getOut().getHeader("key"), "Get a wrong header value");
     }

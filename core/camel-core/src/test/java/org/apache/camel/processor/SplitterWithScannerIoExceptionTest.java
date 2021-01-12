@@ -44,7 +44,8 @@ public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 // wrong encoding to force the scanner to fail
-                from("file://src/test/data?fileName=crm.sample.csv&noop=true&charset=UTF-8").split(body().tokenize("\n")).streaming().to("mock:a").end().to("mock:b");
+                from("file://src/test/data?fileName=crm.sample.csv&noop=true&charset=UTF-8").split(body().tokenize("\n"))
+                        .streaming().to("mock:a").end().to("mock:b");
             }
         };
     }

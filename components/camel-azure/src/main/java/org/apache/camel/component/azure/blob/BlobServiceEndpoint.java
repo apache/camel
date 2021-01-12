@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
              scheme = "azure-blob",
              title = "Azure Storage Blob Service (Deprecated)",
              syntax = "azure-blob:containerOrBlobUri",
-             category = {Category.CLOUD, Category.FILE})
+             category = { Category.CLOUD, Category.FILE })
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container or Blob compact Uri")
@@ -62,8 +62,8 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         if (getConfiguration().getBlobName() == null
-            && getConfiguration().getOperation() != null
-            && BlobServiceOperations.listBlobs != configuration.getOperation()) {
+                && getConfiguration().getOperation() != null
+                && BlobServiceOperations.listBlobs != configuration.getOperation()) {
             // Omitting a blob name is only possible it is a (default) listBlobs producer operation
             throw new IllegalArgumentException("Blob name must be specified.");
         }

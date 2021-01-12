@@ -63,7 +63,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
         // exception here (the client side)
         template.sendBody("direct:start", message);
 
-        assertEquals(count, 4, "The message should be delivered 4 times");
+        assertEquals(4, count, "The message should be delivered 4 times");
         mock.assertIsSatisfied();
     }
 

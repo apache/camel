@@ -47,9 +47,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder atomix(Object atomix) {
             doSetProperty("atomix", atomix);
@@ -58,10 +62,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option will be converted to a <code>io.atomix.AtomixClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder atomix(String atomix) {
             doSetProperty("atomix", atomix);
@@ -70,9 +77,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix configuration uri.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
@@ -83,10 +93,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.value.AtomixValue$Action&lt;/code&gt; type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
@@ -97,10 +110,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.value.AtomixValue$Action&lt;/code&gt; type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
@@ -111,9 +127,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The address of the nodes composing the cluster.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder nodes(List<Object> nodes) {
             doSetProperty("nodes", nodes);
@@ -123,9 +142,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The address of the nodes composing the cluster.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder nodes(String nodes) {
             doSetProperty("nodes", nodes);
@@ -134,9 +156,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The header that wil carry the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
@@ -146,10 +171,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
+         * 
+         * @param transportClassName the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder transportClassName(
                 String transportClassName) {
@@ -159,9 +187,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder ttl(long ttl) {
             doSetProperty("ttl", ttl);
@@ -170,9 +201,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder ttl(String ttl) {
             doSetProperty("ttl", ttl);
@@ -187,10 +221,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -206,10 +243,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -233,10 +274,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -250,9 +294,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -262,9 +309,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -275,9 +326,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -285,39 +339,14 @@ public interface AtomixValueEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomixValueEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomixValueEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The cluster wide default resource configuration.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -327,10 +356,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The cluster wide default resource configuration.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -340,9 +372,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -352,10 +387,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -367,10 +405,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
@@ -382,10 +423,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
@@ -395,10 +440,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The read consistency level.
          * 
-         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -409,9 +457,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The read consistency level.
          * 
          * The option will be converted to a
-         * <code>io.atomix.resource.ReadConsistency</code> type.
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
@@ -421,10 +472,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -435,10 +489,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Cluster wide resources configuration.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -448,10 +505,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -462,10 +522,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Local resources configurations.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
@@ -476,10 +539,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -490,10 +556,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -514,9 +584,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder atomix(Object atomix) {
             doSetProperty("atomix", atomix);
@@ -525,10 +599,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option will be converted to a <code>io.atomix.AtomixClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder atomix(String atomix) {
             doSetProperty("atomix", atomix);
@@ -537,9 +614,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix configuration uri.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder configurationUri(
                 String configurationUri) {
@@ -550,10 +630,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.value.AtomixValue$Action&lt;/code&gt; type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
@@ -564,10 +647,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.value.AtomixValue$Action&lt;/code&gt; type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
                 String defaultAction) {
@@ -578,9 +664,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The address of the nodes composing the cluster.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder nodes(List<Object> nodes) {
             doSetProperty("nodes", nodes);
@@ -590,9 +679,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The address of the nodes composing the cluster.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder nodes(String nodes) {
             doSetProperty("nodes", nodes);
@@ -601,9 +693,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The header that wil carry the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder resultHeader(
                 String resultHeader) {
@@ -613,10 +708,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
+         * 
+         * @param transportClassName the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder transportClassName(
                 String transportClassName) {
@@ -626,9 +724,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder ttl(long ttl) {
             doSetProperty("ttl", ttl);
@@ -637,9 +738,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder ttl(String ttl) {
             doSetProperty("ttl", ttl);
@@ -656,10 +760,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -677,10 +784,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -699,39 +810,14 @@ public interface AtomixValueEndpointBuilderFactory {
             return (AtomixValueEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomixValueEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomixValueEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The cluster wide default resource configuration.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -741,10 +827,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The cluster wide default resource configuration.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -754,9 +843,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -766,10 +858,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -781,10 +876,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
@@ -796,10 +894,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder ephemeral(
                 String ephemeral) {
@@ -809,10 +911,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The read consistency level.
          * 
-         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -823,9 +928,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The read consistency level.
          * 
          * The option will be converted to a
-         * <code>io.atomix.resource.ReadConsistency</code> type.
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder readConsistency(
                 String readConsistency) {
@@ -835,10 +943,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -849,10 +960,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Cluster wide resources configuration.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -862,10 +976,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -876,10 +993,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Local resources configurations.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
@@ -890,10 +1010,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -904,10 +1027,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -929,9 +1056,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder atomix(Object atomix) {
             doSetProperty("atomix", atomix);
@@ -940,10 +1071,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option will be converted to a <code>io.atomix.AtomixClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.atomix.AtomixClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder atomix(String atomix) {
             doSetProperty("atomix", atomix);
@@ -952,9 +1086,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The Atomix configuration uri.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder configurationUri(
                 String configurationUri) {
@@ -965,10 +1102,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.value.AtomixValue$Action&lt;/code&gt; type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder defaultAction(Action defaultAction) {
             doSetProperty("defaultAction", defaultAction);
@@ -978,10 +1118,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * The default action.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.value.AtomixValue$Action&lt;/code&gt; type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder defaultAction(String defaultAction) {
             doSetProperty("defaultAction", defaultAction);
@@ -991,9 +1134,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The address of the nodes composing the cluster.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder nodes(List<Object> nodes) {
             doSetProperty("nodes", nodes);
@@ -1003,9 +1149,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The address of the nodes composing the cluster.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder nodes(String nodes) {
             doSetProperty("nodes", nodes);
@@ -1014,9 +1163,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The header that wil carry the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder resultHeader(String resultHeader) {
             doSetProperty("resultHeader", resultHeader);
@@ -1025,10 +1177,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
+         * 
+         * @param transportClassName the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder transportClassName(
                 String transportClassName) {
@@ -1038,9 +1193,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder ttl(long ttl) {
             doSetProperty("ttl", ttl);
@@ -1049,9 +1207,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder ttl(String ttl) {
             doSetProperty("ttl", ttl);
@@ -1070,39 +1231,14 @@ public interface AtomixValueEndpointBuilderFactory {
             return (AtomixValueEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomixValueEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomixValueEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The cluster wide default resource configuration.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -1112,10 +1248,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The cluster wide default resource configuration.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -1125,9 +1264,12 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -1137,10 +1279,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -1152,10 +1297,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder ephemeral(boolean ephemeral) {
             doSetProperty("ephemeral", ephemeral);
@@ -1166,10 +1314,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder ephemeral(String ephemeral) {
             doSetProperty("ephemeral", ephemeral);
@@ -1178,10 +1330,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * The read consistency level.
          * 
-         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -1192,9 +1347,12 @@ public interface AtomixValueEndpointBuilderFactory {
          * The read consistency level.
          * 
          * The option will be converted to a
-         * <code>io.atomix.resource.ReadConsistency</code> type.
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder readConsistency(
                 String readConsistency) {
@@ -1204,10 +1362,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -1218,10 +1379,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Cluster wide resources configuration.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -1231,10 +1395,13 @@ public interface AtomixValueEndpointBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -1245,10 +1412,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Local resources configurations.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder resourceOptions(
                 String resourceOptions) {
@@ -1259,10 +1429,13 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1273,10 +1446,14 @@ public interface AtomixValueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomixValueEndpointBuilder synchronous(
                 String synchronous) {
@@ -1321,6 +1498,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The distributed resource name
          * 
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder atomixValue(String path) {
             return AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
@@ -1341,6 +1519,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder atomixValue(
                 String componentName,

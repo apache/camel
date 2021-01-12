@@ -27,10 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class DisruptorTimeoutTest extends CamelTestSupport {
     private int timeout = 100;
@@ -59,7 +59,7 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
             assertIsInstanceOf(CamelExecutionException.class, e.getCause());
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
-            final DisruptorEndpoint de = (DisruptorEndpoint)context.getRoute("disruptor").getEndpoint();
+            final DisruptorEndpoint de = (DisruptorEndpoint) context.getRoute("disruptor").getEndpoint();
             assertNotNull(de, "Consumer endpoint cannot be null");
             //we can't remove the exchange from a Disruptor once it is published, but it should never reach the
             //mock:result endpoint because it should be filtered out by the DisruptorConsumer

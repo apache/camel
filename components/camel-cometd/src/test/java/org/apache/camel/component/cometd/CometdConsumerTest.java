@@ -67,7 +67,7 @@ public class CometdConsumerTest {
 
         testObj = new CometdConsumer(endpoint, processor);
         testObj.setBayeux(bayeuxServerImpl);
-        
+
         Set<String> attributeNames = new HashSet<>();
         String attributeKey = USER_NAME;
         attributeNames.add(attributeKey);
@@ -86,6 +86,5 @@ public class CometdConsumerTest {
         // assert
         assertEquals(expectedService, result);
     }
-    
-}
 
+}

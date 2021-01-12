@@ -100,7 +100,8 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                     // Handle x-java-serialized-object Content-Type
                     if (VertxHttpHelper.isContentTypeMatching(exchange, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
                         if (!getComponent().isAllowJavaSerializedObject()) {
-                            throw new CamelExchangeException("Content-type " + CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                            throw new CamelExchangeException(
+                                    "Content-type " + CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
                         }
 
                         // Send a serialized Java object message body

@@ -25,8 +25,6 @@ public enum CalendarChannelsApiMethod implements ApiMethod {
         "stop",
         arg("contentChannel", com.google.api.services.calendar.model.Channel.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CalendarChannelsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

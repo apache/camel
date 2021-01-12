@@ -116,6 +116,6 @@ public class IrcProducerTest {
         when(connection.isConnected()).thenReturn(false);
 
         assertThrows(RuntimeCamelException.class,
-            () -> producer.process(exchange));
+                () -> producer.process(exchange));
     }
 }

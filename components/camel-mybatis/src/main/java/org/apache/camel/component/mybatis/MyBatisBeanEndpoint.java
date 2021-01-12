@@ -28,12 +28,15 @@ import org.apache.camel.spi.UriPath;
 /**
  * Perform queries, inserts, updates or deletes in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "mybatis-bean", title = "MyBatis Bean", syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = {Category.DATABASE, Category.SQL})
+@UriEndpoint(firstVersion = "2.22.0", scheme = "mybatis-bean", title = "MyBatis Bean",
+             syntax = "mybatis-bean:beanName:methodName", producerOnly = true, category = { Category.DATABASE, Category.SQL })
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String beanName;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String methodName;
 
     public MyBatisBeanEndpoint() {
@@ -60,8 +63,7 @@ public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
     }
 
     /**
-     * Name of the bean with the MyBatis annotations.
-     * This can either by a type alias or a FQN class name.
+     * Name of the bean with the MyBatis annotations. This can either by a type alias or a FQN class name.
      */
     public void setBeanName(String beanName) {
         this.beanName = beanName;

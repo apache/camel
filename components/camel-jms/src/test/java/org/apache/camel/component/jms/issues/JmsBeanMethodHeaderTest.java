@@ -32,8 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test for sending the bean method name as a key over the JMS wire, that
- * we now support this.
+ * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.
  */
 public class JmsBeanMethodHeaderTest extends CamelTestSupport {
 
@@ -77,7 +76,8 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("Yes");
 
-        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveLoan");
+        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+                "approveLoan");
 
         mock.assertIsSatisfied();
     }
@@ -89,7 +89,8 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("No");
 
-        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveSuperLoan");
+        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+                "approveSuperLoan");
 
         mock.assertIsSatisfied();
     }

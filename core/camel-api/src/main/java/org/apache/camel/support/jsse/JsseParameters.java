@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
  * Base class that provides optional integration with core Camel capabilities.
  */
 public class JsseParameters implements CamelContextAware {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(JsseParameters.class);
-    
+
     private CamelContext context;
 
     /**
@@ -49,8 +49,8 @@ public class JsseParameters implements CamelContextAware {
     }
 
     /**
-     * Sets the optional {@link CamelContext} used for integration with core capabilities
-     * such as Camel Property Placeholders and {@link ClassResolver}.
+     * Sets the optional {@link CamelContext} used for integration with core capabilities such as Camel Property
+     * Placeholders and {@link ClassResolver}.
      *
      * @param context the context to use
      */
@@ -58,17 +58,17 @@ public class JsseParameters implements CamelContextAware {
     public void setCamelContext(CamelContext context) {
         this.context = context;
     }
-    
+
     /**
-     * Parses the value using the Camel Property Placeholder capabilities if
-     * a context is provided.  Otherwise returns {@code value} as is.
+     * Parses the value using the Camel Property Placeholder capabilities if a context is provided. Otherwise returns
+     * {@code value} as is.
      *
-     * @param value the string to replace property tokens in
-     * @return the value
+     * @param  value                 the string to replace property tokens in
+     * @return                       the value
      * 
      * @throws RuntimeCamelException if property placeholders were used and there was an error resolving them
      *
-     * @see #setCamelContext(CamelContext)
+     * @see                          #setCamelContext(CamelContext)
      */
     protected String parsePropertyValue(String value) throws RuntimeCamelException {
         if (this.getCamelContext() != null) {
@@ -81,17 +81,17 @@ public class JsseParameters implements CamelContextAware {
             return value;
         }
     }
-    
+
     /**
-     * Parses the values using the Camel Property Placeholder capabilities if
-     * a context is provided.  Otherwise returns {@code values} as is.
+     * Parses the values using the Camel Property Placeholder capabilities if a context is provided. Otherwise returns
+     * {@code values} as is.
      *
-     * @param values the list of strings to replace property tokens in
-     * @return the list of strings
+     * @param  values                the list of strings to replace property tokens in
+     * @return                       the list of strings
      * 
      * @throws RuntimeCamelException if property placeholders were used and there was an error resolving them
      *
-     * @see #parsePropertyValue(String)
+     * @see                          #parsePropertyValue(String)
      */
     protected List<String> parsePropertyValues(List<String> values) throws RuntimeCamelException {
         if (this.getCamelContext() == null) {
@@ -104,20 +104,19 @@ public class JsseParameters implements CamelContextAware {
             return parsedValues;
         }
     }
-    
+
     /**
-     * Attempts to loads a resource using a number of different approaches.
-     * The loading of the resource, is attempted by treating the resource as a file path,
-     * a class path resource, a URL, and using the Camel Context's {@link ClassResolver} 
-     * if a context is available in that order. An exception is thrown if the resource
-     * cannot be resolved to readable input stream using any of the above methods.
+     * Attempts to loads a resource using a number of different approaches. The loading of the resource, is attempted by
+     * treating the resource as a file path, a class path resource, a URL, and using the Camel Context's
+     * {@link ClassResolver} if a context is available in that order. An exception is thrown if the resource cannot be
+     * resolved to readable input stream using any of the above methods.
      * 
-     * @param resource the resource location
-     * @return the input stream for the resource
+     * @param  resource    the resource location
+     * @return             the input stream for the resource
      *
      * @throws IOException if the resource cannot be resolved using any of the above methods
      * 
-     * @see #setCamelContext(CamelContext)
+     * @see                #setCamelContext(CamelContext)
      */
     protected InputStream resolveResource(String resource) throws IOException {
         InputStream is = null;
@@ -128,7 +127,7 @@ public class JsseParameters implements CamelContextAware {
             is = new FileInputStream(resource);
             LOG.debug("Opened resource [{}] as a file.", resource);
         } catch (FileNotFoundException e) {
-            LOG.trace("Could not open resource [" + resource + "] as a file.", e);
+            LOG.trace("Could not open resource [{}] as a file.", resource, e);
         }
 
         // then prefer to use ClassResolver from CamelContext if possible
@@ -144,35 +143,35 @@ public class JsseParameters implements CamelContextAware {
                             resource, this.getClass().getClassLoader());
                 }
             } catch (Throwable e) {
-                LOG.trace("Could not open resource [" + resource + "]  using the CamelContext ClassResolver.", e);
+                LOG.trace("Could not open resource [{}]  using the CamelContext ClassResolver.", resource, e);
             }
         }
 
         if (is == null && Thread.currentThread().getContextClassLoader() != null) {
             LOG.trace("Trying to open resource [{}] as a class path resource with the TCCL [{}].",
-                      resource, Thread.currentThread().getContextClassLoader());
+                    resource, Thread.currentThread().getContextClassLoader());
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-            
+
             if (is == null) {
                 LOG.trace("Could not open resource [{}] as a class path resource using the TCCL [{}].",
-                          resource, Thread.currentThread().getContextClassLoader());
+                        resource, Thread.currentThread().getContextClassLoader());
             } else {
                 LOG.debug("Opened resource [{}] as a class path resource with the TCCL [{}].",
-                          resource, Thread.currentThread().getContextClassLoader());
+                        resource, Thread.currentThread().getContextClassLoader());
             }
         }
 
         if (is == null) {
             LOG.trace("Trying to open resource [{}] as a class path resource using the classloader [{}].",
-                      resource, this.getClass().getClassLoader());
+                    resource, this.getClass().getClassLoader());
             is = this.getClass().getResourceAsStream(resource);
-            
+
             if (is == null) {
                 LOG.trace("Could not open resource [{}] as a class path resource using the classloader [{}].",
-                          resource, this.getClass().getClassLoader());
+                        resource, this.getClass().getClassLoader());
             } else {
                 LOG.debug("Opened resource [{}] as a class path resource with the classloader [{}].",
-                          resource, this.getClass().getClassLoader());
+                        resource, this.getClass().getClassLoader());
             }
         }
 
@@ -182,7 +181,7 @@ public class JsseParameters implements CamelContextAware {
                 is = new URL(resource).openStream();
                 LOG.debug("Opened resource [{}] as a URL.", resource);
             } catch (IOException e) {
-                LOG.trace("Could not open resource [" + resource + "] as a URL.", e);
+                LOG.trace("Could not open resource [{}] as a URL.", resource, e);
             }
         }
 

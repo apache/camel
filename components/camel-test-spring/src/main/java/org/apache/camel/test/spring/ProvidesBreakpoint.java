@@ -25,12 +25,12 @@ import java.lang.annotation.Target;
 import org.apache.camel.spi.Breakpoint;
 
 /**
- * Indicates that the annotated method returns a {@link Breakpoint} for use in the test.  Useful for intercepting
- * traffic to all endpoints or simply for setting a break point in an IDE for debugging.  The method must
- * be {@code public}, {@code static}, take no arguments, and return {@link Breakpoint}.
+ * Indicates that the annotated method returns a {@link Breakpoint} for use in the test. Useful for intercepting traffic
+ * to all endpoints or simply for setting a break point in an IDE for debugging. The method must be {@code public},
+ * {@code static}, take no arguments, and return {@link Breakpoint}.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 public @interface ProvidesBreakpoint {
 }

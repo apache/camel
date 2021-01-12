@@ -57,7 +57,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         request.setLastName("Denbrough");
         request.setNickname("Big Bill");
 
-        final User response = (User)template.requestBody("direct:insertUser", request);
+        final User response = (User) template.requestBody("direct:insertUser", request);
         assertThat(response.getId(), is(3));
         assertThat(response.getSlug(), is("bdenbrough"));
 
@@ -73,7 +73,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         final User request = new User();
         request.setEmail("admin@email.com");
 
-        final User response = (User)template.requestBody("direct:updateUser", request);
+        final User response = (User) template.requestBody("direct:updateUser", request);
         assertThat(response.getId(), is(1));
         assertThat(response.getEmail(), is("admin@email.com"));
 
@@ -86,7 +86,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         mock.expectedBodyReceived().body(User.class);
         mock.expectedMessageCount(1);
 
-        final User response = (User)template.requestBody("direct:deleteUser", "");
+        final User response = (User) template.requestBody("direct:deleteUser", "");
         assertThat(response.getId(), is(4));
         assertThat(response.getUsername(), is("bmarsh"));
 
@@ -97,17 +97,19 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                final WordpressComponentConfiguration configuration = new WordpressComponentConfiguration();
+                final WordpressConfiguration configuration = new WordpressConfiguration();
                 final WordpressComponent component = new WordpressComponent();
                 configuration.setUrl(getServerBaseUrl());
                 component.setConfiguration(configuration);
                 getContext().addComponent("wordpress", component);
 
-                from("wordpress:user?criteria.perPage=10&criteria.orderBy=name&criteria.roles=admin,editor").to("mock:resultList");
+                from("wordpress:user?criteria.perPage=10&criteria.orderBy=name&criteria.roles=admin,editor")
+                        .to("mock:resultList");
 
                 from("wordpress:user?id=114913").to("mock:resultSingle");
 
-                from("direct:deleteUser").to("wordpress:user:delete?id=9&user=ben&password=password123").to("mock:resultDelete");
+                from("direct:deleteUser").to("wordpress:user:delete?id=9&user=ben&password=password123")
+                        .to("mock:resultDelete");
                 from("direct:insertUser").to("wordpress:user?user=ben&password=password123").to("mock:resultInsert");
                 from("direct:updateUser").to("wordpress:user?id=9&user=ben&password=password123").to("mock:resultUpdate");
             }

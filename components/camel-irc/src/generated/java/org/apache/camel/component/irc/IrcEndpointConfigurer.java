@@ -4,8 +4,10 @@ package org.apache.camel.component.irc;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autorejoin":
         case "autoRejoin": target.getConfiguration().setAutoRejoin(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channels": target.getConfiguration().setChannels(property(camelContext, java.lang.String.class, value)); return true;
@@ -73,38 +73,57 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoRejoin", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channels", java.lang.String.class);
-        answer.put("colors", boolean.class);
-        answer.put("commandTimeout", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("keys", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("namesOnJoin", boolean.class);
-        answer.put("nickPassword", java.lang.String.class);
-        answer.put("nickname", java.lang.String.class);
-        answer.put("onJoin", boolean.class);
-        answer.put("onKick", boolean.class);
-        answer.put("onMode", boolean.class);
-        answer.put("onNick", boolean.class);
-        answer.put("onPart", boolean.class);
-        answer.put("onPrivmsg", boolean.class);
-        answer.put("onQuit", boolean.class);
-        answer.put("onReply", boolean.class);
-        answer.put("onTopic", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("persistent", boolean.class);
-        answer.put("realname", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustManager", org.schwering.irc.lib.ssl.SSLTrustManager.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autorejoin":
+        case "autoRejoin": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channels": return java.lang.String.class;
+        case "colors": return boolean.class;
+        case "commandtimeout":
+        case "commandTimeout": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "keys": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "namesonjoin":
+        case "namesOnJoin": return boolean.class;
+        case "nickpassword":
+        case "nickPassword": return java.lang.String.class;
+        case "nickname": return java.lang.String.class;
+        case "onjoin":
+        case "onJoin": return boolean.class;
+        case "onkick":
+        case "onKick": return boolean.class;
+        case "onmode":
+        case "onMode": return boolean.class;
+        case "onnick":
+        case "onNick": return boolean.class;
+        case "onpart":
+        case "onPart": return boolean.class;
+        case "onprivmsg":
+        case "onPrivmsg": return boolean.class;
+        case "onquit":
+        case "onQuit": return boolean.class;
+        case "onreply":
+        case "onReply": return boolean.class;
+        case "ontopic":
+        case "onTopic": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "persistent": return boolean.class;
+        case "realname": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "trustmanager":
+        case "trustManager": return org.schwering.irc.lib.ssl.SSLTrustManager.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -113,8 +132,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autorejoin":
         case "autoRejoin": return target.getConfiguration().isAutoRejoin();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channels": return target.getConfiguration().getChannels();

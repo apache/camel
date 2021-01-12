@@ -75,7 +75,7 @@ public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().roundRobin().id("mysend")
+                        .loadBalance().roundRobin().id("mysend")
                         .to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };

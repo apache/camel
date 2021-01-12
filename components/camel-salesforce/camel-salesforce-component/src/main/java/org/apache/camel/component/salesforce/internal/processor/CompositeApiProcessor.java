@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +45,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     @FunctionalInterface
     interface ResponseHandler<T> {
 
-        void handleResponse(Exchange exchange, Optional<T> body, Map<String, String> headers, SalesforceException exception, AsyncCallback callback);
+        void handleResponse(
+                Exchange exchange, Optional<T> body, Map<String, String> headers, SalesforceException exception,
+                AsyncCallback callback);
 
     }
 
@@ -81,24 +84,34 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         try {
             switch (operationName) {
                 case COMPOSITE_TREE:
-                    return processInternal(SObjectTree.class, exchange, compositeClient::submitCompositeTree, this::processCompositeTreeResponse, callback);
+                    return processInternal(SObjectTree.class, exchange, compositeClient::submitCompositeTree,
+                            this::processCompositeTreeResponse, callback);
                 case COMPOSITE_BATCH:
-                    return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch, this::processCompositeBatchResponse, callback);
+                    return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch,
+                            this::processCompositeBatchResponse, callback);
                 case COMPOSITE:
-                    return processInternal(SObjectComposite.class, exchange, compositeClient::submitComposite, this::processCompositeResponse, callback);
+                    if (rawPayload) {
+                        return processRaw(exchange, compositeClient,
+                                this::processCompositeResponseRaw, callback);
+                    } else {
+                        return processInternal(SObjectComposite.class, exchange, compositeClient::submitComposite,
+                                this::processCompositeResponse, callback);
+                    }
                 default:
                     throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (final SalesforceException e) {
             return processException(exchange, callback, e);
         } catch (final RuntimeException e) {
-            final SalesforceException exception = new SalesforceException(String.format("Unexpected Error processing %s: \"%s\"", operationName.value(), e.getMessage()), e);
+            final SalesforceException exception = new SalesforceException(
+                    String.format("Unexpected Error processing %s: \"%s\"", operationName.value(), e.getMessage()), e);
             return processException(exchange, callback, exception);
         }
     }
 
-    void processCompositeBatchResponse(final Exchange exchange, final Optional<SObjectBatchResponse> responseBody, final Map<String, String> headers,
-                                       final SalesforceException exception, final AsyncCallback callback) {
+    void processCompositeBatchResponse(
+            final Exchange exchange, final Optional<SObjectBatchResponse> responseBody, final Map<String, String> headers,
+            final SalesforceException exception, final AsyncCallback callback) {
         try {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
@@ -117,8 +130,30 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         }
     }
 
-    void processCompositeResponse(final Exchange exchange, final Optional<SObjectCompositeResponse> responseBody, final Map<String, String> headers,
-                                  final SalesforceException exception, final AsyncCallback callback) {
+    void processCompositeResponseRaw(
+            final Exchange exchange, final Optional<InputStream> responseBody, final Map<String, String> headers,
+            final SalesforceException exception, final AsyncCallback callback) {
+        try {
+            if (!responseBody.isPresent()) {
+                exchange.setException(exception);
+            } else {
+                final Message in = exchange.getIn();
+                final Message out = exchange.getOut();
+
+                final InputStream response = responseBody.get();
+
+                out.copyFromWithNewBody(in, response);
+                out.getHeaders().putAll(headers);
+            }
+        } finally {
+            // notify callback that exchange is done
+            callback.done(false);
+        }
+    }
+
+    void processCompositeResponse(
+            final Exchange exchange, final Optional<SObjectCompositeResponse> responseBody, final Map<String, String> headers,
+            final SalesforceException exception, final AsyncCallback callback) {
         try {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
@@ -137,8 +172,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         }
     }
 
-    void processCompositeTreeResponse(final Exchange exchange, final Optional<SObjectTreeResponse> responseBody, final Map<String, String> headers,
-                                      final SalesforceException exception, final AsyncCallback callback) {
+    void processCompositeTreeResponse(
+            final Exchange exchange, final Optional<SObjectTreeResponse> responseBody, final Map<String, String> headers,
+            final SalesforceException exception, final AsyncCallback callback) {
 
         try {
             if (!responseBody.isPresent()) {
@@ -163,7 +199,8 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                 }
 
                 if (hasErrors) {
-                    final SalesforceException withErrors = new SalesforceException(response.getAllErrors(), exception.getStatusCode(), exception);
+                    final SalesforceException withErrors
+                            = new SalesforceException(response.getAllErrors(), exception.getStatusCode(), exception);
                     exchange.setException(withErrors);
                 }
 
@@ -176,8 +213,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         }
     }
 
-    <T, R> boolean processInternal(final Class<T> bodyType, final Exchange exchange, final CompositeApiClient.Operation<T, R> clientOperation,
-                                   final ResponseHandler<R> responseHandler, final AsyncCallback callback)
+    <T, R> boolean processInternal(
+            final Class<T> bodyType, final Exchange exchange, final CompositeApiClient.Operation<T, R> clientOperation,
+            final ResponseHandler<R> responseHandler, final AsyncCallback callback)
             throws SalesforceException {
 
         final T body;
@@ -190,7 +228,33 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         }
 
         clientOperation.submit(body, determineHeaders(exchange),
-            (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders, exception, callback));
+                (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders,
+                        exception, callback));
+
+        return false;
+    }
+
+    boolean processRaw(
+            final Exchange exchange, final CompositeApiClient compositeClient,
+            final ResponseHandler<InputStream> responseHandler, final AsyncCallback callback)
+            throws SalesforceException {
+        final InputStream body;
+
+        final Message in = exchange.getIn();
+        try {
+            body = in.getMandatoryBody(InputStream.class);
+        } catch (final InvalidPayloadException e) {
+            throw new SalesforceException(e);
+        }
+
+        String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        String extId = getParameter(SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        String method = getParameter(SalesforceEndpointConfig.COMPOSITE_METHOD, exchange, IGNORE_BODY, NOT_OPTIONAL);
+
+        compositeClient.submitCompositeRaw(body, determineHeaders(exchange),
+                (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders,
+                        exception, callback),
+                sObjectName, extId, method);
 
         return false;
     }

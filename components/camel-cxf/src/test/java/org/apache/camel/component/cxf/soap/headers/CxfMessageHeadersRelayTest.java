@@ -61,16 +61,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-
 
 /**
  * This test suite verifies message header filter features
@@ -84,6 +85,8 @@ public class CxfMessageHeadersRelayTest {
     static int portE4 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.4");
     static int portE5 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.5");
 
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMessageHeadersRelayTest.class);
+
     @Autowired
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -93,253 +96,258 @@ public class CxfMessageHeadersRelayTest {
     private Endpoint relayEndpointWithInsertion;
 
     @BeforeEach
-    public void setUp() throws Exception {        
+    public void setUp() throws Exception {
         template = context.createProducerTemplate();
 
-        relayEndpoint = Endpoint.publish("http://localhost:" 
-            + CXFTestSupport.getPort1() + "/CxfMessageHeadersRelayTest/HeaderService/", new HeaderTesterImpl());
-        noRelayEndpoint = Endpoint.publish("http://localhost:" 
-            + CXFTestSupport.getPort2() + "/CxfMessageHeadersRelayTest/HeaderService/", new HeaderTesterImpl(false));
-        relayEndpointWithInsertion = Endpoint.publish("http://localhost:" 
-            + CXFTestSupport.getPort3() + "/CxfMessageHeadersRelayTest/HeaderService/", 
-            new HeaderTesterWithInsertionImpl());
+        relayEndpoint = Endpoint.publish("http://localhost:"
+                                         + CXFTestSupport.getPort1() + "/CxfMessageHeadersRelayTest/HeaderService/",
+                new HeaderTesterImpl());
+        noRelayEndpoint = Endpoint.publish("http://localhost:"
+                                           + CXFTestSupport.getPort2() + "/CxfMessageHeadersRelayTest/HeaderService/",
+                new HeaderTesterImpl(false));
+        relayEndpointWithInsertion = Endpoint.publish("http://localhost:"
+                                                      + CXFTestSupport.getPort3()
+                                                      + "/CxfMessageHeadersRelayTest/HeaderService/",
+                new HeaderTesterWithInsertionImpl());
 
     }
 
     @AfterEach
     public void tearDown() throws Exception {
-        
+
         if (relayEndpoint != null) {
             relayEndpoint.stop();
             relayEndpoint = null;
         }
-        
+
         if (noRelayEndpoint != null) {
             noRelayEndpoint.stop();
             noRelayEndpoint = null;
         }
-        
+
         if (relayEndpointWithInsertion != null) {
             relayEndpointWithInsertion.stop();
             relayEndpointWithInsertion = null;
         }
     }
-    
+
     protected static void addOutOfBoundHeader(HeaderTester proxy, boolean invalid) throws JAXBException {
-        InvocationHandler handler  = Proxy.getInvocationHandler(proxy);
-        BindingProvider  bp = null;
+        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        BindingProvider bp = null;
 
         try {
             if (handler instanceof BindingProvider) {
-                bp = (BindingProvider)handler;
+                bp = (BindingProvider) handler;
                 Map<String, Object> requestContext = bp.getRequestContext();
-                requestContext.put(Header.HEADER_LIST, buildOutOfBandHeaderList(invalid)); 
+                requestContext.put(Header.HEADER_LIST, buildOutOfBandHeaderList(invalid));
             }
         } catch (JAXBException ex) {
             throw ex;
         }
-        
+
     }
-    
+
     @Test
     public void testInHeaderCXFClientRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
         InHeader me = new InHeader();
         me.setRequestType("CXF user");
         InHeaderResponse response = proxy.inHeader(me, Constants.IN_HEADER_DATA);
-        assertTrue(response.getResponseType().equals("pass"), "Expected in band header to propagate but it didn't");
+        assertEquals("pass", response.getResponseType(), "Expected in band header to propagate but it didn't");
     }
-    
+
     @Test
     public void testOutHeaderCXFClientRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
 
         OutHeader me = new OutHeader();
         me.setRequestType("CXF user");
-        Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse()); 
+        Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse());
         Holder<SOAPHeaderData> header = new Holder<>(new SOAPHeaderData());
         proxy.outHeader(me, result, header);
-        assertTrue(result.value.getResponseType().equals("pass"), "Expected in band header to propagate but it didn't");
+        assertEquals("pass", result.value.getResponseType(), "Expected in band header to propagate but it didn't");
         assertTrue(Constants.equals(Constants.OUT_HEADER_DATA, header.value),
                 "Expected in band response header to propagate but it either didn't "
-                        + " or its contents do not match");
+                                                                              + " or its contents do not match");
     }
 
     @Test
     public void testInOutHeaderCXFClientRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
         InoutHeader me = new InoutHeader();
         me.setRequestType("CXF user");
         Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);
         InoutHeaderResponse result = proxy.inoutHeader(me, header);
-        assertTrue(result.getResponseType().equals("pass"), "Expected in band header to propagate but it didn't");
+        assertEquals("pass", result.getResponseType(), "Expected in band header to propagate but it didn't");
         assertTrue(Constants.equals(Constants.IN_OUT_RESPONSE_HEADER_DATA, header.value),
                 "Expected in band response header to propagate but it either didn't "
-                        + " or its contents do not match");
+                                                                                          + " or its contents do not match");
     }
 
     @Test
     public void testInOutOfBandHeaderCXFClientRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
-        
+
         Me response = proxy.inOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
     }
 
     @Test
     public void testInoutOutOfBandHeaderCXFClientRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inoutOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
         validateReturnedOutOfBandHeader(proxy);
     }
-    
-    
+
     @Test
     public void testInoutOutOfBandHeaderCXFClientRelayWithHeaderInsertion() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelayWithInsertion();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE2 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE2 + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inoutOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
-        
-        InvocationHandler handler  = Proxy.getInvocationHandler(proxy);
-        BindingProvider  bp = null;
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
+
+        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        BindingProvider bp = null;
         if (!(handler instanceof BindingProvider)) {
             fail("Unable to cast dynamic proxy InocationHandler to BindingProvider type");
         }
 
-        bp = (BindingProvider)handler;
+        bp = (BindingProvider) handler;
         Map<String, Object> responseContext = bp.getResponseContext();
         validateReturnedOutOfBandHeaderWithInsertion(responseContext, true);
     }
-    
 
     @Test
     public void testOutOutOfBandHeaderCXFClientRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE1 + "/CxfMessageHeadersRelayTest/HeaderService/");
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.outOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
         validateReturnedOutOfBandHeader(proxy);
     }
 
     @Test
     public void testInOutOfBandHeaderCXFClientNoRelay() throws Exception {
 
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortNoRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
 
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the in out of band header *not* to propagate but it did");
-        
+        assertEquals("pass", response.getFirstName(), "Expected the in out of band header *not* to propagate but it did");
+
     }
 
     @Test
     public void testOutOutOfBandHeaderCXFClientNoRelay() throws Exception {
-        
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortNoRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
         Thread.sleep(5000);
         Me response = proxy.outOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out out of band header *not* to propagate but it did");
+        assertEquals("pass", response.getFirstName(), "Expected the out out of band header *not* to propagate but it did");
         validateReturnedOutOfBandHeader(proxy, false);
     }
 
     @Test
     public void testInoutOutOfBandHeaderCXFClientNoRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortNoRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         addOutOfBoundHeader(proxy, false);
         Me me = new Me();
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inoutOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the in out of band header to *not* propagate but it did");
+        assertEquals("pass", response.getFirstName(), "Expected the in out of band header to *not* propagate but it did");
         validateReturnedOutOfBandHeader(proxy, false);
     }
 
     @Test
     public void testInHeaderCXFClientNoRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortNoRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         InHeader me = new InHeader();
         me.setRequestType("CXF user");
         InHeaderResponse response = null;
@@ -348,40 +356,43 @@ public class CxfMessageHeadersRelayTest {
         } catch (Exception e) {
             // do nothing
         }
-        assertTrue(response.getResponseType().equals("pass"), "Expected in in band header *not* to propagate but it did");
+        assertEquals("pass", response.getResponseType(), "Expected in in band header *not* to propagate but it did");
     }
 
     @Test
     public void testOutHeaderCXFClientNoRelay() throws Exception {
         Thread.sleep(5000);
 
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortNoRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         OutHeader me = new OutHeader();
         me.setRequestType("CXF user");
-        Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse()); 
+        Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse());
         Holder<SOAPHeaderData> header = new Holder<>(new SOAPHeaderData());
         try {
             proxy.outHeader(me, result, header);
         } catch (Exception e) {
             // do nothing
         }
-        assertTrue(result.value.getResponseType().equals("pass"), "Ultimate remote HeaderTester.outHeader() destination was not reached");
-        assertTrue(header.value == null, "Expected in band response header *not* to propagate but it did");
+        assertEquals("pass", result.value.getResponseType(),
+                "Ultimate remote HeaderTester.outHeader() destination was not reached");
+        assertNull(header.value, "Expected in band response header *not* to propagate but it did");
     }
 
     @Test
     public void testInoutHeaderCXFClientNoRelay() throws Exception {
-        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
-                                            HeaderService.SERVICE);
+        HeaderService s = new HeaderService(
+                getClass().getClassLoader().getResource("soap_header.wsdl"),
+                HeaderService.SERVICE);
         HeaderTester proxy = s.getSoapPortNoRelay();
-        ((BindingProvider)proxy).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
+        ((BindingProvider) proxy).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + portE3 + "/CxfMessageHeadersRelayTest/HeaderService/");
         InoutHeader me = new InoutHeader();
         me.setRequestType("CXF user");
         Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);
@@ -391,29 +402,30 @@ public class CxfMessageHeadersRelayTest {
         } catch (Exception e) {
             // do nothing
         }
-        assertTrue(result.getResponseType().equals("pass"), "Expected in band out header *not* to propagate but it did");
-        assertTrue(header.value == null, "Expected in band response header *not* to propagate but did");
+        assertEquals("pass", result.getResponseType(), "Expected in band out header *not* to propagate but it did");
+        assertNull(header.value, "Expected in band response header *not* to propagate but did");
     }
-    
+
     @Test
-   
+
     public void testInoutHeaderCXFClientNoServiceClassNoRelay() throws Exception {
         // TODO: Fix this test later
         QName qname = QName.valueOf("{http://apache.org/camel/component/cxf/soap/headers}SOAPHeaderInfo");
         String uri = "cxf:bean:routerNoRelayNoServiceClassEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy";
-        String requestHeader = "<ns2:SOAPHeaderInfo xmlns:ns2=\"http://apache.org/camel/" 
-            + "component/cxf/soap/headers\"><originator>CxfSoapHeaderRoutePropagationTest.testInOutHeader Requestor" 
-            + "</originator><message>Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Request" 
-            +   "</message></ns2:SOAPHeaderInfo>";
-        String requestBody = "<ns2:inoutHeader xmlns:ns2=\"http://apache.org/camel/component/cxf/soap/headers\">" 
-            + "<requestType>CXF user</requestType></ns2:inoutHeader>";
+        String requestHeader = "<ns2:SOAPHeaderInfo xmlns:ns2=\"http://apache.org/camel/"
+                               + "component/cxf/soap/headers\"><originator>CxfSoapHeaderRoutePropagationTest.testInOutHeader Requestor"
+                               + "</originator><message>Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Request"
+                               + "</message></ns2:SOAPHeaderInfo>";
+        String requestBody = "<ns2:inoutHeader xmlns:ns2=\"http://apache.org/camel/component/cxf/soap/headers\">"
+                             + "<requestType>CXF user</requestType></ns2:inoutHeader>";
         List<Source> elements = new ArrayList<>();
         elements.add(new DOMSource(StaxUtils.read(new StringReader(requestBody)).getDocumentElement()));
         final List<SoapHeader> headers = new ArrayList<>();
-        headers.add(new SoapHeader(qname,
-                                   StaxUtils.read(new StringReader(requestHeader)).getDocumentElement()));
+        headers.add(new SoapHeader(
+                qname,
+                StaxUtils.read(new StringReader(requestHeader)).getDocumentElement()));
         final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<>(headers, elements, null);
-        
+
         Exchange exchange = template.request(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(cxfPayload);
@@ -423,31 +435,33 @@ public class CxfMessageHeadersRelayTest {
 
         });
 
-        CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<?> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBodySources().size());
 
         assertTrue(out.getBodySources().get(0) instanceof DOMSource);
 
         assertEquals(0, out.getHeaders().size());
-        
-        String responseExp = "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
-            + "component/cxf/soap/headers\"><responseType>pass</responseType>" 
-            + "</ns2:inoutHeaderResponse>";
+
+        String responseExp = "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/"
+                             + "component/cxf/soap/headers\"><responseType>pass</responseType>"
+                             + "</ns2:inoutHeaderResponse>";
         String response = StaxUtils.toString(out.getBody().get(0));
         //REVISIT use a more reliable comparison to tolerate some namespaces being added to the root element
         assertTrue(response.startsWith(responseExp.substring(0, 87))
-                   && response.endsWith(responseExp.substring(88, responseExp.length())), response);
+                && response.endsWith(responseExp.substring(88, responseExp.length())), response);
     }
 
     @Test
     public void testMessageHeadersRelaysSpringContext() throws Exception {
-        CxfEndpoint endpoint = context.getEndpoint("cxf:bean:serviceExtraRelays?headerFilterStrategy=#customMessageFilterStrategy", CxfEndpoint.class);
-        CxfHeaderFilterStrategy strategy = (CxfHeaderFilterStrategy)endpoint.getHeaderFilterStrategy();
+        CxfEndpoint endpoint = context.getEndpoint(
+                "cxf:bean:serviceExtraRelays?headerFilterStrategy=#customMessageFilterStrategy", CxfEndpoint.class);
+        CxfHeaderFilterStrategy strategy = (CxfHeaderFilterStrategy) endpoint.getHeaderFilterStrategy();
         List<MessageHeaderFilter> filters = strategy.getMessageHeaderFilters();
         assertEquals(2, filters.size(), "Expected number of filters");
         Map<String, MessageHeaderFilter> messageHeaderFilterMap = strategy.getMessageHeaderFiltersMap();
         for (String ns : new CustomHeaderFilter().getActivationNamespaces()) {
-            assertEquals(CustomHeaderFilter.class, messageHeaderFilterMap.get(ns).getClass(), "Expected a filter class for namespace: " + ns);
+            assertEquals(CustomHeaderFilter.class, messageHeaderFilterMap.get(ns).getClass(),
+                    "Expected a filter class for namespace: " + ns);
         }
     }
 
@@ -480,7 +494,7 @@ public class CxfMessageHeadersRelayTest {
     public void testInOutOutOfBandHeaderCamelTemplateRelay() throws Exception {
         doTestInOutOutOfBandHeaderCamelTemplate("direct:relayProducer");
     }
-    
+
     protected void doTestInOutOfBandHeaderCamelTemplate(String producerUri) throws Exception {
         // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
@@ -500,11 +514,11 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
-        MessageContentsList result = (MessageContentsList)out.getBody();
-        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
+        org.apache.camel.Message out = exchange.getMessage();
+        MessageContentsList result = (MessageContentsList) out.getBody();
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
-        assertTrue(result.get(0) != null && ((Me)result.get(0)).getFirstName().equals("pass"),
+        assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");
 
     }
@@ -523,15 +537,14 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
-        MessageContentsList result = (MessageContentsList)out.getBody();
-        assertTrue(result.get(0) != null && ((Me)result.get(0)).getFirstName().equals("pass"),
+        org.apache.camel.Message out = exchange.getMessage();
+        MessageContentsList result = (MessageContentsList) out.getBody();
+        assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");
-        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         validateReturnedOutOfBandHeader(responseContext);
     }
-
 
     public void doTestInOutOutOfBandHeaderCamelTemplate(String producerUri) throws Exception {
         // START SNIPPET: sending
@@ -552,11 +565,11 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
-        MessageContentsList result = (MessageContentsList)out.getBody();
-        assertTrue(result.get(0) != null && ((Me)result.get(0)).getFirstName().equals("pass"),
+        org.apache.camel.Message out = exchange.getMessage();
+        MessageContentsList result = (MessageContentsList) out.getBody();
+        assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");
-        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         validateReturnedOutOfBandHeader(responseContext);
     }
@@ -564,26 +577,26 @@ public class CxfMessageHeadersRelayTest {
     protected static void validateReturnedOutOfBandHeader(HeaderTester proxy) {
         validateReturnedOutOfBandHeader(proxy, true);
     }
-    
+
     protected static void validateReturnedOutOfBandHeader(HeaderTester proxy, boolean expect) {
-        InvocationHandler handler  = Proxy.getInvocationHandler(proxy);
-        BindingProvider  bp = null;
+        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        BindingProvider bp = null;
         if (!(handler instanceof BindingProvider)) {
             fail("Unable to cast dynamic proxy InocationHandler to BindingProvider type");
         }
 
-        bp = (BindingProvider)handler;
+        bp = (BindingProvider) handler;
         Map<String, Object> responseContext = bp.getResponseContext();
         validateReturnedOutOfBandHeader(responseContext, expect);
     }
-    
+
     protected static void validateReturnedOutOfBandHeader(Map<String, Object> responseContext) {
         validateReturnedOutOfBandHeader(responseContext, true);
     }
-    
+
     protected static void validateReturnedOutOfBandHeader(Map<String, Object> responseContext, boolean expect) {
         OutofBandHeader hdrToTest = null;
-        List<Header> oobHdr = CastUtils.cast((List<?>)responseContext.get(Header.HEADER_LIST));
+        List<Header> oobHdr = CastUtils.cast((List<?>) responseContext.get(Header.HEADER_LIST));
         if (!expect) {
             if (oobHdr == null || (oobHdr != null && oobHdr.size() == 0)) {
                 return;
@@ -594,33 +607,32 @@ public class CxfMessageHeadersRelayTest {
             fail("Should have got List of out-of-band headers");
         }
 
-        assertTrue(oobHdr.size() == 1,
-                "HeaderHolder list expected to conain 1 object received " + oobHdr.size());
+        assertEquals(1, oobHdr.size(), "HeaderHolder list expected to conain 1 object received " + oobHdr.size());
 
         for (Header hdr1 : oobHdr) {
             if (hdr1.getObject() instanceof Node) {
                 try {
-                    JAXBElement<?> job = (JAXBElement<?>)JAXBContext
-                        .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
-                        .createUnmarshaller().unmarshal((Node)hdr1.getObject());
-                    hdrToTest = (OutofBandHeader)job.getValue();
+                    JAXBElement<?> job = (JAXBElement<?>) JAXBContext
+                            .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                            .createUnmarshaller().unmarshal((Node) hdr1.getObject());
+                    hdrToTest = (OutofBandHeader) job.getValue();
                 } catch (JAXBException ex) {
-                    ex.printStackTrace();
+                    LOG.warn("JAXB error: {}", ex.getMessage(), ex);
                 }
             }
         }
 
         assertNotNull(hdrToTest, "out-of-band header should not be null");
-        assertTrue("testOobReturnHeaderName".equals(hdrToTest.getName()),
+        assertEquals("testOobReturnHeaderName", hdrToTest.getName(),
                 "Expected out-of-band Header name testOobReturnHeaderName recevied :"
-                        + hdrToTest.getName());
-        assertTrue("testOobReturnHeaderValue".equals(hdrToTest.getValue()),
+                                                                     + hdrToTest.getName());
+        assertEquals("testOobReturnHeaderValue", hdrToTest.getValue(),
                 "Expected out-of-band Header value testOobReturnHeaderValue recevied :"
-                        + hdrToTest.getValue());
-        assertTrue("testReturnHdrAttribute".equals(hdrToTest.getHdrAttribute()),
+                                                                       + hdrToTest.getValue());
+        assertEquals("testReturnHdrAttribute", hdrToTest.getHdrAttribute(),
                 "Expected out-of-band Header attribute testReturnHdrAttribute recevied :" + hdrToTest.getHdrAttribute());
     }
-    
+
     protected static List<Header> buildOutOfBandHeaderList(boolean invalid) throws JAXBException {
         OutofBandHeader ob = new OutofBandHeader();
         ob.setName("testOobHeader");
@@ -628,20 +640,20 @@ public class CxfMessageHeadersRelayTest {
         ob.setHdrAttribute(invalid ? "dontProcess" : "testHdrAttribute");
 
         SoapHeader hdr = new SoapHeader(
-                new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_REQUEST_ELEM), 
-                ob, 
+                new QName(Constants.TEST_HDR_NS, Constants.TEST_HDR_REQUEST_ELEM),
+                ob,
                 new JAXBDataBinding(ob.getClass()));
-        
+
         hdr.setMustUnderstand(invalid);
 
         List<Header> headers = new ArrayList<>();
         headers.add(hdr);
         return headers;
     }
-    
+
     protected static void validateReturnedOutOfBandHeaderWithInsertion(Map<String, Object> responseContext, boolean expect) {
         List<OutofBandHeader> hdrToTest = new ArrayList<>();
-        List<Header> oobHdr = CastUtils.cast((List<?>)responseContext.get(Header.HEADER_LIST));
+        List<Header> oobHdr = CastUtils.cast((List<?>) responseContext.get(Header.HEADER_LIST));
         if (!expect) {
             if (oobHdr == null || (oobHdr != null && oobHdr.size() == 0)) {
                 return;
@@ -652,97 +664,97 @@ public class CxfMessageHeadersRelayTest {
             fail("Should have got List of out-of-band headers");
         }
 
-        assertTrue(oobHdr.size() == 2, "HeaderHolder list expected to conain 2 object received " + oobHdr.size());
-        
+        assertEquals(2, oobHdr.size(), "HeaderHolder list expected to conain 2 object received " + oobHdr.size());
+
         for (Header hdr1 : oobHdr) {
             if (hdr1.getObject() instanceof Node) {
                 try {
-                    JAXBElement<?> job = (JAXBElement<?>)JAXBContext
-                        .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
-                        .createUnmarshaller().unmarshal((Node)hdr1.getObject());
-                    hdrToTest.add((OutofBandHeader)job.getValue());
+                    JAXBElement<?> job = (JAXBElement<?>) JAXBContext
+                            .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                            .createUnmarshaller().unmarshal((Node) hdr1.getObject());
+                    hdrToTest.add((OutofBandHeader) job.getValue());
                 } catch (JAXBException ex) {
-                    ex.printStackTrace();
+                    LOG.warn("JAXB error: {}", ex.getMessage(), ex);
                 }
             }
         }
 
         assertTrue(hdrToTest.size() > 0, "out-of-band header should not be null");
-        assertTrue("testOobReturnHeaderName".equals(hdrToTest.get(0).getName()), "Expected out-of-band Header name testOobReturnHeaderName recevied :"
-                   + hdrToTest.get(0).getName());
-        assertTrue("testOobReturnHeaderValue".equals(hdrToTest.get(0).getValue()),
+        assertEquals("testOobReturnHeaderName", hdrToTest.get(0).getName(),
+                "Expected out-of-band Header name testOobReturnHeaderName recevied :"
+                                                                            + hdrToTest.get(0).getName());
+        assertEquals("testOobReturnHeaderValue", hdrToTest.get(0).getValue(),
                 "Expected out-of-band Header value testOobReturnHeaderValue recevied :"
-                   + hdrToTest.get(0).getValue());
-        assertTrue("testReturnHdrAttribute"
-                .equals(hdrToTest.get(0).getHdrAttribute()),
+                                                                              + hdrToTest.get(0).getValue());
+        assertEquals("testReturnHdrAttribute", hdrToTest.get(0).getHdrAttribute(),
                 "Expected out-of-band Header attribute testReturnHdrAttribute recevied :"
-                   + hdrToTest.get(0).getHdrAttribute());
-        
-        assertTrue("New_testOobHeader".equals(hdrToTest.get(1).getName()),
+                                                                                   + hdrToTest.get(0).getHdrAttribute());
+
+        assertEquals("New_testOobHeader", hdrToTest.get(1).getName(),
                 "Expected out-of-band Header name New_testOobHeader recevied :"
-                        + hdrToTest.get(1).getName());
-        assertTrue("New_testOobHeaderValue".equals(hdrToTest.get(1).getValue()),
+                                                                      + hdrToTest.get(1).getName());
+        assertEquals("New_testOobHeaderValue", hdrToTest.get(1).getValue(),
                 "Expected out-of-band Header value New_testOobHeaderValue recevied :"
-                        + hdrToTest.get(1).getValue());
-        assertTrue("testHdrAttribute"
-            .equals(hdrToTest.get(1).getHdrAttribute()),
+                                                                            + hdrToTest.get(1).getValue());
+        assertEquals("testHdrAttribute", hdrToTest.get(1).getHdrAttribute(),
                 "Expected out-of-band Header attribute testHdrAttribute recevied :"
-                        + hdrToTest.get(1).getHdrAttribute());
+                                                                             + hdrToTest.get(1).getHdrAttribute());
     }
 
     public static class InsertRequestOutHeaderProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            List<SoapHeader> soapHeaders = CastUtils.cast((List<?>)exchange.getIn().getHeader(Header.HEADER_LIST));
-   
+            List<SoapHeader> soapHeaders = CastUtils.cast((List<?>) exchange.getIn().getHeader(Header.HEADER_LIST));
+
             // Insert a new header
             String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><outofbandHeader "
-                + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
-                + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
-                + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
-            
-            SoapHeader newHeader = new SoapHeader(soapHeaders.get(0).getName(),
-                                                  StaxUtils.read(new StringReader(xml)).getDocumentElement());
+                         + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
+                         + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
+                         + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
+
+            SoapHeader newHeader = new SoapHeader(
+                    soapHeaders.get(0).getName(),
+                    StaxUtils.read(new StringReader(xml)).getDocumentElement());
             // make sure direction is IN since it is a request message.
             newHeader.setDirection(Direction.DIRECTION_IN);
             //newHeader.setMustUnderstand(false);
             soapHeaders.add(newHeader);
-            
+
         }
-        
+
     }
-    
+
     // START SNIPPET: InsertResponseOutHeaderProcessor
-    
+
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
             // You should be able to get the header if exchange is routed from camel-cxf endpoint
-            List<SoapHeader> soapHeaders = CastUtils.cast((List<?>)exchange.getIn().getHeader(Header.HEADER_LIST));
+            List<SoapHeader> soapHeaders = CastUtils.cast((List<?>) exchange.getIn().getHeader(Header.HEADER_LIST));
             if (soapHeaders == null) {
                 // we just create a new soap headers in case the header is null
                 soapHeaders = new ArrayList<>();
             }
-            
+
             // Insert a new header
             String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><outofbandHeader "
-                + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
-                + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
-                + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
-            SoapHeader newHeader = new SoapHeader(soapHeaders.get(0).getName(),
-                                                  StaxUtils.read(new StringReader(xml)).getDocumentElement());
+                         + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
+                         + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
+                         + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
+            SoapHeader newHeader = new SoapHeader(
+                    soapHeaders.get(0).getName(),
+                    StaxUtils.read(new StringReader(xml)).getDocumentElement());
             // make sure direction is OUT since it is a response message.
             newHeader.setDirection(Direction.DIRECTION_OUT);
             //newHeader.setMustUnderstand(false);
             soapHeaders.add(newHeader);
-            
-        }
-        
-    }
-    
-    // END SNIPPET: InsertResponseOutHeaderProcessor
 
+        }
+
+    }
+
+    // END SNIPPET: InsertResponseOutHeaderProcessor
 
 }

@@ -28,8 +28,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Use this class to run tests agains a local basic Kudu server. This
- * local kudu server is spinned up by
+ * Use this class to run tests agains a local basic Kudu server. This local kudu server is spinned up by
  * https://kudu.apache.org/docs/developing.html#_using_the_kudu_binary_test_jar
  */
 public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEachCallback {
@@ -60,8 +59,8 @@ public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEa
     static class Internal extends KuduTestHarness {
 
         /**
-         * Setup the Camel Context and make sure all KuduEndpoints use the
-         * special KuduClient that connects to the local server.
+         * Setup the Camel Context and make sure all KuduEndpoints use the special KuduClient that connects to the local
+         * server.
          *
          * @param context
          */
@@ -77,8 +76,8 @@ public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEa
         }
 
         /**
-         * Needed because we have to shutdown the local cluster, but as
-         * Camel already closed the client, it will always throw an IllegalStateException.
+         * Needed because we have to shutdown the local cluster, but as Camel already closed the client, it will always
+         * throw an IllegalStateException.
          */
         @Override
         public void after() {

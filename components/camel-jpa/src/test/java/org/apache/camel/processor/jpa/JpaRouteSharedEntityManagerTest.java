@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,25 +65,26 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
         // not the cleanest way to check the number of open connections
         int countEnd = getBrokerCount();
         assertThat("brokerCount", countEnd, equalTo(1));
-        
+
         latch.countDown();
 
         assertMockEndpointsSatisfied();
     }
 
     private int getBrokerCount() {
-        LocalEntityManagerFactoryBean entityManagerFactory = applicationContext.getBean("&entityManagerFactory", LocalEntityManagerFactoryBean.class);
+        LocalEntityManagerFactoryBean entityManagerFactory
+                = applicationContext.getBean("&entityManagerFactory", LocalEntityManagerFactoryBean.class);
 
         //uses Spring EL so we don't need to reference the classes
         StandardEvaluationContext context = new StandardEvaluationContext(entityManagerFactory);
         context.setBeanResolver(new BeanFactoryResolver(applicationContext));
         SpelExpressionParser parser = new SpelExpressionParser();
-        Expression expression = parser.parseExpression("nativeEntityManagerFactory.brokerFactory.openBrokers"); 
+        Expression expression = parser.parseExpression("nativeEntityManagerFactory.brokerFactory.openBrokers");
         List<?> brokers = expression.getValue(context, List.class);
 
         return brokers.size();
     }
-    
+
     @Test
     public void testRouteJpaNotShared() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -101,20 +101,23 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
         // not the cleanest way to check the number of open connections
         int countEnd = getBrokerCount();
         assertThat("brokerCount", countEnd, equalTo(2));
-        
+
         latch.countDown();
 
         assertMockEndpointsSatisfied();
-    }    
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:startNotshared").to("jpa://" + SendEmail.class.getName() + "?");
-                from("direct:startShared").to("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=true&joinTransaction=false");
-                from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=true&joinTransaction=false").routeId("jpaShared").autoStartup(false).process(new LatchProcessor()).to("mock:result");
-                from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=false").routeId("jpaOwn").autoStartup(false).process(new LatchProcessor()).to("mock:result");
+                from("direct:startShared")
+                        .to("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=true&joinTransaction=false");
+                from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=true&joinTransaction=false")
+                        .routeId("jpaShared").autoStartup(false).process(new LatchProcessor()).to("mock:result");
+                from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=false").routeId("jpaOwn").autoStartup(false)
+                        .process(new LatchProcessor()).to("mock:result");
             }
         };
     }
@@ -128,7 +131,7 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     protected String selectAllString() {
         return SELECT_ALL_STRING;
     }
-    
+
     private class LatchProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -136,4 +139,3 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
         }
     }
 }
-

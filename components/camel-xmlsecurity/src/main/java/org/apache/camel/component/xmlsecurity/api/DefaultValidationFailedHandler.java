@@ -23,8 +23,8 @@ import javax.xml.crypto.dsig.XMLSignature.SignatureValue;
 import javax.xml.crypto.dsig.XMLSignatureException;
 
 /**
- * Interrupts the validation by throwing an exception as soon as a validation
- * failure occurs and gives specific error messages.
+ * Interrupts the validation by throwing an exception as soon as a validation failure occurs and gives specific error
+ * messages.
  */
 public class DefaultValidationFailedHandler implements ValidationFailedHandler {
 
@@ -47,7 +47,8 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
 
     @Override
     public void signatureValueValidationFailed(SignatureValue value) throws Exception {
-        error.append("The signature value could not be validated by the public key. Either the message has been tampered with or the public key is not correct.");
+        error.append(
+                "The signature value could not be validated by the public key. Either the message has been tampered with or the public key is not correct.");
         throw new XmlSignatureInvalidValueException(error.toString());
     }
 

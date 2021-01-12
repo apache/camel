@@ -24,14 +24,13 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that Camel can build remote directory on FTP server if
- * missing (full or part of).
+ * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
  */
 @Disabled("Run this test manually")
 public class FtpProducerRecipientListParallelTimeoutTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin:admin@127.0.0.2:" + (getPort() - 1) + "/timeout";
+        return "ftp://admin:admin@127.0.0.2:" + (service.getPort() - 1) + "/timeout";
     }
 
     @Test

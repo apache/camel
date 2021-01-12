@@ -131,7 +131,6 @@ public class MongoDbChangeStreamsConsumerTest extends AbstractMongoDbTest {
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
-
     protected void addTestRoutes() throws Exception {
         context.addRoutes(new RouteBuilder() {
 

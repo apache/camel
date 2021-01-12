@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-mail</artifactId>
@@ -85,15 +85,6 @@
             </exclusions>
         </dependency>
 
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-gmail</artifactId>
-            <version>${google-api-services-mail-version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -105,6 +96,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-catalog</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -138,40 +134,40 @@
                                 <api>
                                     <apiName>threads</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Threads</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>messages</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Messages</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>attachments</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Messages$Attachments
                                     </proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>labels</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Labels</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$History</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>drafts</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Drafts</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>users</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <includeMethods>getProfile|watch|stop</includeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                 </api>
                             </apis>
                             <substitutions>
@@ -203,6 +199,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>com.google.apis</groupId>
+                        <artifactId>google-api-services-gmail</artifactId>
+                        <version>${google-api-services-mail-version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

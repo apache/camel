@@ -39,7 +39,8 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     private ServerEndpointDeploymentStrategy serverEndpointDeploymentStrategy;
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         JSR356Endpoint endpoint = new JSR356Endpoint(this, uri);
         endpoint.setUri(new URI(remaining));
         setProperties(endpoint, parameters);
@@ -57,7 +58,8 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     public static ContextBag getContext(final String context) {
         return ofNullable(context)
                 .map(SERVER_CONTAINERS::get)
-                .orElseGet(() -> SERVER_CONTAINERS.size() == 1 ? SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
+                .orElseGet(() -> SERVER_CONTAINERS.size() == 1
+                        ? SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
     }
 
     public ServerEndpointDeploymentStrategy getServerEndpointDeploymentStrategy() {

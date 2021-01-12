@@ -44,15 +44,15 @@ public class StAXComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/in")
-                    .routeId("stax-parser")
-                    .to("stax:" + CountingHandler.class.getName())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals(11, exchange.getIn().getBody(CountingHandler.class).getNumber());
-                        }
-                    })
-                    .to("mock:records");
+                        .routeId("stax-parser")
+                        .to("stax:" + CountingHandler.class.getName())
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals(11, exchange.getIn().getBody(CountingHandler.class).getNumber());
+                            }
+                        })
+                        .to("mock:records");
             }
         };
     }

@@ -19,80 +19,9 @@ package org.apache.camel.parser.model;
 /**
  * Details about a parsed and discovered Camel simple expression.
  */
-public class CamelSimpleExpressionDetails {
+public class CamelSimpleExpressionDetails extends LanguageExpressionDetails {
 
-    private String fileName;
-    private String lineNumber;
-    private String lineNumberEnd;
-    private int absolutePosition;
-    private int linePosition;
-    private String className;
-    private String methodName;
     private String simple;
-    private boolean predicate;
-    private boolean expression;
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getLineNumber() {
-        return lineNumber;
-    }
-
-    public void setLineNumber(String lineNumber) {
-        this.lineNumber = lineNumber;
-    }
-
-    public String getLineNumberEnd() {
-        return lineNumberEnd;
-    }
-
-    public void setLineNumberEnd(String lineNumberEnd) {
-        this.lineNumberEnd = lineNumberEnd;
-    }
-
-    public int getAbsolutePosition() {
-        return absolutePosition;
-    }
-
-    /**
-     * The absolute position where 0 is the beginning of the file. This is only available for Java DSL.
-     */
-    public void setAbsolutePosition(int absolutePosition) {
-        this.absolutePosition = absolutePosition;
-    }
-
-    public int getLinePosition() {
-        return linePosition;
-    }
-
-    /**
-     * The relative position in the begin line number.
-     */
-    public void setLinePosition(int linePosition) {
-        this.linePosition = linePosition;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
 
     public String getSimple() {
         return simple;
@@ -100,22 +29,6 @@ public class CamelSimpleExpressionDetails {
 
     public void setSimple(String simple) {
         this.simple = simple;
-    }
-
-    public boolean isPredicate() {
-        return predicate;
-    }
-
-    public void setPredicate(boolean predicate) {
-        this.predicate = predicate;
-    }
-
-    public boolean isExpression() {
-        return expression;
-    }
-
-    public void setExpression(boolean expression) {
-        this.expression = expression;
     }
 
     @Override

@@ -22,7 +22,7 @@ import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
 
@@ -30,7 +30,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/ActiveMQWithoutTransactionManager.xml");
     }
-    
+
     @Test
     public void testNoTransactionRollbackUsingXmlQueueToQueue() throws Exception {
 
@@ -43,7 +43,6 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
                 from("activemq:queue:foo?transacted=false").process(new ConditionalExceptionProcessor())
                         .to("activemq:queue:bar?transacted=false");
 
-
             }
         });
 
@@ -51,11 +50,11 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
 
         template.sendBody("activemq:queue:foo", "blah");
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
-        assertTrue(getConditionalExceptionProcessor().getCount() == 1,
+        assertEquals(1, getConditionalExceptionProcessor().getCount(),
                 "Expected only 1 calls to process() (1 failure) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + ".");
+                                                                       + getConditionalExceptionProcessor().getCount() + ".");
     }
-    
+
 }

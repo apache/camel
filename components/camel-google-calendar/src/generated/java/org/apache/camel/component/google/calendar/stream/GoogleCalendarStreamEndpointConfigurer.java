@@ -4,8 +4,10 @@ package org.apache.camel.component.google.calendar.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -29,8 +31,6 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "calendarid":
@@ -44,6 +44,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": target.getConfiguration().setConsumeFromNow(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "emailaddress":
+        case "emailAddress": target.getConfiguration().setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -53,6 +55,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "maxresults":
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
+        case "p12filename":
+        case "p12FileName": target.getConfiguration().setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
@@ -64,7 +68,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "scopes": target.getConfiguration().setScopes(property(camelContext, java.util.List.class, value)); return true;
@@ -77,46 +81,77 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("calendarId", java.lang.String.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("considerLastUpdate", boolean.class);
-        answer.put("consumeFromNow", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("maxResults", int.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("refreshToken", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("scopes", java.util.List.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "calendarid":
+        case "calendarId": return java.lang.String.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "considerlastupdate":
+        case "considerLastUpdate": return boolean.class;
+        case "consumefromnow":
+        case "consumeFromNow": return boolean.class;
+        case "delay": return long.class;
+        case "emailaddress":
+        case "emailAddress": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "p12filename":
+        case "p12FileName": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "query": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "scopes": return java.util.List.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -133,8 +168,6 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "calendarid":
@@ -148,6 +181,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": return target.getConfiguration().isConsumeFromNow();
         case "delay": return target.getDelay();
+        case "emailaddress":
+        case "emailAddress": return target.getConfiguration().getEmailAddress();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -157,6 +192,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "initialDelay": return target.getInitialDelay();
         case "maxresults":
         case "maxResults": return target.getConfiguration().getMaxResults();
+        case "p12filename":
+        case "p12FileName": return target.getConfiguration().getP12FileName();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "query": return target.getConfiguration().getQuery();
@@ -181,6 +218,17 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "user": return target.getConfiguration().getUser();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

@@ -35,8 +35,8 @@ public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transacted()
-                    .to("mock:result");
+                        .transacted()
+                        .to("mock:result");
             }
         });
         try {
@@ -44,7 +44,7 @@ public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals(cause.getMessage(), "No bean could be found in the registry of type: PlatformTransactionManager");
+            assertEquals("No bean could be found in the registry of type: PlatformTransactionManager", cause.getMessage());
         }
     }
 

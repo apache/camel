@@ -54,8 +54,10 @@ public class XmppDirectProducer extends DefaultProducer {
                 connection.connect();
             }
         } catch (XMPPException e) {
-            throw new RuntimeExchangeException("Cannot connect to XMPP Server: "
-                    + ((connection != null) ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()),
+            throw new RuntimeExchangeException(
+                    "Cannot connect to XMPP Server: "
+                                               + ((connection != null)
+                                                       ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()),
                     exchange, e);
         }
 
@@ -74,12 +76,16 @@ public class XmppDirectProducer extends DefaultProducer {
                 throw new Exception("Body does not contain Stanza/Stanza[] object(s)");
             }
         } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Cannot send XMPP direct: from " + endpoint.getUser() + " to: "
-                    + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
+            throw new RuntimeExchangeException(
+                    "Cannot send XMPP direct: from " + endpoint.getUser() + " to: "
+                                               + XmppEndpoint.getConnectionMessage(connection),
+                    exchange, xmppe);
 
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot send XMPP direct: from " + endpoint.getUser() + " to: "
-                    + XmppEndpoint.getConnectionMessage(connection), exchange, e);
+            throw new RuntimeExchangeException(
+                    "Cannot send XMPP direct: from " + endpoint.getUser() + " to: "
+                                               + XmppEndpoint.getConnectionMessage(connection),
+                    exchange, e);
         }
     }
 }

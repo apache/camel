@@ -49,30 +49,32 @@ public class FaultToleranceTimeoutWithFallbackTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .circuitBreaker()
+                        .circuitBreaker()
                         // enable and use 2 second timeout
                         .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
                         .log("FaultTolerance processing start: ${threadName}")
                         .toD("direct:${body}")
                         .log("FaultTolerance processing end: ${threadName}")
-                    .onFallback()
+                        .onFallback()
                         // use fallback if there was an exception or timeout
                         .log("FaultTolerance fallback start: ${threadName}")
                         .transform().constant("Fallback response")
                         .log("FaultTolerance fallback end: ${threadName}")
-                    .end()
-                    .log("After FaultTolerance ${body}")
-                    .transform(simple("A CHANGE"))
-                    .transform(simple("LAST CHANGE"))
-                    .log("End ${body}");
+                        .end()
+                        .log("After FaultTolerance ${body}")
+                        .transform(simple("A CHANGE"))
+                        .transform(simple("LAST CHANGE"))
+                        .log("End ${body}");
 
                 from("direct:fast")
-                    // this is a fast route and takes 1 second to respond
-                    .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response").log("Fast processing end: ${threadName}");
+                        // this is a fast route and takes 1 second to respond
+                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
-                    // this is a slow route and takes 3 second to respond
-                    .log("Slow processing start: ${threadName}").delay(8000).transform().constant("Slow response").log("Slow processing end: ${threadName}");
+                        // this is a slow route and takes 3 second to respond
+                        .log("Slow processing start: ${threadName}").delay(8000).transform().constant("Slow response")
+                        .log("Slow processing end: ${threadName}");
             }
         };
     }

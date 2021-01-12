@@ -61,7 +61,8 @@ public final class BlobStreamAndLength {
         }
 
         // try as input stream
-        final InputStream inputStream = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+        final InputStream inputStream
+                = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
 
         if (inputStream == null) {
             // fallback to string based

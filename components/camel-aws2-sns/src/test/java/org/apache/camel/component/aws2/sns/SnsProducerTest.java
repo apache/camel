@@ -29,8 +29,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.when;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SnsProducerTest {

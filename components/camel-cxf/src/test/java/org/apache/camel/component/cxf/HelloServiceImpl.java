@@ -24,17 +24,17 @@ import org.slf4j.LoggerFactory;
 public class HelloServiceImpl implements HelloService {
     private static final Logger LOG = LoggerFactory.getLogger(HelloServiceImpl.class);
     private int invocationCount;
-    
+
     private String name;
-    
+
     public HelloServiceImpl(String name) {
         this.name = name;
     }
-    
+
     public HelloServiceImpl() {
         name = "";
     }
- 
+
     @Override
     public String echo(String text) {
         LOG.info("call for echo with " + text);
@@ -71,7 +71,4 @@ public class HelloServiceImpl implements HelloService {
         return result;
     }
 
-
 }
-
-

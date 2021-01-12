@@ -32,8 +32,8 @@ import org.apache.camel.component.olingo4.internal.Olingo4ApiCollection;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.component.olingo4.internal.Olingo4Constants;
 import org.apache.camel.component.olingo4.internal.Olingo4PropertiesHelper;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -44,7 +44,9 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Communicate with OData 4.0 services using Apache Olingo OData API.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName", category = {Category.CLOUD})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName",
+             apiSyntax = "apiName/methodName",
+             category = { Category.CLOUD })
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
@@ -71,8 +73,10 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     private Olingo4AppWrapper apiProxy;
 
-    public Olingo4Endpoint(String uri, Olingo4Component component, Olingo4ApiName apiName, String methodName, Olingo4Configuration endpointConfiguration) {
-        super(uri, component, apiName, methodName, Olingo4ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+    public Olingo4Endpoint(String uri, Olingo4Component component, Olingo4ApiName apiName, String methodName,
+                           Olingo4Configuration endpointConfiguration) {
+        super(uri, component, apiName, methodName, Olingo4ApiCollection.getCollection().getHelper(apiName),
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -123,17 +127,21 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
         // configure endpoint first (from the known options) and then specialized configuration class afterwards
         PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
-        if (configurer instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+        if (configurer instanceof ExtendedPropertyConfigurerGetter) {
+            ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
             for (String name : getter.getAllOptions(this).keySet()) {
                 if (known.containsKey(name)) {
-                    Object value = known.remove(name);
-                    configurer.configure(getCamelContext(), this, name, value, true);
+                    Object value = known.get(name);
+                    boolean hit = configurer.configure(getCamelContext(), this, name, value, true);
+                    if (hit) {
+                        known.remove(name);
+                    }
                 }
             }
         }
         // configure on configuration first to be reflection free
-        configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+        configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
         if (configurer != null) {
             PropertyBindingSupport.build()
                     .withConfigurer(configurer)
@@ -166,7 +174,8 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
         olingo4endpointPropertyNames.add(FILTER_ALREADY_SEEN);
 
         // set default inBody
-        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName)) && inBody == null) {
+        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName))
+                && inBody == null) {
             inBody = DATA_PROPERTY;
         }
         createProxy();
@@ -179,7 +188,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     @Override
     public Olingo4Component getComponent() {
-        return (Olingo4Component)super.getComponent();
+        return (Olingo4Component) super.getComponent();
     }
 
     @Override
@@ -211,7 +220,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     @Override
     public void interceptProperties(Map<String, Object> properties) {
-        Map<String, String> endpointHttpHeaders = (Map<String, String>)properties.get(ENDPOINT_HTTP_HEADERS_PROPERTY);
+        Map<String, String> endpointHttpHeaders = (Map<String, String>) properties.get(ENDPOINT_HTTP_HEADERS_PROPERTY);
 
         // read Edm if not set yet
         properties.put(EDM_PROPERTY, apiProxy.getEdm(endpointHttpHeaders));
@@ -220,13 +229,15 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
         properties.put(FILTER_ALREADY_SEEN, configuration.isFilterAlreadySeen());
 
         // handle keyPredicate
-        final String keyPredicate = (String)properties.get(KEY_PREDICATE_PROPERTY);
+        final String keyPredicate = (String) properties.get(KEY_PREDICATE_PROPERTY);
         if (keyPredicate != null) {
 
             // make sure a resource path is provided
-            final String resourcePath = (String)properties.get(RESOURCE_PATH_PROPERTY);
+            final String resourcePath = (String) properties.get(RESOURCE_PATH_PROPERTY);
             if (resourcePath == null) {
-                throw new IllegalArgumentException("Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY + "', or exchange header '"
+                throw new IllegalArgumentException(
+                        "Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY
+                                                   + "', or exchange header '"
                                                    + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
             }
 
@@ -271,7 +282,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
         if (!queryParams.isEmpty()) {
 
             @SuppressWarnings("unchecked")
-            final Map<String, String> oldParams = (Map<String, String>)options.get(QUERY_PARAMS_PROPERTY);
+            final Map<String, String> oldParams = (Map<String, String>) options.get(QUERY_PARAMS_PROPERTY);
             if (oldParams == null) {
                 // set queryParams property
                 options.put(QUERY_PARAMS_PROPERTY, queryParams);

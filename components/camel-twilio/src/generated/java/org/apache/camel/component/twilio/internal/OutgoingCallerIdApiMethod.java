@@ -62,8 +62,6 @@ public enum OutgoingCallerIdApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private OutgoingCallerIdApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

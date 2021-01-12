@@ -1,10 +1,11 @@
-[[headersmap-component]]
+[[headersmap-other]]
 = Headersmap Component
 :docTitle: Headersmap
 :artifactId: camel-headersmap
 :description: Fast case-insensitive headers map implementation
 :since: 2.20
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/headersmap.adoc[opts=optional]
 
 *Since Camel {since}*
 

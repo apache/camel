@@ -25,9 +25,8 @@ public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-        // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("rabbitmq.*");
-        setInFilterPattern("rabbitmq.*");
+        setOutFilterPattern("CamelRabbitmq.*");
+        setInFilterPattern("CamelRabbitmq.*");
     }
 
 }

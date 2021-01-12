@@ -35,8 +35,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.IntrospectionSupport;
@@ -53,18 +51,18 @@ public class ConverterTest extends TestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), true);
 
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         @Override
         public void setAsText(String text) throws IllegalArgumentException {
-            setValue(new Integer(text));
+            setValue(Integer.valueOf(text));
         }
 
         @Override
         public String getAsText() {
-            Integer value = (Integer)getValue();
+            Integer value = (Integer) getValue();
             return value != null ? value.toString() : "";
         }
     }
@@ -79,7 +77,7 @@ public class ConverterTest extends TestSupport {
     public void testIntegerPropertyEditorConversion() throws Exception {
         Integer value = converter.convertTo(Integer.class, "1000");
         assertNotNull(value);
-        assertEquals(new Integer(1000), (Object) value, "Converted to Integer");
+        assertEquals(Integer.valueOf(1000), (Object) value, "Converted to Integer");
 
         String text = converter.convertTo(String.class, value);
         assertEquals("1000", text, "Converted to String");
@@ -118,7 +116,7 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testArrayToListAndSetConversion() throws Exception {
-        String[] array = new String[] {"one", "two"};
+        String[] array = new String[] { "one", "two" };
 
         List<?> list = converter.convertTo(List.class, array);
         assertEquals(2, list.size(), "List size: " + list);
@@ -228,13 +226,13 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testInstanceMethodConversionWithExchange() throws Exception {
-        String[] values = new String[] {"5", "bar"};
+        String[] values = new String[] { "5", "bar" };
 
         CamelContext camel = new DefaultCamelContext();
         Exchange e = new DefaultExchange(camel);
         e.setProperty("prefix", "foo-");
         MyBean bean = converter.convertTo(MyBean.class, e, values);
-        assertEquals(bean.getFoo(), 5, "converted using exchange");
+        assertEquals(5, bean.getFoo(), "converted using exchange");
         assertEquals("foo-bar", bean.getBar(), "converted using exchange");
     }
 

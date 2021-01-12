@@ -32,26 +32,27 @@ public interface ModelToXMLDumper {
     /**
      * Dumps the definition as XML
      *
-     * @param context the CamelContext
-     * @param definition the definition, such as a {@link org.apache.camel.NamedNode}
-     * @return the output in XML (is formatted)
-     * @throws Exception is throw if error marshalling to XML
+     * @param  context    the CamelContext
+     * @param  definition the definition, such as a {@link org.apache.camel.NamedNode}
+     * @return            the output in XML (is formatted)
+     * @throws Exception  is throw if error marshalling to XML
      */
     String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception;
 
     /**
      * Dumps the definition as XML
      *
-     * @param context the CamelContext
-     * @param definition the definition, such as a {@link org.apache.camel.NamedNode}
-     * @param resolvePlaceholders whether to resolve property placeholders in
-     *            the dumped XML
-     * @param resolveDelegateEndpoints whether to resolve delegate endpoints in
-     *            the dumped XML (limited to endpoints used in uri attributes in the model)
-     * @return the output in XML (is formatted)
-     * @throws Exception is throw if error marshalling to XML
+     * @param  context                  the CamelContext
+     * @param  definition               the definition, such as a {@link org.apache.camel.NamedNode}
+     * @param  resolvePlaceholders      whether to resolve property placeholders in the dumped XML
+     * @param  resolveDelegateEndpoints whether to resolve delegate endpoints in the dumped XML (limited to endpoints
+     *                                  used in uri attributes in the model)
+     * @return                          the output in XML (is formatted)
+     * @throws Exception                is throw if error marshalling to XML
      */
-    String dumpModelAsXml(CamelContext context, NamedNode definition,
-                          boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception;
+    String dumpModelAsXml(
+            CamelContext context, NamedNode definition,
+            boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            throws Exception;
 
 }

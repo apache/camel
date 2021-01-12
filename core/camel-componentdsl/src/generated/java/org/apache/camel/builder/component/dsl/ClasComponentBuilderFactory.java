@@ -37,6 +37,8 @@ public interface ClasComponentBuilderFactory {
      * Category: core,java
      * Since: 2.4
      * Maven coordinates: org.apache.camel:camel-bean
+     * 
+     * @return the dsl builder
      */
     static ClasComponentBuilder clas() {
         return new ClasComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface ClasComponentBuilderFactory {
         /**
          * Use singleton option instead.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param cache the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ClasComponentBuilder cache(java.lang.Boolean cache) {
@@ -70,10 +75,13 @@ public interface ClasComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ClasComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -95,27 +103,37 @@ public interface ClasComponentBuilderFactory {
          * configuration can act as either singleton or prototype scope. so when
          * using prototype then this depends on the delegated registry.
          * 
-         * The option is a: <code>org.apache.camel.BeanScope</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.BeanScope&lt;/code&gt;
+         * type.
          * 
          * Default: Singleton
          * Group: producer
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default ClasComponentBuilder scope(org.apache.camel.BeanScope scope) {
             doSetProperty("scope", scope);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ClasComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ClasComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -138,7 +156,7 @@ public interface ClasComponentBuilderFactory {
             case "cache": ((ClassComponent) component).setCache((java.lang.Boolean) value); return true;
             case "lazyStartProducer": ((ClassComponent) component).setLazyStartProducer((boolean) value); return true;
             case "scope": ((ClassComponent) component).setScope((org.apache.camel.BeanScope) value); return true;
-            case "basicPropertyBinding": ((ClassComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ClassComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

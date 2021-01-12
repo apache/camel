@@ -99,7 +99,6 @@ public class FastTypeConverterTest {
         }
     }
 
-
     @Benchmark
     public void typeConvertByteBufToArray(BenchmarkCamelContextState state, Blackhole bh) {
         byte[] arr = state.camel.getTypeConverter().convertTo(byte[].class, state.buffer);

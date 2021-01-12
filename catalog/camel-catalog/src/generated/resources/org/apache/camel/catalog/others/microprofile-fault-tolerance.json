@@ -7,9 +7,9 @@
     "deprecated": false,
     "firstVersion": "3.3.0",
     "label": "eip,microservice",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-microprofile-fault-tolerance",
-    "version": "3.5.0-SNAPSHOT"
+    "version": "3.8.0-SNAPSHOT"
   }
 }

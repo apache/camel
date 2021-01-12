@@ -24,8 +24,8 @@ import javax.xml.crypto.dsig.Reference;
 import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 
 /**
- * Removes all references whose URIs contain "propert" from the relevant
- * references for the mapping to the camel message.
+ * Removes all references whose URIs contain "propert" from the relevant references for the mapping to the camel
+ * message.
  */
 public class XmlSignature2Message2MessageWithTimestampProperty extends DefaultXmlSignature2Message {
 

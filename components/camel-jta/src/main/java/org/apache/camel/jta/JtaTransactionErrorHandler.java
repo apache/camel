@@ -22,43 +22,46 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.ErrorHandler;
 
 /**
- * This error handler does redelivering. If the transaction fails it can be
- * retried if configured to do so. In the Spring implementation redelivering is
- * done within the transaction which is not appropriate in JTA since every error
+ * This error handler does redelivering. If the transaction fails it can be retried if configured to do so. In the
+ * Spring implementation redelivering is done within the transaction which is not appropriate in JTA since every error
  * breaks the current transaction.
  */
 public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
 
-    public JtaTransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
-            Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-            ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
-            Predicate retryWhile, ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel,
-            Processor onExceptionOccurredProcessor) {
+    private final JtaTransactionPolicy transactionPolicy;
+    private final LoggingLevel rollbackLoggingLevel;
 
+    public JtaTransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+                                      Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
+                                      JtaTransactionPolicy transactionPolicy,
+                                      Predicate retryWhile, ScheduledExecutorService executorService,
+                                      LoggingLevel rollbackLoggingLevel,
+                                      Processor onExceptionOccurredProcessor) {
         super(camelContext,
-                new TransactionErrorHandler(camelContext,
-                        output,
-                        exceptionPolicyStrategy,
-                        transactionPolicy,
-                        executorService,
-                        rollbackLoggingLevel),
-                logger,
-                redeliveryProcessor,
-                redeliveryPolicy,
-                null,
-                null,
-                false,
-                false,
-                false,
-                retryWhile,
-                executorService,
-                null,
-                onExceptionOccurredProcessor);
+              new TransactionErrorHandler(camelContext, output, transactionPolicy, rollbackLoggingLevel),
+              logger, redeliveryProcessor, redeliveryPolicy,
+              null, null, false, false, false,
+              retryWhile, executorService, null, onExceptionOccurredProcessor);
+        this.transactionPolicy = transactionPolicy;
+        this.rollbackLoggingLevel = rollbackLoggingLevel;
     }
+
+    @Override
+    public ErrorHandler clone(Processor output) {
+        JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(
+                camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, transactionPolicy, retryWhilePolicy,
+                executorService, rollbackLoggingLevel, onExceptionProcessor);
+        // shallow clone is okay as we do not mutate these
+        if (exceptionPolicies != null) {
+            answer.exceptionPolicies = exceptionPolicies;
+        }
+        return answer;
+    }
+
 }

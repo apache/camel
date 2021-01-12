@@ -29,7 +29,8 @@ public class ProxyInstantiationExceptionTest extends ContextTestSupport {
     @Test
     public void testProxyException() {
         Endpoint endpoint = context.getEndpoint("mock:foo");
-        ProxyInstantiationException e = new ProxyInstantiationException(CamelContext.class, endpoint, new IllegalArgumentException("Damn"));
+        ProxyInstantiationException e
+                = new ProxyInstantiationException(CamelContext.class, endpoint, new IllegalArgumentException("Damn"));
 
         assertNotNull(e);
         assertNotNull(e.getMessage());

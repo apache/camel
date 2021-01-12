@@ -55,11 +55,12 @@ public class AsyncEndpointRecipientListParallel5Test extends ContextTestSupport 
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
                     }
-                }).recipientList(constant("async:hi:camel,async:hi:world,direct:foo")).parallelProcessing().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").to("mock:result");
+                }).recipientList(constant("async:hi:camel,async:hi:world,direct:foo")).parallelProcessing()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
 
                 from("direct:foo").transform(constant("Bye Camel")).to("mock:foo");
             }

@@ -31,13 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Folders Manager
- * 
- * <p>
  * Provides operations to manage Box folders.
- * 
- * 
- *
  */
 public class BoxFoldersManager {
 
@@ -49,11 +43,9 @@ public class BoxFoldersManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create folder manager to manage folders of Box connection's authenticated
-     * user.
+     * Create folder manager to manage folders of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxFoldersManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -70,19 +62,16 @@ public class BoxFoldersManager {
             return BoxFolder.getRootFolder(boxConnection);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Return the Box folder referenced by <code>path</code>.
      * 
-     * @param path
-     *            - Sequence of Box folder names from root folder to returned
-     *            folder.
+     * @param  path - Sequence of Box folder names from root folder to returned folder.
      * 
-     * @return The Box folder referenced by <code>path</code> or
-     *         <code>null</code> if folder is not found.
+     * @return      The Box folder referenced by <code>path</code> or <code>null</code> if folder is not found.
      */
     public BoxFolder getFolder(String... path) {
         try {
@@ -107,31 +96,25 @@ public class BoxFoldersManager {
             return folder;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
-     * Returns a specific range of child items in folder and specifies which
-     * fields of each item to retrieve.
+     * Returns a specific range of child items in folder and specifies which fields of each item to retrieve.
      * 
-     * @param folderId
-     *            - the id of folder.
-     * @param offset
-     *            - the index of first child item to retrieve; if
-     *            <code>null</code> all child items are retrieved.
-     * @param limit
-     *            - the maximum number of children to retrieve after the offset;
-     *            if <code>null</code> all child items are retrieved.
-     * @param fields
-     *            - the item fields to retrieve for each child item; if
-     *            <code>null</code> all item fields are retrieved.
-     * @return The Items in folder
+     * @param  folderId - the id of folder.
+     * @param  offset   - the index of first child item to retrieve; if <code>null</code> all child items are retrieved.
+     * @param  limit    - the maximum number of children to retrieve after the offset; if <code>null</code> all child
+     *                  items are retrieved.
+     * @param  fields   - the item fields to retrieve for each child item; if <code>null</code> all item fields are
+     *                  retrieved.
+     * @return          The Items in folder
      */
     public Collection<BoxItem.Info> getFolderItems(String folderId, Long offset, Long limit, String... fields) {
         try {
-            LOG.debug("Getting folder items in folder(id=" + folderId + ") at offset=" + offset + " and limit=" + limit
-                    + " with fields=" + Arrays.toString(fields));
+            LOG.debug("Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
+                    folderId, offset, limit, Arrays.toString(fields));
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -157,50 +140,45 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Create a folder in parent folder with given <code>parentFolderId</code>.
      * 
-     * @param parentFolderId
-     *            - the id of parent folder.
-     * @param folderName
-     *            the name of created folder.
-     * @return The created folder.
+     * @param  parentFolderId - the id of parent folder.
+     * @param  folderName     the name of created folder.
+     * @return                The created folder.
      */
     public BoxFolder createFolder(String parentFolderId, String folderName) {
         try {
-            LOG.debug("Creating folder with name '" + folderName + "' in parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Creating folder with name '{}' in parent_folder(id={})", folderName, parentFolderId);
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }
             if (folderName == null) {
-                throw new IllegalArgumentException("Paramerer 'folderName' can not be null");
+                throw new IllegalArgumentException("Parameter 'folderName' can not be null");
             }
             BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
             return parentFolder.createFolder(folderName).getResource();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
-     * Create a folder specified by path from parent folder with given <code>parentFolderId</code>,
-     * creating intermediate directories as required.
+     * Create a folder specified by path from parent folder with given <code>parentFolderId</code>, creating
+     * intermediate directories as required.
      *
-     * @param parentFolderId
-     *            - the id of parent folder.
-     * @param path
-     *            - Sequence of Box folder names from parent folder to returned
-     *            folder.
-     * @return The last folder in path, no fault will be thrown if it already exists.
+     * @param  parentFolderId - the id of parent folder.
+     * @param  path           - Sequence of Box folder names from parent folder to returned folder.
+     * @return                The last folder in path, no fault will be thrown if it already exists.
      */
     public BoxFolder createFolder(String parentFolderId, String... path) {
         try {
-            LOG.debug("Creating folder with path '" + Arrays.toString(path) + "' in parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Creating folder with path '{}' in parent_folder(id={})", Arrays.toString(path), parentFolderId);
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }
@@ -220,27 +198,23 @@ public class BoxFoldersManager {
             return folder;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Copy folder to destination folder while optionally giving it a new name.
      * 
-     * @param folderId
-     *            - the id of folder to copy.
-     * @param destinationFolderId
-     *            - the id of the destination folder.
-     * @param newName
-     *            - the new name for copied folder; if <code>newName</code> is
-     *            <code>null</code>, the copied folder has same name as the
-     *            original.
-     * @return The copied folder.
+     * @param  folderId            - the id of folder to copy.
+     * @param  destinationFolderId - the id of the destination folder.
+     * @param  newName             - the new name for copied folder; if <code>newName</code> is <code>null</code>, the
+     *                             copied folder has same name as the original.
+     * @return                     The copied folder.
      */
     public BoxFolder copyFolder(String folderId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Copying folder(id=" + folderId + ") to destination_folder(id=" + destinationFolderId + ")"
-                    + (newName == null ? "" : " with new name '" + newName + "'"));
+            LOG.debug("Copying folder(id={}) to destination_folder(id={}) {}",
+                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -256,27 +230,23 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Move folder to destination folder while optionally giving it a new name.
      * 
-     * @param folderId
-     *            - the id of folder to move.
-     * @param destinationFolderId
-     *            - the id of the destination folder.
-     * @param newName
-     *            - the new name of moved folder; if <code>newName</code> is
-     *            <code>null</code>, the moved folder has same name as the
-     *            original.
-     * @return The moved folder.
+     * @param  folderId            - the id of folder to move.
+     * @param  destinationFolderId - the id of the destination folder.
+     * @param  newName             - the new name of moved folder; if <code>newName</code> is <code>null</code>, the
+     *                             moved folder has same name as the original.
+     * @return                     The moved folder.
      */
     public BoxFolder moveFolder(String folderId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Moving folder(id=" + folderId + ") to destination_folder(id=" + destinationFolderId + ")"
-                    + (newName == null ? "" : " with new name '" + newName + "'"));
+            LOG.debug("Moving folder(id={}) to destination_folder(id={}) {}",
+                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -292,22 +262,20 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Rename folder giving it the name <code>newName</code>
      * 
-     * @param folderId
-     *            - the id of folder to rename.
-     * @param newFolderName
-     *            - the new name of folder.
-     * @return The renamed folder.
+     * @param  folderId      - the id of folder to rename.
+     * @param  newFolderName - the new name of folder.
+     * @return               The renamed folder.
      */
     public BoxFolder renameFolder(String folderId, String newFolderName) {
         try {
-            LOG.debug("Renaming folder(id=" + folderId + ") to '" + newFolderName + "'");
+            LOG.debug("Renaming folder(id={}}) to '{}'", folderId, newFolderName);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -319,15 +287,14 @@ public class BoxFoldersManager {
             return folderToRename;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Delete folder.
      * 
-     * @param folderId
-     *            - the id of folder to delete.
+     * @param folderId - the id of folder to delete.
      */
     public void deleteFolder(String folderId) {
         try {
@@ -339,19 +306,16 @@ public class BoxFoldersManager {
             folder.delete(true);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Get folder information.
      * 
-     * @param folderId
-     *            - the id of folder.
-     * @param fields
-     *            - the information fields to retrieve; if <code>null</code> all
-     *            information fields are retrieved.
-     * @return The folder information.
+     * @param  folderId - the id of folder.
+     * @param  fields   - the information fields to retrieve; if <code>null</code> all information fields are retrieved.
+     * @return          The folder information.
      */
     public BoxFolder.Info getFolderInfo(String folderId, String... fields) {
         try {
@@ -369,18 +333,16 @@ public class BoxFoldersManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Update folder information.
      * 
-     * @param folderId
-     *            - the id of folder to update.
-     * @param info
-     *            - the updated information
-     * @return The updated folder.
+     * @param  folderId - the id of folder to update.
+     * @param  info     - the updated information
+     * @return          The updated folder.
      */
     public BoxFolder updateFolderInfo(String folderId, BoxFolder.Info info) {
         try {
@@ -396,34 +358,30 @@ public class BoxFoldersManager {
             return folder;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
     /**
      * Create a shared link to folder.
      * 
-     * @param folderId
-     *            - the id of folder to create shared link on.
-     * @param access
-     *            - the access level of the shared link.
-     * @param unshareDate
-     *            - the date and time at which time the created shared link will
-     *            expire; if <code>unsharedDate</code> is <code>null</code> then
-     *            a non-expiring link is created.
-     * @param permissions
-     *            - the permissions of the created link; if
-     *            <code>permissions</code> is <code>null</code> then the created
-     *            shared link is create with default permissions.
-     * @return The created shared link.
+     * @param  folderId    - the id of folder to create shared link on.
+     * @param  access      - the access level of the shared link.
+     * @param  unshareDate - the date and time at which time the created shared link will expire; if
+     *                     <code>unsharedDate</code> is <code>null</code> then a non-expiring link is created.
+     * @param  permissions - the permissions of the created link; if <code>permissions</code> is <code>null</code> then
+     *                     the created shared link is create with default permissions.
+     * @return             The created shared link.
      */
-    public BoxSharedLink createFolderSharedLink(String folderId, BoxSharedLink.Access access, Date unshareDate,
+    public BoxSharedLink createFolderSharedLink(
+            String folderId, BoxSharedLink.Access access, Date unshareDate,
             BoxSharedLink.Permissions permissions) {
         try {
-            LOG.debug("Creating shared link for folder(id=" + folderId + ") with access=" + access
-                    + (unshareDate == null ? ""
+            LOG.debug("Creating shared link for folder(id={}) with access={} {}",
+                    folderId, access, unshareDate == null
+                            ? ""
                             : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
-                                    + " permissions=" + permissions));
+                              + " permissions=" + permissions);
 
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
@@ -436,7 +394,7 @@ public class BoxFoldersManager {
             return folder.createSharedLink(access, unshareDate, permissions);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 

@@ -45,9 +45,12 @@ public interface NitriteEndpointBuilderFactory {
          * Name of Nitrite collection. Cannot be used in combination with
          * repositoryClass option.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -57,10 +60,13 @@ public interface NitriteEndpointBuilderFactory {
          * Class of Nitrite ObjectRepository. Cannot be used in combination with
          * collection option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryClass the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder repositoryClass(
                 Class<Object> repositoryClass) {
@@ -72,9 +78,12 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryClass the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder repositoryClass(
                 String repositoryClass) {
@@ -85,9 +94,12 @@ public interface NitriteEndpointBuilderFactory {
          * Optional name of ObjectRepository. Can be only used in combination
          * with repositoryClass, otherwise have no effect.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryName the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder repositoryName(
                 String repositoryName) {
@@ -103,10 +115,13 @@ public interface NitriteEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -122,10 +137,14 @@ public interface NitriteEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -136,9 +155,12 @@ public interface NitriteEndpointBuilderFactory {
          * Password for Nitrite database. Required, if option username
          * specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -148,9 +170,12 @@ public interface NitriteEndpointBuilderFactory {
          * Username for Nitrite database. Database is not secured if option not
          * specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -173,10 +198,13 @@ public interface NitriteEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -190,9 +218,12 @@ public interface NitriteEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -202,9 +233,13 @@ public interface NitriteEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -215,9 +250,12 @@ public interface NitriteEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -225,41 +263,16 @@ public interface NitriteEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNitriteEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNitriteEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -270,10 +283,14 @@ public interface NitriteEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -295,9 +312,12 @@ public interface NitriteEndpointBuilderFactory {
          * Name of Nitrite collection. Cannot be used in combination with
          * repositoryClass option.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -307,10 +327,13 @@ public interface NitriteEndpointBuilderFactory {
          * Class of Nitrite ObjectRepository. Cannot be used in combination with
          * collection option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryClass the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder repositoryClass(
                 Class<Object> repositoryClass) {
@@ -322,9 +345,12 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryClass the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder repositoryClass(
                 String repositoryClass) {
@@ -335,9 +361,12 @@ public interface NitriteEndpointBuilderFactory {
          * Optional name of ObjectRepository. Can be only used in combination
          * with repositoryClass, otherwise have no effect.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryName the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder repositoryName(
                 String repositoryName) {
@@ -355,10 +384,13 @@ public interface NitriteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -376,10 +408,14 @@ public interface NitriteEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -390,9 +426,12 @@ public interface NitriteEndpointBuilderFactory {
          * Password for Nitrite database. Required, if option username
          * specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -402,9 +441,12 @@ public interface NitriteEndpointBuilderFactory {
          * Username for Nitrite database. Database is not secured if option not
          * specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -422,41 +464,16 @@ public interface NitriteEndpointBuilderFactory {
             return (NitriteEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNitriteEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNitriteEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -467,10 +484,14 @@ public interface NitriteEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -493,9 +514,12 @@ public interface NitriteEndpointBuilderFactory {
          * Name of Nitrite collection. Cannot be used in combination with
          * repositoryClass option.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -505,10 +529,13 @@ public interface NitriteEndpointBuilderFactory {
          * Class of Nitrite ObjectRepository. Cannot be used in combination with
          * collection option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryClass the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder repositoryClass(
                 Class<Object> repositoryClass) {
@@ -520,9 +547,12 @@ public interface NitriteEndpointBuilderFactory {
          * collection option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryClass the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder repositoryClass(String repositoryClass) {
             doSetProperty("repositoryClass", repositoryClass);
@@ -532,9 +562,12 @@ public interface NitriteEndpointBuilderFactory {
          * Optional name of ObjectRepository. Can be only used in combination
          * with repositoryClass, otherwise have no effect.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryName the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder repositoryName(String repositoryName) {
             doSetProperty("repositoryName", repositoryName);
@@ -544,9 +577,12 @@ public interface NitriteEndpointBuilderFactory {
          * Password for Nitrite database. Required, if option username
          * specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -556,9 +592,12 @@ public interface NitriteEndpointBuilderFactory {
          * Username for Nitrite database. Database is not secured if option not
          * specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -577,41 +616,16 @@ public interface NitriteEndpointBuilderFactory {
             return (NitriteEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNitriteEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNitriteEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -621,10 +635,14 @@ public interface NitriteEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNitriteEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -647,6 +665,7 @@ public interface NitriteEndpointBuilderFactory {
          * Path to database file. Will be created if not exists.
          * 
          * @param path database
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder nitrite(String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder("nitrite", path);
@@ -667,6 +686,7 @@ public interface NitriteEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path database
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder nitrite(String componentName, String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);

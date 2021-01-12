@@ -35,7 +35,9 @@ public class HazelcastSedaComponent extends HazelcastDefaultComponent {
     }
 
     @Override
-    protected HazelcastDefaultEndpoint doCreateEndpoint(String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance) throws Exception {
+    protected HazelcastDefaultEndpoint doCreateEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance)
+            throws Exception {
         final HazelcastSedaConfiguration config = new HazelcastSedaConfiguration();
         config.setQueueName(remaining);
         HazelcastSedaEndpoint answer = new HazelcastSedaEndpoint(hzInstance, uri, this, config);

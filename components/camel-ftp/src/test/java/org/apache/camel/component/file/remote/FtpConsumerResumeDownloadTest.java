@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
     }
 
     @Override
@@ -47,8 +47,8 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
         super.setUp();
 
         // create file on FTP server to download
-        createDirectory(FTP_ROOT_DIR + "/myserver");
-        File temp = new File(FTP_ROOT_DIR + "/myserver", "hello.txt");
+        createDirectory(service.getFtpRootDir() + "/myserver");
+        File temp = new File(service.getFtpRootDir() + "/myserver", "hello.txt");
         temp.createNewFile();
         FileOutputStream fos = new FileOutputStream(temp);
         fos.write("Hello\nWorld\nI was here".getBytes());
@@ -74,7 +74,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
         context.getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");

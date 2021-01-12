@@ -22,37 +22,64 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.OnCamelContextInitialized;
+import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStop;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitialized;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitializing;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStart;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarted;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarting;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStop;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopped;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopping;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LifecycleStrategyDiscoveryTest extends TestSupport {
     @Test
     public void testLifecycleStrategyDiscovery() throws Exception {
-        final AtomicInteger onInit = new AtomicInteger();
+        final AtomicInteger onInitializing = new AtomicInteger();
+        final AtomicInteger onInitialized = new AtomicInteger();
         final AtomicInteger onStart = new AtomicInteger();
+        final AtomicInteger onStarting = new AtomicInteger();
+        final AtomicInteger onStarted = new AtomicInteger();
         final AtomicInteger onStop = new AtomicInteger();
-        final AtomicInteger onInitRoute = new AtomicInteger();
+        final AtomicInteger onStopping = new AtomicInteger();
+        final AtomicInteger onStopped = new AtomicInteger();
+        final AtomicInteger onInitializingRoute = new AtomicInteger();
+        final AtomicInteger onInitializedRoute = new AtomicInteger();
         final AtomicInteger onStartRoute = new AtomicInteger();
         final AtomicInteger onStopRoute = new AtomicInteger();
 
         CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myOnInit", onCamelContextInitialized(c -> onInit.incrementAndGet()));
-        context.getRegistry().bind("myOnStart", onCamelContextInitialized(c -> onStart.incrementAndGet()));
-        context.getRegistry().bind("myOnStop", onCamelContextInitialized(c -> onStop.incrementAndGet()));
+        context.getRegistry().bind("myOnInitializing", onCamelContextInitializing(c -> onInitializing.incrementAndGet()));
+        context.getRegistry().bind("myOnInitialized", onCamelContextInitialized(c -> onInitialized.incrementAndGet()));
+        context.getRegistry().bind("myOnStart", onCamelContextStart(c -> onStart.incrementAndGet()));
+        context.getRegistry().bind("myOnStarting", onCamelContextStarting(c -> onStarting.incrementAndGet()));
+        context.getRegistry().bind("myOnStarted", onCamelContextStarted(c -> onStarted.incrementAndGet()));
+        context.getRegistry().bind("myOnStop", onCamelContextStop(c -> onStop.incrementAndGet()));
+        context.getRegistry().bind("myOnStopping", onCamelContextStopping(c -> onStopping.incrementAndGet()));
+        context.getRegistry().bind("myOnStopped", onCamelContextStopped(c -> onStopped.incrementAndGet()));
 
         try {
-            class MyBuilder extends RouteBuilder implements OnCamelContextInitialized, OnCamelContextStart, OnCamelContextStop {
+            class MyBuilder
+                    extends RouteBuilder
+                    implements OnCamelContextInitializing, OnCamelContextInitialized, OnCamelContextStart, OnCamelContextStop {
+
                 @Override
                 public void configure() throws Exception {
                 }
 
                 @Override
+                public void onContextInitializing(CamelContext context) {
+                    onInitializingRoute.incrementAndGet();
+                }
+
+                @Override
                 public void onContextInitialized(CamelContext context) {
-                    onInitRoute.incrementAndGet();
+                    onInitializedRoute.incrementAndGet();
                 }
 
                 @Override
@@ -72,10 +99,16 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
             context.stop();
         }
 
-        assertEquals(1, onInit.get());
+        assertEquals(1, onInitializing.get());
+        assertEquals(1, onInitialized.get());
         assertEquals(1, onStart.get());
+        assertEquals(1, onStarting.get());
+        assertEquals(1, onStarted.get());
         assertEquals(1, onStop.get());
-        assertEquals(1, onInitRoute.get());
+        assertEquals(1, onStopping.get());
+        assertEquals(1, onStopped.get());
+        assertEquals(1, onInitializingRoute.get());
+        assertEquals(1, onInitializedRoute.get());
         assertEquals(1, onStartRoute.get());
         assertEquals(1, onStopRoute.get());
     }

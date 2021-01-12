@@ -17,8 +17,7 @@
 package org.apache.camel;
 
 /**
- * An exception caused when a mandatory property is not available on a message
- * {@link Exchange}
+ * An exception caused when a mandatory property is not available on a message {@link Exchange}
  * 
  * @see org.apache.camel.support.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
  * 

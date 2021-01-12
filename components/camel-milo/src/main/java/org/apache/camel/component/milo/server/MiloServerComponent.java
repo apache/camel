@@ -151,7 +151,8 @@ public class MiloServerComponent extends DefaultComponent {
      * @return the new server configuration, never returns {@code null}
      */
     private OpcUaServerConfig buildServerConfig() {
-        OpcUaServerConfigBuilder serverConfig = this.opcServerConfig  != null ? this.opcServerConfig : createDefaultConfiguration();
+        OpcUaServerConfigBuilder serverConfig
+                = this.opcServerConfig != null ? this.opcServerConfig : createDefaultConfiguration();
 
         this.securityPolicies = createSecurityPolicies();
 
@@ -187,7 +188,7 @@ public class MiloServerComponent extends DefaultComponent {
                 runOnStop(() -> {
                     try {
                         LOG.debug("Closing: {}", certificateValidator);
-                        ((Closeable)certificateValidator).close();
+                        ((Closeable) certificateValidator).close();
                     } catch (IOException e) {
                         LOG.debug("Failed to close. This exception is ignored.", e);
                     }
@@ -231,7 +232,8 @@ public class MiloServerComponent extends DefaultComponent {
         return createEndpointConfigurations(userTokenPolicies, securityPolicies);
     }
 
-    private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
+    private Set<EndpointConfiguration> createEndpointConfigurations(
+            List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
         Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
 
         //if address is not defined, return empty set
@@ -247,11 +249,12 @@ public class MiloServerComponent extends DefaultComponent {
             boolean anonymous = (this.enableAnonymousAuthentication != null && this.enableAnonymousAuthentication)
                     || Boolean.getBoolean("org.apache.camel.milo.server.default.enableAnonymous");
 
-            UserTokenPolicy[] tokenPolicies =
-                    userTokenPolicies != null ? userTokenPolicies.toArray(new UserTokenPolicy[userTokenPolicies.size()])
+            UserTokenPolicy[] tokenPolicies
+                    = userTokenPolicies != null ? userTokenPolicies.toArray(new UserTokenPolicy[userTokenPolicies.size()])
                             : anonymous
-                                ? new UserTokenPolicy[] {USER_TOKEN_POLICY_ANONYMOUS, USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509}
-                                : new UserTokenPolicy[] {USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509};
+                                    ? new UserTokenPolicy[] {
+                                            USER_TOKEN_POLICY_ANONYMOUS, USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509 }
+                            : new UserTokenPolicy[] { USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509 };
 
             for (String hostname : hostnames) {
                 EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder()
@@ -260,7 +263,6 @@ public class MiloServerComponent extends DefaultComponent {
                         .setCertificate(certificate)
                         .setPath(this.path == null ? "" : this.path)
                         .addTokenPolicies(tokenPolicies);
-
 
                 if (securityPolicies == null || securityPolicies.contains(SecurityPolicy.None)) {
                     EndpointConfiguration.Builder noSecurityBuilder = builder.copy()
@@ -275,15 +277,13 @@ public class MiloServerComponent extends DefaultComponent {
                     endpointConfigurations.add(buildTcpEndpoint(
                             builder.copy()
                                     .setSecurityPolicy(SecurityPolicy.Basic256Sha256)
-                                    .setSecurityMode(MessageSecurityMode.SignAndEncrypt))
-                    );
+                                    .setSecurityMode(MessageSecurityMode.SignAndEncrypt)));
                 } else if (securityPolicies.contains(SecurityPolicy.Basic256Sha256)) {
                     // HTTPS Basic256Sha256 / Sign (SignAndEncrypt not allowed for HTTPS)
                     endpointConfigurations.add(buildHttpsEndpoint(
                             builder.copy()
                                     .setSecurityPolicy(SecurityPolicy.Basic256Sha256)
-                                    .setSecurityMode(MessageSecurityMode.Sign))
-                    );
+                                    .setSecurityMode(MessageSecurityMode.Sign)));
                 }
 
                 /*
@@ -393,7 +393,8 @@ public class MiloServerComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         Endpoint endpoint = new MiloServerEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -436,7 +437,8 @@ public class MiloServerComponent extends DefaultComponent {
             final EnumSet<SecurityPolicy> policies = EnumSet.noneOf(SecurityPolicy.class);
 
             for (final String policyName : ids) {
-                final SecurityPolicy policy = SecurityPolicy.fromUriSafe(policyName).orElseGet(() -> SecurityPolicy.valueOf(policyName));
+                final SecurityPolicy policy
+                        = SecurityPolicy.fromUriSafe(policyName).orElseGet(() -> SecurityPolicy.valueOf(policyName));
                 policies.add(policy);
             }
 
@@ -519,8 +521,7 @@ public class MiloServerComponent extends DefaultComponent {
     }
 
     /**
-     * Set user password combinations in the form of "user1:pwd1,user2:pwd2"
-     * Usernames and passwords will be URL decoded
+     * Set user password combinations in the form of "user1:pwd1,user2:pwd2" Usernames and passwords will be URL decoded
      */
     public void setUserAuthenticationCredentials(final String userAuthenticationCredentials) {
         this.userAuthenticationCredentials = userAuthenticationCredentials;

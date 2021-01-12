@@ -57,8 +57,6 @@ public enum MessageMediaApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathMessageSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private MessageMediaApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

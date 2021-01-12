@@ -39,18 +39,29 @@ public class GrpcMethodHandler {
         this.consumer = consumer;
     }
 
+    /**
+     * This method deals with the unary and server streaming gRPC calls
+     *
+     * @param  body             The request object sent by the gRPC client to the server
+     * @param  responseObserver The response stream observer
+     * @param  methodName       The name of the method invoked using the stub.
+     * @throws Exception        java.lang.Exception
+     */
     public void handle(Object body, StreamObserver<Object> responseObserver, String methodName) throws Exception {
         Map<String, Object> grcpHeaders = populateGrpcHeaders(methodName);
         GrpcEndpoint endpoint = (GrpcEndpoint) consumer.getEndpoint();
+
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(body);
         exchange.getIn().setHeaders(grcpHeaders);
 
-        if (endpoint.isSynchronous()) {
-            consumer.getProcessor().process(exchange);
-        } else {
-            consumer.getAsyncProcessor().process(exchange);
+        if (endpoint.getConfiguration().isRouteControlledStreamObserver()) {
+            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            invokeRoute(endpoint, exchange);
+            return;
         }
+
+        invokeRoute(endpoint, exchange);
 
         if (exchange.isFailed()) {
             responseObserver.onError(Status.INTERNAL
@@ -62,9 +73,7 @@ public class GrpcMethodHandler {
             Object responseBody = exchange.getIn().getBody();
             if (responseBody instanceof List) {
                 List<Object> responseList = (List<Object>) responseBody;
-                responseList.forEach(responseItem -> {
-                    responseObserver.onNext(responseItem);
-                });
+                responseList.forEach(responseObserver::onNext);
             } else {
                 responseObserver.onNext(responseBody);
             }
@@ -72,6 +81,21 @@ public class GrpcMethodHandler {
         }
     }
 
+    private void invokeRoute(GrpcEndpoint endpoint, Exchange exchange) throws Exception {
+        if (endpoint.isSynchronous()) {
+            consumer.getProcessor().process(exchange);
+        } else {
+            consumer.getAsyncProcessor().process(exchange);
+        }
+    }
+
+    /**
+     * This method deals with the client streaming and bi-directional streaming gRPC calls
+     *
+     * @param  responseObserver The response stream observer
+     * @param  methodName       The name of the method invoked using the stub.
+     * @return                  Request stream observer
+     */
     public StreamObserver<Object> handleForConsumerStrategy(StreamObserver<Object> responseObserver, String methodName) {
         Map<String, Object> grcpHeaders = populateGrpcHeaders(methodName);
         GrpcEndpoint endpoint = (GrpcEndpoint) consumer.getEndpoint();
@@ -82,7 +106,8 @@ public class GrpcMethodHandler {
         } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.PROPAGATION) {
             requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
         } else {
-            throw new IllegalArgumentException("gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
+            throw new IllegalArgumentException(
+                    "gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
         }
 
         return requestObserver;
@@ -90,8 +115,10 @@ public class GrpcMethodHandler {
 
     private Map<String, Object> populateGrpcHeaders(String methodName) {
         Map<String, Object> grpcHeaders = new HashMap<>();
-        grpcHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(), GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
-        grpcHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(), GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
+        grpcHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(),
+                GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
+        grpcHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(),
+                GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
         grpcHeaders.put(GrpcConstants.GRPC_METHOD_NAME_HEADER, methodName);
         return grpcHeaders;
     }

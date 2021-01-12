@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
- * XMPP {@link Message}
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a XMPP
+ * {@link Message}
  */
 public class XmppBinding {
 
@@ -77,9 +77,7 @@ public class XmppBinding {
                         JivePropertiesManager.addProperty(message, name, value);
                         LOG.trace("Added property name: {} value: {}", name, value);
                     } catch (IllegalArgumentException iae) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Cannot add property " + name + " to XMPP message due: ", iae);
-                        }
+                        LOG.debug("Cannot add property {} to XMPP message due: {}", name, iae.getMessage(), iae);
                     }
                 }
             }
@@ -102,9 +100,9 @@ public class XmppBinding {
             if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
                 try {
                     JivePropertiesManager.addProperty(stanza, name, value);
-                    LOG.debug("Added property name: " + name + " value: " + value);
+                    LOG.debug("Added property name: {} value: {}", name, value);
                 } catch (IllegalArgumentException iae) {
-                    LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                    LOG.debug("Not adding property {} to XMPP message due to {}", name, iae.getMessage(), iae);
                 }
             }
         }
@@ -113,7 +111,6 @@ public class XmppBinding {
             JivePropertiesManager.addProperty(stanza, "exchangeId", id);
         }
     }
-
 
     /**
      * Extracts the body from the XMPP message
@@ -136,10 +133,10 @@ public class XmppBinding {
 
         ExtensionElement jpe = stanza.getExtension(JivePropertiesExtension.NAMESPACE);
         if (jpe instanceof JivePropertiesExtension) {
-            extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
+            extractHeadersFrom((JivePropertiesExtension) jpe, exchange, answer);
         }
         if (jpe instanceof DefaultExtensionElement) {
-            extractHeadersFrom((DefaultExtensionElement)jpe, exchange, answer);
+            extractHeadersFrom((DefaultExtensionElement) jpe, exchange, answer);
         }
 
         if (stanza instanceof Message) {

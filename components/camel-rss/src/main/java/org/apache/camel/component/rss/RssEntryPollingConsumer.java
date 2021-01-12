@@ -30,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
-    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
+    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
+                                   boolean throttleEntries) {
         super(endpoint, processor, filter, lastUpdate, throttleEntries);
     }
 
@@ -55,7 +56,8 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
         if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
             return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
         } else {
-            return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword(), RssEntryPollingConsumer.class.getClassLoader());
+            return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword(),
+                    RssEntryPollingConsumer.class.getClassLoader());
         }
     }
 

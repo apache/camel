@@ -21,20 +21,21 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.cluster.CamelPreemptiveClusterService;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesLockConfiguration;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A Kubernetes based cluster service leveraging Kubernetes optimistic locks on
- * resources (specifically ConfigMaps).
+ * A Kubernetes based cluster service leveraging Kubernetes optimistic locks on resources (specifically ConfigMaps).
  */
-public class KubernetesClusterService extends AbstractCamelClusterService<KubernetesClusterView> {
+public class KubernetesClusterService extends AbstractCamelClusterService<KubernetesClusterView>
+        implements CamelPreemptiveClusterService {
 
-    private KubernetesConfiguration configuration;
+    protected KubernetesConfiguration configuration;
 
-    private KubernetesLockConfiguration lockConfiguration;
+    protected KubernetesLockConfiguration lockConfiguration;
 
     public KubernetesClusterService() {
         this.configuration = new KubernetesConfiguration();
@@ -59,12 +60,18 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
         return new KubernetesClusterView(getCamelContext(), this, config, lockConfig);
     }
 
-    protected KubernetesConfiguration setConfigDefaults(KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
+    @Override
+    public KubernetesClusterView getView(String namespace) throws Exception {
+        return (KubernetesClusterView) super.getView(namespace);
+    }
+
+    protected KubernetesConfiguration setConfigDefaults(
+            KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
         if (configuration.getConnectionTimeout() == null) {
             // Set the connection timeout to be much lower than the renewal
             // deadline,
             // to avoid losing the leadership in case of stale connections
-            int timeout = (int)(lockConfiguration.getRenewDeadlineMillis() / 3);
+            int timeout = (int) (lockConfiguration.getRenewDeadlineMillis() / 3);
             timeout = Math.max(timeout, 3000);
             timeout = Math.min(timeout, 30000);
             configuration.setConnectionTimeout(timeout);
@@ -105,12 +112,17 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
             throw new IllegalStateException("leaseDurationMillis must be > 0 (found: " + config.getLeaseDurationMillis() + ")");
         }
         if (config.getLeaseDurationMillis() <= config.getRenewDeadlineMillis()) {
-            throw new IllegalStateException("leaseDurationMillis must be greater than renewDeadlineMillis " + "(" + config.getLeaseDurationMillis() + " is not greater than "
+            throw new IllegalStateException(
+                    "leaseDurationMillis must be greater than renewDeadlineMillis ("
+                                            + config.getLeaseDurationMillis() + " is not greater than "
                                             + config.getRenewDeadlineMillis() + ")");
         }
         if (config.getRenewDeadlineMillis() <= config.getJitterFactor() * config.getRetryPeriodMillis()) {
-            throw new IllegalStateException("renewDeadlineMillis must be greater than jitterFactor*retryPeriodMillis " + "(" + config.getRenewDeadlineMillis()
-                                            + " is not greater than " + config.getJitterFactor() + "*" + config.getRetryPeriodMillis() + ")");
+            throw new IllegalStateException(
+                    "renewDeadlineMillis must be greater than jitterFactor*retryPeriodMillis " + "("
+                                            + config.getRenewDeadlineMillis()
+                                            + " is not greater than " + config.getJitterFactor() + "*"
+                                            + config.getRetryPeriodMillis() + ")");
         }
 
         return config;
@@ -121,8 +133,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * Set the URL of the Kubernetes master (read from Kubernetes client
-     * properties by default).
+     * Set the URL of the Kubernetes master (read from Kubernetes client properties by default).
      */
     public void setMasterUrl(String masterUrl) {
         configuration.setMasterUrl(masterUrl);
@@ -133,8 +144,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * Connection timeout in milliseconds to use when making requests to the
-     * Kubernetes API server.
+     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
      */
     public void setConnectionTimeoutMillis(Integer connectionTimeout) {
         configuration.setConnectionTimeout(connectionTimeout);
@@ -145,23 +155,53 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * Set the name of the Kubernetes namespace containing the pods and the
-     * configmap (autodetected by default)
+     * Set the name of the Kubernetes namespace containing the pods and the configmap (autodetected by default)
      */
     public void setKubernetesNamespace(String kubernetesNamespace) {
         this.lockConfiguration.setKubernetesResourcesNamespace(kubernetesNamespace);
     }
 
+    /**
+     * @return     the resource name
+     * @deprecated Use {@link #getKubernetesResourceName()}
+     */
+    @Deprecated
     public String getConfigMapName() {
         return this.lockConfiguration.getConfigMapName();
     }
 
     /**
-     * Set the name of the ConfigMap used to do optimistic locking (defaults to
-     * 'leaders').
+     * Set the name of the ConfigMap used to do optimistic locking (defaults to 'leaders').
+     *
+     * @param      kubernetesResourceName the resource name
+     * @deprecated                        Use {@link #setKubernetesResourceName(String)}
      */
-    public void setConfigMapName(String configMapName) {
-        this.lockConfiguration.setConfigMapName(configMapName);
+    @Deprecated
+    public void setConfigMapName(String kubernetesResourceName) {
+        this.lockConfiguration.setConfigMapName(kubernetesResourceName);
+    }
+
+    public LeaseResourceType getLeaseResourceType() {
+        return this.lockConfiguration.getLeaseResourceType();
+    }
+
+    /**
+     * Set the lease resource type used in Kubernetes (defaults to 'Lease', from coordination.k8s.io).
+     */
+    public void setLeaseResourceType(LeaseResourceType type) {
+        this.lockConfiguration.setLeaseResourceType(type);
+    }
+
+    public String getKubernetesResourceName() {
+        return this.lockConfiguration.getKubernetesResourceName();
+    }
+
+    /**
+     * Set the name of the lease resource used to do optimistic locking (defaults to 'leaders'). Resource name is used
+     * as prefix when the underlying Kubernetes resource can mange a single lock.
+     */
+    public void setKubernetesResourceName(String kubernetesResourceName) {
+        this.lockConfiguration.setKubernetesResourceName(kubernetesResourceName);
     }
 
     public String getPodName() {
@@ -169,8 +209,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * Set the name of the current pod (autodetected from container host name by
-     * default).
+     * Set the name of the current pod (autodetected from container host name by default).
      */
     public void setPodName(String podName) {
         this.lockConfiguration.setPodName(podName);
@@ -196,8 +235,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * A jitter factor to apply in order to prevent all pods to call Kubernetes
-     * APIs in the same instant.
+     * A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant.
      */
     public void setJitterFactor(double jitterFactor) {
         lockConfiguration.setJitterFactor(jitterFactor);
@@ -219,8 +257,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * The deadline after which the leader must stop its services because it may
-     * have lost the leadership.
+     * The deadline after which the leader must stop its services because it may have lost the leadership.
      */
     public void setRenewDeadlineMillis(long renewDeadlineMillis) {
         lockConfiguration.setRenewDeadlineMillis(renewDeadlineMillis);
@@ -231,10 +268,11 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     }
 
     /**
-     * The time between two subsequent attempts to check and acquire the
-     * leadership. It is randomized using the jitter factor.
+     * The time between two subsequent attempts to check and acquire the leadership. It is randomized using the jitter
+     * factor.
      */
     public void setRetryPeriodMillis(long retryPeriodMillis) {
         lockConfiguration.setRetryPeriodMillis(retryPeriodMillis);
     }
+
 }

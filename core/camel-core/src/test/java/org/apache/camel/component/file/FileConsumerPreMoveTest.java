@@ -55,7 +55,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset and drop the same file again
         mock.reset();
@@ -70,7 +70,8 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor()).to("mock:result");
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10")
+                        .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
         };
     }

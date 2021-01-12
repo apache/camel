@@ -37,6 +37,8 @@ public interface HttpComponentBuilderFactory {
      * Category: http
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
+     * 
+     * @return the dsl builder
      */
     static HttpComponentBuilder http() {
         return new HttpComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface HttpComponentBuilderFactory {
          * cookie store is forced to be a noop cookie store as cookie shouldn't
          * be stored as we are just bridging (eg acting as a proxy).
          * 
-         * The option is a: <code>org.apache.http.client.CookieStore</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.http.client.CookieStore&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cookieStore the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder cookieStore(
                 org.apache.http.client.CookieStore cookieStore) {
@@ -74,10 +79,13 @@ public interface HttpComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -90,10 +98,13 @@ public interface HttpComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -101,17 +112,23 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default HttpComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default HttpComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -120,9 +137,12 @@ public interface HttpComponentBuilderFactory {
          * all endpoints created by this component.
          * 
          * The option is a:
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
+         * &lt;code&gt;org.apache.http.conn.HttpClientConnectionManager&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientConnectionManager the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder clientConnectionManager(
                 org.apache.http.conn.HttpClientConnectionManager clientConnectionManager) {
@@ -132,10 +152,13 @@ public interface HttpComponentBuilderFactory {
         /**
          * The maximum number of connections per route.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: advanced
+         * 
+         * @param connectionsPerRoute the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder connectionsPerRoute(int connectionsPerRoute) {
             doSetProperty("connectionsPerRoute", connectionsPerRoute);
@@ -145,9 +168,12 @@ public interface HttpComponentBuilderFactory {
          * The time for connection to live, the time unit is millisecond, the
          * default value is always keep alive.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeToLive the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder connectionTimeToLive(
                 long connectionTimeToLive) {
@@ -159,9 +185,13 @@ public interface HttpComponentBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
@@ -173,10 +203,12 @@ public interface HttpComponentBuilderFactory {
          * the HttpClient that will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.http.HttpClientConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientConfigurer the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder httpClientConfigurer(
                 org.apache.camel.component.http.HttpClientConfigurer httpClientConfigurer) {
@@ -187,9 +219,12 @@ public interface HttpComponentBuilderFactory {
          * To use the shared HttpConfiguration as base configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpConfiguration the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
@@ -200,10 +235,13 @@ public interface HttpComponentBuilderFactory {
          * To use a custom org.apache.http.protocol.HttpContext when executing
          * requests.
          * 
-         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.http.protocol.HttpContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpContext the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder httpContext(
                 org.apache.http.protocol.HttpContext httpContext) {
@@ -213,10 +251,13 @@ public interface HttpComponentBuilderFactory {
         /**
          * The maximum number of connections.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder maxTotalConnections(int maxTotalConnections) {
             doSetProperty("maxTotalConnections", maxTotalConnections);
@@ -227,13 +268,122 @@ public interface HttpComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Proxy authentication domain to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthDomain the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthDomain(
+                java.lang.String proxyAuthDomain) {
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
+            return this;
+        }
+        /**
+         * Proxy authentication host.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthHost the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthHost(
+                java.lang.String proxyAuthHost) {
+            doSetProperty("proxyAuthHost", proxyAuthHost);
+            return this;
+        }
+        /**
+         * Proxy authentication method to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthMethod the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthMethod(
+                java.lang.String proxyAuthMethod) {
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
+            return this;
+        }
+        /**
+         * Proxy authentication domain (workstation name) to use with NTML.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthNtHost the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthNtHost(
+                java.lang.String proxyAuthNtHost) {
+            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthPassword the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthPassword(
+                java.lang.String proxyAuthPassword) {
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
+            return this;
+        }
+        /**
+         * Proxy authentication port.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthPort the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthPort(
+                java.lang.Integer proxyAuthPort) {
+            doSetProperty("proxyAuthPort", proxyAuthPort);
+            return this;
+        }
+        /**
+         * Proxy authentication username.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthUsername the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder proxyAuthUsername(
+                java.lang.String proxyAuthUsername) {
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
             return this;
         }
         /**
@@ -244,9 +394,12 @@ public interface HttpComponentBuilderFactory {
          * need.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -256,10 +409,13 @@ public interface HttpComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -270,9 +426,13 @@ public interface HttpComponentBuilderFactory {
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or NoopHostnameVerifier.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param x509HostnameVerifier the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder x509HostnameVerifier(
                 javax.net.ssl.HostnameVerifier x509HostnameVerifier) {
@@ -286,10 +446,13 @@ public interface HttpComponentBuilderFactory {
          * infinite timeout. A negative value is interpreted as undefined
          * (system default).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: timeout
+         * 
+         * @param connectionRequestTimeout the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder connectionRequestTimeout(
                 int connectionRequestTimeout) {
@@ -303,10 +466,13 @@ public interface HttpComponentBuilderFactory {
          * timeout. A negative value is interpreted as undefined (system
          * default).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: timeout
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -319,10 +485,13 @@ public interface HttpComponentBuilderFactory {
          * interpreted as an infinite timeout. A negative value is interpreted
          * as undefined (system default).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: timeout
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default HttpComponentBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -348,7 +517,7 @@ public interface HttpComponentBuilderFactory {
             case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.http.client.CookieStore) value); return true;
             case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "basicPropertyBinding": ((HttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((HttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientConnectionManager": ((HttpComponent) component).setClientConnectionManager((org.apache.http.conn.HttpClientConnectionManager) value); return true;
             case "connectionsPerRoute": ((HttpComponent) component).setConnectionsPerRoute((int) value); return true;
             case "connectionTimeToLive": ((HttpComponent) component).setConnectionTimeToLive((long) value); return true;
@@ -358,6 +527,13 @@ public interface HttpComponentBuilderFactory {
             case "httpContext": ((HttpComponent) component).setHttpContext((org.apache.http.protocol.HttpContext) value); return true;
             case "maxTotalConnections": ((HttpComponent) component).setMaxTotalConnections((int) value); return true;
             case "headerFilterStrategy": ((HttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "proxyAuthDomain": ((HttpComponent) component).setProxyAuthDomain((java.lang.String) value); return true;
+            case "proxyAuthHost": ((HttpComponent) component).setProxyAuthHost((java.lang.String) value); return true;
+            case "proxyAuthMethod": ((HttpComponent) component).setProxyAuthMethod((java.lang.String) value); return true;
+            case "proxyAuthNtHost": ((HttpComponent) component).setProxyAuthNtHost((java.lang.String) value); return true;
+            case "proxyAuthPassword": ((HttpComponent) component).setProxyAuthPassword((java.lang.String) value); return true;
+            case "proxyAuthPort": ((HttpComponent) component).setProxyAuthPort((java.lang.Integer) value); return true;
+            case "proxyAuthUsername": ((HttpComponent) component).setProxyAuthUsername((java.lang.String) value); return true;
             case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "x509HostnameVerifier": ((HttpComponent) component).setX509HostnameVerifier((javax.net.ssl.HostnameVerifier) value); return true;

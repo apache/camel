@@ -35,7 +35,8 @@ public class RestNettyHttpPostXmlJaxbPojoTest extends BaseNettyTest {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "text/xml");
+        template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE,
+                "text/xml");
 
         assertMockEndpointsSatisfied();
 
@@ -73,7 +74,7 @@ public class RestNettyHttpPostXmlJaxbPojoTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
+                        .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

@@ -42,10 +42,13 @@ public interface LambdaEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -57,10 +60,14 @@ public interface LambdaEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
@@ -78,10 +85,13 @@ public interface LambdaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -99,10 +109,14 @@ public interface LambdaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -113,11 +127,13 @@ public interface LambdaEndpointBuilderFactory {
          * createFunction, deleteFunction or invokeFunction.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.lambda.LambdaOperations&lt;/code&gt; type.
          * 
          * Default: invokeFunction
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder operation(LambdaOperations operation) {
             doSetProperty("operation", operation);
@@ -128,11 +144,13 @@ public interface LambdaEndpointBuilderFactory {
          * createFunction, deleteFunction or invokeFunction.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.lambda.LambdaOperations&lt;/code&gt; type.
          * 
          * Default: invokeFunction
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -143,9 +161,12 @@ public interface LambdaEndpointBuilderFactory {
          * expect the capitalized name of the region (for example AP_EAST_1)
          * You'll need to use the name Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -154,9 +175,12 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the Lambda client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -165,9 +189,12 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Lambda client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -176,10 +203,13 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Lambda client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -188,10 +218,14 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Lambda client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -200,11 +234,14 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Lambda client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: proxy
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -213,9 +250,12 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -224,9 +264,12 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -246,10 +289,14 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * To use a existing configured AwsLambdaClient as client.
          * 
-         * The option is a: <code>com.amazonaws.services.lambda.AWSLambda</code>
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.lambda.AWSLambda&lt;/code&gt;
          * type.
          * 
          * Group: advanced
+         * 
+         * @param awsLambdaClient the value to set
+         * @return the dsl builder
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 Object awsLambdaClient) {
@@ -260,9 +307,13 @@ public interface LambdaEndpointBuilderFactory {
          * To use a existing configured AwsLambdaClient as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.lambda.AWSLambda</code> type.
+         * &lt;code&gt;com.amazonaws.services.lambda.AWSLambda&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param awsLambdaClient the value to set
+         * @return the dsl builder
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 String awsLambdaClient) {
@@ -270,41 +321,16 @@ public interface LambdaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLambdaEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLambdaEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLambdaEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -314,10 +340,14 @@ public interface LambdaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLambdaEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -373,6 +403,7 @@ public interface LambdaEndpointBuilderFactory {
          * Name of the Lambda function.
          * 
          * @param path function
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder awsLambda(String path) {
             return LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
@@ -393,6 +424,7 @@ public interface LambdaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path function
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder awsLambda(
                 String componentName,

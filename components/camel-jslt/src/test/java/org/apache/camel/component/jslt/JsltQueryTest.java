@@ -42,17 +42,15 @@ public class JsltQueryTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://start")
-                    .to("jslt:dummy?allowTemplateFromHeader=true")
-                    .to("mock:result");
+                        .to("jslt:dummy?allowTemplateFromHeader=true")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

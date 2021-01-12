@@ -43,8 +43,9 @@ public class AnyOfOperationTest extends ZooKeeperTestSupport {
 
     private AnyOfOperations getExistsOrWaitOperation(String node) {
         ZooKeeper connection = getConnection();
-        AnyOfOperations operation = new AnyOfOperations(node, new ExistsOperation(connection, node),
-                                                        new ExistenceChangedOperation(connection, node));
+        AnyOfOperations operation = new AnyOfOperations(
+                node, new ExistsOperation(connection, node),
+                new ExistenceChangedOperation(connection, node));
         return operation;
     }
 }

@@ -53,7 +53,8 @@ public class LanguageCacheScriptTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 String script = URLEncoder.encode("Hello ${body}", "UTF-8");
-                endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=true", LanguageEndpoint.class);
+                endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=true",
+                        LanguageEndpoint.class);
 
                 from("direct:start").to(endpoint).to("mock:result");
             }

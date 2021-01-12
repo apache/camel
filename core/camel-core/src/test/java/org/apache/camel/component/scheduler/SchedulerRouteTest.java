@@ -59,7 +59,7 @@ public class SchedulerRouteTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        public AtomicInteger counter = new AtomicInteger(0);
+        public AtomicInteger counter = new AtomicInteger();
 
         public void someMethod() {
             LOG.debug("Invoked someMethod()");

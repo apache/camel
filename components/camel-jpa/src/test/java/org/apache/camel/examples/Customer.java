@@ -26,9 +26,9 @@ import javax.persistence.Version;
 
 @Entity
 @NamedQuery(name = "findAllCustomersWithName",
-query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")
+            query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")
 public class Customer {
-    
+
     @Id
     @GeneratedValue
     private Long id;
@@ -55,7 +55,7 @@ public class Customer {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Address getAddress() {
         return address;
     }
@@ -75,7 +75,8 @@ public class Customer {
     @Override
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
-        return "Customer[id: " + getId() + ", version: " + version + ", name: " + getName() + ", address: " + getAddress() + "]";
+        return "Customer[id: " + getId() + ", version: " + version + ", name: " + getName() + ", address: " + getAddress()
+               + "]";
     }
 
 }

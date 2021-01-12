@@ -30,7 +30,8 @@ import static com.github.dozermapper.core.util.DozerConstants.DEFAULT_MAPPING_FI
 @UriParams
 public class DozerConfiguration {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String name;
     @UriParam
     private String marshalId;
@@ -38,23 +39,25 @@ public class DozerConfiguration {
     private String unmarshalId;
     @UriParam
     private String sourceModel;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String targetModel;
     @UriParam(defaultValue = DEFAULT_MAPPING_FILE)
     private String mappingFile;
     @UriParam
     private DozerBeanMapperConfiguration mappingConfiguration;
-    
+
     public DozerConfiguration() {
         setMappingFile(DEFAULT_MAPPING_FILE);
     }
-    
+
     public String getMarshalId() {
         return marshalId;
     }
 
     /**
-     * The id of a dataFormat defined within the Camel Context to use for marshalling the mapping output to a non-Java type.
+     * The id of a dataFormat defined within the Camel Context to use for marshalling the mapping output to a non-Java
+     * type.
      */
     public void setMarshalId(String marshalId) {
         this.marshalId = marshalId;
@@ -65,7 +68,8 @@ public class DozerConfiguration {
     }
 
     /**
-     * The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a non-Java type.
+     * The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a
+     * non-Java type.
      */
     public void setUnmarshalId(String unmarshalId) {
         this.unmarshalId = unmarshalId;
@@ -76,7 +80,8 @@ public class DozerConfiguration {
     }
 
     /**
-     * Fully-qualified class name for the source type used in the mapping. If specified, the input to the mapping is converted to the specified type before being mapped with Dozer.
+     * Fully-qualified class name for the source type used in the mapping. If specified, the input to the mapping is
+     * converted to the specified type before being mapped with Dozer.
      */
     public void setSourceModel(String sourceModel) {
         this.sourceModel = sourceModel;
@@ -103,27 +108,28 @@ public class DozerConfiguration {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getMappingFile() {
         return mappingFile;
     }
 
     /**
-     * The location of a Dozer configuration file. The file is loaded from the classpath by default,
-     * but you can use file:, classpath:, or http: to load the configuration from a specific location.
+     * The location of a Dozer configuration file. The file is loaded from the classpath by default, but you can use
+     * file:, classpath:, or http: to load the configuration from a specific location.
      */
     public void setMappingFile(String mappingFile) {
         this.mappingFile = mappingFile;
     }
-    
+
     public DozerBeanMapperConfiguration getMappingConfiguration() {
         return mappingConfiguration;
     }
 
     /**
-     * The name of a DozerBeanMapperConfiguration bean in the Camel registry which should be used for configuring the Dozer mapping.
-     * This is an alternative to the mappingFile option that can be used for fine-grained control over how Dozer is configured.
-     * Remember to use a "#" prefix in the value to indicate that the bean is in the Camel registry (e.g. "#myDozerConfig").
+     * The name of a DozerBeanMapperConfiguration bean in the Camel registry which should be used for configuring the
+     * Dozer mapping. This is an alternative to the mappingFile option that can be used for fine-grained control over
+     * how Dozer is configured. Remember to use a "#" prefix in the value to indicate that the bean is in the Camel
+     * registry (e.g. "#myDozerConfig").
      */
     public void setMappingConfiguration(DozerBeanMapperConfiguration mappingConfiguration) {
         this.mappingConfiguration = mappingConfiguration;

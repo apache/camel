@@ -7,9 +7,9 @@
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "monitoring,microservice",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-opentelemetry",
-    "version": "3.5.0-SNAPSHOT"
+    "version": "3.8.0-SNAPSHOT"
   }
 }

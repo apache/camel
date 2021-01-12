@@ -4,8 +4,10 @@ package org.apache.camel.component.azure.blob;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -26,10 +28,10 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BlobServiceComponent target = (BlobServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "azureblobclient":
         case "azureBlobClient": getOrCreateConfiguration(target).setAzureBlobClient(property(camelContext, com.microsoft.azure.storage.blob.CloudBlob.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobmetadata":
         case "blobMetadata": getOrCreateConfiguration(target).setBlobMetadata(property(camelContext, java.util.Map.class, value)); return true;
         case "bloboffset":
@@ -72,41 +74,61 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("azureBlobClient", com.microsoft.azure.storage.blob.CloudBlob.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blobMetadata", java.util.Map.class);
-        answer.put("blobOffset", java.lang.Long.class);
-        answer.put("blobPrefix", java.lang.String.class);
-        answer.put("blobType", org.apache.camel.component.azure.blob.BlobType.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("closeStreamAfterRead", boolean.class);
-        answer.put("closeStreamAfterWrite", boolean.class);
-        answer.put("configuration", org.apache.camel.component.azure.blob.BlobServiceConfiguration.class);
-        answer.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
-        answer.put("credentialsAccountKey", java.lang.String.class);
-        answer.put("credentialsAccountName", java.lang.String.class);
-        answer.put("dataLength", java.lang.Long.class);
-        answer.put("fileDir", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.azure.blob.BlobServiceOperations.class);
-        answer.put("publicForRead", boolean.class);
-        answer.put("streamReadSize", int.class);
-        answer.put("streamWriteSize", int.class);
-        answer.put("useFlatListing", boolean.class);
-        answer.put("validateClientURI", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "azureblobclient":
+        case "azureBlobClient": return com.microsoft.azure.storage.blob.CloudBlob.class;
+        case "blobmetadata":
+        case "blobMetadata": return java.util.Map.class;
+        case "bloboffset":
+        case "blobOffset": return java.lang.Long.class;
+        case "blobprefix":
+        case "blobPrefix": return java.lang.String.class;
+        case "blobtype":
+        case "blobType": return org.apache.camel.component.azure.blob.BlobType.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return boolean.class;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return boolean.class;
+        case "configuration": return org.apache.camel.component.azure.blob.BlobServiceConfiguration.class;
+        case "credentials": return com.microsoft.azure.storage.StorageCredentials.class;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": return java.lang.String.class;
+        case "credentialsaccountname":
+        case "credentialsAccountName": return java.lang.String.class;
+        case "datalength":
+        case "dataLength": return java.lang.Long.class;
+        case "filedir":
+        case "fileDir": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.azure.blob.BlobServiceOperations.class;
+        case "publicforread":
+        case "publicForRead": return boolean.class;
+        case "streamreadsize":
+        case "streamReadSize": return int.class;
+        case "streamwritesize":
+        case "streamWriteSize": return int.class;
+        case "useflatlisting":
+        case "useFlatListing": return boolean.class;
+        case "validateclienturi":
+        case "validateClientURI": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BlobServiceComponent target = (BlobServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "azureblobclient":
         case "azureBlobClient": return getOrCreateConfiguration(target).getAzureBlobClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobmetadata":
         case "blobMetadata": return getOrCreateConfiguration(target).getBlobMetadata();
         case "bloboffset":
@@ -144,6 +166,15 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         case "useFlatListing": return getOrCreateConfiguration(target).isUseFlatListing();
         case "validateclienturi":
         case "validateClientURI": return getOrCreateConfiguration(target).isValidateClientURI();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blobmetadata":
+        case "blobMetadata": return java.lang.String.class;
         default: return null;
         }
     }

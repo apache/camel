@@ -59,7 +59,7 @@ public class CamelKieServerExtensionTest {
 
     @Mock
     private KieContainer kieContainer;
-    
+
     private String identifier = "test";
 
     @AfterEach
@@ -71,7 +71,8 @@ public class CamelKieServerExtensionTest {
     public void testInit() {
         CamelKieServerExtension extension = new CamelKieServerExtension();
         extension.init(null, null);
-        DefaultCamelContext globalCamelContext = (DefaultCamelContext)ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        DefaultCamelContext globalCamelContext
+                = (DefaultCamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         List<RouteDefinition> globalRestDefinitions = globalCamelContext.getRouteDefinitions();
         assertThat(globalRestDefinitions.size(), equalTo(1));
         assertThat(globalCamelContext.getRouteDefinition("unitTestRoute"), is(notNullValue()));
@@ -87,7 +88,8 @@ public class CamelKieServerExtensionTest {
 
         extension.createContainer(containerId, kieContainerInstance, new HashMap<String, Object>());
 
-        DefaultCamelContext camelContext = (DefaultCamelContext)ServiceRegistry.get().service("testContainer" + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
+        DefaultCamelContext camelContext = (DefaultCamelContext) ServiceRegistry.get()
+                .service("testContainer" + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
         List<RouteDefinition> restDefinitions = camelContext.getRouteDefinitions();
         assertThat(restDefinitions.size(), equalTo(1));
 

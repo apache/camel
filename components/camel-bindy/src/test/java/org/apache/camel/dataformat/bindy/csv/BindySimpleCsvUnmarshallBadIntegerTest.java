@@ -63,9 +63,9 @@ public class BindySimpleCsvUnmarshallBadIntegerTest {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-       
+
         Object data = result.getReceivedExchanges().get(0).getIn().getBody();
-        
+
         LOG.info(">>> Model generated : " + data.getClass().getName());
     }
 
@@ -94,7 +94,8 @@ public class BindySimpleCsvUnmarshallBadIntegerTest {
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
+        BindyCsvDataFormat orderBindyDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
 
         @Override
         public void configure() {

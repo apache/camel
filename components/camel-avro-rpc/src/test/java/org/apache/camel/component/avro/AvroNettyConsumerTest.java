@@ -34,17 +34,29 @@ public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
 
     @Override
     protected void initializeTranceiver() throws IOException {
-        transceiver = new NettyTransceiver(new InetSocketAddress("localhost", avroPort));
-        requestor = new SpecificRequestor(KeyValueProtocol.class, transceiver);
+        ConsumerRouteType type = getRouteType();
 
-        transceiverMessageInRoute = new NettyTransceiver(new InetSocketAddress("localhost", avroPortMessageInRoute));
-        requestorMessageInRoute = new SpecificRequestor(KeyValueProtocol.class, transceiverMessageInRoute);
-
-        transceiverForWrongMessages = new NettyTransceiver(new InetSocketAddress("localhost", avroPortForWrongMessages));
-        requestorForWrongMessages = new SpecificRequestor(KeyValueProtocol.class, transceiverForWrongMessages);
-
-        reflectTransceiver = new NettyTransceiver(new InetSocketAddress("localhost", avroPortReflection));
-        reflectRequestor = new ReflectRequestor(TestReflection.class, reflectTransceiver);
+        switch (type) {
+            case reflect:
+                reflectTransceiver = new NettyTransceiver(new InetSocketAddress("localhost", avroPortReflection));
+                reflectRequestor = new ReflectRequestor(TestReflection.class, reflectTransceiver);
+                return;
+            case specific:
+                transceiver = new NettyTransceiver(new InetSocketAddress("localhost", avroPort));
+                requestor = new SpecificRequestor(KeyValueProtocol.class, transceiver);
+                return;
+            case specificProcessor:
+                transceiverMessageInRoute = new NettyTransceiver(new InetSocketAddress("localhost", avroPortMessageInRoute));
+                requestorMessageInRoute = new SpecificRequestor(KeyValueProtocol.class, transceiverMessageInRoute);
+                return;
+            case specificProcessorWrong:
+                transceiverForWrongMessages
+                        = new NettyTransceiver(new InetSocketAddress("localhost", avroPortForWrongMessages));
+                requestorForWrongMessages = new SpecificRequestor(KeyValueProtocol.class, transceiverForWrongMessages);
+                return;
+            default:
+                throw new IllegalStateException("Unsupported type of route.");
+        }
     }
 
     @Override
@@ -52,34 +64,58 @@ public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                //In Only
-                from("avro:netty:localhost:" + avroPort + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").choice()
-                        .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'put'").process(new PutProcessor(keyValue))
-                        .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'get'").process(new GetProcessor(keyValue));
 
-                from("avro:netty:localhost:" + avroPortMessageInRoute + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
-                        .process(new PutProcessor(keyValue));
+                switch (getRouteType()) {
+                    case specific:
+                        from("avro:netty:localhost:" + avroPort
+                             + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                     .choice()
+                                     .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'put'")
+                                     .process(new PutProcessor(keyValue))
+                                     .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'get'")
+                                     .process(new GetProcessor(keyValue));
+                        break;
+                    case specificProcessor:
+                        from("avro:netty:localhost:" + avroPortMessageInRoute
+                             + "/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                     .process(new GetProcessor(keyValue));
 
-                from("avro:netty:localhost:" + avroPortMessageInRoute + "/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
-                        .process(new GetProcessor(keyValue));
+                        from("avro:netty:localhost:" + avroPortMessageInRoute
+                             + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                     .process(new PutProcessor(keyValue));
 
-                from("avro:netty:localhost:" + avroPortForWrongMessages + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
-                        .process(new PutProcessor(keyValue));
+                        break;
+                    case specificProcessorWrong:
+                        from("avro:netty:localhost:" + avroPortForWrongMessages
+                             + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                     .process(new PutProcessor(keyValue));
+                        break;
+                    case reflect:
+                        from("avro:netty:localhost:" + avroPortReflection
+                             + "/getTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection")
+                                     .process(new ReflectionInOutProcessor(testReflection));
 
-                from("avro:netty:localhost:" + avroPortReflection + "/setName?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
-                        .process(new ReflectionInOnlyProcessor(testReflection));
+                        from("avro:netty:localhost:" + avroPortReflection
+                             + "/setAge?protocolClassName=org.apache.camel.avro.test.TestReflection")
+                                     .process(new ReflectionInOnlyProcessor(testReflection));
 
-                from("avro:netty:localhost:" + avroPortReflection + "/setAge?protocolClassName=org.apache.camel.avro.test.TestReflection")
-                        .process(new ReflectionInOnlyProcessor(testReflection));
+                        from("avro:http:localhost:" + avroPortReflection
+                             + "/setTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
+                                     .process(new ReflectionInOnlyProcessor(testReflection));
 
-                from("avro:http:localhost:" + avroPortReflection + "/setTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
-                        .process(new ReflectionInOnlyProcessor(testReflection));
+                        from("avro:http:localhost:" + avroPortReflection
+                             + "/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
+                                     .process(new ReflectionInOutProcessor(testReflection));
 
-                from("avro:http:localhost:" + avroPortReflection + "/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
-                        .process(new ReflectionInOutProcessor(testReflection));
+                        from("avro:netty:localhost:" + avroPortReflection
+                             + "/setName?protocolClassName=org.apache.camel.avro.test.TestReflection&singleParameter=true")
+                                     .process(new ReflectionInOnlyProcessor(testReflection));
 
-                from("avro:netty:localhost:" + avroPortReflection + "/getTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection")
-                        .process(new ReflectionInOutProcessor(testReflection));
+                        break;
+                    default:
+                        throw new IllegalStateException("Unsupported type of route.");
+                }
+
             }
         };
     }

@@ -25,6 +25,4 @@ public class MyRouteBuilder extends AbstractRouteBuilder {
         return "mock:result";
     }
 
-   
-
 }

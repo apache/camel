@@ -54,18 +54,20 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             FullHttpResponse fullHttpResponse = (FullHttpResponse) message;
             response = fullHttpResponse;
             // use the binding
-            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(fullHttpResponse, exchange, producer.getConfiguration());
+            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(fullHttpResponse, exchange,
+                    producer.getConfiguration());
         } else {
             InboundStreamHttpResponse streamHttpResponse = (InboundStreamHttpResponse) message;
             response = streamHttpResponse.getHttpResponse();
-            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange, producer.getConfiguration());
+            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange,
+                    producer.getConfiguration());
         }
 
         if (response.status().equals(HttpResponseStatus.CONTINUE)) {
             // need to continue to send the body and will ignore this response
             exchange.setProperty(NettyConstants.NETTY_CLIENT_CONTINUE, true);
         }
-        
+
         if (!HttpUtil.isKeepAlive(response)) {
             // just want to make sure we close the channel if the keepAlive is not true
             exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
@@ -83,5 +85,5 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
 
         return answer;
     }
-    
+
 }

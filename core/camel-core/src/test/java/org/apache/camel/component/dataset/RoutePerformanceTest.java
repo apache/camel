@@ -28,9 +28,8 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 /**
- * A route for simple performance testing that can be used when we suspect
- * something is wrong. Inspired by end user on forum doing this as proof of
- * concept.
+ * A route for simple performance testing that can be used when we suspect something is wrong. Inspired by end user on
+ * forum doing this as proof of concept.
  */
 public class RoutePerformanceTest extends ContextTestSupport {
 
@@ -52,7 +51,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
         StopWatch watch = new StopWatch();
 
         MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int)dataSet.getSize());
+        endpoint.expectedMessageCount((int) dataSet.getSize());
         endpoint.expectedHeaderReceived("foo", 123);
 
         // wait 30 sec for slow servers

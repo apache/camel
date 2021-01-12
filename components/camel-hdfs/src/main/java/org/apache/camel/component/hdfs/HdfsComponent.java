@@ -53,7 +53,7 @@ public class HdfsComponent extends DefaultComponent {
             URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
         } catch (Throwable e) {
             // ignore as its most likely already set
-            LOG.debug("Cannot set URLStreamHandlerFactory due " + e.getMessage() + ". This exception will be ignored.", e);
+            LOG.debug("Cannot set URLStreamHandlerFactory due {}. This exception will be ignored.", e.getMessage(), e);
         }
     }
 
@@ -86,10 +86,11 @@ public class HdfsComponent extends DefaultComponent {
     }
 
     /**
-     * To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file.
-     * If the environment variable is already set, warn if different than the specified parameter
+     * To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an
+     * existing file. If the environment variable is already set, warn if different than the specified parameter
      *
-     * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
+     * @param kerberosConfigFileLocation - kerb5.conf file
+     *                                   (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
     @Metadata(label = "security")
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) {

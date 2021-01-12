@@ -25,14 +25,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for consuming files from a FTP Server to files where we want to use
- * the filename from the FTPServer instead of explicit setting a filename using
- * the file headername option.
+ * Unit test for consuming files from a FTP Server to files where we want to use the filename from the FTPServer instead
+ * of explicit setting a filename using the file headername option.
  */
 public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp3/camel?password=admin&binary=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tmp3/camel?password=admin&binary=false";
     }
 
     @Override

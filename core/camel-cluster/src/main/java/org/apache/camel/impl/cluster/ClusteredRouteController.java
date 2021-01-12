@@ -27,11 +27,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Experimental;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -47,7 +45,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Experimental
+/**
+ * Clustered {@link org.apache.camel.spi.RouteController}.
+ */
 public class ClusteredRouteController extends DefaultRouteController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRouteController.class);
 
@@ -117,8 +117,8 @@ public class ClusteredRouteController extends DefaultRouteController {
     }
 
     /**
-     * Set the amount of time the route controller should wait before to start
-     * the routes after the camel context is started.
+     * Set the amount of time the route controller should wait before to start the routes after the camel context is
+     * started.
      *
      * @param initialDelay the initial delay.
      */
@@ -186,7 +186,8 @@ public class ClusteredRouteController extends DefaultRouteController {
             clusterService = ClusterServiceHelper.mandatoryLookupService(context, clusterServiceSelector);
         }
 
-        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(), clusterService.getClass().getName());
+        LOGGER.debug("Using ClusterService instance {} (id={}, type={})", clusterService, clusterService.getId(),
+                clusterService.getClass().getName());
 
         if (!ServiceHelper.isStarted(clusterService)) {
             // Start the cluster service if not yet started.
@@ -214,85 +215,13 @@ public class ClusteredRouteController extends DefaultRouteController {
     }
 
     // *******************************
-    // Route operations are disabled
-    // *******************************
-
-    @Override
-    public void startRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.startRoute(routeId);
-    }
-
-    @Override
-    public void stopRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.stopRoute(routeId);
-    }
-
-    @Override
-    public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.stopRoute(routeId, timeout, timeUnit);
-    }
-
-    @Override
-    public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        return super.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
-    }
-
-    @Override
-    public void suspendRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.suspendRoute(routeId);
-    }
-
-    @Override
-    public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.suspendRoute(routeId, timeout, timeUnit);
-    }
-
-    @Override
-    public void resumeRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.resumeRoute(routeId);
-    }
-
-    // *******************************
-    // Helpers
-    // *******************************
-
-    private void failIfClustered(String routeId) {
-        // Can't perform action on routes managed by this controller as they
-        // are clustered and they may be part of the same view.
-        if (routes.contains(routeId)) {
-            throw new UnsupportedOperationException("Operation not supported as route " + routeId + " is clustered");
-        }
-    }
-
-    // *******************************
     // Factories
     // *******************************
 
     private final class PolicyFactory implements RoutePolicyFactory {
         @Override
         public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode node) {
-            RouteDefinition route = (RouteDefinition)node;
+            RouteDefinition route = (RouteDefinition) node;
             // All the filter have to be match to include the route in the
             // clustering set-up
             if (filters.stream().allMatch(filter -> filter.test(camelContext, routeId, route))) {
@@ -307,9 +236,12 @@ public class ClusteredRouteController extends DefaultRouteController {
                 }
 
                 try {
-                    final ClusteredRouteConfiguration configuration = configurations.getOrDefault(routeId, defaultConfiguration);
-                    final String namespace = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
-                    final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(), defaultConfiguration::getInitialDelay);
+                    final ClusteredRouteConfiguration configuration
+                            = configurations.getOrDefault(routeId, defaultConfiguration);
+                    final String namespace
+                            = ObjectHelper.supplyIfEmpty(configuration.getNamespace(), defaultConfiguration::getNamespace);
+                    final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(),
+                            defaultConfiguration::getInitialDelay);
 
                     ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace(clusterService, namespace);
                     policy.setCamelContext(getCamelContext());

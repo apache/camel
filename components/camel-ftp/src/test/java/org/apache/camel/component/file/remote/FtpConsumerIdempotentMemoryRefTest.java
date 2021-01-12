@@ -33,11 +33,11 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
     private MemoryIdempotentRepository repo;
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-               + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&idempotentKey=${file:onlyname}&delete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/idempotent?password=admin&binary=false&idempotent=true"
+               + "&idempotentRepository=#myConsumerIdemRepo&idempotentKey=${file:onlyname}&delete=true";
     }
 
-    @BindToRegistry("myRepo")
+    @BindToRegistry("myConsumerIdemRepo")
     public MemoryIdempotentRepository addRepo() throws Exception {
         repo = new MemoryIdempotentRepository();
         repo.setCacheSize(5);
@@ -56,7 +56,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello E", "e.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(5, repo.getCache().size());
         assertTrue(repo.contains("a.txt"));
@@ -78,7 +78,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello G", "g.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(5, repo.getCache().size());
     }

@@ -50,10 +50,13 @@ public interface DigitalOceanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -71,10 +74,14 @@ public interface DigitalOceanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -84,10 +91,13 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Use for pagination. Force the page number.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder page(Integer page) {
             doSetProperty("page", page);
@@ -96,11 +106,14 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Use for pagination. Force the page number.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder page(String page) {
             doSetProperty("page", page);
@@ -110,10 +123,13 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Use for pagination. Set the number of item per request. The maximum
          * number of results per page is 200.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 25
          * Group: producer
+         * 
+         * @param perPage the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder perPage(Integer perPage) {
             doSetProperty("perPage", perPage);
@@ -123,11 +139,14 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Use for pagination. Set the number of item per request. The maximum
          * number of results per page is 200.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 25
          * Group: producer
+         * 
+         * @param perPage the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder perPage(String perPage) {
             doSetProperty("perPage", perPage);
@@ -137,10 +156,13 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The DigitalOcean resource type on which perform the operation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
+         * &lt;code&gt;org.apache.camel.component.digitalocean.constants.DigitalOceanResources&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param resource the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder resource(
                 DigitalOceanResources resource) {
@@ -151,10 +173,13 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The DigitalOcean resource type on which perform the operation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
+         * &lt;code&gt;org.apache.camel.component.digitalocean.constants.DigitalOceanResources&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param resource the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder resource(String resource) {
             doSetProperty("resource", resource);
@@ -163,9 +188,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy host if needed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder httpProxyHost(String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
@@ -174,9 +202,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy password if needed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -186,9 +217,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy port if needed.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -197,10 +231,13 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy port if needed.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder httpProxyPort(String httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -209,9 +246,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Set a proxy host if needed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder httpProxyUser(String httpProxyUser) {
             doSetProperty("httpProxyUser", httpProxyUser);
@@ -220,9 +260,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * DigitalOcean OAuth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthToken the value to set
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder oAuthToken(String oAuthToken) {
             doSetProperty("oAuthToken", oAuthToken);
@@ -240,40 +283,15 @@ public interface DigitalOceanEndpointBuilderFactory {
             return (DigitalOceanEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a existing configured DigitalOceanClient as client.
          * 
          * The option is a:
-         * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
+         * &lt;code&gt;com.myjeeva.digitalocean.impl.DigitalOceanClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param digitalOceanClient the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 Object digitalOceanClient) {
@@ -284,9 +302,12 @@ public interface DigitalOceanEndpointBuilderFactory {
          * To use a existing configured DigitalOceanClient as client.
          * 
          * The option will be converted to a
-         * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
+         * &lt;code&gt;com.myjeeva.digitalocean.impl.DigitalOceanClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param digitalOceanClient the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 String digitalOceanClient) {
@@ -297,10 +318,13 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -311,10 +335,14 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(
                 String synchronous) {
@@ -354,15 +382,16 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * Path parameter: operation
          * The operation to perform to the given resource.
-         * The value can be one of: create, update, delete, list, ownList, get,
-         * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-         * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-         * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-         * rename, changeKernel, enableIpv6, enablePrivateNetworking,
-         * takeSnapshot, transfer, convert, attach, detach, assign, unassign,
-         * tag, untag
+         * There are 36 enums and the value can be one of: create, update,
+         * delete, list, ownList, get, listBackups, listActions, listNeighbors,
+         * listSnapshots, listKernels, listAllNeighbors, enableBackups,
+         * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff,
+         * restore, resetPassword, resize, rebuild, rename, changeKernel,
+         * enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert,
+         * attach, detach, assign, unassign, tag, untag
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder digitalocean(String path) {
             return DigitalOceanEndpointBuilderFactory.endpointBuilder("digitalocean", path);
@@ -379,17 +408,18 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * Path parameter: operation
          * The operation to perform to the given resource.
-         * The value can be one of: create, update, delete, list, ownList, get,
-         * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-         * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-         * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-         * rename, changeKernel, enableIpv6, enablePrivateNetworking,
-         * takeSnapshot, transfer, convert, attach, detach, assign, unassign,
-         * tag, untag
+         * There are 36 enums and the value can be one of: create, update,
+         * delete, list, ownList, get, listBackups, listActions, listNeighbors,
+         * listSnapshots, listKernels, listAllNeighbors, enableBackups,
+         * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff,
+         * restore, resetPassword, resize, rebuild, rename, changeKernel,
+         * enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert,
+         * attach, detach, assign, unassign, tag, untag
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder digitalocean(
                 String componentName,

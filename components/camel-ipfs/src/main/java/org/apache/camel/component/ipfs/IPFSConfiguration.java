@@ -26,10 +26,14 @@ public class IPFSConfiguration {
 
     // Available commands
     public enum IPFSCommand {
-        add, cat, get, version
+        add,
+        cat,
+        get,
+        version
     }
 
-    @UriPath(description = "The ipfs command", enums = "add,cat,get,version") @Metadata(required = true)
+    @UriPath(description = "The ipfs command", enums = "add,cat,get,version")
+    @Metadata(required = true)
     private String ipfsCmd;
     @UriParam(description = "The ipfs output directory")
     private String outdir;

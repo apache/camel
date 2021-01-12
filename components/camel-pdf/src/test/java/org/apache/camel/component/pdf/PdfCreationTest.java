@@ -97,7 +97,8 @@ public class PdfCreationTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody();
                 assertThat(body, instanceOf(ByteArrayOutputStream.class));
                 try {
-                    PDDocument doc = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
+                    PDDocument doc
+                            = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray()), userPass);
                     assertTrue(doc.isEncrypted(), "Expected encrypted document");
                     assertFalse(doc.getCurrentAccessPermission().canPrint(), "Printing should not be permitted");
                     PDFTextStripper pdfTextStripper = new PDFTextStripper();
@@ -119,7 +120,7 @@ public class PdfCreationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("pdf:create?font=Courier&pageSize=PAGE_SIZE_A1")
+                        .to("pdf:create?fontSize=6&font=Courier&pageSize=PAGE_SIZE_A1")
                         .to("mock:result");
             }
         };

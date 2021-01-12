@@ -157,7 +157,7 @@ original we received.
 === Boundary of original message
 
 The original input means the input message that are bounded by the current unit of work. An unit of work typically spans one route, or multiple routes if they are connected 
-using internal endpoints such as direct or seda. When messages is passed via external
+using internal endpoints such as direct or seda. When messages are passed via external
 endpoints such as JMS or HTT then the consumer will create a new unit of work, with the
 message it received as input as the original input. Also some EIP patterns such as splitter,
 multicast, will create a new unit of work boundary for the messages in their sub-route
@@ -207,7 +207,7 @@ The maximum redeliver delay ensures that a delay is never longer than
 the value, default 1 minute. This can happen if you turn on the
 exponential backoff.
 
-The maximum redeliveries is the number of redelivery attempts. By
+The maximum redeliveries are the number of redelivery attempts. By
 default Camel will try to process the exchange 1 + 5 times. 1 time for
 the normal attempt and then 5 attempts as redeliveries.
 Setting the maximumRedeliveries to a negative value such as -1 will
@@ -429,7 +429,7 @@ option `allowRedeliveryWhileStopping` which you can use to control if
 redelivery is allowed or not; notice that any in progress redelivery
 will still be executed. This option can only disallow any redelivery to
 be executed *after* the stopping of a route/shutdown of Camel has been
-triggered. If a redelivery is dissallowed then a
+triggered. If a redelivery is disallowed then a
 `RejectedExecutionException` is set on the xref:latest@manual:ROOT:exchange.adoc[Exchange]
 and the processing of the xref:latest@manual:ROOT:exchange.adoc[Exchange] stops. This means
 any consumer will see the xref:latest@manual:ROOT:exchange.adoc[Exchange] as failed due the
@@ -439,7 +439,7 @@ The default value is `true` to be backwards compatible as before. For
 example the following sample shows how to do this with Java DSL and XML
 DSL
 
-And the sample sample with XML DSL
+And the sample with XML DSL
 
 [[deadLetterChannel-Samples]]
 == Samples

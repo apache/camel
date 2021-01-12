@@ -37,6 +37,8 @@ public interface IpfsComponentBuilderFactory {
      * Category: file,ipfs
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
+     * 
+     * @return the dsl builder
      */
     static IpfsComponentBuilder ipfs() {
         return new IpfsComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface IpfsComponentBuilderFactory {
         /**
          * The ipfs host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 127.0.0.1
          * Group: producer
+         * 
+         * @param ipfsHost the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder ipfsHost(java.lang.String ipfsHost) {
             doSetProperty("ipfsHost", ipfsHost);
@@ -61,10 +66,13 @@ public interface IpfsComponentBuilderFactory {
         /**
          * The ipfs port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5001
          * Group: producer
+         * 
+         * @param ipfsPort the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder ipfsPort(int ipfsPort) {
             doSetProperty("ipfsPort", ipfsPort);
@@ -81,27 +89,36 @@ public interface IpfsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default IpfsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default IpfsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -124,7 +141,7 @@ public interface IpfsComponentBuilderFactory {
             case "ipfsHost": ((IPFSComponent) component).setIpfsHost((java.lang.String) value); return true;
             case "ipfsPort": ((IPFSComponent) component).setIpfsPort((int) value); return true;
             case "lazyStartProducer": ((IPFSComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((IPFSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((IPFSComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

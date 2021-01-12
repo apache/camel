@@ -66,22 +66,21 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
                 notify.matches(30, TimeUnit.SECONDS), is(equalTo(true)));
 
         List<TestTrace> testData = Arrays.asList(
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude"))
-            .withSegment(TestDataBuilder.createSegment("car")),
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude"))
-            .withSegment(TestDataBuilder.createSegment("car")),
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude"))
-            .withSegment(TestDataBuilder.createSegment("car")),
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude"))
-            .withSegment(TestDataBuilder.createSegment("car")),
-        TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude"))
-            .withSegment(TestDataBuilder.createSegment("car"))
-        );
+                TestDataBuilder.createTrace()
+                        .withSegment(TestDataBuilder.createSegment("dude"))
+                        .withSegment(TestDataBuilder.createSegment("car")),
+                TestDataBuilder.createTrace()
+                        .withSegment(TestDataBuilder.createSegment("dude"))
+                        .withSegment(TestDataBuilder.createSegment("car")),
+                TestDataBuilder.createTrace()
+                        .withSegment(TestDataBuilder.createSegment("dude"))
+                        .withSegment(TestDataBuilder.createSegment("car")),
+                TestDataBuilder.createTrace()
+                        .withSegment(TestDataBuilder.createSegment("dude"))
+                        .withSegment(TestDataBuilder.createSegment("car")),
+                TestDataBuilder.createTrace()
+                        .withSegment(TestDataBuilder.createSegment("dude"))
+                        .withSegment(TestDataBuilder.createSegment("car")));
 
         Thread.sleep(2000);
 

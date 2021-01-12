@@ -63,7 +63,8 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     @Test
     public void testExceptionExpected() throws Exception {
         LOG.info("gRPC expected exception test start");
-        PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         assertThrows(StatusRuntimeException.class, () -> blockingStub.pingSyncSync(pingRequest));
     }
 
@@ -71,7 +72,8 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     public void testExchangeExceptionHandling() throws Exception {
         LOG.info("gRPC exchange exception handling test start");
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
@@ -83,13 +85,14 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
-                    .throwException(CamelException.class, "GRPC Camel exception message");
-                
+                from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
+                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
+                             .throwException(CamelException.class, "GRPC Camel exception message");
+
             }
         };
     }
-    
+
     public class PongResponseStreamObserver implements StreamObserver<PongResponse> {
         private PongResponse pongResponse;
         private final CountDownLatch latch;

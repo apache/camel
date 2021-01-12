@@ -18,23 +18,26 @@ package org.apache.camel.itest.jms;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test that exchange.isExternalRedelivered() is kept around even when
- * Message implementation changes from JmsMessage to DefaultMessage, when routing
- * from JMS over Jetty.
+ * Test that exchange.isExternalRedelivered() is kept around even when Message implementation changes from JmsMessage to
+ * DefaultMessage, when routing from JMS over Jetty.
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
@@ -56,7 +59,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
     @Test
     void testTransactionSuccess() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 onException(AssertionError.class).to("log:error", "mock:error");

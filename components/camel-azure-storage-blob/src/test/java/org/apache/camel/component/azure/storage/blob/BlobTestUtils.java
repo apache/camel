@@ -26,24 +26,18 @@ public final class BlobTestUtils {
     private BlobTestUtils() {
     }
 
-    public static Properties loadAzurePropertiesFile() throws IOException {
+    public static Properties getAzuriteProperties() {
         final Properties properties = new Properties();
-        final String fileName = "azure_key.properties";
+        final String fileName = "azurite.properties";
 
-        final InputStream inputStream = Objects.requireNonNull(BlobTestUtils.class.getClassLoader().getResourceAsStream(fileName));
+        final InputStream inputStream
+                = Objects.requireNonNull(BlobTestUtils.class.getClassLoader().getResourceAsStream(fileName));
 
-        properties.load(inputStream);
-
-        return properties;
-    }
-
-    public static Properties loadAzureAccessFromJvmEnv() throws Exception {
-        final Properties properties = new Properties();
-        if (System.getProperty("accountName") == null || System.getProperty("accessKey") == null) {
-            throw new Exception("Make sure to supply azure accessKey or accountName, e.g:  mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey");
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not initialize Azurite properties", e);
         }
-        properties.setProperty("account_name", System.getProperty("accountName"));
-        properties.setProperty("access_key", System.getProperty("accessKey"));
 
         return properties;
     }

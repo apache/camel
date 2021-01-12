@@ -23,8 +23,7 @@ import java.util.Arrays;
 /**
  * Custom parametrized type implementation.
  *
- * @version $Rev: 1621935 $ $Date: 2014-09-02 09:07:32 +0200 (Tue, 02 Sep 2014)
- *          $
+ * @version $Rev: 1621935 $ $Date: 2014-09-02 09:07:32 +0200 (Tue, 02 Sep 2014) $
  */
 public class OwbParametrizedTypeImpl implements ParameterizedType {
     /**
@@ -46,7 +45,7 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
      * New instance.
      *
      * @param owner owner
-     * @param raw raw
+     * @param raw   raw
      */
     public OwbParametrizedTypeImpl(Type owner, Type raw, Type... types) {
         this.owner = owner;
@@ -87,11 +86,12 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
         if (this == obj) {
             return true;
         } else if (obj instanceof ParameterizedType) {
-            ParameterizedType that = (ParameterizedType)obj;
+            ParameterizedType that = (ParameterizedType) obj;
             Type thatOwnerType = that.getOwnerType();
             Type thatRawType = that.getRawType();
-            return (owner == null ? thatOwnerType == null : owner.equals(thatOwnerType)) && (rawType == null ? thatRawType == null : rawType.equals(thatRawType))
-                   && Arrays.equals(types, that.getActualTypeArguments());
+            return (owner == null ? thatOwnerType == null : owner.equals(thatOwnerType))
+                    && (rawType == null ? thatRawType == null : rawType.equals(thatRawType))
+                    && Arrays.equals(types, that.getActualTypeArguments());
         } else {
             return false;
         }
@@ -101,14 +101,14 @@ public class OwbParametrizedTypeImpl implements ParameterizedType {
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(((Class<?>)rawType).getName());
+        buffer.append(((Class<?>) rawType).getName());
         Type[] actualTypes = getActualTypeArguments();
         if (actualTypes.length > 0) {
             buffer.append("<");
             int length = actualTypes.length;
             for (int i = 0; i < length; i++) {
                 if (actualTypes[i] instanceof Class) {
-                    buffer.append(((Class<?>)actualTypes[i]).getSimpleName());
+                    buffer.append(((Class<?>) actualTypes[i]).getSimpleName());
                 } else {
                     buffer.append(actualTypes[i].toString());
                 }

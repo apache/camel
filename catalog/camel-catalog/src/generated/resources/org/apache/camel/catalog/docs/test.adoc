@@ -1,10 +1,11 @@
-[[test-component]]
+[[test-other]]
 = Test Component
 :docTitle: Test
 :artifactId: camel-test
 :description: Camel unit testing
 :since: 2.9
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/test.adoc[opts=optional]
 
 *Since Camel {since}*
 

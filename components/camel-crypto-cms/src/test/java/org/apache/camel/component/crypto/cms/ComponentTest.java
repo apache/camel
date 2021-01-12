@@ -114,8 +114,8 @@ public class ComponentTest extends CamelTestSupport {
                 recipient.setKeyStoreParameters(keystore);
 
                 DefaultSignerInfo signerInfo = new DefaultSignerInfo();
-                signerInfo.setIncludeCertificates(true); 
-                signerInfo.setSignatureAlgorithm("SHA256withRSA"); 
+                signerInfo.setIncludeCertificates(true);
+                signerInfo.setSignatureAlgorithm("SHA256withRSA");
                 signerInfo.setPrivateKeyAlias("rsa");
                 signerInfo.setKeyStoreParameters(keystore);
 
@@ -132,10 +132,11 @@ public class ComponentTest extends CamelTestSupport {
                 onException(CryptoCmsVerifierCertificateNotValidException.class).handled(false).to("mock:exception");
 
                 from("direct:start").to("crypto-cms:sign://testsign?signer=#signer1,#signer2&includeContent=true")
-                    .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128")
-                    // .to("file:target/test_signed_encrypted.base64")
-                    .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
-                    .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters").convertBodyTo(String.class).to("log:after").to("mock:result");
+                        .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128")
+                        // .to("file:target/test_signed_encrypted.base64")
+                        .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
+                        .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters").convertBodyTo(String.class)
+                        .to("log:after").to("mock:result");
 
                 DefaultSignerInfo signerOutdated = new DefaultSignerInfo();
                 signerOutdated.setIncludeCertificates(false);
@@ -145,10 +146,11 @@ public class ComponentTest extends CamelTestSupport {
                 simpleReg.bind("signerOutdated", signerOutdated);
 
                 from("direct:outdated").to("crypto-cms:sign://outdated?signer=#signerOutdated&includeContent=true")
-                    .to("crypto-cms:verify://outdated?keyStoreParameters=#keyStoreParameters").to("mock:result");
+                        .to("crypto-cms:verify://outdated?keyStoreParameters=#keyStoreParameters").to("mock:result");
 
-                from("direct:decryptAndVerify").to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
-                    .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters").to("mock:result");
+                from("direct:decryptAndVerify")
+                        .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
+                        .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters").to("mock:result");
 
                 TestOriginatorInformationProvider originatorInformationProvider = new TestOriginatorInformationProvider();
                 TestAttributesGeneratorProvider attributesGeneratorProvider = new TestAttributesGeneratorProvider();
@@ -156,9 +158,10 @@ public class ComponentTest extends CamelTestSupport {
                 simpleReg.bind("attributesGeneratorProvider1", attributesGeneratorProvider);
 
                 from("direct:encryptDecryptOriginatorAttributes")
-                    .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128&"
-                        + "originatorInformationProvider=#originatorInformationProvider1&unprotectedAttributesGeneratorProvider=#attributesGeneratorProvider1")
-                    .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters").to("mock:result");
+                        .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128&"
+                            + "originatorInformationProvider=#originatorInformationProvider1&unprotectedAttributesGeneratorProvider=#attributesGeneratorProvider1")
+                        .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
+                        .to("mock:result");
             }
         };
     }
@@ -167,6 +170,6 @@ public class ComponentTest extends CamelTestSupport {
     public void wrongOperation() throws Exception {
         CryptoCmsComponent c = new CryptoCmsComponent(new DefaultCamelContext());
         assertThrows(IllegalStateException.class,
-            () -> c.createEndpoint("uri", "wrongoperation", null));
+                () -> c.createEndpoint("uri", "wrongoperation", null));
     }
 }

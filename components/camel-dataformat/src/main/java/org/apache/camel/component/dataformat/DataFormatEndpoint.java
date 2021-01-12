@@ -36,16 +36,19 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Use a Camel Data Format as a regular Camel Component.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
-        label = "core,transformation", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation",
+             producerOnly = true,
+             label = "core,transformation", lenientProperties = true)
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private AsyncProcessor processor;
     private DataFormat dataFormat;
 
-    @UriPath(description = "Name of data format") @Metadata(required = true)
+    @UriPath(description = "Name of data format")
+    @Metadata(required = true)
     private String name;
-    @UriPath(enums = "marshal,unmarshal") @Metadata(required = true)
+    @UriPath(enums = "marshal,unmarshal")
+    @Metadata(required = true)
     private String operation;
 
     public DataFormatEndpoint() {

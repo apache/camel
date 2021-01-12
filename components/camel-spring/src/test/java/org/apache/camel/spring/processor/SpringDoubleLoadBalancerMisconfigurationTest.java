@@ -37,7 +37,8 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         } catch (Exception e) {
             FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
-            assertTrue(ie.getMessage().startsWith("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
+            assertTrue(ie.getMessage().startsWith(
+                    "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
         }
     }
 

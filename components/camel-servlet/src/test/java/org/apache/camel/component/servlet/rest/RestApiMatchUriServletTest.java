@@ -42,14 +42,15 @@ public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().component("servlet")
-                    .apiContextPath("/api-doc")
-                    .endpointProperty("matchOnUriPrefix", "true")
-                    .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3")
-                    .bindingMode(RestBindingMode.auto);
+                        .apiContextPath("/api-doc")
+                        .endpointProperty("matchOnUriPrefix", "true")
+                        .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")
+                        .apiProperty("api.version", "1.2.3")
+                        .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/json").type(UserPojo.class)
+                        .post("new").consumes("application/json").type(UserPojo.class)
                         .to("mock:input");
             }
         };

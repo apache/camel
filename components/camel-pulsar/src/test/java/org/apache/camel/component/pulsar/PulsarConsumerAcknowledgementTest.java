@@ -27,27 +27,36 @@ import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.infra.common.TestUtils;
+import org.apache.camel.test.infra.pulsar.services.PulsarService;
+import org.apache.camel.test.infra.pulsar.services.PulsarServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 
-public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
+public class PulsarConsumerAcknowledgementTest extends CamelTestSupport {
+
+    @RegisterExtension
+    static PulsarService service = PulsarServiceFactory.createService();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerAcknowledgementTest.class);
-
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer-1";
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000" + "&negativeAckRedeliveryDelayMicros=100000")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                    + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
+                    + "&negativeAckRedeliveryDelayMicros=100000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -55,10 +64,29 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
 
     private Producer<String> producer;
 
+    public String getPulsarBrokerUrl() {
+        return service.getPulsarBrokerUrl();
+    }
+
+    public String getPulsarAdminUrl() {
+        return service.getPulsarAdminUrl();
+    }
+
     @BeforeEach
     public void setup() throws Exception {
         context.removeRoute("myRoute");
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
+
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(TOPIC_URI).create();
+    }
+
+    @AfterEach
+    public void tearDownProducer() {
+        try {
+            producer.close();
+        } catch (PulsarClientException e) {
+            LOGGER.warn("Failed to close client: {}", e.getMessage(), e);
+        }
     }
 
     @Override
@@ -95,7 +123,8 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt
+                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }
@@ -116,7 +145,8 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt
+                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     try {
                         CompletableFuture<Void> f = receipt.acknowledgeAsync();
                         f.get();
@@ -142,7 +172,8 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt
+                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     // Ack the second message. The first will also be acked.
                     if (exchange.getIn().getBody().equals("Hello World Again!")) {
                         receipt.acknowledgeCumulative();
@@ -167,7 +198,8 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt
+                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     // Ack the second message. The first will also be acked.
                     if (exchange.getIn().getBody().equals("Hello World Again!")) {
                         try {

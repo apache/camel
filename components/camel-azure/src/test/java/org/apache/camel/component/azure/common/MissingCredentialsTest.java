@@ -86,7 +86,6 @@ public class MissingCredentialsTest extends CamelTestSupport {
             .append("credentialsAccountName=").append(INLINE_CREDENTIALS_ACCOUNT_NAME)
             .toString();
 
-
     // Missing Credentials Blob Tests
     @Test
     public void createBlobEndpointWithoutCredentials() {
@@ -95,19 +94,21 @@ public class MissingCredentialsTest extends CamelTestSupport {
 
     @Test
     public void testNoClientAndCredentialsPublicForRead() throws Exception {
-        BlobServiceEndpoint endpoint =
-                (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
+        BlobServiceEndpoint endpoint
+                = (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
 
     @Test
     public void createBlobEndpointWithoutCredentialsAccountName() {
-        createEndpointWithoutCredentials(missingCredentialsAccountNameBlobUriEndoint, MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsAccountNameBlobUriEndoint,
+                MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
     }
 
     @Test
     public void createBlobEndpointWithoutCredentialsAccountKey() {
-        createEndpointWithoutCredentials(missingCredentialsAccountKeyBlobUriEndoint, MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsAccountKeyBlobUriEndoint,
+                MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE);
     }
 
     // Missing Credentials Queue Tests
@@ -118,52 +119,50 @@ public class MissingCredentialsTest extends CamelTestSupport {
 
     @Test
     public void createQueueEndpointWithoutCredentialsAccountName() {
-        createEndpointWithoutCredentials(missingCredentialsAccountNameQueueUriEndoint, MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsAccountNameQueueUriEndoint,
+                MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE);
     }
 
     @Test
     public void createQueueEndpointWithoutCredentialsAccountKey() {
-        createEndpointWithoutCredentials(missingCredentialsAccountKeyQueueUriEndoint, MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE);
+        createEndpointWithoutCredentials(missingCredentialsAccountKeyQueueUriEndoint,
+                MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE);
     }
-
 
     // Client Tests
 
     @Test
     public void testBlobClientWithoutCredentialsPublicRead() throws Exception {
-        CloudBlockBlob client =
-                new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+        CloudBlockBlob client = new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
 
         context.getRegistry().bind("azureBlobClient", client);
 
-        BlobServiceEndpoint endpoint =
-                (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
+        BlobServiceEndpoint endpoint
+                = (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
 
     @Test
     public void testBlobClientWithoutAnonymousCredentials() throws Exception {
-        CloudBlockBlob client =
-                new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
-                        StorageCredentialsAnonymous.ANONYMOUS);
+        CloudBlockBlob client = new CloudBlockBlob(
+                URI.create("https://camelazure.blob.core.windows.net/container/blob"),
+                StorageCredentialsAnonymous.ANONYMOUS);
         context.getRegistry().bind("azureBlobClient", client);
         assertContains(MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE, assertThrows(ResolveEndpointFailedException.class,
-            () -> context.getEndpoint("azure-blob://camelazure/container/blob")).getMessage());
+                () -> context.getEndpoint("azure-blob://camelazure/container/blob")).getMessage());
     }
 
     @Test
     public void testBlobClientWithoutCredentials() throws Exception {
-        CloudBlockBlob client =
-                new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+        CloudBlockBlob client = new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
         context.getRegistry().bind("azureBlobClient", client);
         assertContains(MISSING_BLOB_CREDENTIALS_EXCEPTION_MESSAGE, assertThrows(ResolveEndpointFailedException.class,
-            () -> context.getEndpoint("azure-blob://camelazure/container/blob")).getMessage());
+                () -> context.getEndpoint("azure-blob://camelazure/container/blob")).getMessage());
     }
-
 
     private void createEndpointWithoutCredentials(String uri, String errorMessage) {
         assertContains(errorMessage, assertThrows(ResolveEndpointFailedException.class,
-            () -> context.getEndpoint(uri)).getMessage());
+                () -> context.getEndpoint(uri)).getMessage());
     }
 
     private void assertContains(String expected, String message) {

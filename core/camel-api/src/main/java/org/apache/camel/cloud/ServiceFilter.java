@@ -29,8 +29,8 @@ public interface ServiceFilter {
     /**
      * Chooses one of the service to use
      *
-     * @param services  list of services
-     * @return the chosen service to use.
+     * @param  services list of services
+     * @return          the chosen service to use.
      */
     List<ServiceDefinition> apply(List<ServiceDefinition> services);
 }

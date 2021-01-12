@@ -1,4 +1,4 @@
-[[jta-component]]
+[[jta-other]]
 = JTA Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jta/src/main/docs/jta.adoc
@@ -6,7 +6,8 @@
 :artifactId: camel-jta
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4
-:supportLevel: Preview
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jta.adoc[opts=optional]
 
 *Since Camel {since}*
 

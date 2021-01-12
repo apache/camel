@@ -4,8 +4,10 @@ package org.apache.camel.component.ahc;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AhcEndpoint target = (AhcEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.ahc.AhcBinding.class, value)); return true;
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -52,32 +52,42 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("binding", org.apache.camel.component.ahc.AhcBinding.class);
-        answer.put("bridgeEndpoint", boolean.class);
-        answer.put("bufferSize", int.class);
-        answer.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
-        answer.put("clientConfigOptions", java.util.Map.class);
-        answer.put("clientConfigRealmOptions", java.util.Map.class);
-        answer.put("connectionClose", boolean.class);
-        answer.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("throwExceptionOnFailure", boolean.class);
-        answer.put("transferException", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binding": return org.apache.camel.component.ahc.AhcBinding.class;
+        case "bridgeendpoint":
+        case "bridgeEndpoint": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "clientconfig":
+        case "clientConfig": return org.asynchttpclient.AsyncHttpClientConfig.class;
+        case "clientconfigoptions":
+        case "clientConfigOptions": return java.util.Map.class;
+        case "clientconfigrealmoptions":
+        case "clientConfigRealmOptions": return java.util.Map.class;
+        case "connectionclose":
+        case "connectionClose": return boolean.class;
+        case "cookiehandler":
+        case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AhcEndpoint target = (AhcEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binding": return target.getBinding();
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.isBridgeEndpoint();
@@ -104,6 +114,17 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         case "transferexception":
         case "transferException": return target.isTransferException();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientconfigoptions":
+        case "clientConfigOptions": return java.lang.Object.class;
+        case "clientconfigrealmoptions":
+        case "clientConfigRealmOptions": return java.lang.Object.class;
         default: return null;
         }
     }

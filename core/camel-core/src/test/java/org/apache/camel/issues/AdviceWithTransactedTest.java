@@ -20,9 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Policy;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:advice").expectedMessageCount(1);
 
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddFirst().to("mock:advice");
@@ -51,8 +51,8 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:advice")
-                    // use policy instead of transacted (but its similar)
-                    .policy(new MyDummyPolicy()).log("Advice ${body}").to("mock:result");
+                        // use policy instead of transacted (but its similar)
+                        .policy(new MyDummyPolicy()).log("Advice ${body}").to("mock:result");
             }
         };
     }

@@ -22,9 +22,9 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
+        <artifactId>camel</artifactId>
+        <version>3.8.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>init</artifactId>
@@ -34,7 +34,30 @@
     <description>Camel Init</description>
 
     <modules>
+        <module>camel-format-plugin</module>
         <module>camel-bundle-plugin</module>
     </modules>
 
- </project>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin-version}</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin-version}</version>
+                    <configuration>
+                        <failIfNoTests>false</failIfNoTests>
+                    </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

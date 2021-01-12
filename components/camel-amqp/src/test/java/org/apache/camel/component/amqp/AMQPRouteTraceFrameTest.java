@@ -69,7 +69,8 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        JmsConnectionFactory connectionFactory = new JmsConnectionFactory("amqp://localhost:" + amqpPort + "?amqp.traceFrames=true");
+        JmsConnectionFactory connectionFactory
+                = new JmsConnectionFactory("amqp://localhost:" + amqpPort + "?amqp.traceFrames=true");
 
         AMQPComponent amqp = amqpComponent("amqp://localhost:" + amqpPort);
         amqp.getConfiguration().setConnectionFactory(connectionFactory);
@@ -83,8 +84,8 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("amqp-customized:queue:ping")
-                    .to("log:routing")
-                    .to("mock:result");
+                        .to("log:routing")
+                        .to("mock:result");
             }
         };
     }

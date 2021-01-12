@@ -35,7 +35,7 @@ public class ElasticsearchPingTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:ping")
-                    .to("elasticsearch-rest://elasticsearch?operation=Ping");
+                        .to("elasticsearch-rest://elasticsearch?operation=Ping");
             }
         };
     }

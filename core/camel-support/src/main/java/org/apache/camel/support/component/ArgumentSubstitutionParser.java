@@ -32,7 +32,8 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
     /**
      * Create a parser using regular expressions to adapt parameter names.
-     * @param proxyType Proxy class.
+     * 
+     * @param proxyType     Proxy class.
      * @param substitutions an array of <b>ordered</b> Argument adapters.
      */
     public ArgumentSubstitutionParser(Class<T> proxyType, Substitution[] substitutions) {
@@ -90,7 +91,9 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
                         final Class<?> argType = argument.getType();
                         final String typeArgs = argument.getTypeArgs();
+                        final String rawTypeArgs = argument.getRawTypeArgs();
                         final String argTypeName = argType.getCanonicalName();
+                        final String typeDesc = argument.getDescription();
 
                         for (Map.Entry<Pattern, List<NameReplacement>> argEntry : argMap.entrySet()) {
                             final Matcher matcher = argEntry.getKey().matcher(argument.getName());
@@ -100,35 +103,35 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                                 final List<NameReplacement> adapters = argEntry.getValue();
                                 for (NameReplacement adapter : adapters) {
                                     if (adapter.typePattern == null) {
-
                                         // no type pattern
                                         final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
-                                        argument = new ApiMethodArg(newName, argType, typeArgs);
-
+                                        argument = new ApiMethodArg(newName, argType, typeArgs, rawTypeArgs, typeDesc);
                                     } else {
-
                                         final Matcher typeMatcher = adapter.typePattern.matcher(argTypeName);
                                         if (typeMatcher.find()) {
                                             if (!adapter.replaceWithType) {
                                                 // replace argument name
                                                 final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
-                                                argument = new ApiMethodArg(newName, argType, typeArgs);
+                                                argument = new ApiMethodArg(
+                                                        newName, argType, typeArgs, rawTypeArgs, typeDesc);
                                             } else {
                                                 // replace name with argument type name
-                                                final String newName = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
-                                                argument = new ApiMethodArg(newName, argType, typeArgs);
+                                                final String newName
+                                                        = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
+                                                argument = new ApiMethodArg(
+                                                        newName, argType, typeArgs, rawTypeArgs, typeDesc);
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-
                         updatedArguments.add(argument);
                     }
 
-                    model = new ApiMethodModel(model.getUniqueName(), model.getName(), model.getResultType(),
-                            updatedArguments, model.getMethod());
+                    model = new ApiMethodModel(
+                            model.getUniqueName(), model.getName(), model.getResultType(),
+                            updatedArguments, model.getMethod(), model.getDescription(), model.getSignature());
                 }
             }
 
@@ -159,8 +162,9 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Creates a substitution for all argument types.
-         * @param method regex to match method name
-         * @param argName regex to match argument name
+         * 
+         * @param method      regex to match method name
+         * @param argName     regex to match argument name
          * @param replacement replacement text for argument name
          */
         public Substitution(String method, String argName, String replacement) {
@@ -171,9 +175,10 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Creates a substitution for a specific argument type.
-         * @param method regex to match method name
-         * @param argName regex to match argument name
-         * @param argType argument type as String
+         * 
+         * @param method      regex to match method name
+         * @param argName     regex to match argument name
+         * @param argType     argument type as String
          * @param replacement replacement text for argument name
          */
         public Substitution(String method, String argName, String argType, String replacement) {
@@ -183,11 +188,6 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Create a substitution for a specific argument type and flag to indicate whether the replacement uses
-         * @param method
-         * @param argName
-         * @param argType
-         * @param replacement
-         * @param replaceWithType
          */
         public Substitution(String method, String argName, String argType, String replacement, boolean replaceWithType) {
             this(method, argName, argType, replacement);

@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @WebTest
 public class ResteasyConsumerTest {
 
@@ -51,7 +50,7 @@ public class ResteasyConsumerTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        
+
         return ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClasses(Customer.class, CustomerService.class, CustomerList.class)
                 .addPackage("org.apache.camel.component.resteasy")

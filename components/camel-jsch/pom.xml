@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jsch</artifactId>
@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            com.jcraft.jsch.*;version="[0.1.40,0.2)"
+            com.jcraft.jsch.*;version="[0.1.5,0.2)"
         </camel.osgi.import.before.defaults>
     </properties>
 

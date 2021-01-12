@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Sign XML payloads using the XML signature specification.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity-sign", title = "XML Security Sign",
-        syntax = "xmlsecurity-sign:name", producerOnly = true, category = {Category.SECURITY, Category.TRANSFORMATION})
+             syntax = "xmlsecurity-sign:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION })
 public class XmlSignerEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -51,7 +51,8 @@ public class XmlSignerEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The name part in the URI can be chosen by the user to distinguish between different signer endpoints within the camel context.
+     * The name part in the URI can be chosen by the user to distinguish between different signer endpoints within the
+     * camel context.
      */
     public void setName(String name) {
         this.name = name;

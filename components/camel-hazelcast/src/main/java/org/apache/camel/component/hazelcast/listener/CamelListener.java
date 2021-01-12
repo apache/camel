@@ -51,7 +51,10 @@ public class CamelListener {
         }
 
         if (exchange.getException() != null) {
-            consumer.getExceptionHandler().handleException(String.format("Error processing exchange for hazelcast consumer on object '%s' in cache '%s'.", key, cacheName), exchange,
+            consumer.getExceptionHandler().handleException(
+                    String.format("Error processing exchange for hazelcast consumer on object '%s' in cache '%s'.", key,
+                            cacheName),
+                    exchange,
                     exchange.getException());
         }
     }

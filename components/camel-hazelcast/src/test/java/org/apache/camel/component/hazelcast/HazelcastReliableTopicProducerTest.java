@@ -37,7 +37,7 @@ public class HazelcastReliableTopicProducerTest extends HazelcastCamelTestSuppor
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getReliableTopic("bar")).thenReturn(reliableTopic);
+        when(hazelcastInstance.<String> getReliableTopic("bar")).thenReturn(reliableTopic);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class HazelcastReliableTopicProducerTest extends HazelcastCamelTestSuppor
     @Test
     public void testWithInvalidOperation() {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:publishInvalid", "foo"));
+                () -> template.sendBody("direct:publishInvalid", "foo"));
     }
 
     @Test
@@ -75,10 +75,12 @@ public class HazelcastReliableTopicProducerTest extends HazelcastCamelTestSuppor
             public void configure() throws Exception {
                 from("direct:no-operation").to(String.format("hazelcast-%sbar?reliable=true", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar?reliable=true", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                        .to(String.format("hazelcast-%sbar?reliable=true", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH)).to(String.format("hazelcast-%sbar?reliable=true",
-                    HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH))
+                        .to(String.format("hazelcast-%sbar?reliable=true",
+                                HazelcastConstants.TOPIC_PREFIX));
             }
         };
     }

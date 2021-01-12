@@ -60,14 +60,14 @@ public class MicroProfileMetricsMeterTest extends MicroProfileMetricsTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:mark")
-                    .to("microprofile-metrics:meter:test-meter?mark=10");
+                        .to("microprofile-metrics:meter:test-meter?mark=10");
 
                 from("direct:default")
-                    .to("microprofile-metrics:meter:test-meter");
+                        .to("microprofile-metrics:meter:test-meter");
 
                 from("direct:markFromHeader")
-                    .setHeader(HEADER_METER_MARK, constant(10))
-                    .to("microprofile-metrics:meter:test-meter-header");
+                        .setHeader(HEADER_METER_MARK, constant(10))
+                        .to("microprofile-metrics:meter:test-meter-header");
             }
         };
     }

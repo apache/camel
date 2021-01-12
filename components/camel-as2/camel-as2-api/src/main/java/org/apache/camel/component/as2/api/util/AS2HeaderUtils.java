@@ -88,7 +88,7 @@ public final class AS2HeaderUtils {
         StringBuilder sb = new StringBuilder();
 
         boolean firstElement = true;
-        for (String[] element: elements) {
+        for (String[] element : elements) {
             if (element.length == 0) {
                 continue;
             }

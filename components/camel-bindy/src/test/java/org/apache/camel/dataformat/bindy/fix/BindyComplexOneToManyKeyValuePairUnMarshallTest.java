@@ -33,9 +33,11 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        String message = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR" + "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" + "22=448=BE000124567854=1"
+        String message = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR"
+                         + "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" + "22=448=BE000124567854=1"
                          + "22=548=BE000987654354=2" + "22=648=BE000999999954=3" + "10=220";
-        String message2 = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR" + "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test10=220";
+        String message2 = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR"
+                          + "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test10=220";
 
         result.expectedMessageCount(2);
         template.sendBody(message);
@@ -45,7 +47,7 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
 
         Order order1 = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
         Order order2 = result.getReceivedExchanges().get(1).getIn().getBody(Order.class);
-        
+
         assertTrue(order1.toString().contains("BE.CHM.001, 11: CHM0001-01, 58: this is a camel - bindy test"));
         assertTrue(order1.getSecurities().get(0).toString().contains("22: 4, 48: BE0001245678, 54: 1"));
         assertTrue(order1.getSecurities().get(1).toString().contains("22: 5, 48: BE0009876543, 54: 2"));
@@ -55,7 +57,8 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
+        BindyKeyValuePairDataFormat kvpBindyDataFormat
+                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
 
         @Override
         public void configure() {

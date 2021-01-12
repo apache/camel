@@ -77,8 +77,6 @@ public enum UsageTriggerApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private UsageTriggerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

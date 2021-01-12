@@ -28,8 +28,8 @@ import org.apache.camel.support.DefaultComponent;
 
 @Component("aws-ddbstream")
 public class DdbStreamComponent extends DefaultComponent {
-    
-    @Metadata 
+
+    @Metadata
     private DdbStreamConfiguration configuration = new DdbStreamConfiguration();
 
     public DdbStreamComponent() {
@@ -38,29 +38,31 @@ public class DdbStreamComponent extends DefaultComponent {
 
     public DdbStreamComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new DdbStreamComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        
+
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
-        DdbStreamConfiguration configuration = this.configuration != null ? this.configuration.copy() : new DdbStreamConfiguration();
+        DdbStreamConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new DdbStreamConfiguration();
         configuration.setTableName(remaining);
         DdbStreamEndpoint endpoint = new DdbStreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonDynamoDbStreamsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonDynamoDbStreamsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBStreamsClient or accessKey and secretKey must be specified");
         }
         return endpoint;
     }
-    
+
     public DdbStreamConfiguration getConfiguration() {
         return configuration;
     }
@@ -71,7 +73,7 @@ public class DdbStreamComponent extends DefaultComponent {
     public void setConfiguration(DdbStreamConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(DdbStreamConfiguration configuration) {
         Set<AmazonDynamoDBStreams> clients = getCamelContext().getRegistry().findByType(AmazonDynamoDBStreams.class);
         if (clients.size() == 1) {

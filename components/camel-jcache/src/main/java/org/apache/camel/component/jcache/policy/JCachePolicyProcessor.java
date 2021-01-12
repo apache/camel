@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache.policy;
 import javax.cache.Cache;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -29,12 +30,13 @@ import org.slf4j.LoggerFactory;
 public class JCachePolicyProcessor extends DelegateAsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessor.class);
 
-
+    private final CamelContext camelContext;
     private Cache cache;
     private Expression keyExpression;
 
-    public JCachePolicyProcessor(Cache cache, Expression keyExpression, Processor processor) {
+    public JCachePolicyProcessor(CamelContext camelContext, Cache cache, Expression keyExpression, Processor processor) {
         super(processor);
+        this.camelContext = camelContext;
         this.cache = cache;
         this.keyExpression = keyExpression;
     }
@@ -48,10 +50,10 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
             return super.process(exchange, callback);
         }
 
-
         try {
             //Get key by the expression or use message body
-            Object key = keyExpression != null ? keyExpression.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+            Object key
+                    = keyExpression != null ? keyExpression.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
 
             if (key == null) {
                 return super.process(exchange, callback);
@@ -69,7 +71,6 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                 return true;
             }
 
-
             //Not found in cache. Continue route.
             LOG.debug("No cached object is found, continue route - key:{}, exchange:{}", key, exchange.getExchangeId());
 
@@ -82,7 +83,8 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
                             Object value = exchange.getMessage().getBody();
 
                             if (value != null) {
-                                LOG.debug("Saving in cache - key:{}, value:{}, exchange:{}", key, value, exchange.getExchangeId());
+                                LOG.debug("Saving in cache - key:{}, value:{}, exchange:{}", key, value,
+                                        exchange.getExchangeId());
                                 cache.put(key, value);
                             }
                         }
@@ -99,6 +101,14 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
             exchange.setException(e);
             callback.done(true);
             return true;
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (keyExpression != null) {
+            keyExpression.init(camelContext);
         }
     }
 

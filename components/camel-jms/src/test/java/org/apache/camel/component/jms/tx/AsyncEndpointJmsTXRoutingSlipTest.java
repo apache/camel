@@ -29,7 +29,6 @@ public class AsyncEndpointJmsTXRoutingSlipTest extends CamelSpringTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
@@ -58,7 +57,7 @@ public class AsyncEndpointJmsTXRoutingSlipTest extends CamelSpringTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")
-                    .transacted()
+                        .transacted()
                         .to("mock:before")
                         .to("log:before")
                         .process(exchange -> {

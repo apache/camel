@@ -38,16 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  */
 public class XMLTokenExpressionIteratorCharsetTest {
-    private static final String DATA_TEMPLATE = 
-        "<?xml version=\"1.0\" encoding=\"{0}\"?>"
-        + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
-        + "    <statement>we l\u00f3ve iso-latin</statement>"
-        + "    <statement>we h\u00e4te unicode</statement>"
-        + "</Statements>";
+    private static final String DATA_TEMPLATE = "<?xml version=\"1.0\" encoding=\"{0}\"?>"
+                                                + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
+                                                + "    <statement>we l\u00f3ve iso-latin</statement>"
+                                                + "    <statement>we h\u00e4te unicode</statement>"
+                                                + "</Statements>";
 
     private static final String[] RESULTS = {
-        "<statement xmlns=\"http://www.apache.org/xml/test\">we l\u00f3ve iso-latin</statement>",
-        "<statement xmlns=\"http://www.apache.org/xml/test\">we h\u00e4te unicode</statement>"
+            "<statement xmlns=\"http://www.apache.org/xml/test\">we l\u00f3ve iso-latin</statement>",
+            "<statement xmlns=\"http://www.apache.org/xml/test\">we h\u00e4te unicode</statement>"
     };
 
     private static final String DATA_STRING = MessageFormat.format(DATA_TEMPLATE, "utf-8");
@@ -64,7 +63,7 @@ public class XMLTokenExpressionIteratorCharsetTest {
         }
         return null;
     }
-    
+
     @Test
     public void testTokenzeWithUTF8() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
@@ -92,16 +91,16 @@ public class XMLTokenExpressionIteratorCharsetTest {
     private void invokeAndVerify(Iterator<?> tokenizer) throws IOException, XMLStreamException {
         List<String> results = new ArrayList<>();
         while (tokenizer.hasNext()) {
-            String token = (String)tokenizer.next();
+            String token = (String) tokenizer.next();
             results.add(token);
         }
-        ((Closeable)tokenizer).close();
-        
+        ((Closeable) tokenizer).close();
+
         assertEquals(RESULTS.length, results.size(), "token count");
         for (int i = 0; i < RESULTS.length; i++) {
             assertEquals(RESULTS[i], results.get(i), "mismatch [" + i + "]");
         }
-        
+
     }
 
 }

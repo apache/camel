@@ -20,10 +20,9 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class LevelDBGetNotFoundTest extends CamelTestSupport {
+public class LevelDBGetNotFoundTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
     private Logger log = LoggerFactory.getLogger(getClass());
@@ -56,7 +55,7 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
 
     @Test
     public void testGetNotFound() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 
@@ -69,7 +68,7 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
 
     @Test
     public void testPutAndGetNotFound() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 

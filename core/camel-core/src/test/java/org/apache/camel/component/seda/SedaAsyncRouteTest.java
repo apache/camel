@@ -47,10 +47,10 @@ public class SedaAsyncRouteTest extends ContextTestSupport {
             // START SNIPPET: e1
             public void configure() throws Exception {
                 from("direct:start")
-                    // send it to the seda queue that is async
-                    .to("seda:next")
-                    // return a constant response
-                    .transform(constant("OK"));
+                        // send it to the seda queue that is async
+                        .to("seda:next")
+                        // return a constant response
+                        .transform(constant("OK"));
 
                 from("seda:next").to("mock:result");
             }

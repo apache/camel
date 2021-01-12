@@ -49,7 +49,7 @@ The following example shows how to route a request from an input *queue:a* endpo
 [source,java]
 ----
 from("jms:queue:a")
-    .recipientList("direct:b,direct:c,direct:d");
+    .recipientList(constant("direct:b,direct:c,direct:d"));
 ----
 
 And in XML:

@@ -4,8 +4,10 @@ package org.apache.camel.component.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autoclosecount":
         case "autoCloseCount": target.setAutoCloseCount(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "closeondone":
@@ -62,30 +62,46 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoCloseCount", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("closeOnDone", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fileName", java.lang.String.class);
-        answer.put("fileWatcher", boolean.class);
-        answer.put("groupLines", int.class);
-        answer.put("groupStrategy", org.apache.camel.component.stream.GroupStrategy.class);
-        answer.put("initialPromptDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("promptDelay", long.class);
-        answer.put("promptMessage", java.lang.String.class);
-        answer.put("readTimeout", int.class);
-        answer.put("retry", boolean.class);
-        answer.put("scanStream", boolean.class);
-        answer.put("scanStreamDelay", long.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autoclosecount":
+        case "autoCloseCount": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closeondone":
+        case "closeOnDone": return boolean.class;
+        case "delay": return long.class;
+        case "encoding": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "filewatcher":
+        case "fileWatcher": return boolean.class;
+        case "grouplines":
+        case "groupLines": return int.class;
+        case "groupstrategy":
+        case "groupStrategy": return org.apache.camel.component.stream.GroupStrategy.class;
+        case "initialpromptdelay":
+        case "initialPromptDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "promptdelay":
+        case "promptDelay": return long.class;
+        case "promptmessage":
+        case "promptMessage": return java.lang.String.class;
+        case "readtimeout":
+        case "readTimeout": return int.class;
+        case "retry": return boolean.class;
+        case "scanstream":
+        case "scanStream": return boolean.class;
+        case "scanstreamdelay":
+        case "scanStreamDelay": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -94,8 +110,6 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autoclosecount":
         case "autoCloseCount": return target.getAutoCloseCount();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "closeondone":

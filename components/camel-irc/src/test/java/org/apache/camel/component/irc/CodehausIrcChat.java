@@ -90,9 +90,12 @@ public final class CodehausIrcChat {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        final IrcConfiguration config = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", "camel-test");
+        final IrcConfiguration config
+                = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", "camel-test");
 
-        final IRCConnection conn = new IRCConnection(config.getHostname(), config.getPorts(), config.getPassword(), config.getNickname(), config.getUsername(), config.getRealname());
+        final IRCConnection conn = new IRCConnection(
+                config.getHostname(), config.getPorts(), config.getPassword(), config.getNickname(), config.getUsername(),
+                config.getRealname());
 
         conn.addIRCEventListener(new CodehausIRCEventAdapter());
         conn.setEncoding("UTF-8");
@@ -103,7 +106,7 @@ public final class CodehausIrcChat {
         try {
             conn.connect();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.debug("I/O error while connecting: {}", e.getMessage(), e);
         }
         // while (!conn.isConnected()) {
         // Thread.sleep(1000);

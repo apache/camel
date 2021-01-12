@@ -57,8 +57,8 @@ import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
- * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions,
- * and validates configuration files such as application.properties.
+ * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions, and validates
+ * configuration files such as application.properties.
  */
 @Mojo(name = "validate", threadSafe = true)
 public class ValidateMojo extends AbstractExecMojo {
@@ -100,15 +100,15 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean includeTest;
 
     /**
-     * To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression).
-     * Multiple values can be separated by comma.
+     * To filter the names of java and xml files to only include files matching any of the given list of patterns
+     * (wildcard and regular expression). Multiple values can be separated by comma.
      */
     @Parameter(property = "camel.includes")
     private String includes;
 
     /**
-     * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression).
-     * Multiple values can be separated by comma.
+     * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard
+     * and regular expression). Multiple values can be separated by comma.
      */
     @Parameter(property = "camel.excludes")
     private String excludes;
@@ -133,8 +133,8 @@ public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter
-     * but would fail on properties that are not part of the component but in the uri because of using lenient properties.
-     * For example using the HTTP components to provide query parameters in the endpoint uri.
+     * but would fail on properties that are not part of the component but in the uri because of using lenient
+     * properties. For example using the HTTP components to provide query parameters in the endpoint uri.
      */
     @Parameter(property = "camel.ignoreLenientProperties", defaultValue = "true")
     private boolean ignoreLenientProperties;
@@ -146,15 +146,15 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean showAll;
 
     /**
-     * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
-     * uses a different Camel version than this plugin is using by default.
+     * Whether to allow downloading Camel catalog version from the internet. This is needed if the project uses a
+     * different Camel version than this plugin is using by default.
      */
     @Parameter(property = "camel.downloadVersion", defaultValue = "true")
     private boolean downloadVersion;
 
     /**
-     * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates
-     * then Camel will fail to startup.
+     * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates then Camel
+     * will fail to startup.
      */
     @Parameter(property = "camel.duplicateRouteId", defaultValue = "true")
     private boolean duplicateRouteId;
@@ -166,8 +166,8 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean directOrSedaPairCheck;
 
     /**
-     * Location of configuration files to validate. The default is application.properties
-     * Multiple values can be separated by comma and use wildcard pattern matching.
+     * Location of configuration files to validate. The default is application.properties Multiple values can be
+     * separated by comma and use wildcard pattern matching.
      */
     @Parameter(property = "camel.configurationFiles")
     private String configurationFiles = "application.properties";

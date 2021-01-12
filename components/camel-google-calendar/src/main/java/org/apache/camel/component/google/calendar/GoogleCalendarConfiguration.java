@@ -28,42 +28,32 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleCalendar component.
  */
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public class GoogleCalendarConfiguration {
 
     @UriPath
     @Metadata(required = true)
     private GoogleCalendarApiName apiName;
-
     @UriPath(enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
     @Metadata(required = true)
     private String methodName;
-
     @UriParam(defaultValue = CalendarScopes.CALENDAR)
     private String scopes = CalendarScopes.CALENDAR;
-
     @UriParam
     private String clientId;
-
-    @UriParam
-    private String emailAddress;
-
-    @UriParam(label = "security", secret = true)
-    private String clientSecret;
-
-    @UriParam(label = "security", secret = true)
-    private String accessToken;
-
-    @UriParam(label = "security", secret = true)
-    private String refreshToken;
-
     @UriParam
     private String applicationName;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
+    private String emailAddress;
+    @UriParam(label = "security", secret = true)
+    private String clientSecret;
+    @UriParam(label = "security", secret = true)
+    private String accessToken;
+    @UriParam(label = "security", secret = true)
+    private String refreshToken;
+    @UriParam(label = "security", secret = true)
     private String p12FileName;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String user;
 
     public GoogleCalendarApiName getApiName() {
@@ -137,7 +127,8 @@ public class GoogleCalendarConfiguration {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -159,9 +150,8 @@ public class GoogleCalendarConfiguration {
     }
 
     /**
-     * Specifies the level of permissions you want a calendar application to have to a user account.
-     * You can separate multiple scopes by comma.
-     * See https://developers.google.com/google-apps/calendar/auth for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account. You can separate
+     * multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info.
      */
     public void setScopes(String scopes) {
         this.scopes = scopes;

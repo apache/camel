@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A JMX capable {@link org.apache.camel.spi.ManagementStrategy} that Camel by default uses if possible.
  * <p/>
- * Camel detects whether its possible to use this JMX capable strategy and if <b>not</b> then Camel
- * will fallback to the {@link DefaultManagementStrategy} instead.
+ * Camel detects whether its possible to use this JMX capable strategy and if <b>not</b> then Camel will fallback to the
+ * {@link DefaultManagementStrategy} instead.
  *
  * @see org.apache.camel.spi.ManagementStrategy
  */

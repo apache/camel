@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -78,16 +79,16 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
                 // this means the async processing model is about 2x faster
 
                 from("seda:start")
-                    // we can only send at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .inOut("activemq:queue:bar")
-                    .to("mock:result");
+                        // we can only send at fastest the 100 msg in 5 sec due the delay
+                        .delay(50)
+                        .to(ExchangePattern.InOut, "activemq:queue:bar")
+                        .to("mock:result");
 
                 from("activemq:queue:bar")
-                    .log("Using ${threadName} to process ${body}")
-                    // we can only process at fastest the 100 msg in 5 sec due the delay
-                    .delay(50)
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        // we can only process at fastest the 100 msg in 5 sec due the delay
+                        .delay(50)
+                        .transform(body().prepend("Bye "));
             }
         };
     }

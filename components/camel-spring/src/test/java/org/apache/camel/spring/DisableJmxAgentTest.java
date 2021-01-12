@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  */
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");            
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");
     }
-   
+
     @Override
     @Test
     public void testQueryMbeans() throws Exception {

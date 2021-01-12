@@ -27,8 +27,9 @@ public interface ServerEndpointDeploymentStrategy {
 
     /**
      * Provides the capability to customize how the WebSocket server endpoint is configured and deployed.
-     * @param container The {@link ServerContainer} instance on which the endpoint will be deployed.
-     * @param configBuilder The {@link Builder} object to customize the endpoint configuration.
+     * 
+     * @param  container           The {@link ServerContainer} instance on which the endpoint will be deployed.
+     * @param  configBuilder       The {@link Builder} object to customize the endpoint configuration.
      * @throws DeploymentException
      */
     void deploy(ServerContainer container, Builder configBuilder) throws DeploymentException;

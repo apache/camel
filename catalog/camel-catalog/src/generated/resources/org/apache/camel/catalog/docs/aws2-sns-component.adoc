@@ -6,6 +6,7 @@
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sns.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS 2
 
@@ -44,31 +45,33 @@ The topic will be created if they don't already exists. +
 
 
 // component options: START
-The AWS 2 Simple Notification System (SNS) component supports 20 options, which are listed below.
+The AWS 2 Simple Notification System (SNS) component supports 22 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | SnsClient
+| *amazonSNSClient* (producer) | *Autowired* To use the AmazonSNS as the client |  | SnsClient
 | *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (producer) | Component configuration |  | Sns2Configuration
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageDeduplicationIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. There are 2 enums and the value can be one of: useExchangeId, useContentBasedDeduplication | useExchangeId | String
+| *messageGroupIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. There are 3 enums and the value can be one of: useConstant, useExchangeId, usePropertyValue |  | String
 | *messageStructure* (producer) | The message structure to use such as json |  | String
-| *policy* (producer) | The policy for this queue |  | String
+| *policy* (producer) | The policy for this queue. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *useDefaultCredentialsProvider* (producer) | Set whether the SNS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -97,30 +100,31 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | SnsClient
+| *amazonSNSClient* (producer) | *Autowired* To use the AmazonSNS as the client |  | SnsClient
 | *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageDeduplicationIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. There are 2 enums and the value can be one of: useExchangeId, useContentBasedDeduplication | useExchangeId | String
+| *messageGroupIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. There are 3 enums and the value can be one of: useConstant, useExchangeId, usePropertyValue |  | String
 | *messageStructure* (producer) | The message structure to use such as json |  | String
-| *policy* (producer) | The policy for this queue |  | String
+| *policy* (producer) | The policy for this queue. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
-| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *useDefaultCredentialsProvider* (producer) | Set whether the SNS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -203,6 +207,56 @@ The component is capable of detecting the presence of an SnsClient bean into the
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
+== SNS FIFO
+
+SNS FIFO are supported. While creating the SQS queue you will subscribe to the SNS topic there is an important point to remember, you'll need to make possible for the SNS Topic to send message to the SQS Queue.
+
+This is clear with an example.
+
+Suppose you created an SNS FIFO Topic called Order.fifo and an SQS Queue called QueueSub.fifo.
+
+In the access Policy of the QueueSub.fifo you should submit something like this
+
+[source,bash]
+-------------------------------------------------
+{
+  "Version": "2008-10-17",
+  "Id": "__default_policy_ID",
+  "Statement": [
+    {
+      "Sid": "__owner_statement",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::780560123482:root"
+      },
+      "Action": "SQS:*",
+      "Resource": "arn:aws:sqs:eu-west-1:780560123482:QueueSub.fifo"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sns.amazonaws.com"
+      },
+      "Action": "SQS:SendMessage",
+      "Resource": "arn:aws:sqs:eu-west-1:780560123482:QueueSub.fifo",
+      "Condition": {
+        "ArnLike": {
+          "aws:SourceArn": "arn:aws:sns:eu-west-1:780410022472:Order.fifo"
+        }
+      }
+    }
+  ]
+}
+-------------------------------------------------
+
+This is a critical step to make the subscription work correctly.
+
+=== SNS Fifo Topic Message group Id Strategy and message Deduplication Id Strategy
+
+When sending something to the FIFO topic you'll need to always set up a message group Id strategy.
+
+If the content-based message deduplication has been enabled on the SNS Fifo topic, where won't be the need of setting a message deduplication id strategy, otherwise you'll have to set it.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
@@ -218,7 +272,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::camel-spring-boot::page$aws2-sns-starter.adoc[]

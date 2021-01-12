@@ -32,7 +32,8 @@ public class ElasticsearchConfiguration {
     private String user;
     private String password;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String clusterName;
     @UriParam
     private ElasticsearchOperation operation;
@@ -44,7 +45,8 @@ public class ElasticsearchConfiguration {
     private String indexName;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String hostAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
@@ -164,7 +166,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     *  The time in ms to wait before connection will timeout.
+     * The time in ms to wait before connection will timeout.
      */
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -175,7 +177,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     *  Basic authenticate user
+     * Basic authenticate user
      */
     public String getUser() {
         return user;
@@ -186,7 +188,7 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     *  Password for authenticate
+     * Password for authenticate
      */
     public String getPassword() {
         return password;
@@ -241,8 +243,8 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when
-     * sniffOnFailure is disabled or when there are no failures between consecutive sniff executions
+     * The interval between consecutive ordinary sniff executions in milliseconds. Will be honoured when sniffOnFailure
+     * is disabled or when there are no failures between consecutive sniff executions
      */
     public int getSnifferInterval() {
         return snifferInterval;

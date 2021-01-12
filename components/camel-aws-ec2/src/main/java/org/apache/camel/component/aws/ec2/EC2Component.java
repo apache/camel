@@ -34,14 +34,14 @@ public class EC2Component extends DefaultComponent {
 
     @Metadata
     private EC2Configuration configuration = new EC2Configuration();
-    
+
     public EC2Component() {
         this(null);
     }
-    
+
     public EC2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new EC2ComponentVerifierExtension());
     }
 
@@ -54,13 +54,14 @@ public class EC2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonEc2Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonEc2Client() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonEC2Client or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public EC2Configuration getConfiguration() {
         return configuration;
     }

@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.cw;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 /**
  * For working with Amazon CloudWatch SDK v2.
@@ -36,7 +33,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 public class Cw2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Cw2Component.class);
-    
+
     @Metadata
     private Cw2Configuration configuration = new Cw2Configuration();
 
@@ -63,10 +60,8 @@ public class Cw2Component extends DefaultComponent {
         // parameters
         setProperties(endpoint, parameters);
 
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
-        if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonCwClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
         }
 
@@ -82,20 +77,5 @@ public class Cw2Component extends DefaultComponent {
      */
     public void setConfiguration(Cw2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Cw2Configuration configuration, Cw2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonCwClient())) {
-            LOG.debug("Looking for an CloudWatchClient instance in the registry");
-            Set<CloudWatchClient> clients = getCamelContext().getRegistry().findByType(CloudWatchClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one CloudWatchClient instance in the registry");
-                configuration.setAmazonCwClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No CloudWatchClient instance in the registry");
-            }
-        } else {
-            LOG.debug("CloudWatchClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

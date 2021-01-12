@@ -28,13 +28,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatorRouteTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:valid")
     protected MockEndpoint validEndpoint;
-    
+
     @EndpointInject("mock:finally")
     protected MockEndpoint finallyEndpoint;
-    
+
     @EndpointInject("mock:invalid")
     protected MockEndpoint invalidEndpoint;
 
@@ -144,24 +144,24 @@ public class ValidatorRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .doTry()
+                        .doTry()
                         .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
                         .to("mock:valid")
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .to("mock:invalid")
-                    .doFinally()
+                        .doFinally()
                         .to("mock:finally")
-                    .end();
+                        .end();
 
                 from("direct:startHeaders")
-                    .doTry()
+                        .doTry()
                         .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate")
                         .to("mock:valid")
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .to("mock:invalid")
-                    .doFinally()
+                        .doFinally()
                         .to("mock:finally")
-                    .end();
+                        .end();
 
                 from("direct:startNoHeaderException")
                         .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json?headerName=headerToValidate")

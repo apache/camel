@@ -8,6 +8,7 @@
 :since: 2.13
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-swf.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 
@@ -58,8 +59,8 @@ The AWS Simple Workflow (SWF) component supports 30 options, which are listed be
 | *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
 | *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
-| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *activityTypeRegistration{zwsp}Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
@@ -67,14 +68,14 @@ The AWS Simple Workflow (SWF) component supports 30 options, which are listed be
 | *secretKey* (security) | Amazon AWS Secret Key. |  | String
 | *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
 | *executionStartToCloseTimeout* (workflow) | Set the execution start to close timeout. | 3600 | String
-| *operation* (workflow) | Workflow operation. The value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
+| *operation* (workflow) | Workflow operation. There are 7 enums and the value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
 | *signalName* (workflow) | The name of the signal to send to the workflow. |  | String
 | *stateResultType* (workflow) | The type of the result when a workflow state is queried. |  | String
 | *taskStartToCloseTimeout* (workflow) | Set the task start to close timeout. | 600 | String
 | *terminationDetails* (workflow) | Details for terminating a workflow. |  | String
 | *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
 | *workflowList* (workflow) | The list name to consume workflows from. |  | String
-| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
+| *workflowTypeRegistration{zwsp}Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
 |===
 // component options: END
 
@@ -96,11 +97,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *type* | *Required* Activity or workflow. The value can be one of: activity, workflow |  | String
+| *type* | *Required* Activity or workflow. There are 2 enums and the value can be one of: activity, workflow |  | String
 |===
 
 
-=== Query Parameters (32 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,14 +115,13 @@ with the following path and query parameters:
 | *version* (common) | The workflow or activity event version to use. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *activityList* (activity) | The list name to consume activities from. |  | String
 | *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
 | *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
-| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *activityTypeRegistration{zwsp}Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
 | *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
@@ -130,14 +130,14 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key. |  | String
 | *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
 | *executionStartToCloseTimeout* (workflow) | Set the execution start to close timeout. | 3600 | String
-| *operation* (workflow) | Workflow operation. The value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
+| *operation* (workflow) | Workflow operation. There are 7 enums and the value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
 | *signalName* (workflow) | The name of the signal to send to the workflow. |  | String
 | *stateResultType* (workflow) | The type of the result when a workflow state is queried. |  | String
 | *taskStartToCloseTimeout* (workflow) | Set the task start to close timeout. | 600 | String
 | *terminationDetails* (workflow) | Details for terminating a workflow. |  | String
 | *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
 | *workflowList* (workflow) | The list name to consume workflows from. |  | String
-| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
+| *workflowTypeRegistration{zwsp}Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
 |===
 // endpoint options: END
 
@@ -284,7 +284,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::camel-spring-boot::page$aws-swf-starter.adoc[]

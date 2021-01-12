@@ -41,9 +41,12 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder host(String host) {
             doSetProperty("host", host);
@@ -52,10 +55,13 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk index to write to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: camel
          * Group: producer
+         * 
+         * @param index the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder index(String index) {
             doSetProperty("index", index);
@@ -72,10 +78,13 @@ public interface SplunkHECEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -93,10 +102,14 @@ public interface SplunkHECEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -106,10 +119,13 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk source argument.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: camel
          * Group: producer
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder source(String source) {
             doSetProperty("source", source);
@@ -118,10 +134,13 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk sourcetype argument.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: camel
          * Group: producer
+         * 
+         * @param sourceType the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder sourceType(String sourceType) {
             doSetProperty("sourceType", sourceType);
@@ -130,10 +149,13 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Contact HEC over https.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param https the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder https(boolean https) {
             doSetProperty("https", https);
@@ -142,10 +164,14 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Contact HEC over https.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param https the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder https(String https) {
             doSetProperty("https", https);
@@ -154,10 +180,13 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk HEC TLS verification.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param skipTlsVerify the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder skipTlsVerify(boolean skipTlsVerify) {
             doSetProperty("skipTlsVerify", skipTlsVerify);
@@ -166,10 +195,14 @@ public interface SplunkHECEndpointBuilderFactory {
         /**
          * Splunk HEC TLS verification.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param skipTlsVerify the value to set
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder skipTlsVerify(String skipTlsVerify) {
             doSetProperty("skipTlsVerify", skipTlsVerify);
@@ -187,41 +220,16 @@ public interface SplunkHECEndpointBuilderFactory {
             return (SplunkHECEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSplunkHECEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkHECEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -231,10 +239,14 @@ public interface SplunkHECEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkHECEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -261,6 +273,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Splunk authorization token
          * 
          * @param path splunkURL/token
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder splunkHec(String path) {
             return SplunkHECEndpointBuilderFactory.endpointBuilder("splunk-hec", path);
@@ -285,6 +298,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path splunkURL/token
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder splunkHec(
                 String componentName,

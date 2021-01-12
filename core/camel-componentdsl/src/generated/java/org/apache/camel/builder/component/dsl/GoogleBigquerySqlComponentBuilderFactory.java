@@ -37,6 +37,8 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
+     * 
+     * @return the dsl builder
      */
     static GoogleBigquerySqlComponentBuilder googleBigquerySql() {
         return new GoogleBigquerySqlComponentBuilderImpl();
@@ -49,13 +51,16 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleBigQuerySQLComponent> {
         /**
-         * ConnectionFactory to obtain connection to Bigquery Service. If non
+         * ConnectionFactory to obtain connection to Bigquery Service. If not
          * provided the default one will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder connectionFactory(
                 org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory connectionFactory) {
@@ -73,10 +78,13 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -86,9 +94,12 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
         /**
          * Google Cloud Project Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param projectId the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder projectId(
                 java.lang.String projectId) {
@@ -96,17 +107,24 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GoogleBigquerySqlComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleBigquerySqlComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -129,7 +147,7 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
             case "connectionFactory": ((GoogleBigQuerySQLComponent) component).setConnectionFactory((org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory) value); return true;
             case "lazyStartProducer": ((GoogleBigQuerySQLComponent) component).setLazyStartProducer((boolean) value); return true;
             case "projectId": ((GoogleBigQuerySQLComponent) component).setProjectId((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((GoogleBigQuerySQLComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleBigQuerySQLComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

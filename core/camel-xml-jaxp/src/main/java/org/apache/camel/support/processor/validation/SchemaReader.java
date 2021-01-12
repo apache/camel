@@ -41,17 +41,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reads the schema used in the processor {@link ValidatingProcessor}.
- * A schema re-reading could be forced using {@link org.apache.camel.component.validator.ValidatorEndpoint#clearCachedSchema()}.
+ * Reads the schema used in the processor {@link ValidatingProcessor}. A schema re-reading could be forced using
+ * {@link org.apache.camel.component.validator.ValidatorEndpoint#clearCachedSchema()}.
  */
 public class SchemaReader {
-    
-    /** Key of the global option to switch either off or on  the access to external DTDs in the XML Validator for StreamSources. 
-     * Only effective, if not a custom schema factory is used.*/
+
+    /**
+     * Key of the global option to switch either off or on the access to external DTDs in the XML Validator for
+     * StreamSources. Only effective, if not a custom schema factory is used.
+     */
     public static final String ACCESS_EXTERNAL_DTD = "CamelXmlValidatorAccessExternalDTD";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SchemaReader.class);
-    
+
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
     // must be volatile because is accessed from different threads see ValidatorEndpoint.clearCachedSchema
     private volatile Schema schema;
@@ -63,16 +65,18 @@ public class SchemaReader {
     private byte[] schemaAsByteArray;
     private final String schemaResourceUri;
     private LSResourceResolver resourceResolver;
-    
+
     private final CamelContext camelContext;
-    
-    
+
     public SchemaReader() {
         this.camelContext = null;
         this.schemaResourceUri = null;
     }
-    
-    /** Specify a camel context and a schema resource URI in order to read the schema via the class resolver specified in the Camel context. */
+
+    /**
+     * Specify a camel context and a schema resource URI in order to read the schema via the class resolver specified in
+     * the Camel context.
+     */
     public SchemaReader(CamelContext camelContext, String schemaResourceUri) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(schemaResourceUri, "schemaResourceUri");
@@ -173,20 +177,21 @@ public class SchemaReader {
         SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
         if (getResourceResolver() != null) {
             factory.setResourceResolver(getResourceResolver());
-        }  
+        }
         if (camelContext == null || !Boolean.parseBoolean(camelContext.getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
             try {
                 LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
                 factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             } catch (SAXException e) {
                 LOG.warn(e.getMessage(), e);
-            } 
+            }
         }
         return factory;
     }
 
     protected Source createSchemaSource() throws IOException {
-        throw new IllegalArgumentException("You must specify either a schema, schemaFile, schemaSource, schemaUrl, or schemaUri property");
+        throw new IllegalArgumentException(
+                "You must specify either a schema, schemaFile, schemaSource, schemaUrl, or schemaUri property");
     }
 
     protected Schema createSchema() throws SAXException, IOException {
@@ -212,21 +217,21 @@ public class SchemaReader {
                 return factory.newSchema(new StreamSource(new ByteArrayInputStream(schemaAsByteArray)));
             }
         }
-        
+
         if (schemaResourceUri != null) {
             synchronized (this) {
                 bytes = readSchemaResource();
                 return factory.newSchema(new StreamSource(new ByteArrayInputStream(bytes)));
-            }          
+            }
         }
-        
+
         Source source = getSchemaSource();
         synchronized (this) {
             return factory.newSchema(source);
         }
 
     }
-    
+
     protected byte[] readSchemaResource() throws IOException {
         LOG.debug("reading schema resource: {}", schemaResourceUri);
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, schemaResourceUri);
@@ -240,7 +245,7 @@ public class SchemaReader {
         }
         return bytes;
     }
-    
+
     private static byte[] getBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copy(IOHelper.buffered(stream), bos);

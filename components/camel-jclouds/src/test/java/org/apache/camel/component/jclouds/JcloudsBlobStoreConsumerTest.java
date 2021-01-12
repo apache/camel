@@ -36,7 +36,8 @@ public class JcloudsBlobStoreConsumerTest extends CamelTestSupport {
     private static final String TEST_BLOB_IN_DIR = "dir/testBlob";
     private static final String TEST_BLOB_IN_OTHER = "other/testBlob";
 
-    BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential").buildView(BlobStoreContext.class).getBlobStore();
+    BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("id", "credential")
+            .buildView(BlobStoreContext.class).getBlobStore();
 
     @Test
     public void testBlobStoreGetOneBlob() throws InterruptedException {

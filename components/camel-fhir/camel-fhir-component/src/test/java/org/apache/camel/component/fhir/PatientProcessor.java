@@ -23,7 +23,8 @@ import org.apache.camel.Processor;
 import org.hl7.fhir.dstu3.model.Patient;
 
 /**
- * Simple Patient processor that converts the Patient segment of a {@link ORU_R01} message into a FHIR dtsu3 {@link Patient}.
+ * Simple Patient processor that converts the Patient segment of a {@link ORU_R01} message into a FHIR dtsu3
+ * {@link Patient}.
  */
 public class PatientProcessor implements Processor {
 
@@ -45,7 +46,7 @@ public class PatientProcessor implements Processor {
         String name = pid.getPatientName()[0].getGivenName().getValue();
         String patientId = msg.getPATIENT_RESULT().getPATIENT().getPID().getPatientID().getCx1_ID().getValue();
         patient.addName()
-            .addGiven(name);
+                .addGiven(name);
         patient.getNameFirstRep().setFamily(surname);
         patient.setId(patientId);
         return patient;

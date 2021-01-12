@@ -104,7 +104,6 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .to("direct:finalize")
                         .log("Done!");
 
-
                 // Order service
 
                 from("direct:newOrder")
@@ -120,7 +119,6 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .bean(orderManagerService, "cancelOrder")
                         .log("Order ${body} cancelled");
 
-
                 // Credit service
 
                 from("direct:reserveCredit")
@@ -135,7 +133,6 @@ public class LRACreditIT extends AbstractLRATestSupport {
                         .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
                         .bean(creditService, "refundCredit")
                         .log("Credit for action ${body} refunded");
-
 
                 // Final actions
                 from("direct:finalize")

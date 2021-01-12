@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,17 +33,29 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
-    S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
+    S3Client client
+            = S3Client.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create("xxxx", "yyyy")))
+                    .region(Region.EU_WEST_1).build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -56,7 +75,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("Test");
             }
         });
-        
+
         template.send("direct:putObject", new Processor() {
 
             @Override
@@ -65,7 +84,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("Test1");
             }
         });
-        
+
         template.send("direct:putObject", new Processor() {
 
             @Override
@@ -79,16 +98,119 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    @DisplayName("Should consume S3StreamObject when include body is true and should close the stream when autocloseBody is true")
+    public void shouldConsumeS3StreamObjectWhenIncludeBodyIsTrueAndNotCloseStreamWhenAutoCloseBodyIsTrue()
+            throws InterruptedException {
+        result.reset();
+
+        result.expectedMessageCount(2);
+
+        template.setDefaultEndpointUri("direct:includeBodyTrueAutoCloseTrue");
+
+        template.send("direct:putObject", exchange -> {
+            exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
+            exchange.getIn().setBody("Test");
+        });
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(AWS2S3Constants.KEY, "test1.txt");
+        headers.put(Exchange.FILE_NAME, "test1.txt");
+
+        template.sendBodyAndHeaders("direct:includeBodyTrueAutoCloseTrue", headers);
+        result.assertIsSatisfied();
+
+        final Exchange exchange = result.getExchanges().get(1);
+
+        assertThat(exchange.getIn().getBody().getClass(), is(equalTo(String.class)));
+        assertThat(exchange.getIn().getBody(String.class), is("Test"));
+    }
+
+    @Test
+    @DisplayName("Should not consume S3StreamObject when include body is false and should not close the stream when autocloseBody is false")
+    public void shouldNotConsumeS3StreamObjectWhenIncludeBodyIsFalseAndNotCloseStreamWhenAutoCloseBodyIsFalse()
+            throws InterruptedException {
+        result.reset();
+
+        result.expectedMessageCount(2);
+
+        template.setDefaultEndpointUri("direct:includeBodyFalseAutoCloseFalse");
+
+        template.send("direct:putObject", exchange -> {
+            exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
+            exchange.getIn().setBody("Test");
+        });
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(AWS2S3Constants.KEY, "test1.txt");
+        headers.put(Exchange.FILE_NAME, "test1.txt");
+
+        template.sendBodyAndHeaders("direct:includeBodyFalseAutoCloseFalse", headers);
+        result.assertIsSatisfied();
+
+        final Exchange exchange = result.getExchanges().get(1);
+
+        assertThat(exchange.getIn().getBody().getClass(), is(equalTo(ResponseInputStream.class)));
+        assertDoesNotThrow(() -> {
+            final ResponseInputStream<GetObjectResponse> inputStream = exchange.getIn().getBody(ResponseInputStream.class);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                final String text = reader.lines().collect(Collectors.joining());
+                assertThat(text, is("Test"));
+            }
+        });
+    }
+
+    @Test
+    @DisplayName("Should not consume S3StreamObject when include body is false and should close the stream when autocloseBody is true")
+    public void shouldNotConsumeS3StreamObjectWhenIncludeBodyIsFalseAndCloseStreamWhenAutoCloseBodyIsTrue()
+            throws InterruptedException {
+        result.reset();
+
+        result.expectedMessageCount(2);
+
+        template.setDefaultEndpointUri("direct:includeBodyFalseAutoCloseTrue");
+
+        template.send("direct:putObject", exchange -> {
+            exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
+            exchange.getIn().setBody("Test");
+        });
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(AWS2S3Constants.KEY, "test1.txt");
+        headers.put(Exchange.FILE_NAME, "test1.txt");
+
+        template.sendBodyAndHeaders("direct:includeBodyFalseAutoCloseTrue", headers);
+        result.assertIsSatisfied();
+
+        final Exchange exchange = result.getExchanges().get(1);
+
+        assertThat(exchange.getIn().getBody().getClass(), is(equalTo(ResponseInputStream.class)));
+        assertThrows(IOException.class, () -> {
+            final ResponseInputStream<GetObjectResponse> inputStream = exchange.getIn().getBody(ResponseInputStream.class);
+            inputStream.read();
+        });
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                String template = "aws2-s3://mycamel?autoCreateBucket=true&includeBody=%s&autocloseBody=%s";
+                String includeBodyTrueAutoCloseTrue = String.format(template, true, true);
+                String includeBodyFalseAutoCloseFalse = String.format(template, false, false);
+                String includeBodyFalseAutoCloseTrue = String.format(template, false, true);
+                from("direct:includeBodyTrueAutoCloseTrue").pollEnrich(includeBodyTrueAutoCloseTrue, 5000).to("mock:result");
+                from("direct:includeBodyFalseAutoCloseFalse").pollEnrich(includeBodyFalseAutoCloseFalse, 5000)
+                        .to("mock:result");
+                from("direct:includeBodyFalseAutoCloseTrue").pollEnrich(includeBodyFalseAutoCloseTrue, 5000).to("mock:result");
+
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false";
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
-                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false").startupOrder(2).log("${body}");
+                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
+                        .startupOrder(2).log("${body}");
 
             }
         };

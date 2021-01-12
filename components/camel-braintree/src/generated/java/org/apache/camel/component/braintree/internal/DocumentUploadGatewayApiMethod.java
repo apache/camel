@@ -25,8 +25,6 @@ public enum DocumentUploadGatewayApiMethod implements ApiMethod {
         "create",
         arg("request", com.braintreegateway.DocumentUploadRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DocumentUploadGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

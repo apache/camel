@@ -56,8 +56,8 @@ public class MyBatisSelectOneTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:selectAccountById?statementType=SelectOne")
-                    .to("mock:result");
+                        .to("mybatis:selectAccountById?statementType=SelectOne")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

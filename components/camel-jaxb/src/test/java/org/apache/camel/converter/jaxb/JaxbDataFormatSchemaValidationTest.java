@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
@@ -64,7 +64,8 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
         LOG.info(payload);
 
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
+        assertTrue(payload.contains(
+                "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
         assertTrue(payload.contains("<firstName>Christian</firstName>"));
         assertTrue(payload.contains("<lastName>Mueller</lastName>"));
         assertTrue(payload.contains("<age>36</age>"));
@@ -75,17 +76,17 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshallWithValidationException() throws Exception {
-        try {
-            template.sendBody("direct:marshall", new Person());
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            Throwable cause = e.getCause();
-            assertIsInstanceOf(IOException.class, cause);
-            assertTrue(cause.getMessage().contains("javax.xml.bind.MarshalException"));
-            assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
-            assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.a"));
-        }
+    public void testMarshallWithValidationException() {
+        Person person = new Person();
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:marshall", person));
+
+        Throwable cause = ex.getCause();
+        assertIsInstanceOf(IOException.class, cause);
+        assertTrue(cause.getMessage().contains("javax.xml.bind.MarshalException"));
+        assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
+        assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.a"));
     }
 
     @Test
@@ -93,15 +94,15 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
         mockUnmarshall.expectedMessageCount(1);
 
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-            .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
-            .append("<firstName>Christian</firstName>")
-            .append("<lastName>Mueller</lastName>")
-            .append("<age>36</age>")
-            .append("<address>")
-            .append("<ns2:addressLine1>Hauptstr. 1; 01129 Entenhausen</ns2:addressLine1>")
-            .append("</address>")
-            .append("</person>")
-            .toString();
+                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
+                .append("<firstName>Christian</firstName>")
+                .append("<lastName>Mueller</lastName>")
+                .append("<age>36</age>")
+                .append("<address>")
+                .append("<ns2:addressLine1>Hauptstr. 1; 01129 Entenhausen</ns2:addressLine1>")
+                .append("</address>")
+                .append("</person>")
+                .toString();
         template.sendBody("direct:unmarshall", xml);
 
         assertMockEndpointsSatisfied();
@@ -116,19 +117,17 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
     @Test
     public void testUnmarshallWithValidationException() throws Exception {
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-            .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" />")
-            .toString();
-        
-        try {
-            template.sendBody("direct:unmarshall", xml);
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            Throwable cause = e.getCause();
-            assertIsInstanceOf(IOException.class, cause);
-            assertTrue(cause.getMessage().contains("javax.xml.bind.UnmarshalException"));
-            assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
-            assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
-        }
+                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" />")
+                .toString();
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unmarshall", xml));
+
+        Throwable cause = ex.getCause();
+        assertIsInstanceOf(IOException.class, cause);
+        assertTrue(cause.getMessage().contains("javax.xml.bind.UnmarshalException"));
+        assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
+        assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
     }
 
     @Override
@@ -141,12 +140,12 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
 
                 from("direct:marshall")
-                    .marshal(jaxbDataFormat)
-                    .to("mock:marshall");
+                        .marshal(jaxbDataFormat)
+                        .to("mock:marshall");
 
                 from("direct:unmarshall")
-                    .unmarshal(jaxbDataFormat)
-                    .to("mock:unmarshall");
+                        .unmarshal(jaxbDataFormat)
+                        .to("mock:unmarshall");
             }
         };
     }

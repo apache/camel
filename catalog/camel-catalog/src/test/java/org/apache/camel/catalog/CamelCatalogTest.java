@@ -367,21 +367,24 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointLenientProperties() throws Exception {
-        Map<String, String> map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456");
+        Map<String, String> map
+                = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456");
         assertNotNull(map);
         assertEquals(2, map.size());
 
         assertEquals("123", map.get("foo"));
         assertEquals("456", map.get("bar"));
 
-        map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000");
+        map = catalog.endpointLenientProperties(
+                "http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000");
         assertNotNull(map);
         assertEquals(2, map.size());
 
         assertEquals("123", map.get("foo"));
         assertEquals("456", map.get("bar"));
 
-        map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000&myPrefix.baz=beer");
+        map = catalog.endpointLenientProperties(
+                "http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000&myPrefix.baz=beer");
         assertNotNull(map);
         assertEquals(3, map.size());
 
@@ -403,7 +406,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNettyHttp() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map
+                = catalog.endpointProperties("netty-http:http:localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -417,7 +421,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNettyHttpDefaultPort() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map
+                = catalog.endpointProperties("netty-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(5, map.size());
 
@@ -430,7 +435,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNettyHttpPlaceholder() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map
+                = catalog.endpointProperties("netty-http:http:{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -444,7 +450,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNettyHttpWithDoubleSlash() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map
+                = catalog.endpointProperties("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -468,7 +475,8 @@ public class CamelCatalogTest {
         map.put("showExchangePattern", "false");
         map.put("style", "Tab");
 
-        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab", catalog.asEndpointUri("log", map, false));
+        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
+                catalog.asEndpointUri("log", map, false));
     }
 
     @Test
@@ -490,7 +498,8 @@ public class CamelCatalogTest {
         assertEquals("sql:{{insert}}?useMessageBodyForSql=true", catalog.asEndpointUri("sql", map, false));
 
         map.put("parametersCount", "{{count}}");
-        assertEquals("sql:{{insert}}?parametersCount={{count}}&useMessageBodyForSql=true", catalog.asEndpointUri("sql", map, false));
+        assertEquals("sql:{{insert}}?parametersCount={{count}}&useMessageBodyForSql=true",
+                catalog.asEndpointUri("sql", map, false));
     }
 
     @Test
@@ -569,7 +578,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesMultiValued() throws Exception {
-        Map<String, String> map = catalog.endpointProperties("http:helloworld?httpClientOptions=httpClient.foo=123&httpClient.bar=456");
+        Map<String, String> map
+                = catalog.endpointProperties("http:helloworld?httpClientOptions=httpClient.foo=123&httpClient.bar=456");
         assertNotNull(map);
         assertEquals(2, map.size());
 
@@ -612,7 +622,8 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
 
         // connection factory
-        result = catalog.validateEndpointProperties("activemq:Consumer.Baz.VirtualTopic.FooRequest?connectionFactory=#pooledJmsConnectionFactory");
+        result = catalog.validateEndpointProperties(
+                "activemq:Consumer.Baz.VirtualTopic.FooRequest?connectionFactory=#pooledJmsConnectionFactory");
         assertTrue(result.isSuccess());
     }
 
@@ -660,11 +671,13 @@ public class CamelCatalogTest {
         assertEquals(1, result.getNumberOfErrors());
 
         // okay
-        result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
+        result = catalog.validateEndpointProperties(
+                "yammer:MESSAGES?accessToken=aaa&consumerKey=bbb&consumerSecret=ccc&useJson=true&initialDelay=500");
         assertTrue(result.isSuccess());
 
         // required / boolean / integer
-        result = catalog.validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
+        result = catalog
+                .validateEndpointProperties("yammer:MESSAGES?accessToken=aaa&consumerKey=&useJson=no&initialDelay=five");
         assertFalse(result.isSuccess());
         assertEquals(4, result.getNumberOfErrors());
         assertTrue(result.getRequired().contains("consumerKey"));
@@ -676,7 +689,7 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
-        assertTrue(result.getUnknownComponent().equals("foo"));
+        assertEquals("foo", result.getUnknownComponent());
         assertEquals(0, result.getNumberOfErrors());
         assertEquals(1, result.getNumberOfWarnings());
 
@@ -753,7 +766,9 @@ public class CamelCatalogTest {
         assertNull(result.getLenient());
 
         // lenient on rss consumer only
-        result = catalog.validateEndpointProperties("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true, false);
+        result = catalog.validateEndpointProperties(
+                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true,
+                false);
         assertTrue(result.isSuccess());
         assertEquals("foo", result.getLenient().iterator().next());
 
@@ -770,7 +785,8 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
 
         // userinfo in authority without password
-        result = catalog.validateEndpointProperties("ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A");
+        result = catalog.validateEndpointProperties(
+                "ssh://scott@localhost:8101?certResource=classpath:test_rsa&useFixedDelay=true&delay=5000&pollCommand=features:list%0A");
         assertTrue(result.isSuccess());
 
         // userinfo with both user and password and placeholder
@@ -788,12 +804,13 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
-        assertTrue(result.getIncapable() != null);
+        assertNotNull(result.getIncapable());
     }
 
     @Test
     public void validatePropertiesSummary() throws Exception {
-        EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
+        EndpointValidationResult result = catalog.validateEndpointProperties(
+                "yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage(true);
         LOG.info(reason);
@@ -1165,6 +1182,64 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateApiEndpoint() throws Exception {
+        // there is a type converter that converts from and to to phone number
+        String uri = "twilio:call/create?applicationSid=123&from=#555&to=#999";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        // there is a type converter that converts from and to to phone number
+        uri = "twilio:call/create?applicationSid=123&from=#555&to=#999&unknown=true";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("unknown"));
+
+        // call/fetcher does not have from and to parameters
+        uri = "twilio:Call/Fetch?applicationSid=123&from=#555&to=#999";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("from"));
+        assertTrue(result.getUnknown().contains("to"));
+
+        uri = "zendesk:getTopicsByUser?user_id=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "zendesk:GET_TOPICS_BY_USER?user_id=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "zendesk:get-topics-by-user?user_id=123&unknown=true";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("unknown"));
+
+        uri = "twilio:account/fetch";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        uri = "twilio:account/fetch?pathSid=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "twilio:account/update";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        uri = "twilio:account/update?pathSid=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        uri = "twilio:account/read";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals(2, result.getEnumChoices("methodName").size());
+        assertTrue(result.getEnumChoices("methodName").contains("fetch"));
+        assertTrue(result.getEnumChoices("methodName").contains("update"));
+
+        uri = "twilio:account/read?pathSid=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+    }
+
+    @Test
     public void testValidateEndpointTimerDuration() throws Exception {
         String uri = "timer:foo?period=5s";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
@@ -1379,7 +1454,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateConfigurationPropertyComponentJClouds() throws Exception {
-        String text = "camel.component.jclouds.basicPropertyBinding=true";
+        String text = "camel.component.jclouds.autowiredEnabled=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
@@ -1423,6 +1498,20 @@ public class CamelCatalogTest {
     public void testValidateConfigurationPropertyMain() throws Exception {
         String text = "camel.main.allow-use-original-message=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        // spaces around
+        text = "camel.main.allow-use-original-message = true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        text = "camel.main.allow-use-original-message= true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        text = "camel.main.allow-use-original-message =true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        text = "camel.main.allow-use-original-message  =   true";
+        result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
         text = "camel.main.allow-use-original-message=abc";
@@ -1506,7 +1595,8 @@ public class CamelCatalogTest {
 
     @Test
     public void validateEnvVariableInSyntax() throws Exception {
-        EndpointValidationResult result = catalog.validateEndpointProperties("netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
+        EndpointValidationResult result
+                = catalog.validateEndpointProperties("netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
         assertTrue(result.isSuccess());
 
         result = catalog.validateEndpointProperties("netty-http:http://foo-bar/?requestTimeout={{env:TIMEOUT}}");

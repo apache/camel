@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.SerializableRequestDto;
@@ -59,7 +60,7 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends CamelTe
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .inOut("activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
+                        .to(ExchangePattern.InOut, "activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
                         .to("mock:result");
 
                 from("activemq:responseGenerator?transferExchange=true")

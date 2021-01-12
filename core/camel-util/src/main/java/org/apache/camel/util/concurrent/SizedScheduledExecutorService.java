@@ -39,20 +39,20 @@ import org.slf4j.LoggerFactory;
  * The {@link ScheduledThreadPoolExecutor} which is the default implementation of the {@link ScheduledExecutorService}
  * has unbounded task queue, which mean you can keep scheduling tasks which may cause the system to run out of memory.
  * <p/>
- * This class is a wrapped for {@link ScheduledThreadPoolExecutor} to reject executing tasks if an upper limit
- * of the task queue has been reached.
+ * This class is a wrapped for {@link ScheduledThreadPoolExecutor} to reject executing tasks if an upper limit of the
+ * task queue has been reached.
  */
 public class SizedScheduledExecutorService implements ScheduledExecutorService {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(SizedScheduledExecutorService.class); 
+
+    private static final Logger LOG = LoggerFactory.getLogger(SizedScheduledExecutorService.class);
     private final ScheduledThreadPoolExecutor delegate;
     private final long queueSize;
 
     /**
      * Creates a new sized {@link ScheduledExecutorService} with the given queue size as upper task limit.
      *
-     * @param delegate   the delegate of the actual thread pool implementation
-     * @param queueSize  the upper queue size, use 0 or negative value for unlimited
+     * @param delegate  the delegate of the actual thread pool implementation
+     * @param queueSize the upper queue size, use 0 or negative value for unlimited
      */
     public SizedScheduledExecutorService(ScheduledThreadPoolExecutor delegate, long queueSize) {
         this.delegate = delegate;
@@ -157,7 +157,8 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit timeUnit) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit timeUnit)
+            throws InterruptedException {
         if (canScheduleOrExecute()) {
             return delegate.invokeAll(tasks, timeout, timeUnit);
         } else {
@@ -175,7 +176,8 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit timeUnit)
+            throws InterruptedException, ExecutionException, TimeoutException {
         if (canScheduleOrExecute()) {
             return delegate.invokeAny(tasks, timeout, timeUnit);
         } else {

@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.athena;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.athena.AthenaClient;
 
 /**
  * For working with Amazon Athena SDK v2.
@@ -51,14 +48,12 @@ public class Athena2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Athena2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
+        Athena2Configuration configuration
+                = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getAmazonAthenaClient() == null && (configuration.getAccessKey() == null
-            || configuration.getSecretKey() == null)) {
+                || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or amazonAthenaClient must be specified");
         }
         return endpoint;
@@ -73,20 +68,5 @@ public class Athena2Component extends DefaultComponent {
      */
     public void setConfiguration(Athena2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Athena2Configuration configuration, Athena2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonAthenaClient())) {
-            LOG.debug("Looking for an AthenaClient instance in the registry");
-            Set<AthenaClient> clients = getCamelContext().getRegistry().findByType(AthenaClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one AthenaClient instance in the registry");
-                configuration.setAmazonAthenaClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No AthenaClient instance in the registry");
-            }
-        } else {
-            LOG.debug("AthenaClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

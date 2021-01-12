@@ -31,7 +31,7 @@ public class NotifyBuilderOnFailureShutdownCamelIssueTest extends ContextTestSup
     @Test
     public void testIssue() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
     }
 
     @Override

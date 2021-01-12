@@ -50,7 +50,8 @@ public class WebhookComponent extends DefaultComponent {
 
         WebhookConfiguration config = configuration != null ? configuration.copy() : new WebhookConfiguration();
 
-        RestConfiguration restConfig = CamelContextHelper.getRestConfiguration(getCamelContext(), config.getWebhookComponentName());
+        RestConfiguration restConfig
+                = CamelContextHelper.getRestConfiguration(getCamelContext(), config.getWebhookComponentName());
         config.storeConfiguration(restConfig);
 
         WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config);

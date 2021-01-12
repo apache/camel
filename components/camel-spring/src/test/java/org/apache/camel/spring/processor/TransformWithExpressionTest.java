@@ -43,7 +43,6 @@ public class TransformWithExpressionTest extends SpringTestSupport {
         endEndpoint = getMockEndpoint("mock:end");
     }
 
-
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/transformWithExpressionContext.xml");

@@ -23,7 +23,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class ValidatorInputStreamTest extends CamelTestSupport {
-    
+
     @Test
     public void testReadTwice() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -43,10 +43,10 @@ public class ValidatorInputStreamTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
-                    .to("mock:foo")
-                    .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
-                    .to("mock:bar");
+                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
+                        .to("mock:foo")
+                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json")
+                        .to("mock:bar");
             }
         };
     }

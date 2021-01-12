@@ -33,11 +33,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarConfigurationTest.class);
-    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
-    private static final String TEST_URI = "google-calendar://" + PATH_PREFIX + "/get?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+    private static final String PATH_PREFIX
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
+    private static final String TEST_URI = "google-calendar://" + PATH_PREFIX
+                                           + "/get?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @BeforeEach
-    @Override    
+    @Override
     public void createTestCalendar() {
     }
 
@@ -45,7 +47,7 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
     @Override
     public void deleteTestCalendar() {
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = new DefaultCamelContext(createCamelRegistry());
@@ -56,7 +58,7 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
 
         return context;
     }
-    
+
     @Test
     public void testConfiguration() throws Exception {
         GoogleCalendarEndpoint endpoint = getMandatoryEndpoint(TEST_URI, GoogleCalendarEndpoint.class);
@@ -66,7 +68,7 @@ public class CalendarConfigurationTest extends AbstractGoogleCalendarTestSupport
         assertEquals("b", configuration.getClientSecret());
         assertEquals("c", configuration.getApplicationName());
         assertEquals("d", configuration.getAccessToken());
-        assertEquals("e", configuration.getRefreshToken());        
+        assertEquals("e", configuration.getRefreshToken());
     }
 
     @Override

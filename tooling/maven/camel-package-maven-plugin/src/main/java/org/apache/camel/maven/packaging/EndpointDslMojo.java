@@ -48,6 +48,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
@@ -76,7 +77,8 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 /**
  * Generate Endpoint DSL source files for Components.
  */
-@Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private static final Map<String, Class<?>> PRIMITIVEMAP;
@@ -152,7 +154,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     protected File outputResourcesDir;
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         baseDir = project.getBasedir();
         endpointFactoriesPackageName = "org.apache.camel.builder.endpoint";
@@ -164,7 +167,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Path root = findCamelDirectory(baseDir, "core/camel-endpointdsl").toPath();
+        File camelDir = findCamelDirectory(baseDir, "core/camel-endpointdsl");
+        if (camelDir == null) {
+            getLog().debug("No core/camel-endpointdsl folder found, skipping execution");
+            return;
+        }
+        Path root = camelDir.toPath();
         if (sourcesOutputDir == null) {
             sourcesOutputDir = root.resolve("src/generated/java").toFile();
         }
@@ -178,8 +186,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         Map<File, Supplier<String>> files;
 
         try {
-            files = Files.find(buildDir.toPath(), Integer.MAX_VALUE, (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
-                .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
+            files = Files
+                    .find(buildDir.toPath(), Integer.MAX_VALUE,
+                            (p, a) -> a.isRegularFile() && p.toFile().getName().endsWith(PackageHelper.JSON_SUFIX))
+                    .collect(Collectors.toMap(Path::toFile, s -> cache(() -> loadJson(s.toFile()))));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -215,11 +225,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             }
 
             // Group the models by implementing classes
-            Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
+            Map<String, List<ComponentModel>> grModels
+                    = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
                 ComponentModel model = compModels.get(0); // They should be
-                                                          // equivalent
+                                                         // equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
                 String overrideComponentName = null;
@@ -233,7 +244,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
+    private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName)
+            throws MojoFailureException {
         List<Method> staticBuilders = new ArrayList<>();
         boolean updated = doCreateEndpointDsl(model, aliases, staticBuilders);
 
@@ -258,8 +270,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    @SuppressWarnings({"checkstyle:executablestatementcount", "checkstyle:methodlength"})
-    private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, List<Method> staticBuilders) throws MojoFailureException {
+    @SuppressWarnings({ "checkstyle:executablestatementcount", "checkstyle:methodlength" })
+    private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, List<Method> staticBuilders)
+            throws MojoFailureException {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
         Class<?> realComponentClass = loadClass(componentClassName);
@@ -288,7 +301,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         JavaClass producerClass = null;
         JavaClass advancedProducerClass = null;
 
-        if (!realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly() && !realEndpointClass.getAnnotation(UriEndpoint.class).consumerOnly()) {
+        if (!realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()
+                && !realEndpointClass.getAnnotation(UriEndpoint.class).consumerOnly()) {
             String consumerName = builderName.replace("Endpoint", "EndpointConsumer");
             consumerClass = javaClass.addNestedType().setPublic().setClass(false);
             consumerClass.setName(consumerName);
@@ -300,11 +314,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 advancedConsumerClass.setName("Advanced" + consumerName);
                 advancedConsumerClass.implementInterface("EndpointConsumerBuilder");
                 generateDummyClass(advancedConsumerClass.getCanonicalName());
-                advancedConsumerClass.getJavaDoc().setText("Advanced builder for endpoint consumers for the " + model.getTitle() + " component.");
-                consumerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedConsumerClass.getCanonicalName())).setDefault()
-                    .setBody("return (Advanced" + consumerName + ") this;");
-                advancedConsumerClass.addMethod().setName("basic").setReturnType(loadClass(consumerClass.getCanonicalName())).setDefault()
-                    .setBody("return (" + consumerName + ") this;");
+                advancedConsumerClass.getJavaDoc()
+                        .setText("Advanced builder for endpoint consumers for the " + model.getTitle() + " component.");
+                consumerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedConsumerClass.getCanonicalName()))
+                        .setDefault()
+                        .setBody("return (Advanced" + consumerName + ") this;");
+                advancedConsumerClass.addMethod().setName("basic").setReturnType(loadClass(consumerClass.getCanonicalName()))
+                        .setDefault()
+                        .setBody("return (" + consumerName + ") this;");
             }
 
             String producerName = builderName.replace("Endpoint", "EndpointProducer");
@@ -318,12 +335,15 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 advancedProducerClass.setName("Advanced" + producerName);
                 advancedProducerClass.implementInterface("EndpointProducerBuilder");
                 generateDummyClass(advancedProducerClass.getCanonicalName());
-                advancedProducerClass.getJavaDoc().setText("Advanced builder for endpoint producers for the " + model.getTitle() + " component.");
+                advancedProducerClass.getJavaDoc()
+                        .setText("Advanced builder for endpoint producers for the " + model.getTitle() + " component.");
 
-                producerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedProducerClass.getCanonicalName())).setDefault()
-                    .setBody("return (Advanced" + producerName + ") this;");
-                advancedProducerClass.addMethod().setName("basic").setReturnType(loadClass(producerClass.getCanonicalName())).setDefault()
-                    .setBody("return (" + producerName + ") this;");
+                producerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedProducerClass.getCanonicalName()))
+                        .setDefault()
+                        .setBody("return (Advanced" + producerName + ") this;");
+                advancedProducerClass.addMethod().setName("basic").setReturnType(loadClass(producerClass.getCanonicalName()))
+                        .setDefault()
+                        .setBody("return (" + producerName + ") this;");
             }
         }
 
@@ -354,11 +374,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 advancedBuilderClass.implementInterface(advancedProducerClass.getName());
             }
             generateDummyClass(advancedBuilderClass.getCanonicalName());
-            advancedBuilderClass.getJavaDoc().setText("Advanced builder for endpoint for the " + model.getTitle() + " component.");
+            advancedBuilderClass.getJavaDoc()
+                    .setText("Advanced builder for endpoint for the " + model.getTitle() + " component.");
 
-            builderClass.addMethod().setName("advanced").setReturnType(loadClass(advancedBuilderClass.getCanonicalName())).setDefault()
-                .setBody("return (Advanced" + builderName + ") this;");
-            advancedBuilderClass.addMethod().setName("basic").setReturnType(loadClass(builderClass.getCanonicalName())).setDefault().setBody("return (" + builderName + ") this;");
+            builderClass.addMethod().setName("advanced").setReturnType(loadClass(advancedBuilderClass.getCanonicalName()))
+                    .setDefault()
+                    .setBody("return (Advanced" + builderName + ") this;");
+            advancedBuilderClass.addMethod().setName("basic").setReturnType(loadClass(builderClass.getCanonicalName()))
+                    .setDefault().setBody("return (" + builderName + ") this;");
         }
 
         generateDummyClass(componentsFactoriesPackageName + ".T");
@@ -425,6 +448,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 // basic description
                 String baseDesc = option.getDescription();
                 if (!Strings.isEmpty(baseDesc)) {
+                    // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+                    baseDesc = JavadocHelper.xmlEncode(baseDesc);
+
                     if (!baseDesc.endsWith(".")) {
                         baseDesc += ".";
                     }
@@ -432,7 +458,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     baseDesc += "@@REPLACE_ME@@";
                     if (option.isMultiValue()) {
                         baseDesc += "\nThe option is multivalued, and you can use the " + option.getName()
-                                + "(String, Object) method to add a value (call the method multiple times to set more values).";
+                                    + "(String, Object) method to add a value (call the method multiple times to set more values).";
                     }
                     baseDesc += "\n";
                     // the Endpoint DSL currently requires to provide the entire
@@ -444,7 +470,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     }
                     // include default value (if any)
                     if (option.getDefaultValue() != null) {
-                        baseDesc += "\nDefault: " + option.getDefaultValue();
+                        // must xml encode default value so its valid as javadoc
+                        String value = JavadocHelper.xmlEncode(option.getDefaultValue().toString());
+                        baseDesc += "\nDefault: " + value;
                     }
                     baseDesc += "\nGroup: " + option.getGroup();
                 }
@@ -452,43 +480,81 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 boolean multiValued = option.isMultiValue();
                 if (multiValued) {
                     // multi value option that takes one value
-                    String desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
-                    Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                    String desc = baseDesc.replace("@@REPLACE_ME@@",
+                            "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
+                                                                     + "</code> type.");
+                    desc = JavadocHelper.xmlEncode(desc);
+
+                    Method fluent = target.addMethod().setDefault().setName(option.getName())
+                            .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(new GenericType(String.class), "key")
                             .addParameter(new GenericType(Object.class), "value")
-                            .setBody("doSetMultiValueProperty(\"" + option.getName() + "\", \"" + option.getPrefix() + "\" + key, value);", "return this;\n");
+                            .setBody("doSetMultiValueProperty(\"" + option.getName() + "\", \"" + option.getPrefix()
+                                     + "\" + key, value);",
+                                    "return this;\n");
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    fluent.getJavaDoc().setFullText(desc);
+
+                    String text = desc;
+                    text += "\n\n@param key the option key";
+                    text += "\n@param value the option value";
+                    text += "\n@return the dsl builder\n";
+                    fluent.getJavaDoc().setText(text);
                     // add multi value method that takes a Map
-                    fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                    fluent = target.addMethod().setDefault().setName(option.getName())
+                            .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(new GenericType(Map.class), "values")
-                            .setBody("doSetMultiValueProperties(\"" + option.getName() + "\", \"" + option.getPrefix() + "\", values);", "return this;\n");
+                            .setBody("doSetMultiValueProperties(\"" + option.getName() + "\", \"" + option.getPrefix()
+                                     + "\", values);",
+                                    "return this;\n");
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    fluent.getJavaDoc().setFullText(desc);
+                    text = desc;
+                    text += "\n\n@param values the values";
+                    text += "\n@return the dsl builder\n";
+                    fluent.getJavaDoc().setText(text);
                 } else {
                     // regular option
-                    String desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
-                    Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                    String desc = baseDesc.replace("@@REPLACE_ME@@",
+                            "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
+                                                                     + "</code> type.");
+                    desc = JavadocHelper.xmlEncode(desc);
+
+                    Method fluent = target.addMethod().setDefault().setName(option.getName())
+                            .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
-                            .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
+                            .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
+                                    "return this;\n");
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    fluent.getJavaDoc().setFullText(desc);
+                    String text = desc;
+                    text += "\n\n@param " + option.getName() + " the value to set";
+                    text += "\n@return the dsl builder\n";
+                    fluent.getJavaDoc().setText(text);
+
                     if (ogtype.getRawClass() != String.class) {
                         // regular option by String parameter variant
-                        desc = baseDesc.replace("@@REPLACE_ME@@", "\nThe option will be converted to a <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;") + "</code> type.");
-                        fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
+                        desc = baseDesc.replace("@@REPLACE_ME@@",
+                                "\nThe option will be converted to a <code>"
+                                                                  + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
+                                                                  + "</code> type.");
+                        desc = JavadocHelper.xmlEncode(desc);
+
+                        fluent = target.addMethod().setDefault().setName(option.getName())
+                                .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                                 .addParameter(new GenericType(String.class), option.getName())
-                                .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");", "return this;\n");
+                                .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");",
+                                        "return this;\n");
                         if (option.isDeprecated()) {
                             fluent.addAnnotation(Deprecated.class);
                         }
-                        fluent.getJavaDoc().setFullText(desc);
+                        text = desc;
+                        text += "\n\n@param " + option.getName() + " the value to set";
+                        text += "\n@return the dsl builder\n";
+                        fluent.getJavaDoc().setText(text);
                     }
                 }
             }
@@ -504,8 +570,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 .addParameter(String.class, "componentName")
                 .addParameter(String.class, "path")
                 .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
-                .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName + ", Advanced" + builderName + " {",
-                        "    public " + builderName + "Impl(String path) {", "        super(componentName, path);", "    }", "}",
+                .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName
+                         + ", Advanced" + builderName + " {",
+                        "    public " + builderName + "Impl(String path) {", "        super(componentName, path);", "    }",
+                        "}",
                         "return new " + builderName + "Impl(path);", "");
         if (model.isDeprecated()) {
             method.addAnnotation(Deprecated.class);
@@ -518,9 +586,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     .addParameter(String.class, "path")
                     .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
                     .setDefault()
-                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "\"" + model.getScheme() + "\", path");
+                    .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
+                            "\"" + model.getScheme() + "\", path");
             String javaDoc = desc;
             javaDoc += "\n\n@param path " + pathParameterJavaDoc(model);
+            javaDoc += "\n@return the dsl builder\n";
             method.getJavaDoc().setText(javaDoc);
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
@@ -530,7 +600,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             method = method.copy();
             method.setPublic().setStatic();
             method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-            method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "\"" + model.getScheme() + "\", path");
+            method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
+                    "\"" + model.getScheme() + "\", path");
             staticBuilders.add(method);
 
             method = dslClass.addMethod().setStatic().setName(methodName)
@@ -542,6 +613,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaDoc = desc;
             javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
             javaDoc += "\n@param path " + pathParameterJavaDoc(model);
+            javaDoc += "\n@return the dsl builder\n";
             method.getJavaDoc().setText(javaDoc);
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
@@ -564,9 +636,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         .addParameter(String.class, "path")
                         .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
                         .setDefault()
-                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder", "\"" + componentModel.getScheme() + "\", path");
+                        .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
+                                "\"" + componentModel.getScheme() + "\", path");
                 String javaDoc = desc;
                 javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
+                javaDoc += "\n@return the dsl builder\n";
                 method.getJavaDoc().setText(javaDoc);
                 if (componentModel.isDeprecated()) {
                     method.addAnnotation(Deprecated.class);
@@ -578,7 +652,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     method = method.copy();
                     method.setPublic().setStatic();
                     method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "\"" + componentModel.getScheme() + "\", path");
+                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
+                            "\"" + componentModel.getScheme() + "\", path");
                     staticBuilders.add(method);
                 }
 
@@ -593,6 +668,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     javaDoc = desc;
                     javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
                     javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
+                    javaDoc += "\n@return the dsl builder\n";
                     method.getJavaDoc().setText(javaDoc);
                     if (componentModel.isDeprecated()) {
                         method.addAnnotation(Deprecated.class);
@@ -605,7 +681,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     method = method.copy();
                     method.setPublic().setStatic();
                     method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
-                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder", "componentName, path");
+                    method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
+                            "componentName, path");
                     staticBuilders.add(method);
                 }
 
@@ -613,7 +690,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             }
         }
 
-        return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java", false);
+        return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java",
+                false);
     }
 
     private static String pathParameterJavaDoc(ComponentModel model) {
@@ -637,11 +715,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         javaClass.addImport("java.util.stream.Collectors");
         javaClass.addImport("java.util.stream.Stream");
         javaClass.addMethod().setDefault().setReturnType("org.apache.camel.Expression").setName("endpoints")
-            .addParameter("org.apache.camel.builder.EndpointProducerBuilder", "endpoints", true)
-            .setBody("return new org.apache.camel.support.ExpressionAdapter() {", "    List<org.apache.camel.Expression> expressions = Stream.of(endpoints)",
-                     "        .map(org.apache.camel.builder.EndpointProducerBuilder::expr)", "        .collect(Collectors.toList());", "", "    @Override",
-                     "    public Object evaluate(org.apache.camel.Exchange exchange) {",
-                     "        return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());", "    }", "};");
+                .addParameter("org.apache.camel.builder.EndpointProducerBuilder", "endpoints", true)
+                .setBody("return new org.apache.camel.support.ExpressionAdapter() {",
+                        "    List<org.apache.camel.Expression> expressions = Stream.of(endpoints)",
+                        "        .map(org.apache.camel.builder.EndpointProducerBuilder::expr)",
+                        "        .collect(Collectors.toList());", "", "    @Override",
+                        "    public Object evaluate(org.apache.camel.Exchange exchange) {",
+                        "        return expressions.stream().map(e -> e.evaluate(exchange, Object.class)).collect(Collectors.toList());",
+                        "    }", "};");
 
         for (File factory : factories) {
             String factoryName = Strings.before(factory.getName(), ".");
@@ -649,7 +730,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaClass.implementInterface(componentsFactoriesPackageName + "." + factoryName + "." + endpointsName);
         }
 
-        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
+        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON",
+                endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
     }
 
     private boolean synchronizeEndpointBuildersInterface(List<File> factories) throws MojoFailureException {
@@ -665,11 +747,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaClass.implementInterface(componentsFactoriesPackageName + "." + Strings.before(factory.getName(), "."));
         }
 
-        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
+        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON",
+                endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
     }
 
     private boolean synchronizeEndpointBuildersStaticClass(List<Method> methods) throws MojoFailureException {
-        File file = new File(sourcesOutputDir.getPath() + "/" + endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+        File file = new File(
+                sourcesOutputDir.getPath() + "/" + endpointFactoriesPackageName.replace(".", "/"),
+                "StaticEndpointBuilders.java");
         if (file.exists()) {
             // does the file already exists
             try {
@@ -678,8 +763,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 JavaClassSource source = (JavaClassSource) Roaster.parse(sourceCode);
                 // add existing methods
                 for (MethodSource ms : source.getMethods()) {
-                    boolean exist = methods.stream().anyMatch(m ->
-                            m.getName().equals(ms.getName()) && m.getParameters().size() == ms.getParameters().size());
+                    boolean exist = methods.stream().anyMatch(
+                            m -> m.getName().equals(ms.getName()) && m.getParameters().size() == ms.getParameters().size());
                     if (!exist) {
                         // the existing file has a method we dont have so create a method and add
                         Method method = new Method();
@@ -708,7 +793,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     }
                 }
             } catch (IOException e) {
-                throw new MojoFailureException("Cannot parse existing java source file: " + file + " due to " + e.getMessage(), e);
+                throw new MojoFailureException(
+                        "Cannot parse existing java source file: " + file + " due to " + e.getMessage(), e);
             }
         }
 
@@ -729,7 +815,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         String printClass = javaClass.printClass();
 
-        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + printClass + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + printClass + "\n//CHECKSTYLE:ON",
+                endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
     }
 
     private static String getQualifiedType(Type type) {
@@ -771,7 +858,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
-        final File allComponentsDslEndpointFactory = new File(sourcesOutputDir, componentsFactoriesPackageName.replace('.', '/'));
+        final File allComponentsDslEndpointFactory
+                = new File(sourcesOutputDir, componentsFactoriesPackageName.replace('.', '/'));
         final File[] files = allComponentsDslEndpointFactory.listFiles();
 
         if (files == null) {
@@ -779,7 +867,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // load components
-        return Arrays.stream(files).filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists()).sorted().collect(Collectors.toList());
+        return Arrays.stream(files).filter(file -> file.isFile() && file.getName().endsWith(".java") && file.exists()).sorted()
+                .collect(Collectors.toList());
     }
 
     private static String camelCaseLower(String s) {
@@ -793,17 +882,17 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         if (s != null) {
             s = s.substring(0, 1).toLowerCase() + s.substring(1);
             switch (s) {
-            case "class":
-                s = "clas";
-                break;
-            case "package":
-                s = "packag";
-                break;
-            case "rest":
-                s = "restEndpoint";
-                break;
-            default:
-                break;
+                case "class":
+                    s = "clas";
+                    break;
+                case "package":
+                    s = "packag";
+                    break;
+                case "rest":
+                    s = "restEndpoint";
+                    break;
+                default:
+                    break;
             }
         }
         return s;
@@ -836,7 +925,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 }
                 // TODO: default value note ?
                 if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnums());
+                    desc += "\nThere are " + option.getEnums().size() + " enums and the value can be one of: "
+                            + wrapEnumValues(option.getEnums());
                 }
             }
         }
@@ -853,14 +943,14 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         String name = type.substring(pos + 1).replace("Component", "");
 
         switch (type) {
-        case "org.apache.camel.component.atmosphere.websocket.WebsocketComponent":
-            return "AtmosphereWebsocket";
-        case "org.apache.camel.component.zookeepermaster.MasterComponent":
-            return "ZooKeeperMaster";
-        case "org.apache.camel.component.jetty9.JettyHttpComponent9":
-            return "JettyHttp";
-        default:
-            return name;
+            case "org.apache.camel.component.atmosphere.websocket.WebsocketComponent":
+                return "AtmosphereWebsocket";
+            case "org.apache.camel.component.zookeepermaster.MasterComponent":
+                return "ZooKeeperMaster";
+            case "org.apache.camel.component.jetty9.JettyHttpComponent9":
+                return "JettyHttp";
+            default:
+                return name;
         }
     }
 
@@ -874,18 +964,19 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         // HACKS
         //
         switch (type) {
-        case "org.apache.camel.component.disruptor.vm.DisruptorVmComponent":
-            return "org.apache.camel.component.disruptor.DisruptorEndpoint";
-        case "org.apache.camel.component.etcd.EtcdComponent":
-            return "org.apache.camel.component.etcd.AbstractEtcdPollingEndpoint";
-        case "org.apache.camel.websocket.jsr356.JSR356WebSocketComponent":
-            return "org.apache.camel.websocket.jsr356.JSR356Endpoint";
-        default:
-            return endpointName;
+            case "org.apache.camel.component.disruptor.vm.DisruptorVmComponent":
+                return "org.apache.camel.component.disruptor.DisruptorEndpoint";
+            case "org.apache.camel.component.etcd.EtcdComponent":
+                return "org.apache.camel.component.etcd.AbstractEtcdPollingEndpoint";
+            case "org.apache.camel.websocket.jsr356.JSR356WebSocketComponent":
+                return "org.apache.camel.websocket.jsr356.JSR356Endpoint";
+            default:
+                return endpointName;
         }
     }
 
-    private Field findField(Class<?> realComponentClass, Class<?> realEndpointClass, EndpointOptionModel option) throws NoSuchFieldException {
+    private Field findField(Class<?> realComponentClass, Class<?> realEndpointClass, EndpointOptionModel option)
+            throws NoSuchFieldException {
         Field field = null;
         List<Class<?>> classes = new ArrayList<>();
         classes.add(realComponentClass);
@@ -1071,7 +1162,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private boolean writeSourceIfChanged(JavaClass source, String filePath, String fileName, boolean innerClassesLast) throws MojoFailureException {
+    private boolean writeSourceIfChanged(JavaClass source, String filePath, String fileName, boolean innerClassesLast)
+            throws MojoFailureException {
         return writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName);
     }
 

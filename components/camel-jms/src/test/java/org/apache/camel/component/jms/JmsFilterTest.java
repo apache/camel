@@ -58,7 +58,7 @@ public class JmsFilterTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -68,7 +68,7 @@ public class JmsFilterTest extends CamelTestSupport {
 
         return camelContext;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

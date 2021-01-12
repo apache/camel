@@ -76,7 +76,8 @@ public class MicrometerComponentTest {
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.getTypeConverter()).thenReturn(typeConverter);
         when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
-        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class)).thenReturn(metricRegistry);
+        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class))
+                .thenReturn(metricRegistry);
 
         Map<String, Object> params = new HashMap<>();
         params.put("tags", "key=value");
@@ -87,7 +88,8 @@ public class MicrometerComponentTest {
         assertThat(me.getMetricsName(), is("counter"));
         assertThat(me.getRegistry(), is(metricRegistry));
         inOrder.verify(camelContext, times(1)).getRegistry();
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME,
+                MeterRegistry.class);
         inOrder.verify(camelContext, times(1)).getTypeConverter();
         inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
         inOrder.verifyNoMoreInteractions();
@@ -102,7 +104,8 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateNewEndpointForHistogram() {
-        Endpoint endpoint = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
+        Endpoint endpoint
+                = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name", Tags.empty());
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
@@ -116,7 +119,7 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetMetricsType() {
-        Meter.Type[] supportedTypes = {Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER};
+        Meter.Type[] supportedTypes = { Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER };
         for (Meter.Type type : supportedTypes) {
             assertThat(component.getMetricsType(MicrometerUtils.getName(type) + ":metrics-name"), is(type));
         }
@@ -130,7 +133,7 @@ public class MicrometerComponentTest {
     @Test
     public void testGetMetricsTypeNotFound() {
         assertThrows(RuntimeCamelException.class,
-            () -> component.getMetricsType("unknown-metrics:metrics-name"));
+                () -> component.getMetricsType("unknown-metrics:metrics-name"));
     }
 
     @Test

@@ -16,6 +16,7 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import java.util.concurrent.ExecutorService;
  * TODO: Update one line description above what the component does.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name",
-             consumerClass = ${name}Consumer.class, label = "custom")
+             category = {Category.JAVA})
 public class ${name}Endpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = true)
     private String name;
@@ -80,7 +81,7 @@ public class ${name}Endpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        // TODO: Delete me when you implementy your custom component
+        // TODO: Delete me when you implemented your custom component
         return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "${name}Consumer");
     }
 }

@@ -35,8 +35,6 @@ public enum CreditCardVerificationGatewayApiMethod implements ApiMethod {
         "search",
         arg("query", com.braintreegateway.CreditCardVerificationSearchRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CreditCardVerificationGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

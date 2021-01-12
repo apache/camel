@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>core</artifactId>
+        <version>3.8.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-core-model</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Camel :: Core Model</name>
+    <description>Camel model</description>
+
+    <properties>
+        <firstVersion>3.7.0</firstVersion>
+        <label>core</label>
+    </properties>
+
+    <dependencies>
+
+        <!-- required dependencies by camel-core -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-processor</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-base</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-base-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-configurer</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-configurer</goal>
+                        </goals>
+                        <configuration>
+                            <discoverClasses>false</discoverClasses>
+                            <classes>
+                                <class>org.apache.camel.model.FaultToleranceConfigurationDefinition</class>
+                                <class>org.apache.camel.model.Resilience4jConfigurationDefinition</class>
+                                <class>org.apache.camel.model.HystrixConfigurationDefinition</class>
+                            </classes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <_plugin>
+                            org.apache.felix.bundleplugin.BlueprintPlugin,
+                            aQute.lib.spring.SpringXMLType,
+                            org.apache.felix.bundleplugin.JpaPlugin,
+                            org.apache.camel.maven.bundle.CamelPlugin
+                        </_plugin>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

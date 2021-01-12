@@ -42,10 +42,12 @@ public interface MetricsEndpointBuilderFactory {
          * Action when using timer type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.metrics.MetricsTimerAction&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder action(MetricsTimerAction action) {
             doSetProperty("action", action);
@@ -55,10 +57,12 @@ public interface MetricsEndpointBuilderFactory {
          * Action when using timer type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.metrics.MetricsTimerAction&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder action(String action) {
             doSetProperty("action", action);
@@ -67,9 +71,12 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Decrement value when using counter type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param decrement the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder decrement(Long decrement) {
             doSetProperty("decrement", decrement);
@@ -78,9 +85,13 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Decrement value when using counter type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param decrement the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder decrement(String decrement) {
             doSetProperty("decrement", decrement);
@@ -89,9 +100,12 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Increment value when using counter type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param increment the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder increment(Long increment) {
             doSetProperty("increment", increment);
@@ -100,9 +114,13 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Increment value when using counter type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param increment the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder increment(String increment) {
             doSetProperty("increment", increment);
@@ -119,10 +137,13 @@ public interface MetricsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -140,10 +161,14 @@ public interface MetricsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -153,9 +178,12 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Mark when using meter type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mark the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder mark(Long mark) {
             doSetProperty("mark", mark);
@@ -164,9 +192,13 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Mark when using meter type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mark the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder mark(String mark) {
             doSetProperty("mark", mark);
@@ -175,9 +207,12 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Subject value when using gauge type.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder subject(Object subject) {
             doSetProperty("subject", subject);
@@ -186,9 +221,13 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Subject value when using gauge type.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -197,9 +236,12 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Value value when using histogram type.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder value(Long value) {
             doSetProperty("value", value);
@@ -208,9 +250,13 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Value value when using histogram type.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder value(String value) {
             doSetProperty("value", value);
@@ -228,41 +274,16 @@ public interface MetricsEndpointBuilderFactory {
             return (MetricsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMetricsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMetricsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -272,10 +293,14 @@ public interface MetricsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMetricsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -306,12 +331,14 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * The value can be one of: gauge, counter, histogram, meter, timer
+         * There are 5 enums and the value can be one of: gauge, counter,
+         * histogram, meter, timer
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
          * 
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder metrics(String path) {
             return MetricsEndpointBuilderFactory.endpointBuilder("metrics", path);
@@ -329,7 +356,8 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * The value can be one of: gauge, counter, histogram, meter, timer
+         * There are 5 enums and the value can be one of: gauge, counter,
+         * histogram, meter, timer
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
@@ -337,6 +365,7 @@ public interface MetricsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder metrics(String componentName, String path) {
             return MetricsEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -31,20 +31,21 @@ import org.apache.camel.support.language.NamespacePrefix;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @LanguageAnnotation(language = "xquery", factory = XQueryAnnotationExpressionFactory.class)
 public @interface XQuery {
     String value();
+
     boolean stripsAllWhiteSpace() default true;
 
     NamespacePrefix[] namespaces() default {
-        @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
-        @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
+            @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
+            @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
     };
-    
+
     /**
-     * @return The name of the header we want to apply the Xquery expression to.
-     *  If this is empty then the Xquery expression will be applied to the body instead.
+     * @return The name of the header we want to apply the Xquery expression to. If this is empty then the Xquery
+     *         expression will be applied to the body instead.
      */
     String headerName() default "";
 }

@@ -16,7 +16,11 @@
  */
 package org.apache.camel.processor.resequencer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ResequencerRunner<E> extends Thread {
+    private static final Logger LOG = LoggerFactory.getLogger(ResequencerRunner.class);
 
     private ResequencerEngineSync<E> resequencer;
 
@@ -39,12 +43,12 @@ public class ResequencerRunner<E> extends Thread {
             try {
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
             try {
                 resequencer.deliver();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
         }
         super.run();

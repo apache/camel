@@ -41,8 +41,7 @@ public class AbstractKuduTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKuduTest.class);
 
     /**
-     * This is the class that connects our Camel test with the
-     * Kudu testing framework to spin up a Kudu local endpoint.
+     * This is the class that connects our Camel test with the Kudu testing framework to spin up a Kudu local endpoint.
      */
     @RegisterExtension
     public IntegrationKuduConfiguration ikc = new IntegrationKuduConfiguration();
@@ -59,10 +58,9 @@ public class AbstractKuduTest extends CamelTestSupport {
         for (int i = 0; i < columnNames.size(); i++) {
             Type type = i == 0 ? Type.INT32 : Type.STRING;
             columns.add(
-                new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), type)
-                    .key(i == 0)
-                    .build()
-            );
+                    new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), type)
+                            .key(i == 0)
+                            .build());
         }
 
         List<String> rangeKeys = new ArrayList<>();
@@ -70,8 +68,8 @@ public class AbstractKuduTest extends CamelTestSupport {
 
         try {
             client.createTable(tableName,
-                new Schema(columns),
-                new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+                    new Schema(columns),
+                    new CreateTableOptions().setRangePartitionColumns(rangeKeys));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

@@ -24,16 +24,16 @@ import ognl.ClassResolver;
  * This class is used to wrap the org.apache.camel.spi.ClassResolver with ClassResolver interface
  */
 public class CamelClassResolver implements ClassResolver {
-    
+
     private org.apache.camel.spi.ClassResolver delegateClassResolver;
-    
+
     public CamelClassResolver(org.apache.camel.spi.ClassResolver resolver) {
         delegateClassResolver = resolver;
     }
 
     @Override
     public Class<?> classForName(String className, Map context) throws ClassNotFoundException {
-       
+
         return delegateClassResolver.resolveClass(className);
     }
 

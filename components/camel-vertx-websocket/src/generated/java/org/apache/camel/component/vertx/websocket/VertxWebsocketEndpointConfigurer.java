@@ -4,8 +4,10 @@ package org.apache.camel.component.vertx.websocket;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,12 +23,12 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedoriginpattern":
         case "allowedOriginPattern": target.getConfiguration().setAllowedOriginPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientoptions":
         case "clientOptions": target.getConfiguration().setClientOptions(property(camelContext, io.vertx.core.http.HttpClientOptions.class, value)); return true;
+        case "clientsubprotocols":
+        case "clientSubProtocols": target.getConfiguration().setClientSubProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -46,21 +48,32 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedOriginPattern", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientOptions", io.vertx.core.http.HttpClientOptions.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("router", io.vertx.ext.web.Router.class);
-        answer.put("sendToAll", boolean.class);
-        answer.put("serverOptions", io.vertx.core.http.HttpServerOptions.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedoriginpattern":
+        case "allowedOriginPattern": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientoptions":
+        case "clientOptions": return io.vertx.core.http.HttpClientOptions.class;
+        case "clientsubprotocols":
+        case "clientSubProtocols": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "router": return io.vertx.ext.web.Router.class;
+        case "sendtoall":
+        case "sendToAll": return boolean.class;
+        case "serveroptions":
+        case "serverOptions": return io.vertx.core.http.HttpServerOptions.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -69,12 +82,12 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedoriginpattern":
         case "allowedOriginPattern": return target.getConfiguration().getAllowedOriginPattern();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientoptions":
         case "clientOptions": return target.getConfiguration().getClientOptions();
+        case "clientsubprotocols":
+        case "clientSubProtocols": return target.getConfiguration().getClientSubProtocols();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

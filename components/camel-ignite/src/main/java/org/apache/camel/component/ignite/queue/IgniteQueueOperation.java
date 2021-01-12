@@ -21,6 +21,20 @@ package org.apache.camel.component.ignite.queue;
  */
 public enum IgniteQueueOperation {
 
-    CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT
+    CONTAINS,
+    ADD,
+    SIZE,
+    REMOVE,
+    ITERATOR,
+    CLEAR,
+    RETAIN_ALL,
+    ARRAY,
+    DRAIN,
+    ELEMENT,
+    PEEK,
+    OFFER,
+    POLL,
+    TAKE,
+    PUT
 
 }

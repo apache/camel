@@ -35,13 +35,13 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
 
     @Test
     public void testEndpointRegistryKeepRouteEndpoints() throws Exception {
-        assertTrue(context.hasEndpoint("direct://start") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
+        assertNotNull(context.hasEndpoint("direct://start"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
 
         // we dont have this endpoint yet
-        assertFalse(context.hasEndpoint("mock://unknown0") != null);
+        assertNull(context.hasEndpoint("mock://unknown0"));
 
         for (int i = 0; i < 50; i++) {
             template.sendBody("mock:unknown" + i, "Hello " + i);
@@ -51,10 +51,10 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
         context.getEndpointRegistry().cleanUp();
 
         // endpoints from routes is always kept in the cache
-        assertTrue(context.hasEndpoint("direct://start") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
+        assertNotNull(context.hasEndpoint("direct://start"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
 
         // and the dynamic cache only keeps 20 dynamic endpoints
         int count = 0;
@@ -85,10 +85,10 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
         assertEquals(4, context.getEndpointRegistry().size());
 
         // endpoints from routes is always kept in the cache
-        assertTrue(context.hasEndpoint("direct://start") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
+        assertNotNull(context.hasEndpoint("direct://start"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
     }
 
     @Override

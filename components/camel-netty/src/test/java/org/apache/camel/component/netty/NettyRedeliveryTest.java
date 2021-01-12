@@ -190,7 +190,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     private static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
-        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[]{interfaceType}, handler);
+        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType }, handler);
         return interfaceType.cast(object);
     }
 

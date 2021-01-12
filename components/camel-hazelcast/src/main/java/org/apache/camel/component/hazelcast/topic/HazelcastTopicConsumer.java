@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.topic;
 
+import java.util.UUID;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.ITopic;
 import org.apache.camel.Endpoint;
@@ -28,15 +30,33 @@ import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
  */
 public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName, boolean reliable) {
+    private ITopic<Object> topic;
+
+    private UUID listener;
+
+    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
+                                  boolean reliable) {
         super(hazelcastInstance, endpoint, processor, cacheName);
-        ITopic<Object> topic;
         if (!reliable) {
             topic = hazelcastInstance.getTopic(cacheName);
         } else {
             topic = hazelcastInstance.getReliableTopic(cacheName);
         }
-        topic.addMessageListener(new CamelMessageListener(this, cacheName));
     }
 
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStart()
+     */
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        listener = topic.addMessageListener(new CamelMessageListener(this, cacheName));
+    }
+
+    protected void doStop() throws Exception {
+        topic.removeMessageListener(listener);
+
+        super.doStop();
+    }
 }

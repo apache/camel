@@ -1,0 +1,1 @@
+compile camel:run -Dcamel.duration=1 -Dmaven.test.skip=true

@@ -57,7 +57,8 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDataSetEndpointCtr() throws Exception {
-        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
+        final DataSetEndpoint endpoint
+                = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
         endpoint.setConsumeDelay(2);
         assertEquals(2, endpoint.getConsumeDelay());
@@ -80,10 +81,11 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDataSetReporter() throws Exception {
-        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
+        final DataSetEndpoint endpoint
+                = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
         endpoint.setInitialDelay(0);
 
-        final AtomicBoolean reported = new AtomicBoolean(false);
+        final AtomicBoolean reported = new AtomicBoolean();
         endpoint.setReporter(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 reported.set(true);

@@ -43,13 +43,14 @@ public class HttpFilterCamelHeadersTest extends BaseJettyTest {
         });
 
         assertNotNull(out);
-        assertEquals("Hi Claus", out.getOut().getBody(String.class));
+        assertEquals("Hi Claus", out.getMessage().getBody(String.class));
 
         // there should be no internal Camel headers
         // except for the response code
-        Map<String, Object> headers = out.getOut().getHeaders();
+        Map<String, Object> headers = out.getMessage().getHeaders();
         for (String key : headers.keySet()) {
-            boolean valid = key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) || key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT);
+            boolean valid
+                    = key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) || key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT);
             if (!valid) {
                 assertTrue(!key.toLowerCase().startsWith("camel"), "Should not contain any Camel internal headers");
             } else {

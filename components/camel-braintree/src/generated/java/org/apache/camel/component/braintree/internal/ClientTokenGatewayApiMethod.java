@@ -29,8 +29,6 @@ public enum ClientTokenGatewayApiMethod implements ApiMethod {
         "generate",
         arg("request", com.braintreegateway.ClientTokenRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private ClientTokenGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

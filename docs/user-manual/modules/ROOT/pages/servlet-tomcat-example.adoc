@@ -4,9 +4,9 @@
 *Since Camel 2.7*
 
 This example is located in the
-https://github.com/apache/camel/blob/master/examples/camel-example-servlet-tomcat[examples/camel-example-servlet-tomcat]
-directory of the Camel distribution.
-There is a `README.txt` file with instructions how to run it.
+https://github.com/apache/camel-examples/tree/master/examples/camel-example-servlet-tomcat[examples/camel-example-servlet-tomcat]
+directory of the https://github.com/apache/camel-examples[Camel Examples Repository].
+There is a `README.adoc` file with instructions how to run it.
 
 If you use Maven then you can easily package the example from the command line:
 

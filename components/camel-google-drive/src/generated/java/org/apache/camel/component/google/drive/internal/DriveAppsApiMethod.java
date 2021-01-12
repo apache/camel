@@ -29,8 +29,6 @@ public enum DriveAppsApiMethod implements ApiMethod {
         com.google.api.services.drive.Drive.Apps.List.class,
         "list");
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveAppsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

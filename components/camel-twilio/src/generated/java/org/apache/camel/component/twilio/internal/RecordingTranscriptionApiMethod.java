@@ -57,8 +57,6 @@ public enum RecordingTranscriptionApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathRecordingSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private RecordingTranscriptionApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

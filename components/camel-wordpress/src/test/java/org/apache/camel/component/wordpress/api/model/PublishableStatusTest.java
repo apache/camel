@@ -38,7 +38,7 @@ public class PublishableStatusTest {
         final String input3 = "";
 
         assertThrows(IllegalArgumentException.class,
-            () -> PublishableStatus.fromString(input3));
+                () -> PublishableStatus.fromString(input3));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class PublishableStatusTest {
         final String input4 = null;
 
         assertThrows(NullPointerException.class,
-            () -> PublishableStatus.fromString(input4));
+                () -> PublishableStatus.fromString(input4));
     }
 
 }

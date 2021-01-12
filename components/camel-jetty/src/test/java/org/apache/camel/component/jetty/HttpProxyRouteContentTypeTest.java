@@ -29,7 +29,8 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
     @Test
     public void testHttpProxyWithContentType() throws Exception {
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml",
+                String.class);
 
         assertEquals("application/xml", out, "Get a wrong response ");
     }
@@ -38,13 +39,14 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://http://localhost:{{port}}/hello").to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty://http://localhost:{{port}}/hello")
+                        .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/bye").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
 
-                        exchange.getOut().setBody(ExchangeHelper.getContentType(exchange));
+                        exchange.getMessage().setBody(ExchangeHelper.getContentType(exchange));
                     }
 
                 });

@@ -26,7 +26,8 @@ class PathVisitor<T> {
     private final CodeEmitter<T> emitter;
     private final OperationFilter filter;
 
-    PathVisitor(final String basePath, final CodeEmitter<T> emitter, OperationFilter filter, final DestinationGenerator destinationGenerator) {
+    PathVisitor(final String basePath, final CodeEmitter<T> emitter, OperationFilter filter,
+                final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.filter = filter;
         this.destinationGenerator = destinationGenerator;

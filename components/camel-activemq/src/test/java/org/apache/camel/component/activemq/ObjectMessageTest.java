@@ -77,7 +77,7 @@ public class ObjectMessageTest extends CamelSpringTestSupport {
         Exchange exchange = result.getReceivedExchanges().get(0);
         // This should be a JMS Exchange
         assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
-        JmsMessage in = (JmsMessage)exchange.getIn();
+        JmsMessage in = (JmsMessage) exchange.getIn();
         assertNotNull(in);
         assertIsInstanceOf(ObjectMessage.class, in.getJmsMessage());
 
@@ -87,7 +87,8 @@ public class ObjectMessageTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-object-message.xml");
+        AbstractApplicationContext context
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-object-message.xml");
         return context;
     }
 }

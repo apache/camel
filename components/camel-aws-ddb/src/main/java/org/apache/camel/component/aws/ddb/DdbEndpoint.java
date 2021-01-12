@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and retrieve data from AWS DynamoDB service.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, category = {Category.CLOUD, Category.DATABASE, Category.NOSQL})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName",
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL })
 public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
@@ -76,8 +77,9 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
-            : createDdbClient();
+        ddbClient = configuration.getAmazonDDBClient() != null
+                ? configuration.getAmazonDDBClient()
+                : createDdbClient();
 
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
@@ -149,7 +151,8 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonDynamoDBClientBuilder.standard().withCredentials(credentialsProvider);
             }

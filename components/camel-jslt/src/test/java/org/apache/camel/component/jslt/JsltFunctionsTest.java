@@ -57,7 +57,6 @@ public class JsltFunctionsTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -66,11 +65,10 @@ public class JsltFunctionsTest extends CamelTestSupport {
                 js.setAllowTemplateFromHeader(true);
 
                 from("direct://start")
-                    .to("jslt:dummy")
-                    .to("mock:result");
+                        .to("jslt:dummy")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consumes events from the JGroups-raft RaftHandle ({@code org.jgroups.raft.RaftHandle}). Received events
- * are routed to Camel as body and/or headers of {@link org.apache.camel.Exchange} see {@link JGroupsRaftEventType}.
+ * Consumes events from the JGroups-raft RaftHandle ({@code org.jgroups.raft.RaftHandle}). Received events are routed to
+ * Camel as body and/or headers of {@link org.apache.camel.Exchange} see {@link JGroupsRaftEventType}.
  */
 public class JGroupsRaftConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(JGroupsRaftConsumer.class);
@@ -36,7 +36,8 @@ public class JGroupsRaftConsumer extends DefaultConsumer {
     private final CamelRoleChangeListener roleListener;
     private final JGroupsRaftEndpoint endpoint;
 
-    public JGroupsRaftConsumer(JGroupsRaftEndpoint endpoint, Processor processor, RaftHandle raftHandle, String clusterName, boolean enableRoleChangeEvents) {
+    public JGroupsRaftConsumer(JGroupsRaftEndpoint endpoint, Processor processor, RaftHandle raftHandle, String clusterName,
+                               boolean enableRoleChangeEvents) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;

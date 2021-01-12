@@ -57,8 +57,6 @@ public enum GmailUsersLabelsApiMethod implements ApiMethod {
         arg("id", String.class),
         arg("content", com.google.api.services.gmail.model.Label.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private GmailUsersLabelsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

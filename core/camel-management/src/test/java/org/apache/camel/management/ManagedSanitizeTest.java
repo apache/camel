@@ -39,7 +39,8 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
     public void testSanitize() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"stub://foo\\?password=xxxxxx&username=foo\"");
+        ObjectName name = ObjectName.getInstance(
+                "org.apache.camel:context=camel-1,type=endpoints,name=\"stub://foo\\?password=xxxxxx&username=foo\"");
         assertTrue(mbeanServer.isRegistered(name), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("stub://foo?password=xxxxxx&username=foo", uri);
@@ -51,11 +52,11 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .to("stub:foo?username=foo&password=secret")
-                    .to("mock:result");
+                        .to("stub:foo?username=foo&password=secret")
+                        .to("mock:result");
 
                 from("stub:foo?username=foo&password=secret").routeId("stub")
-                    .to("mock:stub");
+                        .to("mock:stub");
             }
         };
     }

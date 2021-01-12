@@ -51,7 +51,6 @@ public class DirectMessageProducerTest extends CamelTwitterTestSupport {
         // send tweet to the twitter endpoint
         producerTemplate.sendBody("direct:tweets", tweet);
 
-
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodyReceived().body(String.class);
         // Message headers should be preserved

@@ -22,8 +22,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 
 /**
- * A base class for a test which requires a {@link org.apache.camel.CamelContext} and
- * a populated {@link Exchange}
+ * A base class for a test which requires a {@link org.apache.camel.CamelContext} and a populated {@link Exchange}
  */
 public abstract class ExchangeTestSupport extends CamelTestSupport {
     protected Exchange exchange;
@@ -36,8 +35,7 @@ public abstract class ExchangeTestSupport extends CamelTestSupport {
     }
 
     /**
-     * A strategy method to populate an exchange with some example values for use
-     * by language plugins
+     * A strategy method to populate an exchange with some example values for use by language plugins
      */
     protected void populateExchange(Exchange exchange) {
         Message in = exchange.getIn();

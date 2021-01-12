@@ -19,8 +19,7 @@ package org.apache.camel.component.jetty.async;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.component.jetty.MultiThreadedHttpGetTest;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -65,7 +64,8 @@ public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice?continuationTimeout=3000").to("async:bye:world?delay=6000").to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice?continuationTimeout=3000").to("async:bye:world?delay=6000")
+                        .to("mock:result");
             }
         };
     }

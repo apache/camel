@@ -4,18 +4,24 @@
  */
 package org.apache.camel.component.box;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxEventsManager
+ * Camel endpoint configuration for {@link org.apache.camel.component.box.api.BoxEventsManager}.
  */
+@ApiParams(apiName = "events", consumerOnly = true,
+           description = "Provides operations to manage Box events",
+           apiMethods = {@ApiMethod(methodName = "listen", description="Create an event stream with optional starting initial position and add listener that will be notified when an event is received", signatures={"void listen(com.box.sdk.EventListener listener, Long startingPosition)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class BoxEventsManagerEndpointConfiguration extends BoxConfiguration {
-
     @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "listen", description="The starting position of the event stream")})
     private Long startingPosition;
 
     public Long getStartingPosition() {

@@ -46,9 +46,9 @@ public abstract class CsvMarshaller {
     /**
      * Creates a new instance.
      *
-     * @param format     CSV format
-     * @param dataFormat Camel CSV data format
-     * @return New instance
+     * @param  format     CSV format
+     * @param  dataFormat Camel CSV data format
+     * @return            New instance
      */
     public static CsvMarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
         org.apache.camel.util.ObjectHelper.notNull(format, "CSV format");
@@ -68,14 +68,15 @@ public abstract class CsvMarshaller {
     /**
      * Marshals the given object into the given stream.
      *
-     * @param exchange     Exchange (used for access to type conversion)
-     * @param object       Body to marshal
-     * @param outputStream Output stream of the CSV
+     * @param  exchange                           Exchange (used for access to type conversion)
+     * @param  object                             Body to marshal
+     * @param  outputStream                       Output stream of the CSV
      * @throws NoTypeConversionAvailableException if the body cannot be converted
      * @throws IOException                        if we cannot write into the given stream
      */
     @SuppressWarnings("rawtypes")
-    public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
+    public void marshal(Exchange exchange, Object object, OutputStream outputStream)
+            throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
             Iterator it = ObjectHelper.createIterator(object);
@@ -91,9 +92,9 @@ public abstract class CsvMarshaller {
     /**
      * Creates and returns a {@link CSVPrinter}.
      *
-     * @param exchange     Exchange (used for access to type conversion). Could NOT be <code>null</code>.
-     * @param outputStream Output stream of the CSV. Could NOT be <code>null</code>.
-     * @return a new {@link CSVPrinter}. Never <code>null</code>.
+     * @param  exchange     Exchange (used for access to type conversion). Could NOT be <code>null</code>.
+     * @param  outputStream Output stream of the CSV. Could NOT be <code>null</code>.
+     * @return              a new {@link CSVPrinter}. Never <code>null</code>.
      */
     protected CSVPrinter createPrinter(Exchange exchange, OutputStream outputStream) throws IOException {
         org.apache.camel.util.ObjectHelper.notNull(exchange, "Exchange");
@@ -113,8 +114,8 @@ public abstract class CsvMarshaller {
     /**
      * Gets the CSV record values of the given map.
      *
-     * @param map Input map
-     * @return CSV record values of the given map
+     * @param  map Input map
+     * @return     CSV record values of the given map
      */
     protected abstract Iterable<?> getMapRecordValues(Map<?, ?> map);
 

@@ -4,8 +4,10 @@ package org.apache.camel.component.seda;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SedaEndpoint target = (SedaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blockwhenfull":
         case "blockWhenFull": target.setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -60,37 +60,50 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blockWhenFull", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("discardIfNoConsumers", boolean.class);
-        answer.put("discardWhenFull", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("failIfNoConsumers", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("limitConcurrentConsumers", boolean.class);
-        answer.put("multipleConsumers", boolean.class);
-        answer.put("offerTimeout", long.class);
-        answer.put("pollTimeout", int.class);
-        answer.put("purgeWhenStopping", boolean.class);
-        answer.put("queue", java.util.concurrent.BlockingQueue.class);
-        answer.put("size", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", long.class);
-        answer.put("waitForTaskToComplete", org.apache.camel.WaitForTaskToComplete.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blockwhenfull":
+        case "blockWhenFull": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "discardifnoconsumers":
+        case "discardIfNoConsumers": return boolean.class;
+        case "discardwhenfull":
+        case "discardWhenFull": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "failifnoconsumers":
+        case "failIfNoConsumers": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limitconcurrentconsumers":
+        case "limitConcurrentConsumers": return boolean.class;
+        case "multipleconsumers":
+        case "multipleConsumers": return boolean.class;
+        case "offertimeout":
+        case "offerTimeout": return long.class;
+        case "polltimeout":
+        case "pollTimeout": return int.class;
+        case "purgewhenstopping":
+        case "purgeWhenStopping": return boolean.class;
+        case "queue": return java.util.concurrent.BlockingQueue.class;
+        case "size": return int.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return long.class;
+        case "waitfortasktocomplete":
+        case "waitForTaskToComplete": return org.apache.camel.WaitForTaskToComplete.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SedaEndpoint target = (SedaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockwhenfull":
         case "blockWhenFull": return target.isBlockWhenFull();
         case "bridgeerrorhandler":

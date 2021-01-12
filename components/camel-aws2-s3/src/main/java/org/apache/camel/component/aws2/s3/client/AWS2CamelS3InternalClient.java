@@ -19,13 +19,12 @@ package org.apache.camel.component.aws2.s3.client;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
- * Mange the required actions of an s3 client for either local or remote.
+ * Manage the required actions of an s3 client for either local or remote.
  */
 public interface AWS2CamelS3InternalClient {
 
     /**
-     * Returns an s3 client after a factory method determines which one to
-     * return.
+     * Returns an s3 client after a factory method determines which one to return.
      * 
      * @return AmazonS3 AmazonS3
      */

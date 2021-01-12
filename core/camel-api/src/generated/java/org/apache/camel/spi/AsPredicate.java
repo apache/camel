@@ -25,15 +25,13 @@ import java.lang.annotation.Target;
 /**
  * Indicates that the Camel language/expression should be used as predicate.
  * <p/>
- * For example the EIPs which accepts expression/languages may used them as either expression or predicate.
- * This annotation is used to mark situation where they should be used as predicate. As by default they
- * are used as expression. And example would be the Filter EIP which uses predicate. And the transform EIP
- * uses an expression.
- * <br/>
+ * For example the EIPs which accepts expression/languages may used them as either expression or predicate. This
+ * annotation is used to mark situation where they should be used as predicate. As by default they are used as
+ * expression. And example would be the Filter EIP which uses predicate. And the transform EIP uses an expression. <br/>
  * Being able to distinguish between these two situations can be of importance to tooling.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 public @interface AsPredicate {
 }

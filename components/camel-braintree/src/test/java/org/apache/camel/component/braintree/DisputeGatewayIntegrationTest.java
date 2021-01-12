@@ -51,9 +51,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DisputeGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(DisputeGatewayApiMethod.class).getName();
-    private static final String TRANSACTION_PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(TransactionGatewayApiMethod.class).getName();
-    private static final String DOCUMENT_UPLOAD_PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(DisputeGatewayApiMethod.class).getName();
+    private static final String TRANSACTION_PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(TransactionGatewayApiMethod.class).getName();
+    private static final String DOCUMENT_UPLOAD_PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
 
     private BraintreeGateway gateway;
 
@@ -69,15 +72,13 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
         final Result result = requestBody(
                 "direct://ACCEPT",
-                createdDispute.getId()
-        );
+                createdDispute.getId());
         assertNotNull(result, "accept result");
         assertTrue(result.isSuccess(), "accept result success");
 
         final Dispute finalizedDispute = requestBody(
                 "direct://FIND",
-                createdDispute.getId()
-        );
+                createdDispute.getId());
         assertNotNull(finalizedDispute, "accepted dispute");
         assertEquals(Dispute.Status.ACCEPTED, finalizedDispute.getStatus());
     }
@@ -92,11 +93,10 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         headers.put("CamelBraintree.disputeId", createdDispute.getId());
         headers.put("CamelBraintree.documentId", uploadedDocument.getId());
 
-        final Result<DisputeEvidence>  result = requestBodyAndHeaders(
+        final Result<DisputeEvidence> result = requestBodyAndHeaders(
                 "direct://ADDFILEEVIDENCE",
                 null,
-                headers
-        );
+                headers);
 
         assertNotNull(result, "addFileEvidence result");
         assertTrue(result.isSuccess(), "addFileEvidence result success");
@@ -116,8 +116,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result<DisputeEvidence> result = requestBodyAndHeaders(
                 "direct://ADDFILEEVIDENCE_1",
                 null,
-                headers
-        );
+                headers);
 
         assertNotNull(result, "addFileEvidence result");
         assertTrue(result.isSuccess(), "addFileEvidence result success");
@@ -136,8 +135,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result<DisputeEvidence> result = requestBodyAndHeaders(
                 "direct://ADDTEXTEVIDENCE",
                 null,
-                headers
-        );
+                headers);
 
         assertNotNull(result, "addTextEvidence result");
         assertTrue(result.isSuccess(), "addTextEvidence result success");
@@ -161,8 +159,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result<DisputeEvidence> result = requestBodyAndHeaders(
                 "direct://ADDTEXTEVIDENCE_1",
                 null,
-                headers
-        );
+                headers);
 
         assertNotNull(result, "addTextEvidence result");
         assertTrue(result.isSuccess(), "addTextEvidence result success");
@@ -178,15 +175,13 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
         final Result result = requestBody(
                 "direct://FINALIZE",
-                createdDispute.getId()
-        );
+                createdDispute.getId());
         assertNotNull(result, "finalize result");
         assertTrue(result.isSuccess(), "finalize result success");
 
         final Dispute finalizedDispute = requestBody(
                 "direct://FIND",
-                createdDispute.getId()
-        );
+                createdDispute.getId());
         assertNotNull(finalizedDispute, "finalized dispute");
         assertEquals(Dispute.Status.DISPUTED, finalizedDispute.getStatus());
     }
@@ -198,8 +193,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
         final Dispute foundDispute = requestBody(
                 "direct://FIND",
-                createdDispute.getId()
-        );
+                createdDispute.getId());
         assertNotNull(foundDispute, "found dispute");
         assertEquals(Dispute.Status.OPEN, foundDispute.getStatus());
     }
@@ -218,8 +212,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result<DisputeEvidence> addTextEvidenceResult = requestBodyAndHeaders(
                 "direct://ADDTEXTEVIDENCE",
                 null,
-                addTextEvidenceHeaders
-        );
+                addTextEvidenceHeaders);
 
         assertNotNull(addTextEvidenceResult, "addTextEvidence result");
         assertTrue(addTextEvidenceResult.isSuccess(), "addTextEvidence result success");
@@ -234,8 +227,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         final Result removeTextEvidenceResult = requestBodyAndHeaders(
                 "direct://REMOVEEVIDENCE",
                 null,
-                removeTextEvidenceHeaders
-        );
+                removeTextEvidenceHeaders);
 
         assertNotNull(removeTextEvidenceResult, "removeEvidence result");
         assertTrue(removeTextEvidenceResult.isSuccess(), "removeEvidence result success");
@@ -249,8 +241,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         DisputeSearchRequest query = new DisputeSearchRequest().id().is(createdDispute.getId());
         final PaginatedCollection<Dispute> result = requestBody(
                 "direct://SEARCH",
-                query
-        );
+                query);
 
         assertNotNull(result, "search result");
         for (Dispute foundDispute : result) {
@@ -272,39 +263,39 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
 
                 // test route for accept
                 from("direct://ACCEPT")
-                    .to("braintree://" + PATH_PREFIX + "/accept?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/accept?inBody=id");
 
                 // test route for addFileEvidence
                 from("direct://ADDFILEEVIDENCE")
-                    .to("braintree://" + PATH_PREFIX + "/addFileEvidence");
+                        .to("braintree://" + PATH_PREFIX + "/addFileEvidence");
 
                 // test route for addFileEvidence
                 from("direct://ADDFILEEVIDENCE_1")
-                    .to("braintree://" + PATH_PREFIX + "/addFileEvidence");
+                        .to("braintree://" + PATH_PREFIX + "/addFileEvidence");
 
                 // test route for addTextEvidence
                 from("direct://ADDTEXTEVIDENCE")
-                    .to("braintree://" + PATH_PREFIX + "/addTextEvidence");
+                        .to("braintree://" + PATH_PREFIX + "/addTextEvidence");
 
                 // test route for addTextEvidence
                 from("direct://ADDTEXTEVIDENCE_1")
-                    .to("braintree://" + PATH_PREFIX + "/addTextEvidence");
+                        .to("braintree://" + PATH_PREFIX + "/addTextEvidence");
 
                 // test route for finalize
                 from("direct://FINALIZE")
-                    .to("braintree://" + PATH_PREFIX + "/finalize?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/finalize?inBody=id");
 
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
 
                 // test route for removeEvidence
                 from("direct://REMOVEEVIDENCE")
-                    .to("braintree://" + PATH_PREFIX + "/removeEvidence");
+                        .to("braintree://" + PATH_PREFIX + "/removeEvidence");
 
                 // test route for search
                 from("direct://SEARCH")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
 
             }
         };
@@ -321,10 +312,10 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
                         .amount(new BigDecimal(amount))
                         .paymentMethodNonce("fake-valid-nonce")
                         .creditCard()
-                            .number("4023898493988028")
+                        .number("4023898493988028")
                         .done()
                         .options()
-                            .submitForSettlement(true)
+                        .submitForSettlement(true)
                         .done(),
                 Result.class);
 
@@ -340,12 +331,10 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         File evidenceDocument = new File(getClass().getClassLoader().getResource(documentName).getPath());
         DocumentUploadRequest documentUploadRequest = new DocumentUploadRequest(
                 DocumentUpload.Kind.EVIDENCE_DOCUMENT,
-                evidenceDocument
-        );
+                evidenceDocument);
         final Result<DocumentUpload> documentUploadResult = requestBody(
                 "direct://CREATE",
-                documentUploadRequest
-        );
+                documentUploadRequest);
         assertNotNull(documentUploadResult, "create result");
         assertTrue(documentUploadResult.isSuccess(), "create result success");
         return documentUploadResult.getTarget();

@@ -41,17 +41,21 @@ public class WorkdayComponent extends DefaultComponent {
     }
 
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
-        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint)endpoint;
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters)
+            throws Exception {
+        WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) endpoint;
         WorkdayConfiguration workdayConfiguration = workdayEndpoint.getWorkdayConfiguration();
         validateConnectionParameters(workdayConfiguration);
     }
 
     /**
      * Parses the configuration
+     * 
      * @return the parsed and valid configuration to use
      */
-    protected WorkdayConfiguration parseConfiguration(WorkdayConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+    protected WorkdayConfiguration parseConfiguration(
+            WorkdayConfiguration configuration, String remaining, Map<String, Object> parameters)
+            throws Exception {
         configuration.parseURI(remaining, parameters);
         return configuration;
     }

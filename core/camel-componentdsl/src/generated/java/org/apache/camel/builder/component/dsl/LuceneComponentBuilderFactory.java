@@ -37,6 +37,8 @@ public interface LuceneComponentBuilderFactory {
      * Category: database,search
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
+     * 
+     * @return the dsl builder
      */
     static LuceneComponentBuilder lucene() {
         return new LuceneComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface LuceneComponentBuilderFactory {
          * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
          * analyzers out of the box.
          * 
-         * The option is a: <code>org.apache.lucene.analysis.Analyzer</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.lucene.analysis.Analyzer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param analyzer the value to set
+         * @return the dsl builder
          */
         default LuceneComponentBuilder analyzer(
                 org.apache.lucene.analysis.Analyzer analyzer) {
@@ -69,9 +74,12 @@ public interface LuceneComponentBuilderFactory {
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param indexDir the value to set
+         * @return the dsl builder
          */
         default LuceneComponentBuilder indexDir(java.io.File indexDir) {
             doSetProperty("indexDir", indexDir);
@@ -88,10 +96,13 @@ public interface LuceneComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LuceneComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -101,9 +112,12 @@ public interface LuceneComponentBuilderFactory {
         /**
          * An integer value that limits the result set of the search operation.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxHits the value to set
+         * @return the dsl builder
          */
         default LuceneComponentBuilder maxHits(int maxHits) {
             doSetProperty("maxHits", maxHits);
@@ -113,36 +127,47 @@ public interface LuceneComponentBuilderFactory {
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param srcDir the value to set
+         * @return the dsl builder
          */
         default LuceneComponentBuilder srcDir(java.io.File srcDir) {
             doSetProperty("srcDir", srcDir);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default LuceneComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default LuceneComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a shared lucene configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.lucene.LuceneConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.lucene.LuceneConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default LuceneComponentBuilder config(
                 org.apache.camel.component.lucene.LuceneConfiguration config) {
@@ -178,7 +203,7 @@ public interface LuceneComponentBuilderFactory {
             case "lazyStartProducer": ((LuceneComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxHits": getOrCreateConfiguration((LuceneComponent) component).setMaxHits((int) value); return true;
             case "srcDir": getOrCreateConfiguration((LuceneComponent) component).setSrcDir((java.io.File) value); return true;
-            case "basicPropertyBinding": ((LuceneComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((LuceneComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "config": ((LuceneComponent) component).setConfig((org.apache.camel.component.lucene.LuceneConfiguration) value); return true;
             default: return false;
             }

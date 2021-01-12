@@ -25,8 +25,9 @@ import org.springframework.context.ApplicationContext;
 public class MainTest {
 
     @Test
-    public void  testOptions() throws Exception {
-        CamelContext context = createCamelContext(new String[] {"-cc", "org.apache.camel.spring.javaconfig.config.ContextConfig"});
+    public void testOptions() throws Exception {
+        CamelContext context
+                = createCamelContext(new String[] { "-cc", "org.apache.camel.spring.javaconfig.config.ContextConfig" });
         context.start();
         runTests(context);
         context.stop();
@@ -34,7 +35,7 @@ public class MainTest {
 
     @org.junit.jupiter.api.Test
     public void testOptionBP() throws Exception {
-        CamelContext context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig.config"});
+        CamelContext context = createCamelContext(new String[] { "-bp", "org.apache.camel.spring.javaconfig.config" });
         context.start();
         runTests(context);
         context.stop();

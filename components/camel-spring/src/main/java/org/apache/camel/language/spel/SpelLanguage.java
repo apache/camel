@@ -18,7 +18,7 @@ package org.apache.camel.language.spel;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
@@ -32,24 +32,28 @@ import org.springframework.expression.BeanResolver;
  * A Spring Expression {@link org.apache.camel.spi.Language} plugin
  */
 @Language("spel")
-public class SpelLanguage extends LanguageSupport implements Service {
+public class SpelLanguage extends LanguageSupport implements StaticService {
 
     private BeanResolver beanResolver;
 
     @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
-        return new SpelExpression(expression, Boolean.class, beanResolver);
+        Predicate answer = new SpelExpression(expression, Boolean.class, beanResolver);
+        answer.init(getCamelContext());
+        return answer;
     }
 
     @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return new SpelExpression(expression, Object.class, beanResolver);
+        Expression answer = new SpelExpression(expression, Object.class, beanResolver);
+        answer.init(getCamelContext());
+        return answer;
     }
 
     @Override
-    public void start() {
+    public void init() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
         if (getCamelContext() instanceof SpringCamelContext) {
@@ -58,6 +62,11 @@ public class SpelLanguage extends LanguageSupport implements Service {
         } else {
             beanResolver = new RegistryBeanResolver(getCamelContext().getRegistry());
         }
+    }
+
+    @Override
+    public void start() {
+        // noop
     }
 
     @Override

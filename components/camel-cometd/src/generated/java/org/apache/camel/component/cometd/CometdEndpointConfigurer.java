@@ -4,8 +4,10 @@ package org.apache.camel.component.cometd;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowedOrigins": target.setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
         case "baseresource":
         case "baseResource": target.setBaseResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "crossoriginfilteron":
@@ -57,27 +57,41 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedOrigins", java.lang.String.class);
-        answer.put("baseResource", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("crossOriginFilterOn", boolean.class);
-        answer.put("disconnectLocalSession", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("filterPath", java.lang.String.class);
-        answer.put("interval", int.class);
-        answer.put("jsonCommented", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("logLevel", int.class);
-        answer.put("maxInterval", int.class);
-        answer.put("multiFrameInterval", int.class);
-        answer.put("sessionHeadersEnabled", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", int.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedorigins":
+        case "allowedOrigins": return java.lang.String.class;
+        case "baseresource":
+        case "baseResource": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "crossoriginfilteron":
+        case "crossOriginFilterOn": return boolean.class;
+        case "disconnectlocalsession":
+        case "disconnectLocalSession": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filterpath":
+        case "filterPath": return java.lang.String.class;
+        case "interval": return int.class;
+        case "jsoncommented":
+        case "jsonCommented": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loglevel":
+        case "logLevel": return int.class;
+        case "maxinterval":
+        case "maxInterval": return int.class;
+        case "multiframeinterval":
+        case "multiFrameInterval": return int.class;
+        case "sessionheadersenabled":
+        case "sessionHeadersEnabled": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -88,8 +102,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowedOrigins": return target.getAllowedOrigins();
         case "baseresource":
         case "baseResource": return target.getBaseResource();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "crossoriginfilteron":

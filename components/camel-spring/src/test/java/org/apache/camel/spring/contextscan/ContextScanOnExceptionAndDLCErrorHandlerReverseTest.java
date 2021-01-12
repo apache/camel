@@ -49,6 +49,7 @@ public class ContextScanOnExceptionAndDLCErrorHandlerReverseTest extends SpringT
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/contextscan/ContextScanOnExceptionAndDLCErrorHandlerReverse.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/contextscan/ContextScanOnExceptionAndDLCErrorHandlerReverse.xml");
     }
 }

@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,13 +35,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(HazelcastQueueConsumerPollTest.class);
 
     @Mock
     private IQueue<String> queue;
-    
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
+        when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
     }
 
     @Override
@@ -48,17 +51,16 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         try {
             verify(queue, atLeast(1)).poll(10000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.debug("Interrupted during test execution", e);
         }
     }
 
     @Test
     public void add() throws InterruptedException {
         when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn("foo");
-        
+
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(1);
-
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
 
@@ -70,7 +72,8 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo?queueConsumerMode=Poll", HazelcastConstants.QUEUE_PREFIX)).to("mock:result");
+                from(String.format("hazelcast-%sfoo?queueConsumerMode=Poll", HazelcastConstants.QUEUE_PREFIX))
+                        .to("mock:result");
             }
         };
     }

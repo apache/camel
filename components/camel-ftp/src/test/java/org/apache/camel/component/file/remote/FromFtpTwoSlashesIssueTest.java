@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "//?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}//?password=admin";
     }
 
     @Override
@@ -66,7 +66,7 @@ public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- Since this is a test case lets run a local ZK server -->
-  <bean id="zkContainer" class="org.apache.camel.component.zookeepermaster.ZKContainer" init-method="start" destroy-method="start">
+  <bean id="zkContainer" class="org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer" init-method="start" destroy-method="start">
     <constructor-arg>
       <value>zookeeper</value>
     </constructor-arg>

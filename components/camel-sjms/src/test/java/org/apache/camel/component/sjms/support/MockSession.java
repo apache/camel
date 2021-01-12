@@ -36,10 +36,12 @@ import org.apache.activemq.command.SessionId;
 public class MockSession extends ActiveMQSession {
     private boolean isBadSession;
 
-    protected MockSession(ActiveMQConnection connection, SessionId sessionId, int acknowledgeMode, boolean asyncDispatch, boolean sessionAsyncDispatch, boolean isBadSession) throws JMSException {
-        super(connection,  sessionId,  acknowledgeMode,  asyncDispatch,  sessionAsyncDispatch);
+    protected MockSession(ActiveMQConnection connection, SessionId sessionId, int acknowledgeMode, boolean asyncDispatch,
+                          boolean sessionAsyncDispatch, boolean isBadSession) throws JMSException {
+        super(connection, sessionId, acknowledgeMode, asyncDispatch, sessionAsyncDispatch);
         this.isBadSession = isBadSession;
     }
+
     @Override
     public Queue createQueue(String queueName) throws JMSException {
         this.checkClosed();
@@ -47,10 +49,12 @@ public class MockSession extends ActiveMQSession {
     }
 
     @Override
-    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean noLocal, MessageListener messageListener) throws JMSException {
+    public MessageConsumer createConsumer(
+            Destination destination, String messageSelector, boolean noLocal, MessageListener messageListener)
+            throws JMSException {
         this.checkClosed();
         if (destination instanceof CustomDestination) {
-            CustomDestination prefetchPolicy1 = (CustomDestination)destination;
+            CustomDestination prefetchPolicy1 = (CustomDestination) destination;
             return prefetchPolicy1.createConsumer(this, messageSelector, noLocal);
         } else {
             ActiveMQPrefetchPolicy prefetchPolicy = this.connection.getPrefetchPolicy();
@@ -62,8 +66,10 @@ public class MockSession extends ActiveMQSession {
             }
 
             ActiveMQDestination activemqDestination = ActiveMQMessageTransformation.transformDestination(destination);
-            return new MockMessageConsumer(this, this.getNextConsumerId(), activemqDestination, (String)null, messageSelector, prefetch1, prefetchPolicy.getMaximumPendingMessageLimit(),
-                                           noLocal, false, this.isAsyncDispatch(), messageListener, isBadSession);
+            return new MockMessageConsumer(
+                    this, this.getNextConsumerId(), activemqDestination, (String) null, messageSelector, prefetch1,
+                    prefetchPolicy.getMaximumPendingMessageLimit(),
+                    noLocal, false, this.isAsyncDispatch(), messageListener, isBadSession);
         }
     }
 }

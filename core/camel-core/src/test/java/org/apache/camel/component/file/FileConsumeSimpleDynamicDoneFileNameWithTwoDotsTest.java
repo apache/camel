@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This class tests an issue where an input file is not picked up due to a
- * dynamic doneFileName using the simple syntax and containing two dots.
+ * This class tests an issue where an input file is not picked up due to a dynamic doneFileName using the simple syntax
+ * and containing two dots.
  */
 public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
 
@@ -53,7 +53,7 @@ public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends Context
         template.sendBodyAndHeader("file:" + TARGET_DIR_NAME, "done-body", Exchange.FILE_NAME, "test.twodot.done");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertFalse(new File(TARGET_DIR_NAME, "test.twodot.txt").exists(), "Input file should be deleted");
         assertFalse(new File(TARGET_DIR_NAME, "test.twodot.done").exists(), "Done file should be deleted");
@@ -64,7 +64,8 @@ public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends Context
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + TARGET_DIR_NAME + "?doneFileName=$simple{file:name.noext}.done&initialDelay=0").to("mock:result");
+                from("file:" + TARGET_DIR_NAME + "?doneFileName=$simple{file:name.noext}.done&initialDelay=0")
+                        .to("mock:result");
             }
         };
     }

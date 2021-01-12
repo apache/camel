@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.api.management.mbean.ManagedBacklogTracerMBean;
-import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed BacklogTracer")

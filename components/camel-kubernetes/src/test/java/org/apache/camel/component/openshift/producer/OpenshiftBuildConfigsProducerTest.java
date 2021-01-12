@@ -38,16 +38,22 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("client")
     public NamespacedOpenShiftClient loadClient() throws Exception {
-        server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs").andReturn(200, new BuildConfigListBuilder().build()).once();
+        server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
+                .andReturn(200, new BuildConfigListBuilder().build()).once();
 
-        server.expect().withPath("/apis").andReturn(200, new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup().addNewGroup()
-            .withApiVersion("v1").withName("security.openshift.io").endGroup().build()).always();
+        server.expect().withPath("/apis")
+                .andReturn(200,
+                        new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup()
+                                .addNewGroup()
+                                .withApiVersion("v1").withName("security.openshift.io").endGroup().build())
+                .always();
 
         server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
-            .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
 
         server.expect().withPath("/apis/build.openshift.io/v1/buildconfigs")
-            .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
 
         return server.getOpenshiftClient();
     }
@@ -65,7 +71,8 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").to("openshift-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
-                from("direct:listByLabels").to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
+                from("direct:listByLabels")
+                        .to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
             }
         };
     }

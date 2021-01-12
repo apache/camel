@@ -47,15 +47,13 @@ public class HttpBodyTest extends BaseHttpTest {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put(CONTENT_TYPE, IMAGE_JPEG.getMimeType());
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).
-                registerHandler("/post1", new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders)).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
+                .registerHandler("/post1",
+                        new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders))
+                .create();
         localServer.start();
 
         endpointUrl = getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
@@ -95,14 +93,16 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithByteArrayBody() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
+        Exchange exchange
+                = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpPostWithInputStreamBody() throws Exception {
-        Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
+        Exchange exchange = template.request(endpointUrl + "/post",
+                exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
 
         assertExchange(exchange);
     }

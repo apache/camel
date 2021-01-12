@@ -31,6 +31,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CronScheduledRoutePolicyTest extends CamelTestSupport {
@@ -48,7 +49,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         success2.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -56,14 +58,14 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStartTime("*/3 * * * * ?");
 
                 from("direct:start1")
-                    .routeId("test1")
-                    .routePolicy(policy)
-                    .to("mock:success1");
+                        .routeId("test1")
+                        .routePolicy(policy)
+                        .to("mock:success1");
 
                 from("direct:start2")
-                    .routeId("test2")
-                    .routePolicy(policy)
-                    .to("mock:success2");
+                        .routeId("test2")
+                        .routePolicy(policy)
+                        .to("mock:success2");
             }
         });
         context.start();
@@ -71,8 +73,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         context.getRouteController().stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test1") == ServiceStatus.Started);
-        assertTrue(context.getRouteController().getRouteStatus("test2") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1"));
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test2"));
         template.sendBody("direct:start1", "Ready or not, Here, I come");
         template.sendBody("direct:start2", "Ready or not, Here, I come");
 
@@ -83,7 +85,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledStopRoutePolicyWithTwoRoutes() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
@@ -92,22 +95,22 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
                 from("direct:start1")
-                    .routeId("test1")
-                    .routePolicy(policy)
-                    .to("mock:unreachable");
+                        .routeId("test1")
+                        .routePolicy(policy)
+                        .to("mock:unreachable");
 
                 from("direct:start2")
-                    .routeId("test2")
-                    .routePolicy(policy)
-                    .to("mock:unreachable");
+                        .routeId("test2")
+                        .routePolicy(policy)
+                        .to("mock:unreachable");
             }
         });
         context.start();
 
         Thread.sleep(5000);
 
-        assertTrue(context.getRouteController().getRouteStatus("test1") == ServiceStatus.Stopped);
-        assertTrue(context.getRouteController().getRouteStatus("test2") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
     }
 
     @Test
@@ -116,7 +119,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -124,16 +128,16 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStartTime("*/3 * * * * ?");
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();
         context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz", QuartzComponent.class).stop();
@@ -143,7 +147,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledStopRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
@@ -152,15 +157,15 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:unreachable");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:unreachable");
             }
         });
         context.start();
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
     }
 
     @Test
@@ -172,7 +177,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         final CountDownLatch stoppedLatch = new CountDownLatch(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy() {
@@ -223,7 +229,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         final MyRoutePolicy myPolicy = new MyRoutePolicy();
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
@@ -232,16 +239,16 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.MILLISECONDS);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy, myPolicy)
-                    .to("mock:unreachable");
+                        .routeId("test")
+                        .routePolicy(policy, myPolicy)
+                        .to("mock:unreachable");
             }
         });
         context.start();
 
         Thread.sleep(5000);
 
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
         assertTrue(myPolicy.isStart(), "Should have called onStart");
         assertTrue(myPolicy.isStop(), "Should have called onStop");
     }
@@ -249,16 +256,17 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledSuspendRoutePolicy() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteSuspendTime("*/3 * * * * ?");
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:unreachable");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:unreachable");
             }
         });
         context.start();
@@ -278,16 +286,17 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteResumeTime("*/3 * * * * ?");
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();
@@ -295,7 +304,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         ServiceHelper.suspendService(context.getRoute("test").getConsumer());
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
 
         template.sendBody("direct:start", "Ready or not, Here, I come");
 

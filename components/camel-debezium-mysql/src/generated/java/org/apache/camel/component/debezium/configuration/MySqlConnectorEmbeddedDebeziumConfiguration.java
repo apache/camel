@@ -54,6 +54,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String sourceStructVersion = "v2";
     @UriParam(label = LABEL_NAME)
     private String databaseSslTruststorePassword;
+    @UriParam(label = LABEL_NAME)
+    private String columnIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String inconsistentSchemaHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -61,14 +63,16 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "earliest")
     private String gtidNewChannelPosition = "earliest";
     @UriParam(label = LABEL_NAME)
+    private String tableExcludeList;
+    @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String databasePassword;
+    @UriParam(label = LABEL_NAME)
+    private String databaseExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean databaseHistoryStoreOnlyMonitoredTablesDdl = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean gtidSourceFilterDmlEvents = true;
-    @UriParam(label = LABEL_NAME)
-    private String databaseBlacklist;
     @UriParam(label = LABEL_NAME)
     private String skippedOperations;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
@@ -104,9 +108,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
-    private String databaseWhitelist;
-    @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean snapshotEventsAsInserts = true;
     @UriParam(label = LABEL_NAME, defaultValue = "long")
     private String bigintUnsignedHandlingMode = "long";
     @UriParam(label = LABEL_NAME)
@@ -129,13 +133,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String databaseSslKeystorePassword;
     @UriParam(label = LABEL_NAME)
+    private String columnExcludeList;
+    @UriParam(label = LABEL_NAME)
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
     private long databaseServerIdOffset = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectKeepAliveIntervalMs = 60000;
+    @UriParam(label = LABEL_NAME)
+    private String tableIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeQuery = false;
+    @UriParam(label = LABEL_NAME)
+    private String databaseIncludeList;
 
     /**
      * Controls how long the connector holds onto the global read lock while it
@@ -183,6 +193,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Regular expressions matching columns to exclude from change events
+     * (deprecated, use "column.exclude.list" instead)
      */
     public void setColumnBlacklist(String columnBlacklist) {
         this.columnBlacklist = columnBlacklist;
@@ -193,8 +204,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Description is not available here, please check Debezium website for
-     * corresponding key 'table.blacklist' description.
+     * A comma-separated list of regular expressions that match the
+     * fully-qualified names of tables to be excluded from monitoring
+     * (deprecated, use "table.exclude.list" instead)
      */
     public void setTableBlacklist(String tableBlacklist) {
         this.tableBlacklist = tableBlacklist;
@@ -437,6 +449,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Regular expressions matching columns to include in change events
+     */
+    public void setColumnIncludeList(String columnIncludeList) {
+        this.columnIncludeList = columnIncludeList;
+    }
+
+    public String getColumnIncludeList() {
+        return columnIncludeList;
+    }
+
+    /**
      * Specify how binlog events that belong to a table missing from internal
      * schema representation (i.e. internal representation is not consistent
      * with database) should be handled, including:'fail' (the default) an
@@ -483,6 +506,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * A comma-separated list of regular expressions that match the
+     * fully-qualified names of tables to be excluded from monitoring
+     */
+    public void setTableExcludeList(String tableExcludeList) {
+        this.tableExcludeList = tableExcludeList;
+    }
+
+    public String getTableExcludeList() {
+        return tableExcludeList;
+    }
+
+    /**
      * Password of the MySQL database user to be used when connecting to the
      * database.
      */
@@ -492,6 +527,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabasePassword() {
         return databasePassword;
+    }
+
+    /**
+     * A comma-separated list of regular expressions that match database names
+     * to be excluded from monitoring
+     */
+    public void setDatabaseExcludeList(String databaseExcludeList) {
+        this.databaseExcludeList = databaseExcludeList;
+    }
+
+    public String getDatabaseExcludeList() {
+        return databaseExcludeList;
     }
 
     /**
@@ -520,18 +567,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isGtidSourceFilterDmlEvents() {
         return gtidSourceFilterDmlEvents;
-    }
-
-    /**
-     * Description is not available here, please check Debezium website for
-     * corresponding key 'database.blacklist' description.
-     */
-    public void setDatabaseBlacklist(String databaseBlacklist) {
-        this.databaseBlacklist = databaseBlacklist;
-    }
-
-    public String getDatabaseBlacklist() {
-        return databaseBlacklist;
     }
 
     /**
@@ -667,7 +702,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The tables for which changes are to be captured
+     * The tables for which changes are to be captured (deprecated, use
+     * "table.include.list" instead)
      */
     public void setTableWhitelist(String tableWhitelist) {
         this.tableWhitelist = tableWhitelist;
@@ -771,17 +807,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The databases for which changes are to be captured
-     */
-    public void setDatabaseWhitelist(String databaseWhitelist) {
-        this.databaseWhitelist = databaseWhitelist;
-    }
-
-    public String getDatabaseWhitelist() {
-        return databaseWhitelist;
-    }
-
-    /**
      * The path to the file that will be used to record the database history
      */
     public void setDatabaseHistoryFileFilename(
@@ -791,6 +816,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseHistoryFileFilename() {
         return databaseHistoryFileFilename;
+    }
+
+    /**
+     * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+     * disabled, the standard functionality of emitting these records as reads
+     * (op 'r') will be used.
+     */
+    public void setSnapshotEventsAsInserts(boolean snapshotEventsAsInserts) {
+        this.snapshotEventsAsInserts = snapshotEventsAsInserts;
+    }
+
+    public boolean isSnapshotEventsAsInserts() {
+        return snapshotEventsAsInserts;
     }
 
     /**
@@ -951,6 +989,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Regular expressions matching columns to exclude from change events
+     */
+    public void setColumnExcludeList(String columnExcludeList) {
+        this.columnExcludeList = columnExcludeList;
+    }
+
+    public String getColumnExcludeList() {
+        return columnExcludeList;
+    }
+
+    /**
      * Resolvable hostname or IP address of the MySQL database server.
      */
     public void setDatabaseHostname(String databaseHostname) {
@@ -988,6 +1037,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The tables for which changes are to be captured
+     */
+    public void setTableIncludeList(String tableIncludeList) {
+        this.tableIncludeList = tableIncludeList;
+    }
+
+    public String getTableIncludeList() {
+        return tableIncludeList;
+    }
+
+    /**
      * Whether the connector should include the original SQL query that
      * generated the change event. Note: This option requires MySQL be
      * configured with the binlog_rows_query_log_events option set to ON. Query
@@ -1002,6 +1062,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isIncludeQuery() {
         return includeQuery;
+    }
+
+    /**
+     * The databases for which changes are to be captured
+     */
+    public void setDatabaseIncludeList(String databaseIncludeList) {
+        this.databaseIncludeList = databaseIncludeList;
+    }
+
+    public String getDatabaseIncludeList() {
+        return databaseIncludeList;
     }
 
     @Override
@@ -1029,13 +1100,15 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
         addPropertyIfNotNull(configBuilder, "database.ssl.truststore.password", databaseSslTruststorePassword);
+        addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "inconsistent.schema.handling.mode", inconsistentSchemaHandlingMode);
         addPropertyIfNotNull(configBuilder, "enable.time.adjuster", enableTimeAdjuster);
         addPropertyIfNotNull(configBuilder, "gtid.new.channel.position", gtidNewChannelPosition);
+        addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "database.password", databasePassword);
+        addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
         addPropertyIfNotNull(configBuilder, "database.history.store.only.monitored.tables.ddl", databaseHistoryStoreOnlyMonitoredTablesDdl);
         addPropertyIfNotNull(configBuilder, "gtid.source.filter.dml.events", gtidSourceFilterDmlEvents);
-        addPropertyIfNotNull(configBuilder, "database.blacklist", databaseBlacklist);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "connect.keep.alive", connectKeepAlive);
@@ -1053,8 +1126,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.new.tables", snapshotNewTables);
         addPropertyIfNotNull(configBuilder, "database.history.skip.unparseable.ddl", databaseHistorySkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
-        addPropertyIfNotNull(configBuilder, "database.whitelist", databaseWhitelist);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
+        addPropertyIfNotNull(configBuilder, "snapshot.events.as.inserts", snapshotEventsAsInserts);
         addPropertyIfNotNull(configBuilder, "bigint.unsigned.handling.mode", bigintUnsignedHandlingMode);
         addPropertyIfNotNull(configBuilder, "database.server.id", databaseServerId);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
@@ -1065,10 +1138,13 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.ssl.truststore", databaseSslTruststore);
         addPropertyIfNotNull(configBuilder, "database.ssl.mode", databaseSslMode);
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore.password", databaseSslKeystorePassword);
+        addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "database.server.id.offset", databaseServerIdOffset);
         addPropertyIfNotNull(configBuilder, "connect.keep.alive.interval.ms", connectKeepAliveIntervalMs);
+        addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "include.query", includeQuery);
+        addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
         
         return configBuilder.build();
     }

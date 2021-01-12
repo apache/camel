@@ -163,7 +163,7 @@ public class StreamProducer extends DefaultProducer {
             openStream();
         }
     }
-    
+
     private Boolean isDone(Exchange exchange) {
         return exchange != null && exchange.getProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
     }

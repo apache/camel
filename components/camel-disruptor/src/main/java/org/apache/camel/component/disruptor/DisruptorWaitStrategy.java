@@ -36,18 +36,20 @@ public enum DisruptorWaitStrategy {
     Blocking(BlockingWaitStrategy.class),
 
     /**
-     * Sleeping strategy that initially spins, then uses a Thread.yield(), and eventually for the minimum number of nanos
-     * the OS and JVM will allow while the {@link com.lmax.disruptor.EventProcessor}s are waiting on a barrier.
+     * Sleeping strategy that initially spins, then uses a Thread.yield(), and eventually for the minimum number of
+     * nanos the OS and JVM will allow while the {@link com.lmax.disruptor.EventProcessor}s are waiting on a barrier.
      * <p/>
-     * This strategy is a good compromise between performance and CPU resource. Latency spikes can occur after quiet periods.
+     * This strategy is a good compromise between performance and CPU resource. Latency spikes can occur after quiet
+     * periods.
      */
     Sleeping(SleepingWaitStrategy.class),
 
     /**
-     * Busy Spin strategy that uses a busy spin loop for {@link com.lmax.disruptor.EventProcessor}s waiting on a barrier.
+     * Busy Spin strategy that uses a busy spin loop for {@link com.lmax.disruptor.EventProcessor}s waiting on a
+     * barrier.
      * <p/>
-     * This strategy will use CPU resource to avoid syscalls which can introduce latency jitter.  It is best
-     * used when threads can be bound to specific CPU cores.
+     * This strategy will use CPU resource to avoid syscalls which can introduce latency jitter. It is best used when
+     * threads can be bound to specific CPU cores.
      */
     BusySpin(BusySpinWaitStrategy.class),
 
@@ -55,31 +57,36 @@ public enum DisruptorWaitStrategy {
      * Yielding strategy that uses a Thread.yield() for {@link com.lmax.disruptor.EventProcessor}s waiting on a barrier
      * after an initially spinning.
      * <p/>
-     * This strategy is a good compromise between performance and CPU resource without incurring significant latency spikes.
+     * This strategy is a good compromise between performance and CPU resource without incurring significant latency
+     * spikes.
      */
     Yielding(YieldingWaitStrategy.class);
 
-//    TODO PhasedBackoffWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out for now
-//    /**
-//     * Phased wait strategy for waiting {@link EventProcessor}s on a barrier.<p/>
-//     *
-//     * This strategy can be used when throughput and low-latency are not as important as CPU resource.<\p></\p>
-//     *
-//     * Spins, then yields, then blocks on the configured BlockingStrategy.
-//     */
-//    PHASED_BACKOFF(PhasedBackoffWaitStrategy.class),
+    //    TODO PhasedBackoffWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out for now
+    //    /**
+    //     * Phased wait strategy for waiting {@link EventProcessor}s on a barrier.<p/>
+    //     *
+    //     * This strategy can be used when throughput and low-latency are not as important as CPU resource.<\p></\p>
+    //     *
+    //     * Spins, then yields, then blocks on the configured BlockingStrategy.
+    //     */
+    //    PHASED_BACKOFF(PhasedBackoffWaitStrategy.class),
 
-//    TODO TimeoutBlockingWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out for now
-//    /**
-//     * TODO, wait for documentation from LMAX
-//     */
-//    TIMEOUT_BLOCKING(TimeoutBlockingWaitStrategy.class);
+    //    TODO TimeoutBlockingWaitStrategy constructor requires parameters, unlike the other strategies. We leave it out for now
+    //    /**
+    //     * TODO, wait for documentation from LMAX
+    //     */
+    //    TIMEOUT_BLOCKING(TimeoutBlockingWaitStrategy.class);
 
     private final Class<? extends WaitStrategy> waitStrategyClass;
 
     DisruptorWaitStrategy(final Class<? extends WaitStrategy> waitStrategyClass) {
 
         this.waitStrategyClass = waitStrategyClass;
+    }
+
+    public Class<? extends WaitStrategy> getWaitStrategyClass() {
+        return this.waitStrategyClass;
     }
 
     public WaitStrategy createWaitStrategyInstance() throws Exception {

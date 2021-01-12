@@ -19,7 +19,9 @@ package org.apache.camel.language.simple.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -52,18 +54,35 @@ public class CompositeNodes extends BaseSimpleNode {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         if (children.isEmpty()) {
             return null;
         } else if (children.size() == 1) {
-            return children.get(0).createExpression(expression);
+            return children.get(0).createExpression(camelContext, expression);
         } else {
             List<Expression> answer = new ArrayList<>();
             for (SimpleNode child : children) {
-                answer.add(child.createExpression(expression));
+                answer.add(child.createExpression(camelContext, expression));
             }
             return ExpressionBuilder.concatExpression(answer);
         }
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        if (children.isEmpty()) {
+            return null;
+        } else if (children.size() == 1) {
+            return children.get(0).createCode(expression);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (SimpleNode child : children) {
+                String code = child.createCode(expression);
+                if (code != null) {
+                    sb.append(code);
+                }
+            }
+            return sb.toString();
+        }
+    }
 }

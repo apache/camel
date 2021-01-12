@@ -139,7 +139,7 @@ public abstract class BaseModel<O extends BaseOptionModel> {
 
     /**
      * @return {@code true} if the part represented by this model supports compilation to native code; {@code false}
-     *          otherwise
+     *         otherwise
      */
     public boolean isNativeSupported() {
         return nativeSupported;

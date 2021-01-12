@@ -47,7 +47,6 @@ import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STD
 import static org.apache.camel.component.exec.ExecutableJavaProgram.READ_INPUT_LINES_AND_PRINT_THEM;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.THREADS;
-import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -55,10 +54,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Tests the functionality of the {@link org.apache.camel.component.exec.ExecComponent}, executing<br>
  * <i>java org.apache.camel.component.exec.ExecutableJavaProgram</i> <br>
- * command. <b>Note, that the tests assume, that the JAVA_HOME system variable
- * is set.</b> This is a more credible assumption, than assuming that java is in
- * the path, because the Maven scripts build the path to java with the JAVA_HOME
- * environment variable.
+ * command. <b>Note, that the tests assume, that the JAVA_HOME system variable is set.</b> This is a more credible
+ * assumption, than assuming that java is in the path, because the Maven scripts build the path to java with the
+ * JAVA_HOME environment variable.
  *
  * @see {@link org.apache.camel.component.exec.ExecutableJavaProgram}
  */
@@ -205,8 +203,8 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
 
         String err = IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class), Charset.defaultCharset());
         ExecResult result = exchange.getIn().getBody(ExecResult.class);
-        String[] outs = IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(LINE_SEPARATOR);
-        String[] errs = err.split(LINE_SEPARATOR);
+        String[] outs = IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(System.lineSeparator());
+        String[] errs = err.split(System.lineSeparator());
 
         output.assertIsSatisfied();
         assertEquals(ExecutableJavaProgram.LINES_TO_PRINT_FROM_EACH_THREAD, outs.length);
@@ -237,7 +235,7 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         final StringBuilder builder = new StringBuilder();
         int lines = 10;
         for (int t = 1; t < lines; t++) {
-            builder.append("Line" + t + LINE_SEPARATOR);
+            builder.append("Line" + t + System.lineSeparator());
         }
         String whiteSpaceSeparatedLines = builder.toString();
         String expected = builder.toString();
@@ -255,11 +253,14 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         return sendExchange(commandArgument, timeout, "testBody", false);
     }
 
-    protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
+    protected Exchange sendExchange(
+            final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
         return sendExchange("direct:input", commandArgument, timeout, body, useStderrOnEmptyStdout);
     }
 
-    protected Exchange sendExchange(final String endpoint, final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
+    protected Exchange sendExchange(
+            final String endpoint, final Object commandArgument, final long timeout, final String body,
+            final boolean useStderrOnEmptyStdout) {
         final List<String> args = buildArgs(commandArgument);
         final String javaAbsolutePath = buildJavaExecutablePath();
 
@@ -292,10 +293,10 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:input")
-                    .recipientList(header("whereTo")).to("mock:output");
+                        .recipientList(header("whereTo")).to("mock:output");
 
                 from("direct:direct")
-                    .recipientList(header("whereTo"));
+                        .recipientList(header("whereTo"));
             }
         };
     }

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a voice message stored on the Telegram servers.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultcachedvoice">
- * https://core.telegram.org/bots/api#inlinequeryresultcachedvoice</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultcachedvoice</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultCachedVoice extends InlineQueryResult {

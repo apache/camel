@@ -27,7 +27,8 @@ public class VertxHttpUriTest extends VertxHttpTestSupport {
 
     @Test
     public void testHttpUriFromHeader() {
-        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_URI, getTestServerUrl() + "/alternate", String.class);
+        String result = template.requestBodyAndHeader(getProducerUri(), null, Exchange.HTTP_URI,
+                getTestServerUrl() + "/alternate", String.class);
         assertEquals("Overridden URI", result);
     }
 
@@ -39,7 +40,6 @@ public class VertxHttpUriTest extends VertxHttpTestSupport {
                 .request(String.class);
         assertEquals("Overridden URI + path", result);
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

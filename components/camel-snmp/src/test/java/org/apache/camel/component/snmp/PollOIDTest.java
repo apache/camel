@@ -45,7 +45,7 @@ public class PollOIDTest extends CamelTestSupport {
             }
         }
     }
-    
+
     @Test
     public void testStartRoute() throws Exception {
         // do nothing here , just make sure the camel route can started.
@@ -56,7 +56,8 @@ public class PollOIDTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0").transform(body().convertToString()).to("mock:result");
+                from("snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0")
+                        .transform(body().convertToString()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

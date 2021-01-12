@@ -26,7 +26,8 @@ import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
 
 @XmlTransient
-public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends BaseSSLContextParameters> extends AbstractJsseUtilFactoryBean<T> {
+public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends BaseSSLContextParameters>
+        extends AbstractJsseUtilFactoryBean<T> {
 
     private CipherSuitesParametersDefinition cipherSuites;
 

@@ -70,11 +70,6 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
@@ -117,60 +112,9 @@
             <configuration>
               <apis>
                 <api>
-                  <apiName>hello-file</apiName>
-                  <proxyClass>${package}.api.${name}FileHello</proxyClass>
-                  <fromSignatureFile>signatures/file-sig-api.txt</fromSignatureFile>
-                  <!-- Use substitutions to manipulate parameter names and avoid name clashes
-                  <substitutions>
-                    <substitution>
-                      <method>^(.+)$</method>
-                      <argName>^(.+)$</argName>
-                      <argType>java.lang.String</argType>
-                      <replacement>$1Param</replacement>
-                      <replaceWithType>false</replaceWithType>
-                    </substitution>
-                  </substitutions>
-                  -->
-                  <!-- Exclude automatically generated endpoint options by name
-                  <excludeConfigNames>name-pattern<excludeConfigNames>
-                  -->
-                  <!-- Exclude automatically generated endpoint options by type
-                  <excludeConfigTypes>type-pattern<excludeConfigTypes>
-                  -->
-                  <!-- Add custom endpoint options to generated EndpointConfiguration class for this API
-                  <extraOptions>
-                    <extraOption>
-                      <type>java.util.List&lt;String&gt;</type>
-                      <name>customOption</name>
-                    </extraOption>
-                  </extraOptions>
-                  -->
-                  <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
-                  <aliases>
-                    <alias>
-                      <methodPattern>[gs]et(.+)</methodPattern>
-                      <methodAlias>$1</methodAlias>
-                    </alias>
-                  </aliases>
-                  -->
-                  <!-- for some methods, null can be a valid input
-                  <nullableOptions>
-                    <nullableOption>option-name</nullableOption>
-                  </nullableOptions>
-                  -->
-                </api>
-                <api>
-                  <apiName>hello-javadoc</apiName>
-                  <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
-                  <fromJavadoc>
-                    <!-- Use exclude patterns to limit what gets exposed in component endpoint
-                    <excludePackages>package-name-patterns</excludePackages>
-                    <excludeClasses>class-name-patterns</excludeClasses>
-                    <includeMethods>method-name-patterns</includeMethods>
-                    <excludeMethods>method-name-patterns</excludeMethods>
-                    <includeStaticMethods>use 'true' to include static methods, false by default<includeStaticMethods>
-                    -->
-                  </fromJavadoc>
+                  <apiName>hello</apiName>
+                  <proxyClass>${package}.api.${name}Hello</proxyClass>
+                  <fromJavasource />
                 </api>
               </apis>
               <!-- Specify global values for all APIs here, these are overridden at API level
@@ -185,13 +129,21 @@
             </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>${groupId}</groupId>
+            <artifactId>${artifactId}-api</artifactId>
+            <version>${version}</version>
+            <classifier>sources</classifier>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <!-- generate camel meta-data -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-component-maven-plugin</artifactId>
-        <version>${camelVersion}</version>
+        <version>${camel-version}</version>
         <executions>
           <execution>
             <id>generate</id>
@@ -248,6 +200,10 @@
             <componentPackage>${componentPackage}</componentPackage>
             <outPackage>${outPackage}</outPackage>
           </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -1,0 +1,199 @@
+[[aws2-sts-component]]
+= AWS 2 Security Token Service (STS) Component
+:docTitle: AWS 2 Security Token Service (STS)
+:artifactId: camel-aws2-sts
+:description: Manage AWS STS cluster instances using AWS SDK version 2.x.
+:since: 3.5
+:supportLevel: Stable
+:component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-sts.adoc[opts=optional]
+//Manually maintained attributes
+:group: AWS 2
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 STS component supports assumeRole operation.
+https://aws.amazon.com/sts/[AWS STS].
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon STS. More information is available at
+https://aws.amazon.com/sts/[Amazon STS].
+
+[NOTE]
+====
+The AWS2 STS component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-sts://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 Security Token Service (STS) component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (producer) | Component configuration |  | STS2Configuration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. There are 3 enums and the value can be one of: assumeRole, getSessionToken, getFederationToken | assumeRole | STS2Operations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the STS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the STS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the STS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which STS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() | aws-global | String
+| *stsClient* (producer) | *Autowired* To use a existing configured AWS STS as client |  | StsClient
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 Security Token Service (STS) endpoint is configured using URI syntax:
+
+----
+aws2-sts:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. There are 3 enums and the value can be one of: assumeRole, getSessionToken, getFederationToken | assumeRole | STS2Operations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the STS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the STS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the STS client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which STS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() | aws-global | String
+| *stsClient* (producer) | *Autowired* To use a existing configured AWS STS as client |  | StsClient
+| *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+Required STS component options
+
+You have to provide the amazonSTSClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/sts/[Amazon STS] service.
+
+== Usage
+
+[NOTE]
+====
+The AWS2 STS component works on the aws-global region and it has aws-global as default region
+====
+
+=== STS Producer operations
+
+Camel-AWS STS component provides the following operation on the producer side:
+
+- assumeRole
+- getSessionToken
+- getFedeationToken
+
+== Producer Examples
+
+- assumeRole: this operation will make an AWS user assume a different role temporary
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:assumeRole")
+    .setHeader(STS2Constants.ROLE_ARN, constant("arn:123"))
+    .setHeader(STS2Constants.ROLE_SESSION_NAME, constant("groot"))
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=assumeRole")
+--------------------------------------------------------------------------------
+
+- getSessionToken: this operation will return a temporary session token
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getSessionToken")
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
+--------------------------------------------------------------------------------
+
+- getFederationToken: this operation will return a temporary federation token
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getFederationToken")
+    .setHeader(STS2Constants.FEDERATED_NAME, constant("federation-account"))
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
+--------------------------------------------------------------------------------
+
+== Automatic detection of StsClient client in registry
+
+The component is capable of detecting the presence of an StsClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+== Using a POJO as body
+
+Sometimes build an AWS Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In AWS STS, as example for Assume Role request, you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:createUser")
+     .setBody(AssumeRoleRequest.builder().roleArn("arn:123").roleSessionName("groot").build())
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=assumeRole&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-sts</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-sts-starter.adoc[]

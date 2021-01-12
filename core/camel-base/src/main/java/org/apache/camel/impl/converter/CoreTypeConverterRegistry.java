@@ -28,12 +28,14 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -56,16 +58,27 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreTypeConverterRegistry.class);
 
-    protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(200);
+    // built-in core type converters that are bulked together in a few classes for optimal performance
+    protected final List<BulkTypeConverters> bulkTypeConverters = new ArrayList<>();
+    // custom type converters (from camel components and end users)
+    protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(16);
+    // fallback converters
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
-    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
-    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
+    // special enum converter for optional performance
+    protected final TypeConverter enumTypeConverter = new EnumTypeConverter();
+
     protected final Statistics statistics = new UtilizationStatistics();
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
+
+    protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
+    protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
+
+    // to keep track of number of converters in the bulked classes
+    private int sumBulkTypeConverters;
 
     public CoreTypeConverterRegistry() {
     }
@@ -74,6 +87,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         if (registry instanceof CoreTypeConverterRegistry) {
             CoreTypeConverterRegistry reg = (CoreTypeConverterRegistry) registry;
             reg.getTypeMappings().forEach(typeMappings::put);
+            this.bulkTypeConverters.addAll(reg.getBulkTypeConverters());
             this.fallbackConverters.addAll(reg.getFallbackConverters());
         } else {
             throw new UnsupportedOperationException();
@@ -115,6 +129,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         return fallbackConverters;
     }
 
+    public List<BulkTypeConverters> getBulkTypeConverters() {
+        return bulkTypeConverters;
+    }
+
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
@@ -131,16 +149,29 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // primitive boolean which must return a value so throw exception if not possible
                 Object answer = ObjectConverter.toBoolean(value);
                 if (answer == null) {
-                    throw new TypeConversionException(value, type, new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
+                    throw new TypeConversionException(
+                            value, type,
+                            new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
             } else if (type == Boolean.class && (value instanceof String)) {
                 // String -> Boolean
                 String str = (String) value;
-                if ("true".equalsIgnoreCase(str)) {
+                // must be 4 or 5 in length
+                int len = str.length();
+                // fast check the value as-is in lower case which is most common
+                if (len == 4 && "true".equals(str)) {
                     return (T) Boolean.TRUE;
-                } else if ("false".equalsIgnoreCase(str)) {
+                } else if (len == 5 && "false".equals(str)) {
                     return (T) Boolean.FALSE;
+                } else {
+                    // do check for ignore case
+                    str = str.toUpperCase();
+                    if (len == 4 && "TRUE".equals(str)) {
+                        return (T) Boolean.TRUE;
+                    } else if (len == 5 && "FALSE".equals(str)) {
+                        return (T) Boolean.FALSE;
+                    }
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
@@ -152,12 +183,20 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // okay its a primitive -> string then return as-is for some common types
                 Class<?> cls = value.getClass();
                 if (cls.isPrimitive()
-                        || cls == Boolean.class || cls == boolean.class
-                        || cls == Integer.class || cls == int.class
-                        || cls == Long.class || cls == long.class) {
+                        || cls == Boolean.class
+                        || cls == Integer.class
+                        || cls == Long.class) {
                     return (T) value.toString();
                 }
+            } else if (type.isEnum()) {
+                // okay its a conversion to enum
+                try {
+                    return enumTypeConverter.convertTo(type, exchange, value);
+                } catch (Exception e) {
+                    throw createTypeConversionException(exchange, type, value, e);
+                }
             }
+
             // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
         }
 
@@ -180,16 +219,29 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // primitive boolean which must return a value so throw exception if not possible
                 Object answer = ObjectConverter.toBoolean(value);
                 if (answer == null) {
-                    throw new TypeConversionException(value, type, new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
+                    throw new TypeConversionException(
+                            value, type,
+                            new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
             } else if (type == Boolean.class && (value instanceof String)) {
                 // String -> Boolean
                 String str = (String) value;
-                if ("true".equalsIgnoreCase(str)) {
+                // must be 4 or 5 in length
+                int len = str.length();
+                // fast check the value as-is in lower case which is most common
+                if (len == 4 && "true".equals(str)) {
                     return (T) Boolean.TRUE;
-                } else if ("false".equalsIgnoreCase(str)) {
+                } else if (len == 5 && "false".equals(str)) {
                     return (T) Boolean.FALSE;
+                } else {
+                    // do check for ignore case
+                    str = str.toUpperCase();
+                    if (len == 4 && "TRUE".equals(str)) {
+                        return (T) Boolean.TRUE;
+                    } else if (len == 5 && "FALSE".equals(str)) {
+                        return (T) Boolean.FALSE;
+                    }
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
@@ -201,10 +253,17 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // okay its a primitive -> string then return as-is for some common types
                 Class<?> cls = value.getClass();
                 if (cls.isPrimitive()
-                        || cls == Boolean.class || cls == boolean.class
-                        || cls == Integer.class || cls == int.class
-                        || cls == Long.class || cls == long.class) {
+                        || cls == Boolean.class
+                        || cls == Integer.class
+                        || cls == Long.class) {
                     return (T) value.toString();
+                }
+            } else if (type.isEnum()) {
+                // okay its a conversion to enum
+                try {
+                    return enumTypeConverter.convertTo(type, exchange, value);
+                } catch (Exception e) {
+                    throw createTypeConversionException(exchange, type, value, e);
                 }
             }
             // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
@@ -224,11 +283,74 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     @SuppressWarnings("unchecked")
     public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        // optimize for a few common conversions
+        if (value != null) {
+            if (type.isInstance(value)) {
+                // same instance
+                return (T) value;
+            }
+            if (type == boolean.class) {
+                // primitive boolean which must return a value so throw exception if not possible
+                Object answer = ObjectConverter.toBoolean(value);
+                if (answer == null) {
+                    throw new TypeConversionException(
+                            value, type,
+                            new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
+                }
+                return (T) answer;
+            } else if (type == Boolean.class && (value instanceof String)) {
+                // String -> Boolean
+                String str = (String) value;
+                // must be 4 or 5 in length
+                int len = str.length();
+                // fast check the value as-is in lower case which is most common
+                if (len == 4 && "true".equals(str)) {
+                    return (T) Boolean.TRUE;
+                } else if (len == 5 && "false".equals(str)) {
+                    return (T) Boolean.FALSE;
+                } else {
+                    // do check for ignore case
+                    str = str.toUpperCase();
+                    if (len == 4 && "TRUE".equals(str)) {
+                        return (T) Boolean.TRUE;
+                    } else if (len == 5 && "FALSE".equals(str)) {
+                        return (T) Boolean.FALSE;
+                    }
+                }
+            } else if (type.isPrimitive()) {
+                // okay its a wrapper -> primitive then return as-is for some common types
+                Class<?> cls = value.getClass();
+                if (cls == Integer.class || cls == Long.class) {
+                    return (T) value;
+                }
+            } else if (type == String.class) {
+                // okay its a primitive -> string then return as-is for some common types
+                Class<?> cls = value.getClass();
+                if (cls.isPrimitive()
+                        || cls == Boolean.class
+                        || cls == Integer.class
+                        || cls == Long.class) {
+                    return (T) value.toString();
+                }
+            } else if (type.isEnum()) {
+                // okay its a conversion to enum
+                try {
+                    return enumTypeConverter.convertTo(type, exchange, value);
+                } catch (Exception e) {
+                    // we are only trying so ignore exceptions
+                    return null;
+                }
+            }
+
+            // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
+        }
+
         return (T) doConvertTo(type, exchange, value, false, true);
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value,
-                                 final boolean mandatory, final boolean tryConvert) {
+    protected Object doConvertTo(
+            final Class<?> type, final Exchange exchange, final Object value,
+            final boolean mandatory, final boolean tryConvert) {
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value, tryConvert);
@@ -264,8 +386,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         }
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value,
-                                 final boolean tryConvert) throws Exception {
+    protected Object doConvertTo(
+            final Class<?> type, final Exchange exchange, final Object value,
+            final boolean tryConvert)
+            throws Exception {
         boolean trace = LOG.isTraceEnabled();
         boolean statisticsEnabled = statistics.isStatisticsEnabled();
 
@@ -274,7 +398,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                     value == null ? "null" : value.getClass().getCanonicalName(),
                     type.getCanonicalName(), value);
         }
-
 
         if (value == null) {
             // no type conversion was needed
@@ -323,6 +446,23 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         // okay we need to attempt to convert
         if (statisticsEnabled) {
             attemptCounter.increment();
+        }
+
+        // attempt bulk first which is the fastest
+        for (BulkTypeConverters bulk : bulkTypeConverters) {
+            if (trace) {
+                LOG.trace("Using bulk converter: {} to convert [{}=>{}]", bulk.getClass().getSimpleName(), value.getClass(),
+                        type);
+            }
+            Object rc;
+            if (tryConvert) {
+                rc = bulk.convertTo(value.getClass(), type, exchange, value);
+            } else {
+                rc = bulk.convertTo(value.getClass(), type, exchange, value);
+            }
+            if (rc != null) {
+                return rc;
+            }
         }
 
         // try to find a suitable type converter
@@ -391,8 +531,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
-                                type.getCanonicalName(), value.getClass().getCanonicalName(), fallback.getFallbackTypeConverter());
+                        LOG.debug(
+                                "Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
+                                type.getCanonicalName(), value.getClass().getCanonicalName(),
+                                fallback.getFallbackTypeConverter());
                     }
                     addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
@@ -419,6 +561,20 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
     public TypeConverter getTypeConverter(Class<?> toType, Class<?> fromType) {
         return typeMappings.get(toType, fromType);
+    }
+
+    @Override
+    public void addBulkTypeConverters(BulkTypeConverters bulkTypeConverters) {
+        // guard against adding duplicates
+        boolean exists = this.bulkTypeConverters.contains(bulkTypeConverters);
+        if (!exists) {
+            if (bulkTypeConverters.getOrder() == Ordered.HIGHEST) {
+                this.bulkTypeConverters.add(0, bulkTypeConverters);
+            } else {
+                this.bulkTypeConverters.add(bulkTypeConverters);
+            }
+            sumBulkTypeConverters += bulkTypeConverters.size();
+        }
     }
 
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
@@ -490,8 +646,18 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     protected TypeConverter doLookup(Class<?> toType, Class<?> fromType, boolean isSuper) {
 
         if (fromType != null) {
+
+            // try with base converters first
+            TypeConverter converter;
+            for (BulkTypeConverters base : bulkTypeConverters) {
+                converter = base.lookup(toType, fromType);
+                if (converter != null) {
+                    return converter;
+                }
+            }
+
             // lets try if there is a direct match
-            TypeConverter converter = getTypeConverter(toType, fromType);
+            converter = getTypeConverter(toType, fromType);
             if (converter != null) {
                 return converter;
             }
@@ -522,7 +688,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 TypeConverter converter = typeMappings.getFirst(
                         toType::isAssignableFrom,
                         // skip Object based we do them last
-                from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
+                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
                 if (converter != null) {
                     return converter;
                 }
@@ -539,14 +705,8 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         return null;
     }
 
-    public List<Class<?>[]> listAllTypeConvertersFromTo() {
-        List<Class<?>[]> answer = new ArrayList<>();
-        typeMappings.forEach((k1, k2, v) -> answer.add(new Class<?>[]{k2, k1}));
-        return answer;
-    }
-
-    protected TypeConversionException createTypeConversionException(Exchange exchange, Class<?> type, Object
-            value, Throwable cause) {
+    protected TypeConversionException createTypeConversionException(
+            Exchange exchange, Class<?> type, Object value, Throwable cause) {
         if (cause instanceof TypeConversionException) {
             if (((TypeConversionException) cause).getToType() == type) {
                 return (TypeConversionException) cause;
@@ -568,7 +728,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
     }
 
     public int size() {
-        return typeMappings.size();
+        return typeMappings.size() + sumBulkTypeConverters;
     }
 
     public LoggingLevel getTypeConverterExistsLoggingLevel() {
@@ -587,7 +747,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         this.typeConverterExists = typeConverterExists;
     }
 
+    @Override
     protected void doStop() throws Exception {
+        super.doStop();
         // log utilization statistics when stopping, including mappings
         if (statistics.isStatisticsEnabled()) {
             String info = statistics.toString();
@@ -597,7 +759,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                     misses.incrementAndGet();
                 }
             });
-            info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses);
+            info += String.format(" mappings[total=%s, misses=%s]", size(), misses);
             LOG.info(info);
         }
 

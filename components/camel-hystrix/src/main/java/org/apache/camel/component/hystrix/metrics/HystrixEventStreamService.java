@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
  * provides such functionality.
  */
 @ManagedResource(description = "Managed Hystrix EventStreamService")
-public class HystrixEventStreamService extends ServiceSupport implements StaticService, HystrixMetricsPoller.MetricsAsJsonPollerListener {
+public class HystrixEventStreamService extends ServiceSupport
+        implements StaticService, HystrixMetricsPoller.MetricsAsJsonPollerListener {
 
     public static final int METRICS_QUEUE_SIZE = 1000;
 
@@ -47,7 +48,6 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
     private HystrixMetricsPoller poller;
     // use a queue with a upper limit to avoid storing too many metrics
     private Queue<String> queue;
-
 
     public int getDelay() {
         return delay;

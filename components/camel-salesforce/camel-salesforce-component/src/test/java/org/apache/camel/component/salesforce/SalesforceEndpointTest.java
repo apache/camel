@@ -34,13 +34,15 @@ public class SalesforceEndpointTest {
         String[] operationNamesInAnnotation = uriPath.enums().split(",");
         Arrays.sort(operationNamesInAnnotation);
 
-        String[] operationNamesInEnum = Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
+        String[] operationNamesInEnum
+                = Arrays.stream(OperationName.values()).map(OperationName::value).toArray(length -> new String[length]);
         Arrays.sort(operationNamesInEnum);
 
         assertArrayEquals(operationNamesInEnum, operationNamesInAnnotation,
                 "All operation values, the String value returned from OperationName::value, must be defined in the @UriPath "
-                                 + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
-                                 + Arrays.stream(operationNamesInEnum).collect(Collectors.joining(",")));
+                                                                            + "enum parameter of the operationName field in SalesforceEndpoint, set the enums parameter to:\n"
+                                                                            + Arrays.stream(operationNamesInEnum)
+                                                                                    .collect(Collectors.joining(",")));
     }
 
 }

@@ -98,7 +98,6 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     public AmazonLambdaClientMock() {
     }
 
-
     @Override
     public AddPermissionResult addPermission(AddPermissionRequest addPermissionRequest) {
         throw new UnsupportedOperationException();
@@ -114,10 +113,12 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public CreateEventSourceMappingResult createEventSourceMapping(CreateEventSourceMappingRequest createEventSourceMappingRequest) {
+    public CreateEventSourceMappingResult createEventSourceMapping(
+            CreateEventSourceMappingRequest createEventSourceMappingRequest) {
         CreateEventSourceMappingResult result = new CreateEventSourceMappingResult();
         result.setBatchSize(100);
-        result.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.getFunctionName());
+        result.setFunctionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.getFunctionName());
         result.setState("Enabled");
         result.setEventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
         return result;
@@ -138,9 +139,10 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
             Runtime runtime = Runtime.fromValue(createFunctionRequest.getRuntime());
             result.setRuntime(runtime);
         } catch (Exception e) {
-            throw new AmazonServiceException("validation error detected: Value '"
-                + createFunctionRequest.getRuntime()
-                + "' at 'runtime' failed to satisfy constraint: Member must satisfy enum value set: [java8, nodejs, nodejs4.3, nodejs6.10, python2.7, python3.6, dotnetcore1.0]");
+            throw new AmazonServiceException(
+                    "validation error detected: Value '"
+                                             + createFunctionRequest.getRuntime()
+                                             + "' at 'runtime' failed to satisfy constraint: Member must satisfy enum value set: [java8, nodejs, nodejs4.3, nodejs6.10, python2.7, python3.6, dotnetcore1.0]");
         }
 
         result.setRole("arn:aws:iam::643534317684:role/" + createFunctionRequest.getRole());
@@ -161,7 +163,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public DeleteEventSourceMappingResult deleteEventSourceMapping(DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
+    public DeleteEventSourceMappingResult deleteEventSourceMapping(
+            DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
         DeleteEventSourceMappingResult result = new DeleteEventSourceMappingResult();
         result.setUUID("a1239494949382882383");
         result.setState("Deleting");
@@ -198,7 +201,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
         GetFunctionResult result = new GetFunctionResult();
         FunctionConfiguration configuration = new FunctionConfiguration();
         configuration.setFunctionName(getFunctionRequest.getFunctionName());
-        configuration.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + getFunctionRequest.getFunctionName());
+        configuration
+                .setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + getFunctionRequest.getFunctionName());
         configuration.setRuntime("nodejs6.10");
         configuration.setRole("arn:aws:iam::643534317684:role/lambda-execution-role");
         configuration.setHandler(getFunctionRequest.getFunctionName() + ".handler");
@@ -214,7 +218,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public GetFunctionConfigurationResult getFunctionConfiguration(GetFunctionConfigurationRequest getFunctionConfigurationRequest) {
+    public GetFunctionConfigurationResult getFunctionConfiguration(
+            GetFunctionConfigurationRequest getFunctionConfigurationRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -230,8 +235,9 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
         Map<String, String> payload = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
-            payload = mapper.readValue(StandardCharsets.UTF_8.decode(invokeRequest.getPayload()).toString(), new TypeReference<Map<String, String>>() {
-            });
+            payload = mapper.readValue(StandardCharsets.UTF_8.decode(invokeRequest.getPayload()).toString(),
+                    new TypeReference<Map<String, String>>() {
+                    });
         } catch (Exception e) {
 
         }
@@ -254,12 +260,14 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public ListEventSourceMappingsResult listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
+    public ListEventSourceMappingsResult listEventSourceMappings(
+            ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
         ListEventSourceMappingsResult result = new ListEventSourceMappingsResult();
         List<EventSourceMappingConfiguration> confList = new ArrayList<>();
         EventSourceMappingConfiguration conf = new EventSourceMappingConfiguration();
         conf.setBatchSize(100);
-        conf.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.getFunctionName());
+        conf.setFunctionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.getFunctionName());
         conf.setState("Enabled");
         conf.setEventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
         confList.add(conf);
@@ -348,7 +356,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public UpdateEventSourceMappingResult updateEventSourceMapping(UpdateEventSourceMappingRequest updateEventSourceMappingRequest) {
+    public UpdateEventSourceMappingResult updateEventSourceMapping(
+            UpdateEventSourceMappingRequest updateEventSourceMappingRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -357,7 +366,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
         UpdateFunctionCodeResult result = new UpdateFunctionCodeResult();
 
         result.setFunctionName(updateFunctionCodeRequest.getFunctionName());
-        result.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + updateFunctionCodeRequest.getFunctionName());
+        result.setFunctionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + updateFunctionCodeRequest.getFunctionName());
         result.setCodeSize(340L);
         result.setCodeSha256("PKt5ygvZ6G8vWJASlWIypsBmKzAdmRrvTO");
         result.setMemorySize(128);
@@ -369,7 +379,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public UpdateFunctionConfigurationResult updateFunctionConfiguration(UpdateFunctionConfigurationRequest updateFunctionConfigurationRequest) {
+    public UpdateFunctionConfigurationResult updateFunctionConfiguration(
+            UpdateFunctionConfigurationRequest updateFunctionConfigurationRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -379,7 +390,7 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public void setEndpoint(String endpoint) {   
+    public void setEndpoint(String endpoint) {
     }
 
     @Override
@@ -387,7 +398,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     }
 
     @Override
-    public DeleteFunctionConcurrencyResult deleteFunctionConcurrency(DeleteFunctionConcurrencyRequest deleteFunctionConcurrencyRequest) {
+    public DeleteFunctionConcurrencyResult deleteFunctionConcurrency(
+            DeleteFunctionConcurrencyRequest deleteFunctionConcurrencyRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -398,6 +410,6 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public void shutdown() {
-        throw new UnsupportedOperationException();        
+        throw new UnsupportedOperationException();
     }
 }

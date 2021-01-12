@@ -66,7 +66,7 @@ public class SalesforceConsumerTest {
                 return false;
             }
 
-            final AccountUpdates other = (AccountUpdates)obj;
+            final AccountUpdates other = (AccountUpdates) obj;
 
             return Objects.equals(id, other.id) && Objects.equals(name, other.name) && Objects.equals(phone, other.phone);
         }
@@ -107,7 +107,7 @@ public class SalesforceConsumerTest {
         when(component.getCamelContext()).thenReturn(camelContext);
         final ClassResolver classResolver = mock(ClassResolver.class);
         when(camelContext.getClassResolver()).thenReturn(classResolver);
-        when(classResolver.resolveClass(AccountUpdates.class.getName())).thenReturn((Class)AccountUpdates.class);
+        when(classResolver.resolveClass(AccountUpdates.class.getName())).thenReturn((Class) AccountUpdates.class);
 
         pushTopicMessage = createPushTopicMessage();
 
@@ -125,7 +125,7 @@ public class SalesforceConsumerTest {
         changeEventHeader.put("commitUser", "0052p000009cl8uBBB");
         changeEventHeader.put("commitNumber", 10585193272713L);
         changeEventHeader.put("entityName", "Account");
-        changeEventHeader.put("recordIds", new Object[] {"0012p00002HHpNlAAL"});
+        changeEventHeader.put("recordIds", new Object[] { "0012p00002HHpNlAAL" });
 
         when(mockChangeEventPayload.get("ChangeEventHeader")).thenReturn(changeEventHeader);
 
@@ -209,7 +209,7 @@ public class SalesforceConsumerTest {
         consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
         @SuppressWarnings("unchecked")
-        final Object sobject = ((Map<String, Object>)pushTopicMessage.get("data")).get("sobject");
+        final Object sobject = ((Map<String, Object>) pushTopicMessage.get("data")).get("sobject");
         verify(in).setBody(sobject);
         verify(in).setHeader("CamelSalesforceEventType", "created");
         verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
@@ -297,7 +297,7 @@ public class SalesforceConsumerTest {
         verify(in).setHeader("CamelSalesforceCommitUser", "0052p000009cl8uBBB");
         verify(in).setHeader("CamelSalesforceCommitNumber", 10585193272713L);
         verify(in).setHeader("CamelSalesforceEntityName", "Account");
-        verify(in).setHeader("CamelSalesforceRecordIds", new Object[] {"0012p00002HHpNlAAL"});
+        verify(in).setHeader("CamelSalesforceRecordIds", new Object[] { "0012p00002HHpNlAAL" });
 
         verify(mockChangeEventPayload).remove("ChangeEventHeader");
 

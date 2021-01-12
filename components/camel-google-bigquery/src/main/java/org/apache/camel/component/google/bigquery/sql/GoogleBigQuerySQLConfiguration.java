@@ -25,7 +25,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleBigQuerySQLConfiguration {
 
-    @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used")
+    @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
+    @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
     @UriPath(label = "common", description = "Google Cloud Project Id")
     @Metadata(required = true)
@@ -46,8 +47,7 @@ public class GoogleBigQuerySQLConfiguration {
     }
 
     /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If non
-     * provided the default will be used.
+     * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used.
      */
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
         return connectionFactory;

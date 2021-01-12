@@ -4,8 +4,10 @@ package org.apache.camel.component.aws2.kinesis;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -30,12 +32,12 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": getOrCreateConfiguration(target).setAmazonKinesisClient(property(camelContext, software.amazon.awssdk.services.kinesis.KinesisClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cborenabled":
+        case "cborEnabled": getOrCreateConfiguration(target).setCborEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class, value)); return true;
         case "iteratortype":
         case "iteratorType": getOrCreateConfiguration(target).setIteratorType(property(camelContext, software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class, value)); return true;
@@ -65,27 +67,49 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonKinesisClient", software.amazon.awssdk.services.kinesis.KinesisClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class);
-        answer.put("iteratorType", software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxResultsPerRequest", int.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sequenceNumber", java.lang.String.class);
-        answer.put("shardClosed", org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class);
-        answer.put("shardId", java.lang.String.class);
-        answer.put("trustAllCertificates", boolean.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonKinesisClient"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonkinesisclient":
+        case "amazonKinesisClient": return software.amazon.awssdk.services.kinesis.KinesisClient.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cborenabled":
+        case "cborEnabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws2.kinesis.Kinesis2Configuration.class;
+        case "iteratortype":
+        case "iteratorType": return software.amazon.awssdk.services.kinesis.model.ShardIteratorType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresultsperrequest":
+        case "maxResultsPerRequest": return int.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sequencenumber":
+        case "sequenceNumber": return java.lang.String.class;
+        case "shardclosed":
+        case "shardClosed": return org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum.class;
+        case "shardid":
+        case "shardId": return java.lang.String.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -96,12 +120,12 @@ public class Kinesis2ComponentConfigurer extends PropertyConfigurerSupport imple
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonkinesisclient":
         case "amazonKinesisClient": return getOrCreateConfiguration(target).getAmazonKinesisClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "cborenabled":
+        case "cborEnabled": return getOrCreateConfiguration(target).isCborEnabled();
         case "configuration": return target.getConfiguration();
         case "iteratortype":
         case "iteratorType": return getOrCreateConfiguration(target).getIteratorType();

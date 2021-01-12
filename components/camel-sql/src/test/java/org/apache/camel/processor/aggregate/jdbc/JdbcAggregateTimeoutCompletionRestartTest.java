@@ -55,7 +55,7 @@ public class JdbcAggregateTimeoutCompletionRestartTest extends AbstractJdbcAggre
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                                // use our created jdbc repo as aggregation repository
+                        // use our created jdbc repo as aggregation repository
                         .completionTimeout(3000).aggregationRepository(repo)
                         .to("mock:aggregated");
             }

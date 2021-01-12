@@ -69,9 +69,9 @@ public class PdfConfiguration {
     @UriParam(defaultValue = "A4", enums = "LETTER,LEGAL,A0,A1,A2,A3,A4,A5,A6")
     private String pageSize = PAGE_SIZE_A4;
     @UriParam(defaultValue = "Helvetica", enums = "Courier,Courier-Bold,Courier-Oblique,Courier-BoldOblique,"
-            + "Helvetica,Helvetica-Bold,Helvetica-Oblique,Helvetica-BoldOblique,"
-            + "Times-Roman,Times-Bold,Times-Italic,Times-BoldItalic,"
-            + "Symbol,ZapfDingbats")
+                                                  + "Helvetica,Helvetica-Bold,Helvetica-Oblique,Helvetica-BoldOblique,"
+                                                  + "Times-Roman,Times-Bold,Times-Italic,Times-BoldItalic,"
+                                                  + "Symbol,ZapfDingbats")
     private String font = "Helvetica";
     @UriParam(defaultValue = "lineTermination")
     private TextProcessingFactory textProcessingFactory = TextProcessingFactory.lineTermination;
@@ -172,10 +172,11 @@ public class PdfConfiguration {
     /**
      * Text processing to use.
      * <ul>
-     *   <li>autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will
-     *   be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line.</li>
-     *   <li>lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol
-     *   and then it will be written regardless it fits in the line or not.</li>
+     * <li>autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will be
+     * written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new
+     * line.</li>
+     * <li>lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line
+     * termination symbol and then it will be written regardless it fits in the line or not.</li>
      * </ul>
      */
     public void setTextProcessingFactory(TextProcessingFactory textProcessingFactory) {

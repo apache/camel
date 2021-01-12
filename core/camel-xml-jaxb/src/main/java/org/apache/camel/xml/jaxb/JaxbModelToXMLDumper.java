@@ -72,20 +72,20 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         // gather all namespaces from the routes or route which is stored on the
         // expression nodes
         if (definition instanceof RouteTemplatesDefinition) {
-            List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition)definition).getRouteTemplates();
+            List<RouteTemplateDefinition> templates = ((RouteTemplatesDefinition) definition).getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
                 extractNamespaces(route.getRoute(), namespaces);
             }
         } else if (definition instanceof RouteTemplateDefinition) {
-            RouteTemplateDefinition template = (RouteTemplateDefinition)definition;
+            RouteTemplateDefinition template = (RouteTemplateDefinition) definition;
             extractNamespaces(template.getRoute(), namespaces);
         } else if (definition instanceof RoutesDefinition) {
-            List<RouteDefinition> routes = ((RoutesDefinition)definition).getRoutes();
+            List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
             }
         } else if (definition instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition)definition;
+            RouteDefinition route = (RouteDefinition) definition;
             extractNamespaces(route, namespaces);
         }
 
@@ -125,7 +125,9 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
     }
 
     @Override
-    public String dumpModelAsXml(CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
+    public String dumpModelAsXml(
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean resolveDelegateEndpoints)
+            throws Exception {
         String xml = dumpModelAsXml(context, definition);
 
         // if resolving placeholders we parse the xml, and resolve the property
@@ -147,7 +149,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
                             String uri = context.resolvePropertyPlaceholders(text);
                             Endpoint endpoint = context.hasEndpoint(uri);
                             if (endpoint instanceof DelegateEndpoint) {
-                                endpoint = ((DelegateEndpoint)endpoint).getEndpoint();
+                                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
                                 after = endpoint.getEndpointUri();
                             }
                         } catch (Exception e) {
@@ -196,9 +198,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
     /**
      * Extract all XML namespaces from the expressions in the route
      *
-     * @param route the route
-     * @param namespaces the map of namespaces to add discovered XML namespaces
-     *            into
+     * @param route      the route
+     * @param namespaces the map of namespaces to add discovered XML namespaces into
      */
     private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
         Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
@@ -220,9 +221,9 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         NamespaceAware na = null;
         Expression exp = ed.getExpressionValue();
         if (exp instanceof NamespaceAware) {
-            na = (NamespaceAware)exp;
+            na = (NamespaceAware) exp;
         } else if (ed instanceof NamespaceAware) {
-            na = (NamespaceAware)ed;
+            na = (NamespaceAware) ed;
         }
 
         return na;
@@ -231,8 +232,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
     /**
      * Creates a new {@link XmlConverter}
      *
-     * @param context CamelContext if provided
-     * @return a new XmlConverter instance
+     * @param  context CamelContext if provided
+     * @return         a new XmlConverter instance
      */
     private static XmlConverter newXmlConverter(CamelContext context) {
         XmlConverter xmlConverter;

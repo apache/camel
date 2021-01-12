@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a Game.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultgame">
- * https://core.telegram.org/bots/api#inlinequeryresultgame</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultgame</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultGame extends InlineQueryResult {

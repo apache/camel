@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * An old unit test from CAMEL-715 which reproduced a problem which we don't
- * have anymore in Camel threads EIP and the routing engine.
+ * An old unit test from CAMEL-715 which reproduced a problem which we don't have anymore in Camel threads EIP and the
+ * routing engine.
  */
 public class Camel715ThreadProcessorTest {
     private static final int ITERS = 50000;

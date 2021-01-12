@@ -4,8 +4,10 @@ package org.apache.camel.component.consul;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -29,8 +31,8 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "acltoken":
         case "aclToken": getOrCreateConfiguration(target).setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blockseconds":
         case "blockSeconds": getOrCreateConfiguration(target).setBlockSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "bridgeerrorhandler":
@@ -81,38 +83,60 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("aclToken", java.lang.String.class);
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blockSeconds", java.lang.Integer.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.consul.ConsulConfiguration.class);
-        answer.put("connectTimeout", java.time.Duration.class);
-        answer.put("connectTimeoutMillis", java.lang.Long.class);
-        answer.put("consistencyMode", com.orbitz.consul.option.ConsistencyMode.class);
-        answer.put("consulClient", com.orbitz.consul.Consul.class);
-        answer.put("datacenter", java.lang.String.class);
-        answer.put("firstIndex", java.math.BigInteger.class);
-        answer.put("key", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("nearNode", java.lang.String.class);
-        answer.put("nodeMeta", java.util.List.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("pingInstance", boolean.class);
-        answer.put("readTimeout", java.time.Duration.class);
-        answer.put("readTimeoutMillis", java.lang.Long.class);
-        answer.put("recursive", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("tags", java.lang.String.class);
-        answer.put("url", java.lang.String.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("userName", java.lang.String.class);
-        answer.put("valueAsString", boolean.class);
-        answer.put("writeTimeout", java.time.Duration.class);
-        answer.put("writeTimeoutMillis", java.lang.Long.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acltoken":
+        case "aclToken": return java.lang.String.class;
+        case "action": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "blockseconds":
+        case "blockSeconds": return java.lang.Integer.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.consul.ConsulConfiguration.class;
+        case "connecttimeout":
+        case "connectTimeout": return java.time.Duration.class;
+        case "connecttimeoutmillis":
+        case "connectTimeoutMillis": return java.lang.Long.class;
+        case "consistencymode":
+        case "consistencyMode": return com.orbitz.consul.option.ConsistencyMode.class;
+        case "consulclient":
+        case "consulClient": return com.orbitz.consul.Consul.class;
+        case "datacenter": return java.lang.String.class;
+        case "firstindex":
+        case "firstIndex": return java.math.BigInteger.class;
+        case "key": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "nearnode":
+        case "nearNode": return java.lang.String.class;
+        case "nodemeta":
+        case "nodeMeta": return java.util.List.class;
+        case "password": return java.lang.String.class;
+        case "pinginstance":
+        case "pingInstance": return boolean.class;
+        case "readtimeout":
+        case "readTimeout": return java.time.Duration.class;
+        case "readtimeoutmillis":
+        case "readTimeoutMillis": return java.lang.Long.class;
+        case "recursive": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "tags": return java.lang.String.class;
+        case "url": return java.lang.String.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "valueasstring":
+        case "valueAsString": return boolean.class;
+        case "writetimeout":
+        case "writeTimeout": return java.time.Duration.class;
+        case "writetimeoutmillis":
+        case "writeTimeoutMillis": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -122,8 +146,8 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "acltoken":
         case "aclToken": return getOrCreateConfiguration(target).getAclToken();
         case "action": return getOrCreateConfiguration(target).getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blockseconds":
         case "blockSeconds": return getOrCreateConfiguration(target).getBlockSeconds();
         case "bridgeerrorhandler":
@@ -169,6 +193,15 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "writeTimeout": return getOrCreateConfiguration(target).getWriteTimeout();
         case "writetimeoutmillis":
         case "writeTimeoutMillis": return getOrCreateConfiguration(target).getWriteTimeoutMillis();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "nodemeta":
+        case "nodeMeta": return java.lang.String.class;
         default: return null;
         }
     }

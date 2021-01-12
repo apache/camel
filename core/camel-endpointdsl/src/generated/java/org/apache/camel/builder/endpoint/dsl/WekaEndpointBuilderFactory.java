@@ -48,10 +48,13 @@ public interface WekaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -68,10 +71,14 @@ public interface WekaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -80,9 +87,12 @@ public interface WekaEndpointBuilderFactory {
         /**
          * The filter spec (i.e. Name Options).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param apply the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder apply(String apply) {
             doSetProperty("apply", apply);
@@ -91,9 +101,12 @@ public interface WekaEndpointBuilderFactory {
         /**
          * The classifier spec (i.e. Name Options).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: model
+         * 
+         * @param build the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder build(String build) {
             doSetProperty("build", build);
@@ -102,9 +115,12 @@ public interface WekaEndpointBuilderFactory {
         /**
          * The named dataset to train the classifier with.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: model
+         * 
+         * @param dsname the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder dsname(String dsname) {
             doSetProperty("dsname", dsname);
@@ -113,10 +129,13 @@ public interface WekaEndpointBuilderFactory {
         /**
          * Number of folds to use for cross-validation.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: model
+         * 
+         * @param folds the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder folds(int folds) {
             doSetProperty("folds", folds);
@@ -125,10 +144,13 @@ public interface WekaEndpointBuilderFactory {
         /**
          * Number of folds to use for cross-validation.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: model
+         * 
+         * @param folds the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder folds(String folds) {
             doSetProperty("folds", folds);
@@ -137,9 +159,12 @@ public interface WekaEndpointBuilderFactory {
         /**
          * Path to load the model from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: model
+         * 
+         * @param loadFrom the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder loadFrom(String loadFrom) {
             doSetProperty("loadFrom", loadFrom);
@@ -148,9 +173,12 @@ public interface WekaEndpointBuilderFactory {
         /**
          * Path to save the model to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: model
+         * 
+         * @param saveTo the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder saveTo(String saveTo) {
             doSetProperty("saveTo", saveTo);
@@ -159,10 +187,13 @@ public interface WekaEndpointBuilderFactory {
         /**
          * An optional seed for the randomizer.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: model
+         * 
+         * @param seed the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder seed(int seed) {
             doSetProperty("seed", seed);
@@ -171,10 +202,13 @@ public interface WekaEndpointBuilderFactory {
         /**
          * An optional seed for the randomizer.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: model
+         * 
+         * @param seed the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder seed(String seed) {
             doSetProperty("seed", seed);
@@ -183,10 +217,13 @@ public interface WekaEndpointBuilderFactory {
         /**
          * Flag on whether to use cross-validation with the current dataset.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: model
+         * 
+         * @param xval the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder xval(boolean xval) {
             doSetProperty("xval", xval);
@@ -195,10 +232,14 @@ public interface WekaEndpointBuilderFactory {
         /**
          * Flag on whether to use cross-validation with the current dataset.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: model
+         * 
+         * @param xval the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder xval(String xval) {
             doSetProperty("xval", xval);
@@ -207,9 +248,12 @@ public interface WekaEndpointBuilderFactory {
         /**
          * An in/out path for the read/write commands.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: write
+         * 
+         * @param path the value to set
+         * @return the dsl builder
          */
         default WekaEndpointBuilder path(String path) {
             doSetProperty("path", path);
@@ -227,41 +271,16 @@ public interface WekaEndpointBuilderFactory {
             return (WekaEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWekaEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedWekaEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWekaEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -271,10 +290,14 @@ public interface WekaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWekaEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -295,10 +318,11 @@ public interface WekaEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * The command to use.
-         * The value can be one of: filter, model, read, write, push, pop,
-         * version
+         * There are 7 enums and the value can be one of: filter, model, read,
+         * write, push, pop, version
          * 
          * @param path command
+         * @return the dsl builder
          */
         default WekaEndpointBuilder weka(String path) {
             return WekaEndpointBuilderFactory.endpointBuilder("weka", path);
@@ -315,12 +339,13 @@ public interface WekaEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * The command to use.
-         * The value can be one of: filter, model, read, write, push, pop,
-         * version
+         * There are 7 enums and the value can be one of: filter, model, read,
+         * write, push, pop, version
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path command
+         * @return the dsl builder
          */
         default WekaEndpointBuilder weka(String componentName, String path) {
             return WekaEndpointBuilderFactory.endpointBuilder(componentName, path);

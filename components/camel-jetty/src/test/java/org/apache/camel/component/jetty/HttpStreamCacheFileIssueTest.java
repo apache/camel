@@ -76,10 +76,10 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
                         assertTrue(files.length > 0, "There should be a temp cache file");
                     }
                 })
-                    // TODO: CAMEL-3839: need to convert the body to a String as
-                    // the tmp file will be deleted
-                    // before the producer template can convert the result back
-                    .convertBodyTo(String.class).to("mock:result");
+                        // TODO: CAMEL-3839: need to convert the body to a String as
+                        // the tmp file will be deleted
+                        // before the producer template can convert the result back
+                        .convertBodyTo(String.class).to("mock:result");
 
                 from("jetty://http://localhost:{{port}}/myserver").transform().constant(body);
             }

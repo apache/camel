@@ -22,21 +22,22 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Represents the options available when shutting down routes.
  * <p/>
- * Is used for example to defer shutting down a route until all inflight exchanges have
- * been completed, after which the route can be shutdown safely.
+ * Is used for example to defer shutting down a route until all inflight exchanges have been completed, after which the
+ * route can be shutdown safely.
  * <p/>
- * This allows fine grained configuration in accomplishing graceful shutdown where you
- * have for example some internal route which other routes are dependent upon.
+ * This allows fine grained configuration in accomplishing graceful shutdown where you have for example some internal
+ * route which other routes are dependent upon.
  * <ul>
- *   <li>Default - The <b>default</b> behavior where a route will attempt to shutdown now</li>
- *   <li>Defer - Will defer shutting down the route and let it be active during graceful shutdown.
- *               The route will be shutdown at a later stage during the graceful shutdown process.</li>
+ * <li>Default - The <b>default</b> behavior where a route will attempt to shutdown now</li>
+ * <li>Defer - Will defer shutting down the route and let it be active during graceful shutdown. The route will be
+ * shutdown at a later stage during the graceful shutdown process.</li>
  * </ul>
  */
 @XmlType
 @XmlEnum
 public enum ShutdownRoute {
 
-    Default, Defer
+    Default,
+    Defer
 
 }

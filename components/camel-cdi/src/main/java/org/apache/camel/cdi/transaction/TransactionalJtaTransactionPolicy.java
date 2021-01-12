@@ -34,22 +34,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper methods for transaction handling
  *
- * This class requires the resource {@link TransactionManager} to be available
- * through JNDI url &quot;java:/TransactionManager&quot;
+ * This class requires the resource {@link TransactionManager} to be available through any of JNDI locations:
+ * &quot;java:comp/TransactionManager&quot;, &quot;java:appserver/TransactionManager&quot;,
+ * &quot;java:pm/TransactionManager&quot;, &quot;java:/TransactionManager&quot;
  */
 public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionalJtaTransactionPolicy.class);
-    private static final String TRANSACTION_MANAGER_JNDI_NAME = "java:/TransactionManager";
+    private static final String[] TRANSACTION_MANAGER_JNDI_NAMES = new String[] {
+            "java:comp/TransactionManager",
+            "java:appserver/TransactionManager",
+            "java:pm/TransactionManager",
+            "java:/TransactionManager"
+    };
 
     protected TransactionManager transactionManager;
 
     public TransactionalJtaTransactionPolicy() {
-        try {
-            transactionManager = InitialContext.doLookup(TRANSACTION_MANAGER_JNDI_NAME);
-        } catch (NamingException e) {
-            LOG.warn("Could not find the transaction manager through " + TRANSACTION_MANAGER_JNDI_NAME);
-        }
+        transactionManager = lookupTransactionManager();
     }
 
     protected void runWithTransaction(final Runnable runnable, final boolean isNew) throws Throwable {
@@ -65,6 +67,23 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
         if (isNew) {
             commit();
         }
+    }
+
+    private TransactionManager lookupTransactionManager() {
+        TransactionManager tm;
+        for (String jndiName : TRANSACTION_MANAGER_JNDI_NAMES) {
+            try {
+                tm = InitialContext.doLookup(jndiName);
+                LOG.debug("JTA TransactionManager found at JNDI location [{}]", jndiName);
+
+                return tm;
+            } catch (NamingException ex) {
+                LOG.debug("No JTA TransactionManager found at JNDI location [{}]", jndiName, ex);
+            }
+        }
+        LOG.warn("Could not find the transaction manager through any of following locations: {}",
+                String.join(",", TRANSACTION_MANAGER_JNDI_NAMES));
+        return null;
     }
 
     private void begin() throws Exception {

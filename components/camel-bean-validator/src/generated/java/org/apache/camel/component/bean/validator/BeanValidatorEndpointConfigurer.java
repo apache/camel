@@ -4,8 +4,10 @@ package org.apache.camel.component.bean.validator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorEndpoint target = (BeanValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
         case "group": target.setGroup(property(camelContext, java.lang.String.class, value)); return true;
@@ -42,27 +42,32 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("constraintValidatorFactory", javax.validation.ConstraintValidatorFactory.class);
-        answer.put("group", java.lang.String.class);
-        answer.put("ignoreXmlConfiguration", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageInterpolator", javax.validation.MessageInterpolator.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("traversableResolver", javax.validation.TraversableResolver.class);
-        answer.put("validationProviderResolver", javax.validation.ValidationProviderResolver.class);
-        answer.put("validatorFactory", javax.validation.ValidatorFactory.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "constraintvalidatorfactory":
+        case "constraintValidatorFactory": return javax.validation.ConstraintValidatorFactory.class;
+        case "group": return java.lang.String.class;
+        case "ignorexmlconfiguration":
+        case "ignoreXmlConfiguration": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messageinterpolator":
+        case "messageInterpolator": return javax.validation.MessageInterpolator.class;
+        case "synchronous": return boolean.class;
+        case "traversableresolver":
+        case "traversableResolver": return javax.validation.TraversableResolver.class;
+        case "validationproviderresolver":
+        case "validationProviderResolver": return javax.validation.ValidationProviderResolver.class;
+        case "validatorfactory":
+        case "validatorFactory": return javax.validation.ValidatorFactory.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanValidatorEndpoint target = (BeanValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": return target.getConstraintValidatorFactory();
         case "group": return target.getGroup();

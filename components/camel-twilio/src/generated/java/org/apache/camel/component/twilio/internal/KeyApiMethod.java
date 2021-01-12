@@ -62,8 +62,6 @@ public enum KeyApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private KeyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -26,7 +26,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTest extends TcpServerConsumerAcknowledgementTestSupport {
+public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTest
+        extends TcpServerConsumerAcknowledgementTestSupport {
     @Override
     protected boolean isBridgeErrorHandler() {
         return false;
@@ -69,7 +70,8 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTe
 
         Exchange failureExchange = failure.getExchanges().get(0);
         Object failureException = failureExchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION);
-        assertNotNull(failureException, "OnFailureOnly exchange should have a " + MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION + " property");
+        assertNotNull(failureException,
+                "OnFailureOnly exchange should have a " + MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION + " property");
         assertIsInstanceOf(Exception.class, failureException);
     }
 
@@ -82,8 +84,10 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTe
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
+        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
+        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
     }
 
     @Test
@@ -95,10 +99,11 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTe
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
+        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
+        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
     }
-
 
     @Test
     public void testMessageWithEmbeddedNewlines() throws Exception {
@@ -109,8 +114,9 @@ public class MllpTcpServerConsumerAutoAcknowledgementWithoutBridgeErrorHandlerTe
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT), "Should not have the exception in the exchange property");
+        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
+        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+                "Should not have the exception in the exchange property");
     }
 }
-

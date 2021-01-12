@@ -4,8 +4,10 @@ package org.apache.camel.component.sjms2;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.sjms.SjmsEndpointConfigurer;
 
@@ -28,12 +30,14 @@ public class Sjms2EndpointConfigurer extends SjmsEndpointConfigurer implements G
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("durable", boolean.class);
-        answer.put("shared", boolean.class);
-        answer.put("subscriptionId", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "durable": return boolean.class;
+        case "shared": return boolean.class;
+        case "subscriptionid":
+        case "subscriptionId": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

@@ -74,4 +74,3 @@ public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
     }
 
 }
-

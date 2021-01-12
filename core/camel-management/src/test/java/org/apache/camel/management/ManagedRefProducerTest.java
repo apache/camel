@@ -78,7 +78,8 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
             assertEquals(true, registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri.equals("direct://start") || uri.equals("ref://foo") || uri.equals("mock://foo") || uri.equals("mock://result"), uri);
+            assertTrue(uri.equals("direct://start") || uri.equals("ref://foo") || uri.equals("mock://foo")
+                    || uri.equals("mock://result"), uri);
         }
     }
 

@@ -2,7 +2,7 @@
 = Components
 
 Component references are references used to place a component in an assembly. Apache Component references
-provides various references that offers services for messaging, sending data, notifcations and various other 
+provides various references that offers services for messaging, sending data, notifications and various other 
 services that can not only resolve easy messaging and transferring data but also provide securing of data.
 
 == Core Components
@@ -27,5 +27,6 @@ Number of Non-Core Components: indexCount:[attributes=!core] in indexUniqueCount
 |===
 | Component | Artifact | Support Level | Since | Description
 |===
-indexTable::[attributes=!core,cells="$xref,artifactid,supportlevel,since,description"]
+//'relative=!nav.adoc' is a workaround for https://gitlab.com/antora/xref-validator/-/issues/9
+indexTable::[relative=!nav.adoc,attributes=!core,cells="$xref,artifactid,supportlevel,since,description"]
 

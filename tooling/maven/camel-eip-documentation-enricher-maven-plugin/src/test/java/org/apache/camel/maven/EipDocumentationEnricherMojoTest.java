@@ -39,32 +39,17 @@ public class EipDocumentationEnricherMojoTest {
     @Mock
     private File mockInputSchema;
 
-
     @BeforeEach
     public void setUp() throws Exception {
-        eipDocumentationEnricherMojo.camelCoreDir = mockCamelCore;
+        eipDocumentationEnricherMojo.camelCoreModelDir = mockCamelCore;
         eipDocumentationEnricherMojo.inputCamelSchemaFile = mockInputSchema;
         eipDocumentationEnricherMojo.pathToModelDir = "sub/path";
     }
 
     @Test
     public void testExecuteCamelCoreIsNull() throws Exception {
-        eipDocumentationEnricherMojo.camelCoreDir = null;
+        eipDocumentationEnricherMojo.camelCoreModelDir = null;
 
-        when(mockInputSchema.exists()).thenReturn(true);
-        when(mockInputSchema.isFile()).thenReturn(true);
-
-        try {
-            eipDocumentationEnricherMojo.execute();
-            fail("Expected MojoExecutionException");
-        } catch (MojoExecutionException e) {
-            // Expected.
-        }
-    }
-
-    @Test
-    public void testExecuteCamelCoreIsNotADirectory() throws Exception {
-        when(mockCamelCore.exists()).thenReturn(true);
         when(mockInputSchema.exists()).thenReturn(true);
         when(mockInputSchema.isFile()).thenReturn(true);
 

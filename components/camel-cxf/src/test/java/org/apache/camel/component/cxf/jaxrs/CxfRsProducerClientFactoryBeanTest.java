@@ -44,7 +44,7 @@ public class CxfRsProducerClientFactoryBeanTest {
     @BeforeEach
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext(
-            "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryBeanTest.xml");
+                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryBeanTest.xml");
         context = SpringCamelContext.springCamelContext(applicationContext, false);
         context.start();
     }
@@ -52,7 +52,7 @@ public class CxfRsProducerClientFactoryBeanTest {
     @Test
     public void testProducerInOutInterceptors() throws Exception {
         CxfRsEndpoint e = context.getEndpoint(
-            "cxfrs://bean://rsClientHttpInterceptors", CxfRsEndpoint.class);
+                "cxfrs://bean://rsClientHttpInterceptors", CxfRsEndpoint.class);
         CxfRsProducer p = new CxfRsProducer(e);
         CxfRsProducer.ClientFactoryBeanCache cache = p.getClientFactoryBeanCache();
         JAXRSClientFactoryBean bean = cache.get("http://localhost:8080/CxfRsProducerClientFactoryBeanInterceptors/");

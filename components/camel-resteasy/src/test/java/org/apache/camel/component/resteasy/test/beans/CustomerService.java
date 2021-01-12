@@ -49,7 +49,6 @@ public class CustomerService {
         return Response.status(200).entity(list.getCustomerList()).build();
     }
 
-
     @GET
     @Produces("application/json")
     @Path("/getCustomer")
@@ -62,14 +61,12 @@ public class CustomerService {
         }
     }
 
-
     @DELETE
     @Path("/deleteCustomer")
     public Response deleteCustomer(@QueryParam("id") Integer id) throws IOException, ServletException {
         Customer c = list.deleteCustomer(id);
         return Response.status(200).entity("Customer deleted : " + c).build();
     }
-
 
     @POST
     @Consumes("application/json")
@@ -87,12 +84,11 @@ public class CustomerService {
         if (update != null) {
             list.deleteCustomer(customer.getId());
             list.addCustomer(customer);
-            return Response.status(200).entity("Customer updated : "  + customer).build();
+            return Response.status(200).entity("Customer updated : " + customer).build();
         } else {
             return Response.status(404).entity("Customer with given id doesn't exist").build();
         }
     }
-
 
     /*
         Specific methods for servlets used in proxy producer test
@@ -101,7 +97,9 @@ public class CustomerService {
     @GET
     @Produces("application/json")
     @Path("/getSpecificThreeCustomers")
-    public Response getSpecificThreeCustomers(@QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2, @QueryParam("c3") Integer customerId3) throws Exception {
+    public Response getSpecificThreeCustomers(
+            @QueryParam("c1") Integer customerId1, @QueryParam("c2") Integer customerId2, @QueryParam("c3") Integer customerId3)
+            throws Exception {
         List<Customer> customers = new ArrayList<>();
         customers.add(list.getCustomer(customerId1));
         customers.add(list.getCustomer(customerId2));
@@ -121,7 +119,6 @@ public class CustomerService {
         } else {
             return Response.status(200).entity("Customers are not equal").build();
         }
-
 
     }
 

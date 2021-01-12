@@ -39,6 +39,8 @@ public class XQueryStripWhitespaceTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/payload.xml"));
 
         XQueryBuilder xquery = XQueryBuilder.xquery("//payload").asString().stripsAllWhiteSpace();
+        xquery.init(context);
+
         Object result = xquery.evaluate(exchange);
         assertNotNull(result);
         assertEquals("012010-10-04JohnDoeThis is a test reportserver is downsomeone@somewhere.com12345678", result);
@@ -50,6 +52,8 @@ public class XQueryStripWhitespaceTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/payload.xml"));
 
         XQueryBuilder xquery = XQueryBuilder.xquery("//payload").asString().stripsIgnorableWhiteSpace();
+        xquery.init(context);
+
         String result = xquery.evaluate(exchange, String.class);
         assertNotNull(result);
 

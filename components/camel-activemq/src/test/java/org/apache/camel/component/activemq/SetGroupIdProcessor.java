@@ -27,7 +27,7 @@ public class SetGroupIdProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         // lets copy the IN to the OUT message
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         out.copyFrom(exchange.getIn());
 
         // now lets set a header

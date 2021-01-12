@@ -38,7 +38,6 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
         this.configuration = new JCacheConfiguration();
     }
 
-
     public JCacheConfiguration getConfiguration() {
         return configuration;
     }
@@ -72,11 +71,11 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
     public boolean remove(String key) {
         return cache.remove(key);
     }
-    
+
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        cache.clear();      
+        cache.clear();
     }
 
     public void setCacheName(String cacheName) {
@@ -99,8 +98,7 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
             cacheManager = new JCacheManager<>(cache);
         } else {
             cacheManager = JCacheHelper.createManager(
-                ObjectHelper.notNull(configuration, "configuration")
-            );
+                    ObjectHelper.notNull(configuration, "configuration"));
 
             cache = cacheManager.getCache();
         }
@@ -111,4 +109,3 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
         cacheManager.close();
     }
 }
-

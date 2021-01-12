@@ -26,7 +26,8 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The <a href="http://camel.apache.org/dataformat-component.html">Data Format Component</a> enables using <a href="https://camel.apache.org/data-format.html">Data Format</a> as a component.
+ * The <a href="http://camel.apache.org/dataformat-component.html">Data Format Component</a> enables using
+ * <a href="https://camel.apache.org/data-format.html">Data Format</a> as a component.
  */
 @Component("dataformat")
 public class DataFormatComponent extends DefaultComponent {

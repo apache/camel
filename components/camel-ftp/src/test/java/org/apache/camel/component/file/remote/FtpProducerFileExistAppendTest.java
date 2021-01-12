@@ -28,7 +28,7 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
     private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&delay=2000&noop=true&fileExist=Append";
+        return "ftp://admin@localhost:{{ftp.server.port}}/exist?password=admin&delay=2000&noop=true&fileExist=Append";
     }
 
     @Override
@@ -48,7 +48,7 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
             expectBody = "Hello World\r\nBye World";
         }
         mock.expectedBodiesReceived(expectBody);
-        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", expectBody);
+        mock.expectedFileExists(service.getFtpRootDir() + "/exist/hello.txt", expectBody);
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();

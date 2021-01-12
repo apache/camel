@@ -38,7 +38,8 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends CamelTestSupport {
 
     @Test
     public void testInOutFixedReplyToAndWithMsgIdAsCorrId() throws Exception {
-        String reply = template.requestBody("activemq:queue:in?replyTo=bar&useMessageIDAsCorrelationID=true", "Hello World", String.class);
+        String reply = template.requestBody("activemq:queue:in?replyTo=bar&useMessageIDAsCorrelationID=true", "Hello World",
+                String.class);
         assertEquals("Bye World", reply);
     }
 

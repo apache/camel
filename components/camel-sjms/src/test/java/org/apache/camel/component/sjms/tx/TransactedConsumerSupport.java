@@ -36,8 +36,10 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
     public abstract String getBrokerUri();
 
-    protected void runTest(String destinationName, int routeCount, int messageCount, int totalRedeliverdFalse, int totalRedeliveredTrue, int batchCount, int consumerCount, int maxAttemptsCount)
-        throws Exception {
+    protected void runTest(
+            String destinationName, int routeCount, int messageCount, int totalRedeliverdFalse, int totalRedeliveredTrue,
+            int concurrentConsumers, int maxAttemptsCount)
+            throws Exception {
         // The CountDownLatch is used to make our final assertions await
         // unit all the messages have been processed. It is also
         // set to time out on the await. Our values are multiplied
@@ -46,7 +48,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
         for (int i = 1; i <= routeCount; i++) {
             // We add a route here so we can pass our latch into it.
-            addRoute(destinationName, i, batchCount, consumerCount, maxAttemptsCount, latch);
+            addRoute(destinationName, i, concurrentConsumers, maxAttemptsCount, latch);
             // Create mock endpoints for the before and after
             getMockEndpoint("mock:test.before." + i).expectedMessageCount(totalRedeliverdFalse);
             getMockEndpoint("mock:test.after." + i).expectedMessageCount(totalRedeliveredTrue);
@@ -85,55 +87,60 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
         return camelContext;
     }
-    
-    protected void addRoute(final String destinationName, final int routeNumber, final int batchCount, final int consumerCount, 
-                            final int maxAttemptsCount, final CountDownLatch latch) throws Exception {
+
+    protected void addRoute(
+            final String destinationName, final int routeNumber, final int concurrentConsumers,
+            final int maxAttemptsCount, final CountDownLatch latch)
+            throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                
+
                 if (context.getRoute("direct.route") == null) {
                     from("direct:start")
-                        .id("direct.route")
-                        .to(destinationName);
+                            .id("direct.route")
+                            .to(destinationName);
                 }
 
                 // Our test consumer route
-                from(destinationName + "?transacted=true&transactionBatchCount=" + batchCount + "&consumerCount=" + consumerCount)
-                    .id("consumer.route." + routeNumber)
-                    // first consume all the messages that are not redelivered
-                    .choice().when(header("JMSRedelivered").isEqualTo("false"))
-                        // The rollback processor
-                        .log("Route " + routeNumber + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
-                        .to("mock:test.before." + routeNumber)
-                        .process(new Processor() {
-                            private final AtomicInteger counter = new AtomicInteger(0);
+                from(destinationName + "?transacted=true&concurrentConsumers="
+                     + concurrentConsumers)
+                             .id("consumer.route." + routeNumber)
+                             // first consume all the messages that are not redelivered
+                             .choice().when(header("JMSRedelivered").isEqualTo("false"))
+                             // The rollback processor
+                             .log("Route " + routeNumber + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                             .to("mock:test.before." + routeNumber)
+                             .process(new Processor() {
+                                 private final AtomicInteger counter = new AtomicInteger();
 
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                if (counter.incrementAndGet() == maxAttemptsCount) {
-                                    log.info("{} Messages have been processed. Failing the exchange to force a rollback of the transaction.", maxAttemptsCount);
-                                    throw new IllegalArgumentException("Forced rollback");
-                                }
-                                
-                                // Countdown the latch
-                                latch.countDown();
-                            }
-                        })
-                    // Now process again any messages that were redelivered
-                    .when(header("JMSRedelivered").isEqualTo("true"))
-                        .log("Route " + routeNumber + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
-                        .to("mock:test.after." + routeNumber)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                
-                                // Countdown the latch
-                                latch.countDown();
-                            }
-                        })
-                    .otherwise()
-                        .to("mock:test.after");
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     if (counter.incrementAndGet() == maxAttemptsCount) {
+                                         log.info(
+                                                 "{} Messages have been processed. Failing the exchange to force a rollback of the transaction.",
+                                                 maxAttemptsCount);
+                                         throw new IllegalArgumentException("Forced rollback");
+                                     }
+
+                                     // Countdown the latch
+                                     latch.countDown();
+                                 }
+                             })
+                             // Now process again any messages that were redelivered
+                             .when(header("JMSRedelivered").isEqualTo("true"))
+                             .log("Route " + routeNumber + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                             .to("mock:test.after." + routeNumber)
+                             .process(new Processor() {
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+
+                                     // Countdown the latch
+                                     latch.countDown();
+                                 }
+                             })
+                             .otherwise()
+                             .to("mock:test.after");
             }
         });
     }

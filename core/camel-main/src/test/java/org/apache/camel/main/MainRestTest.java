@@ -33,12 +33,13 @@ public class MainRestTest {
         main.addInitialProperty("camel.rest.bindingMode", "json");
         main.addInitialProperty("camel.rest.apiContextPath", "bar");
 
-        main.configure().rest()
+        main.configure()
+                .rest()
                 .withComponent("servlet")
                 .withContextPath("foo")
                 .withUseXForwardHeaders(true)
                 .withPort(1234)
-            .end();
+                .end();
 
         main.start();
 

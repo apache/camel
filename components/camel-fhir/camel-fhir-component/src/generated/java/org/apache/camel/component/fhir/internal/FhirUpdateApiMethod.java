@@ -52,7 +52,7 @@ public enum FhirUpdateApiMethod implements ApiMethod {
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYSEARCHURL(
+    RESOURCE_BY_SEARCH_URL(
         ca.uhn.fhir.rest.api.MethodOutcome.class,
         "resourceBySearchUrl",
         arg("resource", org.hl7.fhir.instance.model.api.IBaseResource.class),
@@ -60,15 +60,13 @@ public enum FhirUpdateApiMethod implements ApiMethod {
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYSEARCHURL_1(
+    RESOURCE_BY_SEARCH_URL_1(
         ca.uhn.fhir.rest.api.MethodOutcome.class,
         "resourceBySearchUrl",
         arg("resourceAsString", String.class),
         arg("url", String.class),
         arg("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class),
         arg("extraParameters", java.util.Map.class));
-
-    
 
     private final ApiMethod apiMethod;
 

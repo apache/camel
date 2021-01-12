@@ -4,8 +4,10 @@ package org.apache.camel.component.openstack.glance;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
         case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -37,19 +37,21 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("config", org.openstack4j.core.transport.Config.class);
-        answer.put("domain", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("project", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "config": return org.openstack4j.core.transport.Config.class;
+        case "domain": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "project": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -58,8 +60,6 @@ public class GlanceEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "config": return target.getConfig();
         case "domain": return target.getDomain();
         case "lazystartproducer":

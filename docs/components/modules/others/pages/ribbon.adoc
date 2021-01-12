@@ -1,4 +1,4 @@
-[[ribbon-component]]
+[[ribbon-other]]
 = Ribbon Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-ribbon/src/main/docs/ribbon.adoc
@@ -7,6 +7,7 @@
 :description: Using Netflix Ribbon for client side load balancing
 :since: 2.18
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/ribbon.adoc[opts=optional]
 
 *Since Camel {since}*
 

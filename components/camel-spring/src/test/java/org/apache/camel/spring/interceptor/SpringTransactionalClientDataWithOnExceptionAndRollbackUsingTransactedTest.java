@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
  */
-public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
+public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransactedTest
+        extends SpringTransactionalClientDataSourceTransactedTest {
 
     @Override
     @Test
@@ -46,7 +47,7 @@ public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransac
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataWithOnExceptionAndRollbackUsingTransacted.xml");
+                "/org/apache/camel/spring/interceptor/springTransactionalClientDataWithOnExceptionAndRollbackUsingTransacted.xml");
     }
 
 }

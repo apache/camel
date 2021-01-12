@@ -33,8 +33,10 @@ import org.apache.camel.support.DefaultEndpoint;
  * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed ZooKeeper Master Endpoint")
-@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerOnly = true,
-    title = "ZooKeeper Master", lenientProperties = true, category = {Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA})
+@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri",
+             consumerOnly = true,
+             title = "ZooKeeper Master", lenientProperties = true,
+             category = { Category.CLUSTERING, Category.MANAGEMENT, Category.BIGDATA })
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final MasterComponent component;

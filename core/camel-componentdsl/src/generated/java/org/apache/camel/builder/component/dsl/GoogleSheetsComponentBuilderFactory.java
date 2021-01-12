@@ -37,6 +37,8 @@ public interface GoogleSheetsComponentBuilderFactory {
      * Category: api,cloud,sheets
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
+     * 
+     * @return the dsl builder
      */
     static GoogleSheetsComponentBuilder googleSheets() {
         return new GoogleSheetsComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface GoogleSheetsComponentBuilderFactory {
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -64,9 +69,12 @@ public interface GoogleSheetsComponentBuilderFactory {
         /**
          * Client ID of the sheets application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -76,9 +84,12 @@ public interface GoogleSheetsComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.sheets.GoogleSheetsConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.sheets.GoogleSheetsConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder configuration(
                 org.apache.camel.component.google.sheets.GoogleSheetsConfiguration configuration) {
@@ -94,14 +105,35 @@ public interface GoogleSheetsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * When consumer return an array or collection this will generate one
+         * exchange per element, and their routes will be executed once for each
+         * exchange. Set this value to false to use a single exchange for the
+         * entire list or array.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param splitResult the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsComponentBuilder splitResult(boolean splitResult) {
+            doSetProperty("splitResult", splitResult);
             return this;
         }
         /**
@@ -115,10 +147,13 @@ public interface GoogleSheetsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -126,17 +161,24 @@ public interface GoogleSheetsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GoogleSheetsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleSheetsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -144,9 +186,12 @@ public interface GoogleSheetsComponentBuilderFactory {
          * client. Will by default use BatchGoogleSheetsClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.sheets.GoogleSheetsClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.sheets.GoogleSheetsClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder clientFactory(
                 org.apache.camel.component.google.sheets.GoogleSheetsClientFactory clientFactory) {
@@ -157,9 +202,12 @@ public interface GoogleSheetsComponentBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -169,9 +217,12 @@ public interface GoogleSheetsComponentBuilderFactory {
         /**
          * Client secret of the sheets application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -183,9 +234,12 @@ public interface GoogleSheetsComponentBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
@@ -220,8 +274,9 @@ public interface GoogleSheetsComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsComponent) component).setConfiguration((org.apache.camel.component.google.sheets.GoogleSheetsConfiguration) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "splitResult": getOrCreateConfiguration((GoogleSheetsComponent) component).setSplitResult((boolean) value); return true;
             case "lazyStartProducer": ((GoogleSheetsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((GoogleSheetsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleSheetsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleSheetsComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientSecret((java.lang.String) value); return true;

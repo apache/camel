@@ -55,7 +55,8 @@ public class RestProducerTest {
     }
 
     @Test
-    public void shouldCreateOptionalPlaceholderQueryParametersForPresentValues() throws UnsupportedEncodingException, URISyntaxException {
+    public void shouldCreateOptionalPlaceholderQueryParametersForPresentValues()
+            throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
         message.setHeader("paramPlaceholderName", "paramValue");
 
@@ -76,7 +77,8 @@ public class RestProducerTest {
     }
 
     @Test
-    public void shouldNotCreateOptionalPlaceholderQueryParametersForMissingValues() throws UnsupportedEncodingException, URISyntaxException {
+    public void shouldNotCreateOptionalPlaceholderQueryParametersForMissingValues()
+            throws UnsupportedEncodingException, URISyntaxException {
         final DefaultMessage message = new DefaultMessage(camelContext);
 
         assertEquals("", RestProducer.createQueryParameters("param={paramPlaceholderName?}", message));
@@ -91,15 +93,15 @@ public class RestProducerTest {
         message.setHeader("multipleOptional", Collections.EMPTY_LIST);
 
         assertEquals("given=value"
-            + "&required=header_required_value"
-            + "&optional_present=header_optional_present_value"
-            + "&multiple=value1&multiple=value2&multiple=value3",
-            RestProducer.createQueryParameters("given=value"
-                + "&required={requiredParamPlaceholder}"
-                + "&optional={optionalParamPlaceholder?}"
-                + "&optional_present={optionalPresentParamPlaceholder?}"
-                + "&multiple={multiple}"
-                + "&multipleOptional={multipleOptional?}",
-                message));
+                     + "&required=header_required_value"
+                     + "&optional_present=header_optional_present_value"
+                     + "&multiple=value1&multiple=value2&multiple=value3",
+                RestProducer.createQueryParameters("given=value"
+                                                   + "&required={requiredParamPlaceholder}"
+                                                   + "&optional={optionalParamPlaceholder?}"
+                                                   + "&optional_present={optionalPresentParamPlaceholder?}"
+                                                   + "&multiple={multiple}"
+                                                   + "&multipleOptional={multipleOptional?}",
+                        message));
     }
 }

@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CXFGreeterRouterTest extends AbstractCXFGreeterRouterTest {
 
     protected static Endpoint endpoint;
+
     @AfterAll
     public static void stopService() {
         if (endpoint != null) {
@@ -33,25 +34,16 @@ public class CXFGreeterRouterTest extends AbstractCXFGreeterRouterTest {
         }
     }
 
-
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1() + "/CXFGreeterRouterTest/SoapContext/SoapPort"; 
-        endpoint = Endpoint.publish(address, implementor); 
+        String address = "http://localhost:" + getPort1() + "/CXFGreeterRouterTest/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(address, implementor);
     }
-
-
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointsRouterContext.xml");
     }
 
-
-
-   
 }
-
-
-

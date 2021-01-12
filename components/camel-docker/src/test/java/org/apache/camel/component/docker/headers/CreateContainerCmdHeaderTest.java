@@ -38,7 +38,6 @@ import static org.mockito.ArgumentMatchers.eq;
  */
 public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerCmd> {
 
-
     @Mock
     private CreateContainerCmd mockObject;
 
@@ -71,10 +70,9 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         String cmd = "whoami";
         Capability capAdd = Capability.NET_BROADCAST;
         Capability capDrop = Capability.BLOCK_SUSPEND;
-        String[] entrypoint = new String[]{"sleep", "9999"};
+        String[] entrypoint = new String[] { "sleep", "9999" };
         String portSpecs = "80";
         String dns = "8.8.8.8";
-
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE, image);

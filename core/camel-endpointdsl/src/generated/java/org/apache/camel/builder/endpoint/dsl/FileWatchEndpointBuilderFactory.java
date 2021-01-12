@@ -46,10 +46,13 @@ public interface FileWatchEndpointBuilderFactory {
          * relative to endpoint path. Pattern must be also relative (not
          * starting with slash).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: **
          * Group: consumer
+         * 
+         * @param antInclude the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder antInclude(String antInclude) {
             doSetProperty("antInclude", antInclude);
@@ -58,10 +61,13 @@ public interface FileWatchEndpointBuilderFactory {
         /**
          * Auto create directory if does not exists.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder autoCreate(boolean autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -70,10 +76,14 @@ public interface FileWatchEndpointBuilderFactory {
         /**
          * Auto create directory if does not exists.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -88,10 +98,13 @@ public interface FileWatchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -107,10 +120,14 @@ public interface FileWatchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -121,10 +138,13 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of concurrent consumers. Increase this value, if your
          * route is slow to prevent buffering in queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -135,10 +155,13 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of concurrent consumers. Increase this value, if your
          * route is slow to prevent buffering in queue.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -149,10 +172,13 @@ public interface FileWatchEndpointBuilderFactory {
          * Comma separated list of events to watch.
          * 
          * The option is a:
-         * <code>java.util.Set&lt;org.apache.camel.component.file.watch.constants.FileEventEnum&gt;</code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.file.watch.constants.FileEventEnum&amp;gt;&lt;/code&gt; type.
          * 
          * Default: CREATE,MODIFY,DELETE
          * Group: consumer
+         * 
+         * @param events the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder events(Set<FileEventEnum> events) {
             doSetProperty("events", events);
@@ -162,10 +188,13 @@ public interface FileWatchEndpointBuilderFactory {
          * Comma separated list of events to watch.
          * 
          * The option will be converted to a
-         * <code>java.util.Set&lt;org.apache.camel.component.file.watch.constants.FileEventEnum&gt;</code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;org.apache.camel.component.file.watch.constants.FileEventEnum&amp;gt;&lt;/code&gt; type.
          * 
          * Default: CREATE,MODIFY,DELETE
          * Group: consumer
+         * 
+         * @param events the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder events(String events) {
             doSetProperty("events", events);
@@ -178,11 +207,14 @@ public interface FileWatchEndpointBuilderFactory {
          * per file, use #lastModifiedTimeFileHasher. You can also provide
          * custom implementation in registry.
          * 
-         * The option is a: <code>io.methvin.watcher.hashing.FileHasher</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
          * 
          * Default: #murmur3FFileHasher
          * Group: consumer
+         * 
+         * @param fileHasher the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder fileHasher(Object fileHasher) {
             doSetProperty("fileHasher", fileHasher);
@@ -196,10 +228,13 @@ public interface FileWatchEndpointBuilderFactory {
          * custom implementation in registry.
          * 
          * The option will be converted to a
-         * <code>io.methvin.watcher.hashing.FileHasher</code> type.
+         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
          * 
          * Default: #murmur3FFileHasher
          * Group: consumer
+         * 
+         * @param fileHasher the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder fileHasher(String fileHasher) {
             doSetProperty("fileHasher", fileHasher);
@@ -209,10 +244,13 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of threads polling WatchService. Increase this value, if
          * you see OVERFLOW messages in log.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param pollThreads the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder pollThreads(int pollThreads) {
             doSetProperty("pollThreads", pollThreads);
@@ -222,10 +260,13 @@ public interface FileWatchEndpointBuilderFactory {
          * The number of threads polling WatchService. Increase this value, if
          * you see OVERFLOW messages in log.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param pollThreads the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder pollThreads(String pollThreads) {
             doSetProperty("pollThreads", pollThreads);
@@ -235,10 +276,13 @@ public interface FileWatchEndpointBuilderFactory {
          * Maximum size of queue between WatchService and consumer. Unbounded by
          * default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: consumer
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
@@ -248,10 +292,13 @@ public interface FileWatchEndpointBuilderFactory {
          * Maximum size of queue between WatchService and consumer. Unbounded by
          * default.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: consumer
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder queueSize(String queueSize) {
             doSetProperty("queueSize", queueSize);
@@ -261,10 +308,13 @@ public interface FileWatchEndpointBuilderFactory {
          * Watch recursive in current and child directories (including newly
          * created directories).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -274,10 +324,14 @@ public interface FileWatchEndpointBuilderFactory {
          * Watch recursive in current and child directories (including newly
          * created directories).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -289,10 +343,13 @@ public interface FileWatchEndpointBuilderFactory {
          * platforms and JDKs. Check java.nio.file.WatchService limitations for
          * your target platform.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useFileHashing the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder useFileHashing(boolean useFileHashing) {
             doSetProperty("useFileHashing", useFileHashing);
@@ -304,10 +361,14 @@ public interface FileWatchEndpointBuilderFactory {
          * platforms and JDKs. Check java.nio.file.WatchService limitations for
          * your target platform.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useFileHashing the value to set
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder useFileHashing(String useFileHashing) {
             doSetProperty("useFileHashing", useFileHashing);
@@ -330,10 +391,13 @@ public interface FileWatchEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -347,9 +411,12 @@ public interface FileWatchEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -359,9 +426,13 @@ public interface FileWatchEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -372,9 +443,12 @@ public interface FileWatchEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -382,41 +456,16 @@ public interface FileWatchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileWatchEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileWatchEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -426,10 +475,14 @@ public interface FileWatchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileWatchEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -463,6 +516,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Path of directory to consume events from.
          * 
          * @param path path
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder fileWatch(String path) {
             return FileWatchEndpointBuilderFactory.endpointBuilder("file-watch", path);
@@ -484,6 +538,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder fileWatch(
                 String componentName,

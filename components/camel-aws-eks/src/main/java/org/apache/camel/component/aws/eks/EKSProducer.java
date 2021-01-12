@@ -37,8 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon EKS Service
- * <a href="http://aws.amazon.com/eks/">AWS EKS</a>
+ * A Producer which sends messages to the Amazon EKS Service <a href="http://aws.amazon.com/eks/">AWS EKS</a>
  */
 public class EKSProducer extends DefaultProducer {
 
@@ -91,7 +90,7 @@ public class EKSProducer extends DefaultProducer {
 
     @Override
     public EKSEndpoint getEndpoint() {
-        return (EKSEndpoint)super.getEndpoint();
+        return (EKSEndpoint) super.getEndpoint();
     }
 
     private void listClusters(AmazonEKS eksClient, Exchange exchange) {

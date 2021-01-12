@@ -21,7 +21,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
-
+import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
@@ -59,8 +59,7 @@ public class RouteTemplateBeforeContextStartingTest extends ContextTestSupport {
 
         TemplatedRouteBuilder.builder(context, "myTemplate")
                 .routeId("second")
-                .parameter("foo", "two")
-                .parameter("bar", "cake")
+                .parameters(mapOf("foo", "two", "bar", "cake"))
                 .add();
 
         // now start camel

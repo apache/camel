@@ -103,7 +103,8 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
     public void testQuery() {
         String sql = "bar > 1000";
 
-        when(map.values(any(SqlPredicate.class))).thenReturn(Arrays.<Object>asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
+        when(map.values(any(SqlPredicate.class)))
+                .thenReturn(Arrays.<Object> asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
         template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, sql);
         verify(map).values(any(SqlPredicate.class));
 
@@ -112,7 +113,7 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         assertNotNull(b1);
         assertEquals(2, b1.size());
     }
-    
+
     @Test
     public void testPutIfAbsent() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
@@ -120,17 +121,17 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
         verify(map).putIfAbsent("4711", "replaced");
     }
-    
+
     @Test
     public void testPutIfAbsentWithTtl() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
-        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_VALUE, Long.valueOf(1));
         headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
-        verify(map).putIfAbsent("4711", "replaced", new Long(1), TimeUnit.MINUTES);
+        verify(map).putIfAbsent("4711", "replaced", Long.valueOf(1), TimeUnit.MINUTES);
     }
-    
+
     @Test
     public void testGetAllEmptySet() {
         Set<Object> l = new HashSet<>();
@@ -159,13 +160,13 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         verify(map).getAll(l);
         assertEquals("{key1=value1}", body);
     }
-    
+
     @Test
     public void testClear() throws InterruptedException {
         template.sendBody("direct:clear", "test");
         verify(map).clear();
     }
-    
+
     @Test
     public void testEvict() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
@@ -173,14 +174,14 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         template.sendBodyAndHeaders("direct:evict", "", headers);
         verify(map).evict("4711");
     }
-    
+
     @Test
     public void testEvictAll() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
         template.sendBodyAndHeaders("direct:evictAll", "", headers);
         verify(map).evictAll();
     }
-    
+
     @Test
     public void testContainsKey() {
         when(map.containsKey("testOk")).thenReturn(true);
@@ -194,7 +195,7 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
         verify(map).containsKey("testKo");
         assertEquals(false, body);
     }
-    
+
     @Test
     public void testContainsValue() {
         when(map.containsValue("testOk")).thenReturn(true);

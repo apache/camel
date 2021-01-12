@@ -4,8 +4,10 @@ package org.apache.camel.component.docker;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -26,8 +28,8 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DockerComponent target = (DockerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "certpath":
@@ -64,38 +66,51 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("certPath", java.lang.String.class);
-        answer.put("cmdExecFactory", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.docker.DockerConfiguration.class);
-        answer.put("email", java.lang.String.class);
-        answer.put("followRedirectFilter", boolean.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loggingFilter", boolean.class);
-        answer.put("maxPerRouteConnections", java.lang.Integer.class);
-        answer.put("maxTotalConnections", java.lang.Integer.class);
-        answer.put("parameters", java.util.Map.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("port", java.lang.Integer.class);
-        answer.put("requestTimeout", java.lang.Integer.class);
-        answer.put("secure", boolean.class);
-        answer.put("serverAddress", java.lang.String.class);
-        answer.put("socket", boolean.class);
-        answer.put("tlsVerify", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "certpath":
+        case "certPath": return java.lang.String.class;
+        case "cmdexecfactory":
+        case "cmdExecFactory": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.docker.DockerConfiguration.class;
+        case "email": return java.lang.String.class;
+        case "followredirectfilter":
+        case "followRedirectFilter": return boolean.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "loggingfilter":
+        case "loggingFilter": return boolean.class;
+        case "maxperrouteconnections":
+        case "maxPerRouteConnections": return java.lang.Integer.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return java.lang.Integer.class;
+        case "parameters": return java.util.Map.class;
+        case "password": return java.lang.String.class;
+        case "port": return java.lang.Integer.class;
+        case "requesttimeout":
+        case "requestTimeout": return java.lang.Integer.class;
+        case "secure": return boolean.class;
+        case "serveraddress":
+        case "serverAddress": return java.lang.String.class;
+        case "socket": return boolean.class;
+        case "tlsverify":
+        case "tlsVerify": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DockerComponent target = (DockerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "certpath":
@@ -127,6 +142,14 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
         case "tlsverify":
         case "tlsVerify": return getOrCreateConfiguration(target).isTlsVerify();
         case "username": return getOrCreateConfiguration(target).getUsername();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "parameters": return java.lang.Object.class;
         default: return null;
         }
     }

@@ -21,21 +21,27 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
 @ContextConfiguration
 public class JettyJmsShutdownTest {
-    private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
+    private static final String URL;
     static {
+        int port = AvailablePortFinder.getNextAvailable();
+        URL = "http://localhost:" + port + "/JettyJmsShutdownTest";
+
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("JettyJmsShutdownTest.port", Integer.toString(port));

@@ -25,79 +25,83 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin";
     }
 
     @Test
     public void testProducerConstantDoneFileName() throws Exception {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/done");
+        File done = new File(service.getFtpRootDir() + "/done/done");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerPrefixDoneFileName() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/done-hello.txt");
+        File done = new File(service.getFtpRootDir() + "/done/done-hello.txt");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerExtDoneFileName() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/hello.txt.done");
+        File done = new File(service.getFtpRootDir() + "/done/hello.txt.done");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerReplaceExtDoneFileName() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/hello.done");
+        File done = new File(service.getFtpRootDir() + "/done/hello.done");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
     @Test
     public void testProducerInvalidDoneFileName() throws Exception {
-        try {
-            template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:parent}/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
-            assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
-        }
+        String uri = getFtpUrl() + "&doneFileName=${file:parent}/foo";
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
+
+        ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class,
+                ex.getCause());
+
+        assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
     }
 
     @Test
     public void testProducerEmptyDoneFileName() throws Exception {
-        try {
-            template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=", "Hello World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
-        }
+        String uri = getFtpUrl() + "&doneFileName=";
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
     }
 
 }

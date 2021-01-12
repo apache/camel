@@ -55,6 +55,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     /**
      * Creates a new XmlJsonStreamWriter instance
+     * 
      * @param jsonGenerator the {@link JsonGenerator} to use to write the json document
      */
     public XmlJsonStreamWriter(JsonGenerator jsonGenerator) {
@@ -150,7 +151,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             }
         }
 
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.ATTRIBUTE, JsonToken.VALUE_STRING, localName);
+        final TreeElement treeElement
+                = new TreeElement(currentTreeElement, XMLStreamConstants.ATTRIBUTE, JsonToken.VALUE_STRING, localName);
         treeElement.setValue(value);
 
         currentTreeElement.addChild(treeElement);
@@ -231,7 +233,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             }
         }
 
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.CHARACTERS, JsonToken.VALUE_STRING);
+        final TreeElement treeElement
+                = new TreeElement(currentTreeElement, XMLStreamConstants.CHARACTERS, JsonToken.VALUE_STRING);
         treeElement.setValue(text);
 
         currentTreeElement.addChild(treeElement);
@@ -369,7 +372,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                             childs.remove(0);
                         } else {
                             // create new intermediary element
-                            final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                            final TreeElement treeElement = new TreeElement(
+                                    this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                             treeElement.addChild(child);
                             childs.set(childs.indexOf(child), treeElement);
                             child.parent = treeElement;
@@ -388,7 +392,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                 iterator.remove();
                             } else {
                                 // create new intermediary element
-                                final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME,
+                                final TreeElement treeElement = new TreeElement(
+                                        this, -1, JsonToken.FIELD_NAME,
                                         element.name != null ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
@@ -435,8 +440,10 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                     iterator.remove();
                                 } else {
                                     // create new intermediary element
-                                    final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME,
-                                            element.name != null ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                                    final TreeElement treeElement = new TreeElement(
+                                            this, -1, JsonToken.FIELD_NAME,
+                                            element.name != null
+                                                    ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                     treeElement.addChild(element);
                                     childs.set(childs.indexOf(element), treeElement);
                                     element.parent = treeElement;
@@ -464,7 +471,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                 iterator.remove();
                             } else {
                                 // create new intermediary element
-                                final TreeElement treeElement = new TreeElement(this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                                final TreeElement treeElement = new TreeElement(
+                                        this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
                                 element.parent = treeElement;
@@ -498,7 +506,8 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                             child.parent = treeElement;
                         }
 
-                        final List<TreeElement> newChildList = new ArrayList<>(this.childs.size() - mapEntry.getValue().size() + 1);
+                        final List<TreeElement> newChildList
+                                = new ArrayList<>(this.childs.size() - mapEntry.getValue().size() + 1);
                         for (TreeElement e : this.childs) {
                             if (!mapEntry.getValue().contains(e)) {
                                 newChildList.add(e);
@@ -609,11 +618,11 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
         @Override
         public String toString() {
             return "TreeElement{"
-                    + "name='" + name + '\''
-                    + ", value='" + value + '\''
-                    + ", xmlEvent=" + xmlEvent
-                    + ", jsonToken=" + jsonToken
-                    + '}';
+                   + "name='" + name + '\''
+                   + ", value='" + value + '\''
+                   + ", xmlEvent=" + xmlEvent
+                   + ", jsonToken=" + jsonToken
+                   + '}';
         }
     }
 }

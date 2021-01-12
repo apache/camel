@@ -23,8 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the issue stated in
- * <a href="https://issues.apache.org/jira/browse/CAMEL-10272">CAMEL-10272</a>.
+ * Tests the issue stated in <a href="https://issues.apache.org/jira/browse/CAMEL-10272">CAMEL-10272</a>.
  */
 public class MulticastParallelWithAggregationStrategyThrowingExceptionTest extends ContextTestSupport {
 
@@ -50,8 +49,9 @@ public class MulticastParallelWithAggregationStrategyThrowingExceptionTest exten
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").multicast(new MyAggregateBean()).parallelProcessing().stopOnAggregateException().shareUnitOfWork().to("mock:a").to("mock:b").end()
-                    .to("mock:end");
+                from("direct:start").multicast(new MyAggregateBean()).parallelProcessing().stopOnAggregateException()
+                        .shareUnitOfWork().to("mock:a").to("mock:b").end()
+                        .to("mock:end");
             }
         };
     }

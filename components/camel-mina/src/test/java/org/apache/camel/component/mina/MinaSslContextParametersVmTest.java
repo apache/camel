@@ -28,7 +28,9 @@ public class MinaSslContextParametersVmTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina:vm://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", body, "cheese", 123);
+        template.sendBodyAndHeader(
+                "mina:vm://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }

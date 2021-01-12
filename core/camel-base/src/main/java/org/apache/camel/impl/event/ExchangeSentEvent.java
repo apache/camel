@@ -21,12 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 
 /**
- * Event for <b>after</b> an {@link Exchange} has been sent to an {@link Endpoint}.
- * The {@link ExchangeSentEvent} is an event which is emitted <b>after</b> the sending is done.
+ * Event for <b>after</b> an {@link Exchange} has been sent to an {@link Endpoint}. The {@link ExchangeSentEvent} is an
+ * event which is emitted <b>after</b> the sending is done.
  * <p/>
- * These two events (sending and sent) come in a pair, and therefore you need to make sure to return
- * <tt>true</tt> for both events in the {@link org.apache.camel.spi.EventNotifier#isEnabled(CamelEvent)}
- * method to receive events for either of them.
+ * These two events (sending and sent) come in a pair, and therefore you need to make sure to return <tt>true</tt> for
+ * both events in the {@link org.apache.camel.spi.EventNotifier#isEnabled(CamelEvent)} method to receive events for
+ * either of them.
  *
  * @see ExchangeSendingEvent
  */
@@ -54,7 +54,8 @@ public class ExchangeSentEvent extends AbstractExchangeEvent implements CamelEve
 
     @Override
     public String toString() {
-        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint + " took: " + timeTaken + " ms.";
+        return getExchange().getExchangeId() + " exchange " + getExchange() + " sent to: " + endpoint + " took: " + timeTaken
+               + " ms.";
     }
 
 }

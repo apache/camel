@@ -50,9 +50,10 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
             @Override
             public void configure() throws Exception {
                 from("direct:request").setHeader("Date", constant("31-03-2014"))
-                    .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
+                        .to("netty-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 
-                from("netty-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date", constant("31-05-2014"));
+                from("netty-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date",
+                        constant("31-05-2014"));
             }
         };
     }

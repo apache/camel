@@ -17,6 +17,11 @@
 package org.apache.camel.component.dropbox.util;
 
 public enum DropboxResultHeader {
-    DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH
+    DOWNLOADED_FILE,
+    DOWNLOADED_FILES,
+    UPLOADED_FILE,
+    UPLOADED_FILES,
+    FOUND_FILES,
+    DELETED_PATH,
+    MOVED_PATH
 }
-

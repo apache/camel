@@ -4,8 +4,10 @@ package org.apache.camel.component.salesforce;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,7 +17,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SalesforceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private org.apache.camel.component.salesforce.SalesforceEndpointConfig getOrCreateConfiguration(SalesforceComponent target) {
+    private org.apache.camel.component.salesforce.SalesforceEndpointConfig getOrCreateConfig(SalesforceComponent target) {
         if (target.getConfig() == null) {
             target.setConfig(new org.apache.camel.component.salesforce.SalesforceEndpointConfig());
         }
@@ -27,35 +29,37 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         SalesforceComponent target = (SalesforceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apexmethod":
-        case "apexMethod": getOrCreateConfiguration(target).setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "apexMethod": getOrCreateConfig(target).setApexMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "apexqueryparams":
-        case "apexQueryParams": getOrCreateConfiguration(target).setApexQueryParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "apexQueryParams": getOrCreateConfig(target).setApexQueryParams(property(camelContext, java.util.Map.class, value)); return true;
         case "apexurl":
-        case "apexUrl": getOrCreateConfiguration(target).setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "apexUrl": getOrCreateConfig(target).setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
-        case "apiVersion": getOrCreateConfiguration(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiVersion": getOrCreateConfig(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticationtype":
         case "authenticationType": target.setAuthenticationType(property(camelContext, org.apache.camel.component.salesforce.AuthenticationType.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backoffincrement":
-        case "backoffIncrement": getOrCreateConfiguration(target).setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "backoffIncrement": getOrCreateConfig(target).setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "batchid":
-        case "batchId": getOrCreateConfiguration(target).setBatchId(property(camelContext, java.lang.String.class, value)); return true;
+        case "batchId": getOrCreateConfig(target).setBatchId(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "compositemethod":
+        case "compositeMethod": getOrCreateConfig(target).setCompositeMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.apache.camel.component.salesforce.SalesforceEndpointConfig.class, value)); return true;
         case "contenttype":
-        case "contentType": getOrCreateConfiguration(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
+        case "contentType": getOrCreateConfig(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
-        case "defaultReplayId": getOrCreateConfiguration(target).setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "format": getOrCreateConfiguration(target).setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
+        case "defaultReplayId": getOrCreateConfig(target).setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "format": getOrCreateConfig(target).setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
-        case "httpClient": getOrCreateConfiguration(target).setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
+        case "httpClient": getOrCreateConfig(target).setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
         case "httpclientconnectiontimeout":
         case "httpClientConnectionTimeout": target.setHttpClientConnectionTimeout(property(camelContext, long.class, value)); return true;
         case "httpclientidletimeout":
@@ -86,22 +90,24 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUseDigestAuth": target.setHttpProxyUseDigestAuth(property(camelContext, boolean.class, value)); return true;
         case "httpproxyusername":
         case "httpProxyUsername": target.setHttpProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "httprequestbuffersize":
+        case "httpRequestBufferSize": target.setHttpRequestBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "includedetails":
-        case "includeDetails": getOrCreateConfiguration(target).setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "includeDetails": getOrCreateConfig(target).setIncludeDetails(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "initialreplayidmap":
-        case "initialReplayIdMap": getOrCreateConfiguration(target).setInitialReplayIdMap(property(camelContext, java.util.Map.class, value)); return true;
+        case "initialReplayIdMap": getOrCreateConfig(target).setInitialReplayIdMap(property(camelContext, java.util.Map.class, value)); return true;
         case "instanceid":
-        case "instanceId": getOrCreateConfiguration(target).setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "instanceId": getOrCreateConfig(target).setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "instanceurl":
         case "instanceUrl": target.setInstanceUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "jobid":
-        case "jobId": getOrCreateConfiguration(target).setJobId(property(camelContext, java.lang.String.class, value)); return true;
+        case "jobId": getOrCreateConfig(target).setJobId(property(camelContext, java.lang.String.class, value)); return true;
         case "keystore": target.setKeystore(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
         case "lazylogin":
         case "lazyLogin": target.setLazyLogin(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "limit": getOrCreateConfiguration(target).setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "limit": getOrCreateConfig(target).setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
         case "loginconfig":
         case "loginConfig": target.setLoginConfig(property(camelContext, org.apache.camel.component.salesforce.SalesforceLoginConfig.class, value)); return true;
         case "loginurl":
@@ -109,57 +115,57 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longpollingtransportproperties":
         case "longPollingTransportProperties": target.setLongPollingTransportProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "maxbackoff":
-        case "maxBackoff": getOrCreateConfiguration(target).setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "maxBackoff": getOrCreateConfig(target).setMaxBackoff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "notfoundbehaviour":
-        case "notFoundBehaviour": getOrCreateConfiguration(target).setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
+        case "notFoundBehaviour": getOrCreateConfig(target).setNotFoundBehaviour(property(camelContext, org.apache.camel.component.salesforce.NotFoundBehaviour.class, value)); return true;
         case "notifyforfields":
-        case "notifyForFields": getOrCreateConfiguration(target).setNotifyForFields(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class, value)); return true;
+        case "notifyForFields": getOrCreateConfig(target).setNotifyForFields(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class, value)); return true;
         case "notifyforoperationcreate":
-        case "notifyForOperationCreate": getOrCreateConfiguration(target).setNotifyForOperationCreate(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyForOperationCreate": getOrCreateConfig(target).setNotifyForOperationCreate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "notifyforoperationdelete":
-        case "notifyForOperationDelete": getOrCreateConfiguration(target).setNotifyForOperationDelete(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyForOperationDelete": getOrCreateConfig(target).setNotifyForOperationDelete(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "notifyforoperationundelete":
-        case "notifyForOperationUndelete": getOrCreateConfiguration(target).setNotifyForOperationUndelete(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyForOperationUndelete": getOrCreateConfig(target).setNotifyForOperationUndelete(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "notifyforoperationupdate":
-        case "notifyForOperationUpdate": getOrCreateConfiguration(target).setNotifyForOperationUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyForOperationUpdate": getOrCreateConfig(target).setNotifyForOperationUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "notifyforoperations":
-        case "notifyForOperations": getOrCreateConfiguration(target).setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
+        case "notifyForOperations": getOrCreateConfig(target).setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": getOrCreateConfiguration(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "packages": target.setPackages(property(camelContext, java.lang.String[].class, value)); return true;
+        case "objectMapper": getOrCreateConfig(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "packages": target.setPackages(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "rawpayload":
-        case "rawPayload": getOrCreateConfiguration(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "rawPayload": getOrCreateConfig(target).setRawPayload(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "reportid":
-        case "reportId": getOrCreateConfiguration(target).setReportId(property(camelContext, java.lang.String.class, value)); return true;
+        case "reportId": getOrCreateConfig(target).setReportId(property(camelContext, java.lang.String.class, value)); return true;
         case "reportmetadata":
-        case "reportMetadata": getOrCreateConfiguration(target).setReportMetadata(property(camelContext, org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class, value)); return true;
+        case "reportMetadata": getOrCreateConfig(target).setReportMetadata(property(camelContext, org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class, value)); return true;
         case "resultid":
-        case "resultId": getOrCreateConfiguration(target).setResultId(property(camelContext, java.lang.String.class, value)); return true;
+        case "resultId": getOrCreateConfig(target).setResultId(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectblobfieldname":
-        case "sObjectBlobFieldName": getOrCreateConfiguration(target).setSObjectBlobFieldName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectBlobFieldName": getOrCreateConfig(target).setSObjectBlobFieldName(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectclass":
-        case "sObjectClass": getOrCreateConfiguration(target).setSObjectClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectClass": getOrCreateConfig(target).setSObjectClass(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectfields":
-        case "sObjectFields": getOrCreateConfiguration(target).setSObjectFields(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectFields": getOrCreateConfig(target).setSObjectFields(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectid":
-        case "sObjectId": getOrCreateConfiguration(target).setSObjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectId": getOrCreateConfig(target).setSObjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectidname":
-        case "sObjectIdName": getOrCreateConfiguration(target).setSObjectIdName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectIdName": getOrCreateConfig(target).setSObjectIdName(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectidvalue":
-        case "sObjectIdValue": getOrCreateConfiguration(target).setSObjectIdValue(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectIdValue": getOrCreateConfig(target).setSObjectIdValue(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectname":
-        case "sObjectName": getOrCreateConfiguration(target).setSObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectName": getOrCreateConfig(target).setSObjectName(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectquery":
-        case "sObjectQuery": getOrCreateConfiguration(target).setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectQuery": getOrCreateConfig(target).setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectsearch":
-        case "sObjectSearch": getOrCreateConfiguration(target).setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "sObjectSearch": getOrCreateConfig(target).setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "updatetopic":
-        case "updateTopic": getOrCreateConfiguration(target).setUpdateTopic(property(camelContext, boolean.class, value)); return true;
+        case "updateTopic": getOrCreateConfig(target).setUpdateTopic(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username":
@@ -169,81 +175,152 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apexMethod", java.lang.String.class);
-        answer.put("apexQueryParams", java.util.Map.class);
-        answer.put("apexUrl", java.lang.String.class);
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("authenticationType", org.apache.camel.component.salesforce.AuthenticationType.class);
-        answer.put("backoffIncrement", long.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("batchId", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("config", org.apache.camel.component.salesforce.SalesforceEndpointConfig.class);
-        answer.put("contentType", org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class);
-        answer.put("defaultReplayId", java.lang.Long.class);
-        answer.put("format", org.apache.camel.component.salesforce.internal.PayloadFormat.class);
-        answer.put("httpClient", org.apache.camel.component.salesforce.SalesforceHttpClient.class);
-        answer.put("httpClientConnectionTimeout", long.class);
-        answer.put("httpClientIdleTimeout", long.class);
-        answer.put("httpClientProperties", java.util.Map.class);
-        answer.put("httpMaxContentLength", java.lang.Integer.class);
-        answer.put("httpProxyAuthUri", java.lang.String.class);
-        answer.put("httpProxyExcludedAddresses", java.util.Set.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyIncludedAddresses", java.util.Set.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyRealm", java.lang.String.class);
-        answer.put("httpProxySecure", boolean.class);
-        answer.put("httpProxySocks4", boolean.class);
-        answer.put("httpProxyUseDigestAuth", boolean.class);
-        answer.put("httpProxyUsername", java.lang.String.class);
-        answer.put("includeDetails", java.lang.Boolean.class);
-        answer.put("initialReplayIdMap", java.util.Map.class);
-        answer.put("instanceId", java.lang.String.class);
-        answer.put("instanceUrl", java.lang.String.class);
-        answer.put("jobId", java.lang.String.class);
-        answer.put("keystore", org.apache.camel.support.jsse.KeyStoreParameters.class);
-        answer.put("lazyLogin", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("limit", java.lang.Integer.class);
-        answer.put("loginConfig", org.apache.camel.component.salesforce.SalesforceLoginConfig.class);
-        answer.put("loginUrl", java.lang.String.class);
-        answer.put("longPollingTransportProperties", java.util.Map.class);
-        answer.put("maxBackoff", long.class);
-        answer.put("notFoundBehaviour", org.apache.camel.component.salesforce.NotFoundBehaviour.class);
-        answer.put("notifyForFields", org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class);
-        answer.put("notifyForOperationCreate", java.lang.Boolean.class);
-        answer.put("notifyForOperationDelete", java.lang.Boolean.class);
-        answer.put("notifyForOperationUndelete", java.lang.Boolean.class);
-        answer.put("notifyForOperationUpdate", java.lang.Boolean.class);
-        answer.put("notifyForOperations", org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class);
-        answer.put("objectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
-        answer.put("packages", java.lang.String[].class);
-        answer.put("password", java.lang.String.class);
-        answer.put("rawPayload", boolean.class);
-        answer.put("refreshToken", java.lang.String.class);
-        answer.put("reportId", java.lang.String.class);
-        answer.put("reportMetadata", org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class);
-        answer.put("resultId", java.lang.String.class);
-        answer.put("sObjectBlobFieldName", java.lang.String.class);
-        answer.put("sObjectClass", java.lang.String.class);
-        answer.put("sObjectFields", java.lang.String.class);
-        answer.put("sObjectId", java.lang.String.class);
-        answer.put("sObjectIdName", java.lang.String.class);
-        answer.put("sObjectIdValue", java.lang.String.class);
-        answer.put("sObjectName", java.lang.String.class);
-        answer.put("sObjectQuery", java.lang.String.class);
-        answer.put("sObjectSearch", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("updateTopic", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("userName", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexmethod":
+        case "apexMethod": return java.lang.String.class;
+        case "apexqueryparams":
+        case "apexQueryParams": return java.util.Map.class;
+        case "apexurl":
+        case "apexUrl": return java.lang.String.class;
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "authenticationtype":
+        case "authenticationType": return org.apache.camel.component.salesforce.AuthenticationType.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "backoffincrement":
+        case "backoffIncrement": return long.class;
+        case "batchid":
+        case "batchId": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "compositemethod":
+        case "compositeMethod": return java.lang.String.class;
+        case "config": return org.apache.camel.component.salesforce.SalesforceEndpointConfig.class;
+        case "contenttype":
+        case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
+        case "defaultreplayid":
+        case "defaultReplayId": return java.lang.Long.class;
+        case "format": return org.apache.camel.component.salesforce.internal.PayloadFormat.class;
+        case "httpclient":
+        case "httpClient": return org.apache.camel.component.salesforce.SalesforceHttpClient.class;
+        case "httpclientconnectiontimeout":
+        case "httpClientConnectionTimeout": return long.class;
+        case "httpclientidletimeout":
+        case "httpClientIdleTimeout": return long.class;
+        case "httpclientproperties":
+        case "httpClientProperties": return java.util.Map.class;
+        case "httpmaxcontentlength":
+        case "httpMaxContentLength": return java.lang.Integer.class;
+        case "httpproxyauthuri":
+        case "httpProxyAuthUri": return java.lang.String.class;
+        case "httpproxyexcludedaddresses":
+        case "httpProxyExcludedAddresses": return java.util.Set.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxyincludedaddresses":
+        case "httpProxyIncludedAddresses": return java.util.Set.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyrealm":
+        case "httpProxyRealm": return java.lang.String.class;
+        case "httpproxysecure":
+        case "httpProxySecure": return boolean.class;
+        case "httpproxysocks4":
+        case "httpProxySocks4": return boolean.class;
+        case "httpproxyusedigestauth":
+        case "httpProxyUseDigestAuth": return boolean.class;
+        case "httpproxyusername":
+        case "httpProxyUsername": return java.lang.String.class;
+        case "httprequestbuffersize":
+        case "httpRequestBufferSize": return java.lang.Integer.class;
+        case "includedetails":
+        case "includeDetails": return java.lang.Boolean.class;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": return java.util.Map.class;
+        case "instanceid":
+        case "instanceId": return java.lang.String.class;
+        case "instanceurl":
+        case "instanceUrl": return java.lang.String.class;
+        case "jobid":
+        case "jobId": return java.lang.String.class;
+        case "keystore": return org.apache.camel.support.jsse.KeyStoreParameters.class;
+        case "lazylogin":
+        case "lazyLogin": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return java.lang.Integer.class;
+        case "loginconfig":
+        case "loginConfig": return org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
+        case "loginurl":
+        case "loginUrl": return java.lang.String.class;
+        case "longpollingtransportproperties":
+        case "longPollingTransportProperties": return java.util.Map.class;
+        case "maxbackoff":
+        case "maxBackoff": return long.class;
+        case "notfoundbehaviour":
+        case "notFoundBehaviour": return org.apache.camel.component.salesforce.NotFoundBehaviour.class;
+        case "notifyforfields":
+        case "notifyForFields": return org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum.class;
+        case "notifyforoperationcreate":
+        case "notifyForOperationCreate": return java.lang.Boolean.class;
+        case "notifyforoperationdelete":
+        case "notifyForOperationDelete": return java.lang.Boolean.class;
+        case "notifyforoperationundelete":
+        case "notifyForOperationUndelete": return java.lang.Boolean.class;
+        case "notifyforoperationupdate":
+        case "notifyForOperationUpdate": return java.lang.Boolean.class;
+        case "notifyforoperations":
+        case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
+        case "objectmapper":
+        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "packages": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "rawpayload":
+        case "rawPayload": return boolean.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "reportid":
+        case "reportId": return java.lang.String.class;
+        case "reportmetadata":
+        case "reportMetadata": return org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata.class;
+        case "resultid":
+        case "resultId": return java.lang.String.class;
+        case "sobjectblobfieldname":
+        case "sObjectBlobFieldName": return java.lang.String.class;
+        case "sobjectclass":
+        case "sObjectClass": return java.lang.String.class;
+        case "sobjectfields":
+        case "sObjectFields": return java.lang.String.class;
+        case "sobjectid":
+        case "sObjectId": return java.lang.String.class;
+        case "sobjectidname":
+        case "sObjectIdName": return java.lang.String.class;
+        case "sobjectidvalue":
+        case "sObjectIdValue": return java.lang.String.class;
+        case "sobjectname":
+        case "sObjectName": return java.lang.String.class;
+        case "sobjectquery":
+        case "sObjectQuery": return java.lang.String.class;
+        case "sobjectsearch":
+        case "sObjectSearch": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "updatetopic":
+        case "updateTopic": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -251,35 +328,37 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         SalesforceComponent target = (SalesforceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apexmethod":
-        case "apexMethod": return getOrCreateConfiguration(target).getApexMethod();
+        case "apexMethod": return getOrCreateConfig(target).getApexMethod();
         case "apexqueryparams":
-        case "apexQueryParams": return getOrCreateConfiguration(target).getApexQueryParams();
+        case "apexQueryParams": return getOrCreateConfig(target).getApexQueryParams();
         case "apexurl":
-        case "apexUrl": return getOrCreateConfiguration(target).getApexUrl();
+        case "apexUrl": return getOrCreateConfig(target).getApexUrl();
         case "apiversion":
-        case "apiVersion": return getOrCreateConfiguration(target).getApiVersion();
+        case "apiVersion": return getOrCreateConfig(target).getApiVersion();
         case "authenticationtype":
         case "authenticationType": return target.getAuthenticationType();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backoffincrement":
-        case "backoffIncrement": return getOrCreateConfiguration(target).getBackoffIncrement();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "backoffIncrement": return getOrCreateConfig(target).getBackoffIncrement();
         case "batchid":
-        case "batchId": return getOrCreateConfiguration(target).getBatchId();
+        case "batchId": return getOrCreateConfig(target).getBatchId();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":
         case "clientId": return target.getClientId();
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
+        case "compositemethod":
+        case "compositeMethod": return getOrCreateConfig(target).getCompositeMethod();
         case "config": return target.getConfig();
         case "contenttype":
-        case "contentType": return getOrCreateConfiguration(target).getContentType();
+        case "contentType": return getOrCreateConfig(target).getContentType();
         case "defaultreplayid":
-        case "defaultReplayId": return getOrCreateConfiguration(target).getDefaultReplayId();
-        case "format": return getOrCreateConfiguration(target).getFormat();
+        case "defaultReplayId": return getOrCreateConfig(target).getDefaultReplayId();
+        case "format": return getOrCreateConfig(target).getFormat();
         case "httpclient":
-        case "httpClient": return getOrCreateConfiguration(target).getHttpClient();
+        case "httpClient": return getOrCreateConfig(target).getHttpClient();
         case "httpclientconnectiontimeout":
         case "httpClientConnectionTimeout": return target.getHttpClientConnectionTimeout();
         case "httpclientidletimeout":
@@ -310,22 +389,24 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "httpProxyUseDigestAuth": return target.isHttpProxyUseDigestAuth();
         case "httpproxyusername":
         case "httpProxyUsername": return target.getHttpProxyUsername();
+        case "httprequestbuffersize":
+        case "httpRequestBufferSize": return target.getHttpRequestBufferSize();
         case "includedetails":
-        case "includeDetails": return getOrCreateConfiguration(target).getIncludeDetails();
+        case "includeDetails": return getOrCreateConfig(target).getIncludeDetails();
         case "initialreplayidmap":
-        case "initialReplayIdMap": return getOrCreateConfiguration(target).getInitialReplayIdMap();
+        case "initialReplayIdMap": return getOrCreateConfig(target).getInitialReplayIdMap();
         case "instanceid":
-        case "instanceId": return getOrCreateConfiguration(target).getInstanceId();
+        case "instanceId": return getOrCreateConfig(target).getInstanceId();
         case "instanceurl":
         case "instanceUrl": return target.getInstanceUrl();
         case "jobid":
-        case "jobId": return getOrCreateConfiguration(target).getJobId();
+        case "jobId": return getOrCreateConfig(target).getJobId();
         case "keystore": return target.getKeystore();
         case "lazylogin":
         case "lazyLogin": return target.isLazyLogin();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "limit": return getOrCreateConfiguration(target).getLimit();
+        case "limit": return getOrCreateConfig(target).getLimit();
         case "loginconfig":
         case "loginConfig": return target.getLoginConfig();
         case "loginurl":
@@ -333,61 +414,80 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "longpollingtransportproperties":
         case "longPollingTransportProperties": return target.getLongPollingTransportProperties();
         case "maxbackoff":
-        case "maxBackoff": return getOrCreateConfiguration(target).getMaxBackoff();
+        case "maxBackoff": return getOrCreateConfig(target).getMaxBackoff();
         case "notfoundbehaviour":
-        case "notFoundBehaviour": return getOrCreateConfiguration(target).getNotFoundBehaviour();
+        case "notFoundBehaviour": return getOrCreateConfig(target).getNotFoundBehaviour();
         case "notifyforfields":
-        case "notifyForFields": return getOrCreateConfiguration(target).getNotifyForFields();
+        case "notifyForFields": return getOrCreateConfig(target).getNotifyForFields();
         case "notifyforoperationcreate":
-        case "notifyForOperationCreate": return getOrCreateConfiguration(target).getNotifyForOperationCreate();
+        case "notifyForOperationCreate": return getOrCreateConfig(target).getNotifyForOperationCreate();
         case "notifyforoperationdelete":
-        case "notifyForOperationDelete": return getOrCreateConfiguration(target).getNotifyForOperationDelete();
+        case "notifyForOperationDelete": return getOrCreateConfig(target).getNotifyForOperationDelete();
         case "notifyforoperationundelete":
-        case "notifyForOperationUndelete": return getOrCreateConfiguration(target).getNotifyForOperationUndelete();
+        case "notifyForOperationUndelete": return getOrCreateConfig(target).getNotifyForOperationUndelete();
         case "notifyforoperationupdate":
-        case "notifyForOperationUpdate": return getOrCreateConfiguration(target).getNotifyForOperationUpdate();
+        case "notifyForOperationUpdate": return getOrCreateConfig(target).getNotifyForOperationUpdate();
         case "notifyforoperations":
-        case "notifyForOperations": return getOrCreateConfiguration(target).getNotifyForOperations();
+        case "notifyForOperations": return getOrCreateConfig(target).getNotifyForOperations();
         case "objectmapper":
-        case "objectMapper": return getOrCreateConfiguration(target).getObjectMapper();
+        case "objectMapper": return getOrCreateConfig(target).getObjectMapper();
         case "packages": return target.getPackages();
         case "password": return target.getPassword();
         case "rawpayload":
-        case "rawPayload": return getOrCreateConfiguration(target).isRawPayload();
+        case "rawPayload": return getOrCreateConfig(target).isRawPayload();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
         case "reportid":
-        case "reportId": return getOrCreateConfiguration(target).getReportId();
+        case "reportId": return getOrCreateConfig(target).getReportId();
         case "reportmetadata":
-        case "reportMetadata": return getOrCreateConfiguration(target).getReportMetadata();
+        case "reportMetadata": return getOrCreateConfig(target).getReportMetadata();
         case "resultid":
-        case "resultId": return getOrCreateConfiguration(target).getResultId();
+        case "resultId": return getOrCreateConfig(target).getResultId();
         case "sobjectblobfieldname":
-        case "sObjectBlobFieldName": return getOrCreateConfiguration(target).getSObjectBlobFieldName();
+        case "sObjectBlobFieldName": return getOrCreateConfig(target).getSObjectBlobFieldName();
         case "sobjectclass":
-        case "sObjectClass": return getOrCreateConfiguration(target).getSObjectClass();
+        case "sObjectClass": return getOrCreateConfig(target).getSObjectClass();
         case "sobjectfields":
-        case "sObjectFields": return getOrCreateConfiguration(target).getSObjectFields();
+        case "sObjectFields": return getOrCreateConfig(target).getSObjectFields();
         case "sobjectid":
-        case "sObjectId": return getOrCreateConfiguration(target).getSObjectId();
+        case "sObjectId": return getOrCreateConfig(target).getSObjectId();
         case "sobjectidname":
-        case "sObjectIdName": return getOrCreateConfiguration(target).getSObjectIdName();
+        case "sObjectIdName": return getOrCreateConfig(target).getSObjectIdName();
         case "sobjectidvalue":
-        case "sObjectIdValue": return getOrCreateConfiguration(target).getSObjectIdValue();
+        case "sObjectIdValue": return getOrCreateConfig(target).getSObjectIdValue();
         case "sobjectname":
-        case "sObjectName": return getOrCreateConfiguration(target).getSObjectName();
+        case "sObjectName": return getOrCreateConfig(target).getSObjectName();
         case "sobjectquery":
-        case "sObjectQuery": return getOrCreateConfiguration(target).getSObjectQuery();
+        case "sObjectQuery": return getOrCreateConfig(target).getSObjectQuery();
         case "sobjectsearch":
-        case "sObjectSearch": return getOrCreateConfiguration(target).getSObjectSearch();
+        case "sObjectSearch": return getOrCreateConfig(target).getSObjectSearch();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         case "updatetopic":
-        case "updateTopic": return getOrCreateConfiguration(target).isUpdateTopic();
+        case "updateTopic": return getOrCreateConfig(target).isUpdateTopic();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username":
         case "userName": return target.getUserName();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexqueryparams":
+        case "apexQueryParams": return java.lang.Object.class;
+        case "httpclientproperties":
+        case "httpClientProperties": return java.lang.Object.class;
+        case "httpproxyexcludedaddresses":
+        case "httpProxyExcludedAddresses": return java.lang.String.class;
+        case "httpproxyincludedaddresses":
+        case "httpProxyIncludedAddresses": return java.lang.String.class;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": return java.lang.Long.class;
+        case "longpollingtransportproperties":
+        case "longPollingTransportProperties": return java.lang.Object.class;
         default: return null;
         }
     }

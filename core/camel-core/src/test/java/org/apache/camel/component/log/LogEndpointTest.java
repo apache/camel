@@ -95,7 +95,9 @@ public class LogEndpointTest extends ContextTestSupport {
         Exchange ex = createExchangeWithBody(null);
         ex.setProperty(Exchange.EXCEPTION_CAUGHT, new RuntimeException("test"));
         template.send("log:testShowCaughtException?showCaughtException=true", ex);
-        assertEquals("Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], CaughtExceptionType: java.lang.RuntimeException, CaughtExceptionMessage: test]", logged.get());
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], CaughtExceptionType: java.lang.RuntimeException, CaughtExceptionMessage: test]",
+                logged.get());
     }
 
     @Test
@@ -105,7 +107,9 @@ public class LogEndpointTest extends ContextTestSupport {
         Exchange ex = createExchangeWithBody(null);
         ex.setException(new RuntimeException("test"));
         template.send("log:testShowException?showException=true", ex);
-        assertEquals("Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], ExceptionType: java.lang.RuntimeException, ExceptionMessage: test]", logged.get());
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: null, Body: [Body is null], ExceptionType: java.lang.RuntimeException, ExceptionMessage: test]",
+                logged.get());
     }
 
     @Override
@@ -114,6 +118,7 @@ public class LogEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 LogEndpoint end = new LogEndpoint();
+                end.setComponent(context.getComponent("log"));
                 end.setCamelContext(context);
                 end.setLogger(new MyLogger());
 
@@ -121,6 +126,7 @@ public class LogEndpointTest extends ContextTestSupport {
                 endpoint.setLoggerName("loggerSetter");
                 endpoint.setGroupSize(10);
                 endpoint.setCamelContext(context);
+                endpoint.setComponent(context.getComponent("log"));
                 endpoint.start();
 
                 assertEquals("log:myLogger", end.getEndpointUri());

@@ -57,7 +57,7 @@ public class WebsocketConsumer extends DefaultConsumer implements WebsocketProdu
             final String connectionKey,
             final String message,
             final InetSocketAddress remote) {
-        sendMessage(connectionKey, (Object)message, remote);
+        sendMessage(connectionKey, (Object) message, remote);
     }
 
     public void sendMessage(

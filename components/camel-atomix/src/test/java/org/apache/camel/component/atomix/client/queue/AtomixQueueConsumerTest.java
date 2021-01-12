@@ -57,7 +57,9 @@ public class AtomixQueueConsumerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        queue.close();
+        if (queue != null) {
+            queue.close();
+        }
 
         super.tearDown();
     }
@@ -102,7 +104,7 @@ public class AtomixQueueConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-queue:%s", QUEUE_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

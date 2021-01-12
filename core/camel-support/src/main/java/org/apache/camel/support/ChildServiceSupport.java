@@ -50,7 +50,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 ServiceHelper.initService(childServices);
             } catch (Exception e) {
                 status = FAILED;
-                LOG.trace("Error while initializing service: " + this, e);
+                LOG.trace("Error while initializing service: {}", this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             try {
@@ -62,7 +62,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 LOG.trace("Service: {} started", this);
             } catch (Exception e) {
                 status = FAILED;
-                LOG.trace("Error while starting service: " + this, e);
+                LOG.trace("Error while starting service: {}", this, e);
                 ServiceHelper.stopService(childServices);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -72,7 +72,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
     @Override
     public void stop() {
         synchronized (lock) {
-            if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+            if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
                 LOG.trace("Service: {} already stopped", this);
                 return;
             }
@@ -89,7 +89,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 LOG.trace("Service: {} stopped service", this);
             } catch (Exception e) {
                 status = FAILED;
-                LOG.trace("Error while stopping service: " + this, e);
+                LOG.trace("Error while stopping service: {}", this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
@@ -102,7 +102,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 LOG.trace("Service: {} already shut down", this);
                 return;
             }
-            if (status == SHUTTINGDOWN) {
+            if (status == SHUTTING_DOWN) {
                 LOG.trace("Service: {} already shutting down", this);
                 return;
             }
@@ -116,7 +116,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 status = SHUTDOWN;
             } catch (Exception e) {
                 status = FAILED;
-                LOG.trace("Error shutting down service: " + this, e);
+                LOG.trace("Error shutting down service: {}", this, e);
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }

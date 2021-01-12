@@ -49,7 +49,8 @@ public class MainBeansTest {
         Object foo = camelContext.getRegistry().lookupByName("foo");
         assertNotNull(foo);
 
-        MySedaBlockingQueueFactory myBQF = camelContext.getRegistry().findByType(MySedaBlockingQueueFactory.class).iterator().next();
+        MySedaBlockingQueueFactory myBQF
+                = camelContext.getRegistry().findByType(MySedaBlockingQueueFactory.class).iterator().next();
         assertSame(foo, myBQF);
 
         assertEquals(123, myBQF.getCounter());

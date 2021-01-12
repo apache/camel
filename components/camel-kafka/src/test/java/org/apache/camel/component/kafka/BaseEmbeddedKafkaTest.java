@@ -19,42 +19,44 @@ package org.apache.camel.component.kafka;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.infra.kafka.services.KafkaService;
+import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
 
 public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
-    protected static AdminClient kafkaAdminClient;
+    @RegisterExtension
+    public static KafkaService service = KafkaServiceFactory.createService();
 
-    private static final String CONFLUENT_PLATFORM_VERSION = "5.5.0";
+    protected static AdminClient kafkaAdminClient;
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
-    protected static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
-        .withEmbeddedZookeeper()
-        .waitingFor(Wait.forListeningPort());
-
-    static {
-        kafkaBroker.start();
-        kafkaAdminClient = createAdminClient();
-    }
-
     @BeforeAll
     public static void beforeClass() {
-        LOG.info("### Embedded Kafka cluster broker list: " + kafkaBroker.getBootstrapServers());
+        LOG.info("### Embedded Kafka cluster broker list: " + service.getBootstrapServers());
+        System.setProperty("bootstrapServers", service.getBootstrapServers());
+    }
+
+    @BeforeEach
+    public void setKafkaAdminClient() {
+        if (kafkaAdminClient == null) {
+            kafkaAdminClient = createAdminClient();
+        }
     }
 
     protected Properties getDefaultProperties() {
-        LOG.info("Connecting to Kafka {}", kafkaBroker.getBootstrapServers());
+        LOG.info("Connecting to Kafka {}", service.getBootstrapServers());
 
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers());
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
@@ -69,19 +71,19 @@ public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.init();
-        kafka.getConfiguration().setBrokers(kafkaBroker.getBootstrapServers());
+        kafka.getConfiguration().setBrokers(service.getBootstrapServers());
         context.addComponent("kafka", kafka);
 
         return context;
     }
 
     protected static String getBootstrapServers() {
-        return kafkaBroker.getBootstrapServers();
+        return service.getBootstrapServers();
     }
 
     private static AdminClient createAdminClient() {
         final Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers());
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
 
         return KafkaAdminClient.create(properties);
     }

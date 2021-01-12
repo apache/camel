@@ -2845,7 +2845,7 @@ public class MXParser implements XmlPullParser {
                     reachedEnd = true;
                     return;
                 } else {
-                    StringBuffer expectedTagStack = new StringBuffer();
+                    StringBuilder expectedTagStack = new StringBuilder();
                     if (depth > 0) {
                         // final char[] cbuf = elRawName[depth];
                         // final String startname = new String(cbuf, 0,
@@ -3094,7 +3094,7 @@ public class MXParser implements XmlPullParser {
         if (s == null)
             return null;
         final int sLen = s.length();
-        StringBuffer buf = new StringBuffer(sLen + 10);
+        StringBuilder buf = new StringBuilder(sLen + 10);
         for (int i = 0; i < sLen; ++i) {
             buf.append(printable(s.charAt(i)));
         }

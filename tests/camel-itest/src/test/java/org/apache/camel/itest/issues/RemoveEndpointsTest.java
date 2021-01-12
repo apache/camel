@@ -18,21 +18,22 @@ package org.apache.camel.itest.issues;
 
 import java.util.Collection;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RemoveEndpointsTest extends CamelTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     @Test
     void testRemoveAllEndpoints() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:jms-queue");
@@ -51,8 +52,8 @@ public class RemoveEndpointsTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
 
         registry.bind("jms", amq);

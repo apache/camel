@@ -49,7 +49,7 @@ public class HttpBindingRefTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
-        assertEquals(context.getTypeConverter().convertTo(String.class, out), "Something went wrong but we dont care");
+        assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Override
@@ -59,13 +59,15 @@ public class HttpBindingRefTest extends BaseJettyTest {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
+                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform()
+                        .constant("Bye World");
 
-                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalStateException("Not implemented");
-                    }
-                });
+                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                throw new IllegalStateException("Not implemented");
+                            }
+                        });
             }
         };
     }

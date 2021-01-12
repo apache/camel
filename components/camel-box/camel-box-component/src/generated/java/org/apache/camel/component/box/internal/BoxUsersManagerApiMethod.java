@@ -20,71 +20,69 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxUsersManagerApiMethod implements ApiMethod {
 
-    ADDUSEREMAILALIAS(
+    ADD_USER_EMAIL_ALIAS(
         com.box.sdk.EmailAlias.class,
         "addUserEmailAlias",
         arg("userId", String.class),
         arg("email", String.class)),
 
-    CREATEAPPUSER(
+    CREATE_APP_USER(
         com.box.sdk.BoxUser.class,
         "createAppUser",
         arg("name", String.class),
         arg("params", com.box.sdk.CreateUserParams.class)),
 
-    CREATEENTERPRISEUSER(
+    CREATE_ENTERPRISE_USER(
         com.box.sdk.BoxUser.class,
         "createEnterpriseUser",
         arg("login", String.class),
         arg("name", String.class),
         arg("params", com.box.sdk.CreateUserParams.class)),
 
-    DELETEUSER(
+    DELETE_USER(
         void.class,
         "deleteUser",
         arg("userId", String.class),
         arg("notifyUser", boolean.class),
         arg("force", boolean.class)),
 
-    DELETEUSEREMAILALIAS(
+    DELETE_USER_EMAIL_ALIAS(
         void.class,
         "deleteUserEmailAlias",
         arg("userId", String.class),
         arg("emailAliasId", String.class)),
 
-    GETALLENTERPRISEOREXTERNALUSERS(
+    GET_ALL_ENTERPRISE_OR_EXTERNAL_USERS(
         java.util.List.class,
         "getAllEnterpriseOrExternalUsers",
         arg("filterTerm", String.class),
         arg("fields", new String[0].getClass())),
 
-    GETCURRENTUSER(
+    GET_CURRENT_USER(
         com.box.sdk.BoxUser.class,
         "getCurrentUser"),
 
-    GETUSEREMAILALIAS(
+    GET_USER_EMAIL_ALIAS(
         java.util.Collection.class,
         "getUserEmailAlias",
         arg("userId", String.class)),
 
-    GETUSERINFO(
+    GET_USER_INFO(
         com.box.sdk.BoxUser.Info.class,
         "getUserInfo",
         arg("userId", String.class)),
 
-    MOVEFOLDERTOUSER(
+    MOVE_FOLDER_TO_USER(
         com.box.sdk.BoxFolder.Info.class,
         "moveFolderToUser",
         arg("userId", String.class),
         arg("sourceUserId", String.class)),
 
-    UPDATEUSERINFO(
+    UPDATE_USER_INFO(
         com.box.sdk.BoxUser.class,
         "updateUserInfo",
         arg("userId", String.class),
         arg("info", com.box.sdk.BoxUser.Info.class));
-
-    
 
     private final ApiMethod apiMethod;
 

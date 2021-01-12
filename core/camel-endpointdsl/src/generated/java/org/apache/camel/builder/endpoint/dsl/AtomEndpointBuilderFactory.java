@@ -54,10 +54,13 @@ public interface AtomEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -73,10 +76,14 @@ public interface AtomEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
@@ -85,10 +92,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets whether to add the feed object as a header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param feedHeader the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder feedHeader(boolean feedHeader) {
             doSetProperty("feedHeader", feedHeader);
@@ -97,10 +107,14 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets whether to add the feed object as a header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param feedHeader the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder feedHeader(String feedHeader) {
             doSetProperty("feedHeader", feedHeader);
@@ -109,10 +123,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets whether to use filtering or not of the entries.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder filter(boolean filter) {
             doSetProperty("filter", filter);
@@ -121,10 +138,14 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets whether to use filtering or not of the entries.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder filter(String filter) {
             doSetProperty("filter", filter);
@@ -134,9 +155,12 @@ public interface AtomEndpointBuilderFactory {
          * Sets the timestamp to be used for filtering entries from the atom
          * feeds. This options is only in conjunction with the splitEntries.
          * 
-         * The option is a: <code>java.util.Date</code> type.
+         * The option is a: &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param lastUpdate the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder lastUpdate(Date lastUpdate) {
             doSetProperty("lastUpdate", lastUpdate);
@@ -146,9 +170,13 @@ public interface AtomEndpointBuilderFactory {
          * Sets the timestamp to be used for filtering entries from the atom
          * feeds. This options is only in conjunction with the splitEntries.
          * 
-         * The option will be converted to a <code>java.util.Date</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param lastUpdate the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder lastUpdate(String lastUpdate) {
             doSetProperty("lastUpdate", lastUpdate);
@@ -158,9 +186,12 @@ public interface AtomEndpointBuilderFactory {
          * Sets the password to be used for basic authentication when polling
          * from a HTTP feed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -170,10 +201,13 @@ public interface AtomEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -184,10 +218,14 @@ public interface AtomEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -198,10 +236,13 @@ public interface AtomEndpointBuilderFactory {
          * Sets whether to sort entries by published date. Only works when
          * splitEntries = true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sortEntries the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder sortEntries(boolean sortEntries) {
             doSetProperty("sortEntries", sortEntries);
@@ -211,10 +252,14 @@ public interface AtomEndpointBuilderFactory {
          * Sets whether to sort entries by published date. Only works when
          * splitEntries = true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sortEntries the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder sortEntries(String sortEntries) {
             doSetProperty("sortEntries", sortEntries);
@@ -224,10 +269,13 @@ public interface AtomEndpointBuilderFactory {
          * Sets whether or not entries should be sent individually or whether
          * the entire feed should be sent as a single message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param splitEntries the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder splitEntries(boolean splitEntries) {
             doSetProperty("splitEntries", splitEntries);
@@ -237,10 +285,14 @@ public interface AtomEndpointBuilderFactory {
          * Sets whether or not entries should be sent individually or whether
          * the entire feed should be sent as a single message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param splitEntries the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder splitEntries(String splitEntries) {
             doSetProperty("splitEntries", splitEntries);
@@ -251,10 +303,13 @@ public interface AtomEndpointBuilderFactory {
          * delivered immediately. If true, only one entry is processed per
          * delay. Only applicable when splitEntries = true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param throttleEntries the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder throttleEntries(boolean throttleEntries) {
             doSetProperty("throttleEntries", throttleEntries);
@@ -265,10 +320,14 @@ public interface AtomEndpointBuilderFactory {
          * delivered immediately. If true, only one entry is processed per
          * delay. Only applicable when splitEntries = true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param throttleEntries the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder throttleEntries(String throttleEntries) {
             doSetProperty("throttleEntries", throttleEntries);
@@ -278,9 +337,12 @@ public interface AtomEndpointBuilderFactory {
          * Sets the username to be used for basic authentication when polling
          * from a HTTP feed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -290,9 +352,12 @@ public interface AtomEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -303,9 +368,12 @@ public interface AtomEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -316,9 +384,12 @@ public interface AtomEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -329,9 +400,12 @@ public interface AtomEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -346,9 +420,12 @@ public interface AtomEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder backoffMultiplier(int backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
@@ -362,9 +439,12 @@ public interface AtomEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder backoffMultiplier(String backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
@@ -373,10 +453,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -385,10 +468,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -398,10 +484,13 @@ public interface AtomEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -411,10 +500,14 @@ public interface AtomEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -423,10 +516,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -435,10 +531,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -449,10 +548,13 @@ public interface AtomEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -463,10 +565,13 @@ public interface AtomEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -476,10 +581,14 @@ public interface AtomEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder runLoggingLevel(LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
@@ -490,10 +599,13 @@ public interface AtomEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder runLoggingLevel(String runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
@@ -505,9 +617,12 @@ public interface AtomEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -520,9 +635,12 @@ public interface AtomEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -531,12 +649,32 @@ public interface AtomEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default AtomEndpointBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -546,13 +684,17 @@ public interface AtomEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AtomEndpointBuilder schedulerProperties(String key, Object value) {
             doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
@@ -562,13 +704,16 @@ public interface AtomEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AtomEndpointBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -577,10 +722,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder startScheduler(boolean startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -589,10 +737,14 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -601,10 +753,14 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -614,10 +770,13 @@ public interface AtomEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -627,10 +786,13 @@ public interface AtomEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -640,10 +802,14 @@ public interface AtomEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default AtomEndpointBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -666,10 +832,13 @@ public interface AtomEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -683,9 +852,12 @@ public interface AtomEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -695,9 +867,13 @@ public interface AtomEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -708,9 +884,12 @@ public interface AtomEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -724,9 +903,12 @@ public interface AtomEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -740,50 +922,28 @@ public interface AtomEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder pollStrategy(String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAtomEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -793,10 +953,14 @@ public interface AtomEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtomEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -819,6 +983,7 @@ public interface AtomEndpointBuilderFactory {
          * The URI to the feed to poll.
          * 
          * @param path feedUri
+         * @return the dsl builder
          */
         default AtomEndpointBuilder atom(String path) {
             return AtomEndpointBuilderFactory.endpointBuilder("atom", path);
@@ -839,6 +1004,7 @@ public interface AtomEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path feedUri
+         * @return the dsl builder
          */
         default AtomEndpointBuilder atom(String componentName, String path) {
             return AtomEndpointBuilderFactory.endpointBuilder(componentName, path);

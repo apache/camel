@@ -27,36 +27,36 @@ public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
         arg("range", String.class),
         arg("values", com.google.api.services.sheets.v4.model.ValueRange.class)),
 
-    BATCHCLEAR(
+    BATCH_CLEAR(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchClear.class,
         "batchClear",
         arg("spreadsheetId", String.class),
         arg("batchClearValuesRequest", com.google.api.services.sheets.v4.model.BatchClearValuesRequest.class)),
 
-    BATCHCLEARBYDATAFILTER(
+    BATCH_CLEAR_BY_DATA_FILTER(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchClearByDataFilter.class,
         "batchClearByDataFilter",
         arg("spreadsheetId", String.class),
         arg("content", com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class)),
 
-    BATCHGET(
+    BATCH_GET(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchGet.class,
         "batchGet",
         arg("spreadsheetId", String.class)),
 
-    BATCHGETBYDATAFILTER(
+    BATCH_GET_BY_DATA_FILTER(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchGetByDataFilter.class,
         "batchGetByDataFilter",
         arg("spreadsheetId", String.class),
         arg("batchGetValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest.class)),
 
-    BATCHUPDATE(
+    BATCH_UPDATE(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchUpdate.class,
         "batchUpdate",
         arg("spreadsheetId", String.class),
         arg("batchUpdateValuesRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest.class)),
 
-    BATCHUPDATEBYDATAFILTER(
+    BATCH_UPDATE_BY_DATA_FILTER(
         com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values.BatchUpdateByDataFilter.class,
         "batchUpdateByDataFilter",
         arg("spreadsheetId", String.class),
@@ -81,8 +81,6 @@ public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
         arg("spreadsheetId", String.class),
         arg("range", String.class),
         arg("values", com.google.api.services.sheets.v4.model.ValueRange.class));
-
-    
 
     private final ApiMethod apiMethod;
 

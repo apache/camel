@@ -29,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -63,7 +64,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
     @Test
     public void testFileProducerCharsetUTFOptimized() throws Exception {
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/charset/output.txt");
         assertTrue(file.exists(), "File should exist");
@@ -72,7 +73,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
-        assertTrue(len != -1, "Should read data: " + len);
+        assertNotEquals(-1, len, "Should read data: " + len);
         byte[] data = new byte[len];
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();
@@ -92,8 +93,8 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true")
-                    // no charset so its optimized to write directly
-                    .to("file:target/data/charset/?fileName=output.txt");
+                        // no charset so its optimized to write directly
+                        .to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

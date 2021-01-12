@@ -73,8 +73,6 @@ public enum QueueApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private QueueApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

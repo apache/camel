@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.couchbase;
 
-import java.lang.reflect.Field;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +34,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -67,7 +64,7 @@ public class CouchbaseProducerTest {
 
     @Mock
     private MutationResult response;
-//    Observable<String> myStringObservable
+    //    Observable<String> myStringObservable
 
     @Mock
     private MutationResult of;
@@ -88,31 +85,31 @@ public class CouchbaseProducerTest {
     @Test
     public void testBodyMandatory() throws Exception {
         assertThrows(CouchbaseException.class,
-            () -> producer.process(exchange));
+                () -> producer.process(exchange));
     }
 
     @Test
     public void testPersistToLowerThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, -1, 0));
+                () -> new CouchbaseProducer(endpoint, client, -1, 0));
     }
 
     @Test
     public void testPersistToHigherThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, 5, 0));
+                () -> new CouchbaseProducer(endpoint, client, 5, 0));
     }
 
     @Test
     public void testReplicateToLowerThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, 0, -1));
+                () -> new CouchbaseProducer(endpoint, client, 0, -1));
     }
 
     @Test
     public void testReplicateToHigherThanSupported() throws Exception {
         assertThrows(IllegalArgumentException.class,
-            () -> new CouchbaseProducer(endpoint, client, 0, 4));
+                () -> new CouchbaseProducer(endpoint, client, 0, 4));
     }
 
     @Test
@@ -139,9 +136,5 @@ public class CouchbaseProducerTest {
         producer.process(exchange);
 
         verify(collection).upsert(anyString(), any(), options.capture());
-        Field privateField = UpsertOptions.class.getDeclaredField("expiry");
-        privateField.setAccessible(true);
-        Duration exp = (Duration) privateField.get(options.getValue());
-        assertEquals(expiry, exp.getSeconds());
     }
 }

@@ -8,6 +8,7 @@
 :since: 2.23
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/google-bigquery-sql.adoc[opts=optional]
 //Manually maintained attributes
 :group: Google
 
@@ -43,19 +44,12 @@ for this component:
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
 For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
 
-Google security credentials can be set explicitly via one of the two options:
+Google security credentials can be set explicitly by providing the path to the GCP credentials file location.
 
-* Service Account Email and Service Account Key (PEM format)
-* GCP credentials file location
-
-If both are set, the Service Account Email/Key will take precedence.
-
-Or implicitly, where the connection factory falls back on
+Or they are set implicitly, where the connection factory falls back on
 https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
 
 *OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
-
-Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
 == URI Format
 
@@ -72,7 +66,7 @@ Examples:
 --------------------------------------------------------
 where
 
- * parameters in form $\{name\} are extracted from message headers and formed the translated query
+ * parameters in form $\{name} are extracted from message headers and formed the translated query
  * parameters in form @name are extracted from body or message headers and sent to Google Bigquery
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
@@ -93,10 +87,10 @@ The Google BigQuery Standard SQL component supports 4 options, which are listed 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQueryConnectionFactory
+| *connectionFactory* (producer) | *Autowired* ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used |  | GoogleBigQueryConnectionFactory
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *projectId* (producer) | Google Cloud Project Id |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -120,21 +114,28 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (4 parameters):
+=== Query Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQueryConnectionFactory
+| *connectionFactory* (producer) | *Autowired* ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used |  | GoogleBigQueryConnectionFactory
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 
 
-== Ouput Message Headers
+== Message Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+|`CamelGoogleBigQueryJobId` |`JobId` |A custom `JobId` to use
+|=======================================================================
+
+== Output Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

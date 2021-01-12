@@ -4,8 +4,10 @@ package org.apache.camel.component.ehcache;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -27,8 +29,8 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachemanager":
@@ -59,25 +61,38 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cacheManager", org.ehcache.CacheManager.class);
-        answer.put("cacheManagerConfiguration", org.ehcache.config.Configuration.class);
-        answer.put("configuration", org.ehcache.config.CacheConfiguration.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("configurations", java.util.Map.class);
-        answer.put("createCacheIfNotExist", boolean.class);
-        answer.put("eventFiring", org.ehcache.event.EventFiring.class);
-        answer.put("eventOrdering", org.ehcache.event.EventOrdering.class);
-        answer.put("eventTypes", java.lang.String.class);
-        answer.put("key", java.lang.Object.class);
-        answer.put("keyType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("valueType", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachemanager":
+        case "cacheManager": return org.ehcache.CacheManager.class;
+        case "cachemanagerconfiguration":
+        case "cacheManagerConfiguration": return org.ehcache.config.Configuration.class;
+        case "configuration": return org.ehcache.config.CacheConfiguration.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "configurations": return java.util.Map.class;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": return boolean.class;
+        case "eventfiring":
+        case "eventFiring": return org.ehcache.event.EventFiring.class;
+        case "eventordering":
+        case "eventOrdering": return org.ehcache.event.EventOrdering.class;
+        case "eventtypes":
+        case "eventTypes": return java.lang.String.class;
+        case "key": return java.lang.Object.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "valuetype":
+        case "valueType": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -85,8 +100,8 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachemanager":
@@ -112,6 +127,14 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "valuetype":
         case "valueType": return getOrCreateConfiguration(target).getValueType();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurations": return org.ehcache.config.CacheConfiguration.class;
         default: return null;
         }
     }

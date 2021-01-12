@@ -221,8 +221,9 @@ class URIScanner {
         return answer;
     }
 
-    private static int scanRawToEnd(String str, int start, String tokenStart, char tokenEnd,
-                                    List<Pair<Integer>> answer) {
+    private static int scanRawToEnd(
+            String str, int start, String tokenStart, char tokenEnd,
+            List<Pair<Integer>> answer) {
         // we search the first end bracket to close the RAW token
         // as opposed to parsing query, this doesn't allow the occurrences of end brackets
         // inbetween because this may be used on the host/path parts of URI

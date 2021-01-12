@@ -60,7 +60,7 @@ public class NitriteConsumer extends DefaultConsumer {
 
         @Override
         public void onChange(ChangeInfo changeInfo) {
-            for (ChangedItem changedItem: changeInfo.getChangedItems()) {
+            for (ChangedItem changedItem : changeInfo.getChangedItems()) {
                 Exchange exchange = endpoint.createExchange();
                 Message message = exchange.getMessage();
                 message.setHeader(NitriteConstants.CHANGE_TIMESTAMP, changedItem.getChangeTimestamp());

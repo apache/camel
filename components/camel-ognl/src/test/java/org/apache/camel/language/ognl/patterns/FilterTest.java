@@ -41,14 +41,11 @@ public class FilterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        choice().when().ognl("request.headers.foo == 'bar'").
-                        to("mock:result");
+                from("direct:start").choice().when().ognl("request.headers.foo == 'bar'").to("mock:result");
             }
         };
     }

@@ -37,6 +37,8 @@ public interface Aws2Ec2ComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ec2
+     * 
+     * @return the dsl builder
      */
     static Aws2Ec2ComponentBuilder aws2Ec2() {
         return new Aws2Ec2ComponentBuilderImpl();
@@ -49,26 +51,14 @@ public interface Aws2Ec2ComponentBuilderFactory {
             extends
                 ComponentBuilder<AWS2EC2Component> {
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2Ec2ComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -78,9 +68,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
          * To use a existing configured AmazonEC2Client as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.ec2.Ec2Client</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.ec2.Ec2Client&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonEc2Client the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder amazonEc2Client(
                 software.amazon.awssdk.services.ec2.Ec2Client amazonEc2Client) {
@@ -91,10 +84,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ec2.AWS2EC2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder configuration(
                 org.apache.camel.component.aws2.ec2.AWS2EC2Configuration configuration) {
@@ -112,10 +107,13 @@ public interface Aws2Ec2ComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -129,10 +127,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
          * unmonitorInstances, createTags or deleteTags.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Operations</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.ec2.AWS2EC2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder operation(
                 org.apache.camel.component.aws2.ec2.AWS2EC2Operations operation) {
@@ -142,10 +142,13 @@ public interface Aws2Ec2ComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -154,9 +157,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the EC2 client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -165,9 +171,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the EC2 client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -176,11 +185,14 @@ public interface Aws2Ec2ComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the EC2 client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -193,9 +205,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -204,9 +219,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -216,10 +234,13 @@ public interface Aws2Ec2ComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2Ec2ComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -227,17 +248,24 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2Ec2ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2Ec2ComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -264,7 +292,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoDiscoverClient": getOrCreateConfiguration((AWS2EC2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonEc2Client": getOrCreateConfiguration((AWS2EC2Component) component).setAmazonEc2Client((software.amazon.awssdk.services.ec2.Ec2Client) value); return true;
             case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;
@@ -277,7 +304,7 @@ public interface Aws2Ec2ComponentBuilderFactory {
             case "region": getOrCreateConfiguration((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWS2EC2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((AWS2EC2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((AWS2EC2Component) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

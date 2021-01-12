@@ -1,4 +1,4 @@
-[[cxf-transport-component]]
+[[cxf-transport-other]]
 = CXF Transport Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cxf-transport/src/main/docs/cxf-transport.adoc
@@ -7,6 +7,7 @@
 :description: Camel Transport for Apache CXF
 :since: 2.8
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/cxf-transport.adoc[opts=optional]
 
 *Since Camel {since}*
 

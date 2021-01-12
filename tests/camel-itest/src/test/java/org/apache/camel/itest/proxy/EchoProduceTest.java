@@ -40,7 +40,7 @@ public class EchoProduceTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .transform().simple("Hello ${body}");
+                        .transform().simple("Hello ${body}");
             }
         };
     }

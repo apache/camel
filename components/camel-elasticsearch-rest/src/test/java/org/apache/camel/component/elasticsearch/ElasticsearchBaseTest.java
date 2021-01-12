@@ -22,32 +22,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerService;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.utility.Base58;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
+public class ElasticsearchBaseTest extends CamelTestSupport {
 
-    public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.3.2";
+    public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.8.0";
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
-    
-    public static GenericContainer elasticsearch = new GenericContainer<>(ELASTICSEARCH_IMAGE)
-        .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
-        .withEnv("discovery.type", "single-node")
-        .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
-        .waitingFor(new HttpWaitStrategy()
-                .forPort(ELASTICSEARCH_DEFAULT_PORT)
-                .forStatusCodeMatching(response -> response == HttpURLConnection.HTTP_OK || response == HttpURLConnection.HTTP_UNAUTHORIZED)
-                .withStartupTimeout(Duration.ofMinutes(2)));
+
+    @RegisterExtension
+    public static ElasticSearchLocalContainerService service;
 
     protected static String clusterName = "docker-cluster";
     protected static RestClient restClient;
@@ -55,15 +50,25 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBaseTest.class);
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return elasticsearch;
+    static {
+        service = new ElasticSearchLocalContainerService();
+
+        service.getContainer()
+                .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
+                .withEnv("discovery.type", "single-node")
+                .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
+                .waitingFor(new HttpWaitStrategy()
+                        .forPort(ELASTICSEARCH_DEFAULT_PORT)
+                        .forStatusCodeMatching(response -> response == HttpURLConnection.HTTP_OK
+                                || response == HttpURLConnection.HTTP_UNAUTHORIZED)
+                        .withStartupTimeout(Duration.ofMinutes(2)));
     }
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        HttpHost host = new HttpHost(elasticsearch.getContainerIpAddress(),  elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
+        HttpHost host
+                = new HttpHost(service.getElasticSearchHost(), service.getPort());
         client = new RestHighLevelClient(RestClient.builder(host));
         restClient = client.getLowLevelClient();
     }
@@ -79,7 +84,7 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
-        elasticsearchComponent.setHostAddresses(elasticsearch.getContainerIpAddress() + ":" + elasticsearch.getMappedPort(ELASTICSEARCH_DEFAULT_PORT));
+        elasticsearchComponent.setHostAddresses(service.getHttpHostAddress());
 
         CamelContext context = super.createCamelContext();
         context.addComponent("elasticsearch-rest", elasticsearchComponent);
@@ -88,10 +93,8 @@ public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
     }
 
     /**
-     * As we don't delete the {@code target/data} folder for <b>each</b> test
-     * below (otherwise they would run much slower), we need to make sure
-     * there's no side effect of the same used data through creating unique
-     * indexes.
+     * As we don't delete the {@code target/data} folder for <b>each</b> test below (otherwise they would run much
+     * slower), we need to make sure there's no side effect of the same used data through creating unique indexes.
      */
     Map<String, String> createIndexedData(String... additionalPrefixes) {
         String prefix = createPrefix();

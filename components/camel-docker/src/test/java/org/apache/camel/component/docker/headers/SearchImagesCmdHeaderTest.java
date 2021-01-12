@@ -48,7 +48,6 @@ public class SearchImagesCmdHeaderTest extends BaseDockerHeaderTest<SearchImages
 
         Mockito.verify(dockerClient, Mockito.times(1)).searchImagesCmd(eq(term));
 
-
     }
 
     @Override

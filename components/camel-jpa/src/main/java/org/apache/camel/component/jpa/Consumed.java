@@ -23,13 +23,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation to mark a method to be invoked when an entity bean has been successfully processed
- * by a Camel consumer and when the routing is done; so that it can be updated in some way to remove it from the query set.
+ * An annotation to mark a method to be invoked when an entity bean has been successfully processed by a Camel consumer
+ * and when the routing is done; so that it can be updated in some way to remove it from the query set.
  * <p/>
- * For example a method may be marked to set an active flag to false or to update some status value to the next step in a workflow
+ * For example a method may be marked to set an active flag to false or to update some status value to the next step in
+ * a workflow
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.METHOD })
+@Target({ ElementType.METHOD })
 public @interface Consumed {
 }

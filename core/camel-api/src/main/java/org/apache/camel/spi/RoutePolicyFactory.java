@@ -27,10 +27,11 @@ public interface RoutePolicyFactory {
     /**
      * Creates a new {@link org.apache.camel.spi.RoutePolicy} which will be assigned to the given route.
      *
-     * @param camelContext the camel context
-     * @param routeId      the route id
-     * @param route        the route definition
-     * @return the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy for this route
+     * @param  camelContext the camel context
+     * @param  routeId      the route id
+     * @param  route        the route definition
+     * @return              the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy
+     *                      for this route
      */
     RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route);
 }

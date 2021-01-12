@@ -34,23 +34,24 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerMessageTest extends CamelTestSupport {
     private static final String TEST_MESSAGE = "Hello World!";
-    
+
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"";
 
     private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-            + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
-            + "</ns1:echoResponse></soap:Body></soap:Envelope>";
-    private static final String ECHO_BOOLEAN_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-            + "<soap:Body><ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
-            + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
+                                                + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+                                                + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
+                                                + "</ns1:echoResponse></soap:Body></soap:Envelope>";
+    private static final String ECHO_BOOLEAN_RESPONSE
+            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+              + "<soap:Body><ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+              + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
+              + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
 
     protected final String simpleEndpointAddress = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
-    
+                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -65,9 +66,9 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
                         String request = in.getBody(String.class);
                         // Send the response message back
                         if (request.indexOf(ECHO_METHOD) > 0) {
-                            exchange.getOut().setBody(ECHO_RESPONSE);
+                            exchange.getMessage().setBody(ECHO_RESPONSE);
                         } else { // echoBoolean call
-                            exchange.getOut().setBody(ECHO_BOOLEAN_RESPONSE);
+                            exchange.getMessage().setBody(ECHO_BOOLEAN_RESPONSE);
                         }
 
                     }
@@ -75,7 +76,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
             }
         };
     }
-    
+
     @Test
     public void testInvokingServiceFromClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
@@ -91,9 +92,8 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
 
         Boolean bool = client.echoBoolean(Boolean.TRUE);
         assertNotNull(bool, "The result should not be null");
-        assertEquals(bool.toString(), "true", "We should get the echo boolean result from router");
+        assertEquals("true", bool.toString(), "We should get the echo boolean result from router");
 
     }
-
 
 }

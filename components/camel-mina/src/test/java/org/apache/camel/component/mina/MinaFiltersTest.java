@@ -40,12 +40,14 @@ public class MinaFiltersTest extends BaseMinaTest {
 
     @Test
     public void testFilterListRef() throws Exception {
-        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters", getPort()));
+        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters",
+                getPort()));
     }
 
     @Test
     public void testFilterElementRef() throws Exception {
-        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter", getPort()));
+        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter",
+                getPort()));
     }
 
     @Override

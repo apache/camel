@@ -4,8 +4,10 @@ package org.apache.camel.component.xslt.saxon;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.xslt.XsltEndpointConfigurer;
 
@@ -30,12 +32,16 @@ public class XsltSaxonEndpointConfigurer extends XsltEndpointConfigurer implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("allowStAX", boolean.class);
-        answer.put("saxonConfiguration", net.sf.saxon.Configuration.class);
-        answer.put("saxonExtensionFunctions", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowstax":
+        case "allowStAX": return boolean.class;
+        case "saxonconfiguration":
+        case "saxonConfiguration": return net.sf.saxon.Configuration.class;
+        case "saxonextensionfunctions":
+        case "saxonExtensionFunctions": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

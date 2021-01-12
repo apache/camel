@@ -227,7 +227,7 @@ abstract class PropertiesValidationResult implements Serializable {
         }
     }
 
-    public void addDefaultValue(String name, String value)  {
+    public void addDefaultValue(String name, String value) {
         if (defaultValues == null) {
             defaultValues = new LinkedHashMap<>();
         }

@@ -53,9 +53,9 @@ And an example in XML
   <!-- throttle 3 messages per 10 sec -->
   <throttle timePeriodMillis="10000">
     <constant>3</constant>
-    <to uri="log:result"/>
-    <to uri="mock:result"/>
   </throttle>
+  <to uri="log:result"/>
+  <to uri="mock:result"/>
 </route>
 ----
 
@@ -69,9 +69,9 @@ Since we use an Expression you can adjust this value at runtime, for example you
   <throttle timePeriodMillis="500">
     <!-- use a header to determine how many messages to throttle per 0.5 sec -->
     <header>throttleValue</header>
-    <to uri="log:result"/>
-    <to uri="mock:result"/>
   </throttle>
+  <to uri="log:result"/>
+  <to uri="mock:result"/>
 </route>
 ----
 

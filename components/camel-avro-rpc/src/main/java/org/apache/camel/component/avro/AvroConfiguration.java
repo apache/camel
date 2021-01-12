@@ -31,11 +31,14 @@ import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SE
 @UriParams
 public class AvroConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private AvroTransport transport;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private int port;
     @UriPath
     private String messageName;
@@ -54,7 +57,7 @@ public class AvroConfiguration implements Cloneable {
 
     public AvroConfiguration copy() {
         try {
-            AvroConfiguration answer = (AvroConfiguration)clone();
+            AvroConfiguration answer = (AvroConfiguration) clone();
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -66,9 +69,9 @@ public class AvroConfiguration implements Cloneable {
 
         setHost(uri.getHost());
         setPort(uri.getPort());
-        
+
         if ((uri.getPath() != null)
-            && (StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1)) {
+                && (StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1)) {
             String path = StringUtils.substringAfter(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR);
             if (!path.contains(AVRO_MESSAGE_NAME_SEPARATOR)) {
                 setMessageName(path);
@@ -76,7 +79,7 @@ public class AvroConfiguration implements Cloneable {
                 throw new IllegalArgumentException("Unrecognized Avro message name: " + path + " for uri: " + uri);
             }
         }
-        
+
         setUriAuthority(uri.getAuthority());
     }
 
@@ -180,7 +183,8 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
+     * If protocol object provided is reflection protocol. Should be used only with protocol parameter because for
+     * protocolClassName protocol type will be auto detected
      */
     public void setReflectionProtocol(boolean isReflectionProtocol) {
         this.reflectionProtocol = isReflectionProtocol;
@@ -191,7 +195,8 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
+     * If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter
+     * for the message
      */
     public void setSingleParameter(boolean singleParameter) {
         this.singleParameter = singleParameter;

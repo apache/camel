@@ -71,8 +71,8 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         mock.assertIsSatisfied();
 
         Exchange out = mock.assertExchangeReceived(0);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
-        ((MailMessage)out.getIn()).getMessage().writeTo(baos);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage) out.getIn()).getMessage().getSize());
+        ((MailMessage) out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
         assertTrue(dumpedMessage.indexOf(expectString) > 0, "There should have the " + expectString);
         log.trace("multipart alternative: \n{}", dumpedMessage);

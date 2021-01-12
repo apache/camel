@@ -53,7 +53,7 @@ public class AbstractEndpointBuilder {
 
         Map<String, Object> remaining = new LinkedHashMap<>();
         // we should not bind complex objects to registry as we create the endpoint via the properties as-is
-        NormalizedEndpointUri uri = computeUri(remaining, context, false);
+        NormalizedEndpointUri uri = computeUri(remaining, context, false, true);
         ExtendedCamelContext ecc = (ExtendedCamelContext) context;
         Endpoint endpoint = ecc.getEndpoint(uri, properties);
         if (endpoint == null) {
@@ -70,10 +70,11 @@ public class AbstractEndpointBuilder {
     }
 
     public String getUri() {
-        return computeUri(new LinkedHashMap<>(), null, false).getUri();
+        return computeUri(new LinkedHashMap<>(), null, false, true).getUri();
     }
 
-    protected NormalizedUri computeUri(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry) {
+    protected NormalizedUri computeUri(
+            Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry, boolean encode) {
         NormalizedUri answer;
 
         // sort parameters so it can be regarded as normalized
@@ -99,8 +100,13 @@ public class AbstractEndpointBuilder {
             answer = new NormalizedUri(targetScheme + "://" + targetPath);
         } else {
             try {
-                String query = URISupport.createQueryString(params);
-                answer = new NormalizedUri(targetScheme + "://" + targetPath + "?" + query);
+                // build query string from parameters
+                String query = URISupport.createQueryString(params, encode);
+                if (targetPath.contains("?")) {
+                    answer = new NormalizedUri(targetScheme + "://" + targetPath + "&" + query);
+                } else {
+                    answer = new NormalizedUri(targetScheme + "://" + targetPath + "?" + query);
+                }
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -109,8 +115,9 @@ public class AbstractEndpointBuilder {
         return answer;
     }
 
-    private static void computeProperties(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry,
-                                          Map<String, Object> params, Map<String, Object> properties) {
+    private static void computeProperties(
+            Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry,
+            Map<String, Object> params, Map<String, Object> properties) {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
@@ -158,7 +165,9 @@ public class AbstractEndpointBuilder {
 
     public Expression expr(CamelContext camelContext) {
         // need to bind complex properties so we can return an uri that includes these parameters too
-        NormalizedEndpointUri uri = computeUri(new LinkedHashMap<>(), camelContext, true);
+        // do not encode computed uri as we want to preserve simple expressions, as this is used
+        // by ToDynamic which builds the uri string un-encoded for simple language parser to be able to parse
+        NormalizedEndpointUri uri = computeUri(new LinkedHashMap<>(), camelContext, true, false);
         return SimpleBuilder.simple(uri.getUri());
     }
 

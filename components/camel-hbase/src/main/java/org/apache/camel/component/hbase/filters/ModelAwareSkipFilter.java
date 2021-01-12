@@ -24,7 +24,6 @@ import org.apache.hadoop.hbase.filter.SkipFilter;
 
 public class ModelAwareSkipFilter extends SkipFilter implements ModelAwareFilter<SkipFilter> {
 
-
     public ModelAwareSkipFilter(Filter filter) {
         super(filter);
     }

@@ -19,8 +19,6 @@ package org.apache.camel.dataformat.tagsoup;
 import java.io.File;
 import java.util.List;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,11 +53,11 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             try {
                 Message in = exchange.getIn();
-                Node tidyMarkup = in.getBody(Node.class);
+                String tidyMarkup = in.getBody(String.class);
 
                 log.debug("Received " + tidyMarkup);
                 assertNotNull(tidyMarkup, "Should be able to convert received body to a string");
-                
+
             } catch (Exception e) {
                 fail("Failed to convert the resulting String to XML: " + e.getLocalizedMessage());
             }
@@ -70,7 +68,7 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").unmarshal().tidyMarkup().to("mock:result");
+                from("direct:start").unmarshal().tidyMarkup(String.class).to("mock:result");
             }
         };
     }

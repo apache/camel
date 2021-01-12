@@ -57,10 +57,8 @@ public class ProcessorDefinitionDslTest extends ContextTestSupport {
                         .setBody(constant("body"))
                         .setHeader("next", constant("m3"));
 
-
             }
         };
     }
 
-   
 }

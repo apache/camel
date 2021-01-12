@@ -35,8 +35,8 @@ public class KeyValueHolderTest {
         KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 123);
 
-        assertTrue(foo1.equals(foo2), "Should be equals");
-        assertTrue(foo1.hashCode() == foo2.hashCode(), "Hash code should be equal");
+        assertEquals(foo2, foo1, "Should be equals");
+        assertEquals(foo2.hashCode(), foo1.hashCode(), "Hash code should be equal");
     }
 
     @Test
@@ -44,8 +44,8 @@ public class KeyValueHolderTest {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 678);
 
-        assertFalse(foo.equals(bar), "Should not be equals");
-        assertFalse(foo.hashCode() == bar.hashCode(), "Hash code should not be equal");
+        assertNotEquals(bar, foo, "Should not be equals");
+        assertNotEquals(bar.hashCode(), foo.hashCode(), "Hash code should not be equal");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class KeyValueHolderTest {
         KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 678);
 
-        assertFalse(foo1.equals(foo2), "Should not be equals");
-        assertFalse(foo1.hashCode() == foo2.hashCode(), "Hash code should not be equal");
+        assertNotEquals(foo2, foo1, "Should not be equals");
+        assertNotEquals(foo2.hashCode(), foo1.hashCode(), "Hash code should not be equal");
     }
 
     @Test
@@ -62,8 +62,8 @@ public class KeyValueHolderTest {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 123);
 
-        assertFalse(foo.equals(bar), "Should not be equals");
-        assertFalse(foo.hashCode() == bar.hashCode(), "Hash code should not be equal");
+        assertNotEquals(bar, foo, "Should not be equals");
+        assertNotEquals(bar.hashCode(), foo.hashCode(), "Hash code should not be equal");
     }
 
     @Test

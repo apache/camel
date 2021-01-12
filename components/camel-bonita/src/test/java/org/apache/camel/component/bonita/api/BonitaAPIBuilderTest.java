@@ -25,6 +25,6 @@ public class BonitaAPIBuilderTest {
     @Test
     public void testNullBuilderInput() {
         assertThrows(IllegalArgumentException.class,
-            () -> BonitaAPIBuilder.build(null));
+                () -> BonitaAPIBuilder.build(null));
     }
 }

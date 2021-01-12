@@ -33,8 +33,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for Java 8 {@link CompletableFuture} as return type on a bean being
- * called from a Camel route.
+ * Unit test for Java 8 {@link CompletableFuture} as return type on a bean being called from a Camel route.
  */
 public class BeanInvokeAsyncTest extends ContextTestSupport {
 
@@ -84,7 +83,8 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         runTestSendBody(m -> m.expectedBodiesReceived(expectedBody), sentBody, processor);
     }
 
-    private void runTestSendBody(Consumer<MockEndpoint> mockPreparer, String sentBody, Function<String, String> processor) throws Exception {
+    private void runTestSendBody(Consumer<MockEndpoint> mockPreparer, String sentBody, Function<String, String> processor)
+            throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
         mockPreparer.accept(mock);

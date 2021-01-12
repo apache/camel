@@ -43,7 +43,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
                 from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Hi " + in);
+                        exchange.getMessage().setBody("Hi " + in);
                     }
                 });
             }
@@ -86,7 +86,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
                 from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + in);
+                        exchange.getMessage().setBody("Bye " + in);
                     }
                 });
             }

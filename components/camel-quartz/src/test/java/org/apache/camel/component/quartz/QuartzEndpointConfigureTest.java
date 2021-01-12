@@ -35,7 +35,8 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test
     public void testConfigureGroupAndName() throws Exception {
-        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=1000");
+        QuartzEndpoint endpoint
+                = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=1000");
 
         Scheduler scheduler = endpoint.getComponent().getScheduler();
         TriggerKey triggerKey = endpoint.getTriggerKey();
@@ -80,7 +81,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
-        CronTrigger cronTrigger = (CronTrigger)trigger;
+        CronTrigger cronTrigger = (CronTrigger) trigger;
         assertEquals("0 0/5 12-18 ? * MON-FRI", cronTrigger.getCronExpression(), "cron expression");
     }
 
@@ -99,7 +100,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
-        CronTrigger cronTrigger = (CronTrigger)trigger;
+        CronTrigger cronTrigger = (CronTrigger) trigger;
         assertEquals("0 0 * * * ?", cronTrigger.getCronExpression(), "cron expression");
     }
 
@@ -144,7 +145,7 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
-        CronTrigger cronTrigger = (CronTrigger)trigger;
+        CronTrigger cronTrigger = (CronTrigger) trigger;
         assertEquals("0 0 * * * ?", cronTrigger.getCronExpression(), "cron expression");
     }
 

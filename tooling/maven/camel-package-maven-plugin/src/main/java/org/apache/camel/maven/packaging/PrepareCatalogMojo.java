@@ -33,7 +33,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,15 +59,15 @@ import org.apache.maven.project.MavenProjectHelper;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
- * Prepares the camel catalog to include component, data format, and eip
- * descriptors, and generates a report.
+ * Prepares the camel catalog to include component, data format, and eip descriptors, and generates a report.
  */
 @Mojo(name = "prepare-catalog", threadSafe = true)
 public class PrepareCatalogMojo extends AbstractMojo {
 
-    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common"};
-
-    private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
+    private static final String[] EXCLUDE_DOC_FILES
+            = {
+                    "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
+                    "camel-debezium-common" };
 
     private static final int UNUSED_LABELS_WARN = 15;
 
@@ -79,8 +78,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * Whether to validate if the components, data formats, and languages are
-     * properly documented and have all the needed details.
+     * Whether to validate if the components, data formats, and languages are properly documented and have all the
+     * needed details.
      */
     @Parameter(defaultValue = "true")
     protected Boolean validate;
@@ -152,6 +151,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File coreDir;
 
     /**
+     * The camel-model directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-model")
+    protected File modelDir;
+
+    /**
      * The camel-base directory
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-base")
@@ -212,10 +217,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -223,13 +227,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allJsonFiles = new TreeSet<>();
             allPropertiesFiles = new TreeSet<>();
 
-            Stream.concat(list(componentsDir.toPath()), Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
-                    .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath).filter(dir -> Files.isDirectory(dir.resolve("src")))
+            Stream.concat(list(componentsDir.toPath()),
+                    Stream.of(coreDir.toPath(), modelDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(),
+                            springDir.toPath()))
+                    .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath)
+                    .filter(dir -> Files.isDirectory(dir.resolve("src")))
                     .map(p -> p.resolve("target/classes")).flatMap(PackageHelper::walk).forEach(p -> {
                         String f = p.getFileName().toString();
                         if (f.endsWith(PackageHelper.JSON_SUFIX)) {
                             allJsonFiles.add(p);
-                        } else if (f.equals("component.properties") || f.equals("dataformat.properties") || f.equals("language.properties") || f.equals("other.properties")) {
+                        } else if (f.equals("component.properties") || f.equals("dataformat.properties")
+                                || f.equals("language.properties") || f.equals("other.properties")) {
                             allPropertiesFiles.add(p);
                         }
                     });
@@ -250,7 +258,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     protected void executeModel() throws Exception {
-        Path coreDir = this.coreDir.toPath();
+        Path coreDir = this.modelDir.toPath();
         Path springDir = this.springDir.toPath();
         Path modelsOutDir = this.modelsOutDir.toPath();
 
@@ -268,7 +276,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Path coreDirTarget = coreDir.resolve("target/classes/org/apache/camel/model");
         Path springTarget1 = springDir.resolve("target/classes/org/apache/camel/spring");
         Path springTarget2 = springDir.resolve("target/classes/org/apache/camel/core/xml");
-        jsonFiles = allJsonFiles.stream().filter(p -> p.startsWith(coreDirTarget) || p.startsWith(springTarget1) || p.startsWith(springTarget2))
+        jsonFiles = allJsonFiles.stream()
+                .filter(p -> p.startsWith(coreDirTarget) || p.startsWith(springTarget1) || p.startsWith(springTarget2))
                 .collect(Collectors.toCollection(TreeSet::new));
         getLog().info("Found " + jsonFiles.size() + " model json files");
 
@@ -284,7 +293,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (Path file : jsonFiles) {
             // check if we have a label as we want the eip to include labels
-            EipModel model = (EipModel)allModels.get(file);
+            EipModel model = (EipModel) allModels.get(file);
 
             String name = asComponentName(file);
 
@@ -300,14 +309,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
 
             // check all the properties if they have description
-            if (model.getOptions().stream().filter(option -> !"outputs".equals(option.getName()) && !"transforms".equals(option.getName())).map(BaseOptionModel::getDescription)
+            if (model.getOptions().stream()
+                    .filter(option -> !"outputs".equals(option.getName()) && !"transforms".equals(option.getName()))
+                    .map(BaseOptionModel::getDescription)
                     .anyMatch(Strings::isNullOrEmpty)) {
                 missingJavaDoc.add(file);
             }
         }
 
         Path all = modelsOutDir.resolve("../models.properties");
-        Set<String> modelNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> modelNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", modelNames) + "\n");
 
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
@@ -315,8 +327,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     // CHECKSTYLE:OFF
     protected Set<String> executeComponents() throws Exception {
-        Path coreDir = this.coreDir.toPath();
-        Path componentsDir = this.componentsDir.toPath();
         Path componentsOutDir = this.componentsOutDir.toPath();
 
         getLog().info("Copying all Camel component json descriptors");
@@ -548,6 +558,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         jsonFiles = allJsonFiles.stream().filter(p -> {
             Path m = getModule(p);
             switch (m.getFileName().toString()) {
+                case "camel-core-model":
                 case "camel-core-xml":
                 case "camel-box":
                 case "camel-http-base":
@@ -560,6 +571,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-salesforce":
                 case "camel-fhir":
                 case "camel-debezium-common":
+                case "camel-vertx-kafka":
                     return false;
                 default:
                     return true;
@@ -649,14 +661,20 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> duplicateAdocFiles = new TreeSet<>();
 
         // find all camel maven modules
-        Stream.concat(list(componentsDir.toPath()).filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
+        Stream.concat(list(componentsDir.toPath()).filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
                 Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
                 .forEach(dir -> {
                     List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs")).filter(f -> f.getFileName().toString().endsWith(".adoc")).collect(Collectors.toList());
                     if (l.isEmpty()) {
-                        missingAdocFiles.add(dir);
+                        String n = dir.getFileName().toString();
+                        boolean isDir = dir.toFile().isDirectory();
+                        boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common");
+                        if (valid) {
+                            missingAdocFiles.add(dir);
+                        }
+                    } else {
+                        adocFiles.addAll(l);
                     }
-                    adocFiles.addAll(l);
                 });
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
@@ -1081,7 +1099,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
             try {
                 BasicFileAttributes af = Files.readAttributes(file, BasicFileAttributes.class);
                 BasicFileAttributes at = Files.readAttributes(to, BasicFileAttributes.class);
-                if (af.isRegularFile() && at.isRegularFile() && af.size() == at.size() && af.lastModifiedTime().compareTo(at.lastAccessTime()) < 0) {
+                if (af.isRegularFile() && at.isRegularFile() && af.size() == at.size()
+                        && af.lastModifiedTime().compareTo(at.lastAccessTime()) < 0) {
                     // if same size and not modified, assume the same
                     return;
                 }
@@ -1139,6 +1158,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 return dir.resolve("camel-servicenow-component");
             case "camel-fhir":
                 return dir.resolve("camel-fhir-component");
+            case "camel-vertx-kafka":
+                return dir.resolve("camel-vertx-kafka-component");
             default:
                 return dir;
         }

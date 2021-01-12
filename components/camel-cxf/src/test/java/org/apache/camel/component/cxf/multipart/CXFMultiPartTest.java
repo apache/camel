@@ -36,15 +36,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CXFMultiPartTest extends CamelTestSupport {
-    public static final QName SERVICE_NAME = new QName("http://camel.apache.org/cxf/multipart",
-                                                      "MultiPartInvokeService");
+    public static final QName SERVICE_NAME = new QName(
+            "http://camel.apache.org/cxf/multipart",
+            "MultiPartInvokeService");
 
-    public static final QName ROUTE_PORT_NAME = new QName("http://camel.apache.org/cxf/multipart",
-                                                         "MultiPartInvokePort");
+    public static final QName ROUTE_PORT_NAME = new QName(
+            "http://camel.apache.org/cxf/multipart",
+            "MultiPartInvokePort");
     protected static Endpoint endpoint;
     protected AbstractXmlApplicationContext applicationContext;
 
@@ -68,7 +70,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
         Object implementor = new MultiPartInvokeImpl();
         String address = "http://localhost:" + CXFTestSupport.getPort1() + "/CXFMultiPartTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
-       
+
     }
 
     @AfterAll
@@ -80,14 +82,14 @@ public class CXFMultiPartTest extends CamelTestSupport {
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
-        String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3() 
+        String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3()
                                               + "/CXFMultiPartTest/CamelContext/RouterPort",
-                                              "in0", "in1");
+                "in0", "in1");
         assertNotNull(reply, "No response received from service");
-        assertTrue(reply.equals("in0 in1"));
+        assertEquals("in0 in1", reply);
 
         assertNotNull(reply, "No response received from service");
-        assertTrue(reply.equals("in0 in1"));
+        assertEquals("in0 in1", reply);
 
     }
 
@@ -101,13 +103,12 @@ public class CXFMultiPartTest extends CamelTestSupport {
         InE e1 = new ObjectFactory().createInE();
         e0.setV(in0);
         e1.setV(in1);
-        
+
         javax.xml.ws.Holder<InE> h = new javax.xml.ws.Holder<>();
         javax.xml.ws.Holder<InE> h1 = new javax.xml.ws.Holder<>();
         multiPartClient.foo(e0, e1, h, h1);
         return h.value.getV() + " " + h1.value.getV();
     }
-   
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

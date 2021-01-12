@@ -61,7 +61,6 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         assertEquals("OK", out.getMessage().getBody(String.class));
         assertEquals("yes", out.getMessage().getHeader("bar"));
 
-
     }
 
     @Override

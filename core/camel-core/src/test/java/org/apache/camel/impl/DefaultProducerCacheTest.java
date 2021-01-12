@@ -29,12 +29,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.engine.DefaultProducerCache;
-import org.apache.camel.impl.engine.ProducerServicePool;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.cache.DefaultProducerCache;
+import org.apache.camel.support.cache.ProducerServicePool;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -230,7 +230,8 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private class MyServicePool extends ProducerServicePool {
 
-        public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator, Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
+        public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
+                             Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
             super(creator, getEndpoint, capacity);
         }
 

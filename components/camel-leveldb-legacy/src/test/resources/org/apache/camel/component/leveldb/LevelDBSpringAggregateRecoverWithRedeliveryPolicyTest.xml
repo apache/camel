@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <!-- START SNIPPET: e1 -->
+
+    <!-- a persistent aggregation repository using camel-leveldb -->
+    <bean id="repo" class="org.apache.camel.component.leveldb.LevelDBAggregationRepository">
+        <!-- store the repo in the leveldb.dat file -->
+        <property name="persistentFileName" value="target/data/leveldb.dat"/>
+        <!-- and use repo2 as the repository name -->
+        <property name="repositoryName" value="repo2"/>
+        <!-- scan 2 times per second -->
+        <property name="recoveryInterval" value="500"/>
+        <!-- enable recovery -->
+        <property name="useRecovery" value="true"/>
+    </bean>
+
+    <!-- aggregate the messages using this strategy -->
+    <bean id="myAggregatorStrategy" class="org.apache.camel.component.leveldb.LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest$MyAggregationStrategy"/>
+
+    <!-- and use this processor to simulate errors -->
+    <bean id="myFailProcessor" class="org.apache.camel.component.leveldb.LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest$MyFailProcessor"/>
+
+    <!-- this is the camel routes -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <from uri="direct:start"/>
+            <!-- aggregate using our strategy and leveldb repo, and complete when we have 5 messages aggregated -->
+            <aggregate strategyRef="myAggregatorStrategy" aggregationRepositoryRef="repo" completionSize="5">
+                <!-- correlate by header with the key id -->
+                <correlationExpression><header>id</header></correlationExpression>
+                <!-- send aggregated messages out here -->
+                <to uri="mock:aggregated"/>
+                <!-- this processor will fail the first 2 attempts -->
+                <process ref="myFailProcessor"/>
+                <!-- at the 3rd attempt we should be able to send to this mock result endpoint -->
+                <to uri="mock:result"/>
+            </aggregate>
+        </route>
+
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
+
+</beans>

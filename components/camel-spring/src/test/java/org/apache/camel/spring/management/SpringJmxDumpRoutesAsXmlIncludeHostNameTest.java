@@ -36,7 +36,8 @@ public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSuppo
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxDumpRouteAsXmlIncludeHostNameTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringJmxDumpRouteAsXmlIncludeHostNameTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {

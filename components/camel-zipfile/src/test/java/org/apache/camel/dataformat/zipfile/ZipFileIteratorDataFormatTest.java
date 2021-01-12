@@ -53,14 +53,14 @@ public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:zip")
-                    .setHeader(Exchange.FILE_NAME, constant("report.txt"))
-                    .marshal().zipFile()
-                    .to("file:target/output")
-                    .to("mock:result");
+                        .setHeader(Exchange.FILE_NAME, constant("report.txt"))
+                        .marshal().zipFile()
+                        .to("file:target/output")
+                        .to("mock:result");
 
                 from("direct:unzip")
-                    .unmarshal().zipFile()
-                    .to("mock:unzip");
+                        .unmarshal().zipFile()
+                        .to("mock:unzip");
             }
         };
     }

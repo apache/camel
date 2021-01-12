@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-
 public class User {
 
     private int id;

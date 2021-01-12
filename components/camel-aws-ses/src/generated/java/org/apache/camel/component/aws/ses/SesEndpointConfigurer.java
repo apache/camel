@@ -4,8 +4,10 @@ package org.apache.camel.component.aws.ses;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -25,8 +27,6 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonSESClient": target.getConfiguration().setAmazonSESClient(property(camelContext, com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -50,24 +50,34 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonSESClient", com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("replyToAddresses", java.util.List.class);
-        answer.put("returnPath", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("to", java.util.List.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonsesclient":
+        case "amazonSESClient": return com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "replytoaddresses":
+        case "replyToAddresses": return java.util.List.class;
+        case "returnpath":
+        case "returnPath": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "subject": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "to": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -80,8 +90,6 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonSESClient": return target.getConfiguration().getAmazonSESClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "proxyhost":
@@ -100,6 +108,16 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "subject": return target.getConfiguration().getSubject();
         case "synchronous": return target.isSynchronous();
         case "to": return target.getConfiguration().getTo();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "replytoaddresses":
+        case "replyToAddresses": return java.lang.String.class;
+        case "to": return java.lang.String.class;
         default: return null;
         }
     }

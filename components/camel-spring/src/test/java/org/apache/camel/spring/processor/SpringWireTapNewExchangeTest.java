@@ -29,4 +29,3 @@ public class SpringWireTapNewExchangeTest extends WireTapNewExchangeTest {
     }
 
 }
-

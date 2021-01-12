@@ -4,8 +4,10 @@ package org.apache.camel.component.corda;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CordaEndpoint target = (CordaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "contractstateclass":
@@ -51,33 +51,41 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("contractStateClass", java.lang.Class.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("flowLogicArguments", java.lang.Object[].class);
-        answer.put("flowLogicClass", java.lang.Class.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("pageSpecification", net.corda.core.node.services.vault.PageSpecification.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("processSnapshot", boolean.class);
-        answer.put("queryCriteria", net.corda.core.node.services.vault.QueryCriteria.class);
-        answer.put("sort", net.corda.core.node.services.vault.Sort.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "contractstateclass":
+        case "contractStateClass": return java.lang.Class.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flowlogicarguments":
+        case "flowLogicArguments": return java.lang.Object[].class;
+        case "flowlogicclass":
+        case "flowLogicClass": return java.lang.Class.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "pagespecification":
+        case "pageSpecification": return net.corda.core.node.services.vault.PageSpecification.class;
+        case "password": return java.lang.String.class;
+        case "processsnapshot":
+        case "processSnapshot": return boolean.class;
+        case "querycriteria":
+        case "queryCriteria": return net.corda.core.node.services.vault.QueryCriteria.class;
+        case "sort": return net.corda.core.node.services.vault.Sort.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CordaEndpoint target = (CordaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "contractstateclass":
@@ -103,6 +111,17 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sort": return target.getConfiguration().getSort();
         case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contractstateclass":
+        case "contractStateClass": return net.corda.core.contracts.ContractState.class;
+        case "flowlogicclass":
+        case "flowLogicClass": return net.corda.core.flows.FlowLogic.class;
         default: return null;
         }
     }

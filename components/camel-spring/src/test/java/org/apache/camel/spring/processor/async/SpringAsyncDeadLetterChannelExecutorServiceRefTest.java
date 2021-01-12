@@ -29,7 +29,8 @@ public class SpringAsyncDeadLetterChannelExecutorServiceRefTest extends SpringTe
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/async/SpringAsyncDeadLetterChannelExecutorServiceRefTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/async/SpringAsyncDeadLetterChannelExecutorServiceRefTest.xml");
     }
 
     @Test

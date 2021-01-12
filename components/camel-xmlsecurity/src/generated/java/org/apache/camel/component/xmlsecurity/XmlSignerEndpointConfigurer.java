@@ -4,8 +4,10 @@ package org.apache.camel.component.xmlsecurity;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "addKeyInfoReference": target.getConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "canonicalizationmethod":
         case "canonicalizationMethod": target.getConfiguration().setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
         case "clearheaders":
@@ -80,38 +80,64 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("addKeyInfoReference", java.lang.Boolean.class);
-        answer.put("baseUri", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("canonicalizationMethod", javax.xml.crypto.AlgorithmMethod.class);
-        answer.put("clearHeaders", java.lang.Boolean.class);
-        answer.put("contentObjectId", java.lang.String.class);
-        answer.put("contentReferenceType", java.lang.String.class);
-        answer.put("contentReferenceUri", java.lang.String.class);
-        answer.put("cryptoContextProperties", java.util.Map.class);
-        answer.put("digestAlgorithm", java.lang.String.class);
-        answer.put("disallowDoctypeDecl", java.lang.Boolean.class);
-        answer.put("keyAccessor", org.apache.camel.component.xmlsecurity.api.KeyAccessor.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("omitXmlDeclaration", java.lang.Boolean.class);
-        answer.put("outputXmlEncoding", java.lang.String.class);
-        answer.put("parentLocalName", java.lang.String.class);
-        answer.put("parentNamespace", java.lang.String.class);
-        answer.put("parentXpath", javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class);
-        answer.put("plainText", java.lang.Boolean.class);
-        answer.put("plainTextEncoding", java.lang.String.class);
-        answer.put("prefixForXmlSignatureNamespace", java.lang.String.class);
-        answer.put("properties", org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties.class);
-        answer.put("schemaResourceUri", java.lang.String.class);
-        answer.put("signatureAlgorithm", java.lang.String.class);
-        answer.put("signatureId", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transformMethods", java.util.List.class);
-        answer.put("uriDereferencer", javax.xml.crypto.URIDereferencer.class);
-        answer.put("xpathsToIdAttributes", java.util.List.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addkeyinforeference":
+        case "addKeyInfoReference": return java.lang.Boolean.class;
+        case "baseuri":
+        case "baseUri": return java.lang.String.class;
+        case "canonicalizationmethod":
+        case "canonicalizationMethod": return javax.xml.crypto.AlgorithmMethod.class;
+        case "clearheaders":
+        case "clearHeaders": return java.lang.Boolean.class;
+        case "contentobjectid":
+        case "contentObjectId": return java.lang.String.class;
+        case "contentreferencetype":
+        case "contentReferenceType": return java.lang.String.class;
+        case "contentreferenceuri":
+        case "contentReferenceUri": return java.lang.String.class;
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.util.Map.class;
+        case "digestalgorithm":
+        case "digestAlgorithm": return java.lang.String.class;
+        case "disallowdoctypedecl":
+        case "disallowDoctypeDecl": return java.lang.Boolean.class;
+        case "keyaccessor":
+        case "keyAccessor": return org.apache.camel.component.xmlsecurity.api.KeyAccessor.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "omitxmldeclaration":
+        case "omitXmlDeclaration": return java.lang.Boolean.class;
+        case "outputxmlencoding":
+        case "outputXmlEncoding": return java.lang.String.class;
+        case "parentlocalname":
+        case "parentLocalName": return java.lang.String.class;
+        case "parentnamespace":
+        case "parentNamespace": return java.lang.String.class;
+        case "parentxpath":
+        case "parentXpath": return javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class;
+        case "plaintext":
+        case "plainText": return java.lang.Boolean.class;
+        case "plaintextencoding":
+        case "plainTextEncoding": return java.lang.String.class;
+        case "prefixforxmlsignaturenamespace":
+        case "prefixForXmlSignatureNamespace": return java.lang.String.class;
+        case "properties": return org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties.class;
+        case "schemaresourceuri":
+        case "schemaResourceUri": return java.lang.String.class;
+        case "signaturealgorithm":
+        case "signatureAlgorithm": return java.lang.String.class;
+        case "signatureid":
+        case "signatureId": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "transformmethods":
+        case "transformMethods": return java.util.List.class;
+        case "uridereferencer":
+        case "uriDereferencer": return javax.xml.crypto.URIDereferencer.class;
+        case "xpathstoidattributes":
+        case "xpathsToIdAttributes": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -122,8 +148,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "addKeyInfoReference": return target.getConfiguration().getAddKeyInfoReference();
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "canonicalizationmethod":
         case "canonicalizationMethod": return target.getConfiguration().getCanonicalizationMethod();
         case "clearheaders":
@@ -174,6 +198,19 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "uriDereferencer": return target.getConfiguration().getUriDereferencer();
         case "xpathstoidattributes":
         case "xpathsToIdAttributes": return target.getConfiguration().getXpathsToIdAttributes();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.lang.Object.class;
+        case "transformmethods":
+        case "transformMethods": return javax.xml.crypto.AlgorithmMethod.class;
+        case "xpathstoidattributes":
+        case "xpathsToIdAttributes": return javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class;
         default: return null;
         }
     }

@@ -34,13 +34,15 @@ class ComponentDslInnerBuilderGeneratorTest {
 
     @Test
     public void testIfCreatesAllPropertiesCorrectly() throws IOException {
-        final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
+        final String json = PackageHelper.loadText(new File(
+                Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component.json")).getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
         final JavaClass javaClass = new JavaClass();
         javaClass.setName("TestClass");
 
-        final ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator = ComponentDslInnerBuilderGenerator.generateClass(javaClass, componentModel);
+        final ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator
+                = ComponentDslInnerBuilderGenerator.generateClass(javaClass, componentModel);
         final String classCode = javaClass.printClass();
 
         // test for naming
@@ -49,7 +51,8 @@ class ComponentDslInnerBuilderGeneratorTest {
 
         // test for properties
         componentModel.getComponentOptions().forEach(componentOptionModel -> {
-            final String propertiesSettersMethods = "default KafkaComponentBuilder " + StringUtils.uncapitalize(componentOptionModel.getName());
+            final String propertiesSettersMethods
+                    = "default KafkaComponentBuilder " + StringUtils.uncapitalize(componentOptionModel.getName());
             assertTrue(classCode.contains(propertiesSettersMethods));
         });
     }

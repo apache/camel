@@ -58,14 +58,14 @@ class RecordableReader extends FilterReader {
         buf.trim(pos, 0);
         return t;
     }
-    
+
     public char[] getChars(int pos) {
         recording = false;
         char[] b = buf.toCharArray(pos);
         buf.trim(pos, 0);
         return b;
     }
-    
+
     public void record() {
         recording = true;
     }
@@ -79,7 +79,7 @@ class RecordableReader extends FilterReader {
             System.arraycopy(buf, head, buf, 0, count - head - tail);
             count -= head + tail;
         }
-        
+
         public char[] toCharArray(int len) {
             char[] b = new char[len];
             System.arraycopy(buf, 0, b, 0, len);

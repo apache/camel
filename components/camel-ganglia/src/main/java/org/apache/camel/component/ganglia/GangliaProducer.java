@@ -85,7 +85,7 @@ public class GangliaProducer extends DefaultProducer {
 
         String value = message.getBody(String.class);
         if ((value == null || value.length() == 0)
-            && (type == GMetricType.FLOAT || type == GMetricType.DOUBLE)) {
+                && (type == GMetricType.FLOAT || type == GMetricType.DOUBLE)) {
             LOG.debug("Metric {} string value was null, using NaN", metricName);
             value = "NaN";
         }
@@ -94,7 +94,7 @@ public class GangliaProducer extends DefaultProducer {
             LOG.debug("Sending metric {} to Ganglia: {}", metricName, value);
         }
         publisher.publish(groupName,
-            metricName, value, type, slope, tmax, dmax, units);
+                metricName, value, type, slope, tmax, dmax, units);
         LOG.trace("Sending metric done");
     }
 }

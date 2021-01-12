@@ -23,14 +23,18 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 @CamelSpringTest
 @ContextConfiguration
 public class JmsConsumerShutdownTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Produce("activemq:start")
     protected ProducerTemplate activemq;
@@ -83,7 +87,6 @@ public class JmsConsumerShutdownTest {
         end.assertIsSatisfied();
     }
 
-
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
@@ -97,8 +100,8 @@ public class JmsConsumerShutdownTest {
 
             from("direct:dir")
                     .onException(Exception.class)
-                        .redeliveryDelay(1000)
-                        .maximumRedeliveries(-1) // forever
+                    .redeliveryDelay(1000)
+                    .maximumRedeliveries(-1) // forever
                     .end()
                     .to("mock:exception");
 

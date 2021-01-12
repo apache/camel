@@ -34,13 +34,14 @@ public class MinaExchangeTimeOutTest extends BaseMinaTest {
     @Test
     public void testUsingTimeoutParameter() throws Exception {
         // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
-        Endpoint endpoint = context.getEndpoint(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true&timeout=500", getPort()));
+        Endpoint endpoint = context
+                .getEndpoint(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true&timeout=500", getPort()));
         Producer producer = endpoint.createProducer();
         producer.start();
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         assertThrows(ExchangeTimedOutException.class,
-            () -> producer.process(exchange));
+                () -> producer.process(exchange));
         producer.stop();
     }
 
@@ -50,14 +51,14 @@ public class MinaExchangeTimeOutTest extends BaseMinaTest {
 
             public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=true&timeout=30000", getPort()))
-                    .process(e -> {
-                        assertEquals("Hello World", e.getIn().getBody(String.class));
-                        // MinaProducer has a default timeout of 3 seconds so we just wait 2 seconds
-                        // (template.requestBody is a MinaProducer behind the doors)
-                        Thread.sleep(2000);
+                        .process(e -> {
+                            assertEquals("Hello World", e.getIn().getBody(String.class));
+                            // MinaProducer has a default timeout of 3 seconds so we just wait 2 seconds
+                            // (template.requestBody is a MinaProducer behind the doors)
+                            Thread.sleep(2000);
 
-                        e.getMessage().setBody("Okay I will be faster in the future");
-                    });
+                            e.getMessage().setBody("Okay I will be faster in the future");
+                        });
             }
         };
     }

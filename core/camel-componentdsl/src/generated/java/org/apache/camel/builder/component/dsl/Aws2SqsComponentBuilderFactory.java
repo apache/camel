@@ -39,6 +39,8 @@ public interface Aws2SqsComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sqs
+     * 
+     * @return the dsl builder
      */
     static Aws2SqsComponentBuilder aws2Sqs() {
         return new Aws2SqsComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: amazonaws.com
          * Group: common
+         * 
+         * @param amazonAWSHost the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder amazonAWSHost(
                 java.lang.String amazonAWSHost) {
@@ -65,9 +70,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder amazonSQSClient(
                 software.amazon.awssdk.services.sqs.SqsClient amazonSQSClient) {
@@ -77,38 +85,28 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder autoCreateQueue(boolean autoCreateQueue) {
             doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2SqsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * The AWS SQS default configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sqs.Sqs2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.Sqs2Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder configuration(
                 org.apache.camel.component.aws2.sqs.Sqs2Configuration configuration) {
@@ -118,10 +116,13 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder protocol(java.lang.String protocol) {
             doSetProperty("protocol", protocol);
@@ -130,11 +131,14 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -145,9 +149,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queueOwnerAWSAccountId the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder queueOwnerAWSAccountId(
                 java.lang.String queueOwnerAWSAccountId) {
@@ -160,9 +167,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -172,10 +182,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -183,12 +196,32 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2SqsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * A list of attribute names to receive when consuming. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param attributeNames the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder attributeNames(
                 java.lang.String attributeNames) {
@@ -204,10 +237,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -218,10 +254,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * Allows you to use multiple threads to poll the sqs queue to increase
          * throughput.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -231,9 +270,12 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * The default visibility timeout (in seconds).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param defaultVisibilityTimeout the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder defaultVisibilityTimeout(
                 java.lang.Integer defaultVisibilityTimeout) {
@@ -243,10 +285,13 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * Delete message from SQS after it has been read.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder deleteAfterRead(boolean deleteAfterRead) {
             doSetProperty("deleteAfterRead", deleteAfterRead);
@@ -258,10 +303,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * not make it through a Camel filter upstream in the route, then don't
          * send DeleteMessage.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteIfFiltered the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder deleteIfFiltered(
                 boolean deleteIfFiltered) {
@@ -274,10 +322,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * process the message. If set to true defaultVisibilityTimeout must be
          * set. See details at Amazon docs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param extendMessageVisibility the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder extendMessageVisibility(
                 boolean extendMessageVisibility) {
@@ -290,9 +341,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * integer representing seconds, between 60 seconds (1 minute) and
          * 86,400 seconds (24 hours). Default: 300 (5 minutes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param kmsDataKeyReusePeriodSeconds the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder kmsDataKeyReusePeriodSeconds(
                 java.lang.Integer kmsDataKeyReusePeriodSeconds) {
@@ -303,9 +357,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SQS or
          * a custom CMK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param kmsMasterKeyId the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder kmsMasterKeyId(
                 java.lang.String kmsMasterKeyId) {
@@ -316,9 +373,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * A list of message attribute names to receive when consuming. Multiple
          * names can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param messageAttributeNames the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder messageAttributeNames(
                 java.lang.String messageAttributeNames) {
@@ -328,10 +388,13 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
@@ -346,9 +409,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * make sense if its different from defaultVisibilityTimeout. It changes
          * the queue visibility timeout attribute permanently.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder visibilityTimeout(
                 java.lang.Integer visibilityTimeout) {
@@ -359,9 +425,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
          * will wait until a message is in the queue to include in the response.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param waitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder waitTimeSeconds(
                 java.lang.Integer waitTimeSeconds) {
@@ -371,9 +440,12 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * Delay sending messages for a number of seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param delaySeconds the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder delaySeconds(
                 java.lang.Integer delaySeconds) {
@@ -391,10 +463,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -407,10 +482,13 @@ public interface Aws2SqsComponentBuilderFactory {
          * useContentBasedDeduplication. For the useContentBasedDeduplication
          * option, no messageDeduplicationId will be set on the message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: useExchangeId
          * Group: producer
+         * 
+         * @param messageDeduplicationIdStrategy the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder messageDeduplicationIdStrategy(
                 java.lang.String messageDeduplicationIdStrategy) {
@@ -423,9 +501,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsMessageGroupId will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageGroupIdStrategy the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder messageGroupIdStrategy(
                 java.lang.String messageGroupIdStrategy) {
@@ -437,9 +518,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sqs.Sqs2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.Sqs2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder operation(
                 org.apache.camel.component.aws2.sqs.Sqs2Operations operation) {
@@ -447,27 +531,37 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2SqsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2SqsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder delayQueue(boolean delayQueue) {
             doSetProperty("delayQueue", delayQueue);
@@ -479,9 +573,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * used, to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder queueUrl(java.lang.String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -490,9 +587,12 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -501,9 +601,12 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -513,9 +616,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder maximumMessageSize(
                 java.lang.Integer maximumMessageSize) {
@@ -526,9 +632,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder messageRetentionPeriod(
                 java.lang.Integer messageRetentionPeriod) {
@@ -536,11 +645,16 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder policy(java.lang.String policy) {
             doSetProperty("policy", policy);
@@ -551,9 +665,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder receiveMessageWaitTimeSeconds(
                 java.lang.Integer receiveMessageWaitTimeSeconds) {
@@ -564,9 +681,12 @@ public interface Aws2SqsComponentBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param redrivePolicy the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder redrivePolicy(
                 java.lang.String redrivePolicy) {
@@ -576,9 +696,12 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -587,9 +710,12 @@ public interface Aws2SqsComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2SqsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -622,13 +748,13 @@ public interface Aws2SqsComponentBuilderFactory {
             case "amazonAWSHost": getOrCreateConfiguration((Sqs2Component) component).setAmazonAWSHost((java.lang.String) value); return true;
             case "amazonSQSClient": getOrCreateConfiguration((Sqs2Component) component).setAmazonSQSClient((software.amazon.awssdk.services.sqs.SqsClient) value); return true;
             case "autoCreateQueue": getOrCreateConfiguration((Sqs2Component) component).setAutoCreateQueue((boolean) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Sqs2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Sqs2Component) component).setConfiguration((org.apache.camel.component.aws2.sqs.Sqs2Configuration) value); return true;
             case "protocol": getOrCreateConfiguration((Sqs2Component) component).setProtocol((java.lang.String) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Sqs2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queueOwnerAWSAccountId": getOrCreateConfiguration((Sqs2Component) component).setQueueOwnerAWSAccountId((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Sqs2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sqs2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sqs2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "attributeNames": getOrCreateConfiguration((Sqs2Component) component).setAttributeNames((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Sqs2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((Sqs2Component) component).setConcurrentConsumers((int) value); return true;
@@ -647,7 +773,7 @@ public interface Aws2SqsComponentBuilderFactory {
             case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
             case "messageGroupIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((Sqs2Component) component).setOperation((org.apache.camel.component.aws2.sqs.Sqs2Operations) value); return true;
-            case "basicPropertyBinding": ((Sqs2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Sqs2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "delayQueue": getOrCreateConfiguration((Sqs2Component) component).setDelayQueue((boolean) value); return true;
             case "queueUrl": getOrCreateConfiguration((Sqs2Component) component).setQueueUrl((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sqs2Component) component).setProxyHost((java.lang.String) value); return true;

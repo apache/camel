@@ -62,8 +62,6 @@ public enum SigningKeyApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private SigningKeyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

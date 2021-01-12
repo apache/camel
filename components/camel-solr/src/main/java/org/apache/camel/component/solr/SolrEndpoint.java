@@ -37,7 +37,8 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 /**
  * Perform operations against Apache Lucene Solr.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, category = {Category.MONITORING, Category.SEARCH})
+@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true,
+             category = { Category.MONITORING, Category.SEARCH })
 public class SolrEndpoint extends DefaultEndpoint {
 
     private String scheme = "http://";
@@ -227,7 +228,8 @@ public class SolrEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for indexing
+     * Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for
+     * indexing
      */
     public void setSoTimeout(Integer soTimeout) {
         this.soTimeout = soTimeout;

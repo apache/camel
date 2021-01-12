@@ -49,4 +49,5 @@ public class MyDummyComponentConfigurer extends PropertyConfigurerSupport implem
                 return false;
         }
     }
+
 }

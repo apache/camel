@@ -43,7 +43,8 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
 
     protected FtpServer ftpServer;
-    private String ftp = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5000&idempotent=false&localWorkDirectory=target/tmp";
+    private String ftp
+            = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5000&idempotent=false&localWorkDirectory=target/tmp";
 
     @Test
     void testFtpCronScheduledRoutePolicyTest() throws Exception {
@@ -64,9 +65,9 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.SECONDS);
 
                 from(ftp)
-                    .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                    .log("Processing ${file:name}")
-                    .to("log:done");
+                        .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .log("Processing ${file:name}")
+                        .to("log:done");
             }
         };
     }

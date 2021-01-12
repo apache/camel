@@ -49,11 +49,11 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             // Message body is split into multiple parts,
             // check if this is permitted
             SmppSplittingPolicy policy = getSplittingPolicy(message);
-            switch(policy) {
+            switch (policy) {
                 case ALLOW:
                     return segments;
                 case TRUNCATE:
-                    return new byte[][] {java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length)};
+                    return new byte[][] { java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length) };
                 case REJECT:
                     // FIXME - JSMPP needs to have an enum of the negative response
                     // codes instead of just using them like this

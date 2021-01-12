@@ -32,37 +32,39 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
         AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
         context.getRegistry().bind("amazonKmsClient", clientMock);
         KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
-        KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://TestDomain");
+        KMSEndpoint endpoint = (KMSEndpoint) component.createEndpoint("aws-kms://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getKmsClient());
     }
-    
+
     @Test
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-kms://TestDomain"));
+                () -> component.createEndpoint("aws-kms://TestDomain"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
 
         AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
         context.getRegistry().bind("amazonKmsClient", clientMock);
         KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
-        KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1&autoDiscoverClient=false");
+        KMSEndpoint endpoint = (KMSEndpoint) component
+                .createEndpoint("aws-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getKmsClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
 
         AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
         context.getRegistry().bind("amazonKmsClient", clientMock);
         KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
-        KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1");
+        KMSEndpoint endpoint
+                = (KMSEndpoint) component.createEndpoint("aws-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
         assertNotNull(endpoint.getConfiguration().getKmsClient());
         assertSame(clientMock, endpoint.getConfiguration().getKmsClient());

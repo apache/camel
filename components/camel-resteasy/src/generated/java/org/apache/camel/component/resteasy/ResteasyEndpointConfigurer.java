@@ -4,8 +4,10 @@ package org.apache.camel.component.resteasy;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.http.HttpEndpointConfigurer;
 
@@ -20,8 +22,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         ResteasyEndpoint target = (ResteasyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
-        case "basicauth":
-        case "basicAuth": target.setBasicAuth(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "eagercheckcontentavailable":
@@ -41,8 +41,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyclientclass":
         case "proxyClientClass": target.setProxyClientClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxymethod":
-        case "proxyMethod": target.setProxyMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "responsebuffersize":
         case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "resteasymethod":
@@ -61,29 +59,43 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("async", boolean.class);
-        answer.put("basicAuth", java.lang.Boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("eagerCheckContentAvailable", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("httpMethodRestrict", java.lang.String.class);
-        answer.put("matchOnUriPrefix", boolean.class);
-        answer.put("muteException", boolean.class);
-        answer.put("optionsEnabled", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("proxyClientClass", java.lang.String.class);
-        answer.put("proxyMethod", java.lang.String.class);
-        answer.put("responseBufferSize", java.lang.Integer.class);
-        answer.put("resteasyMethod", java.lang.String.class);
-        answer.put("servletName", java.lang.String.class);
-        answer.put("setHttpResponseDuringProcessing", java.lang.Boolean.class);
-        answer.put("skipServletProcessing", java.lang.Boolean.class);
-        answer.put("traceEnabled", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "proxyclientclass":
+        case "proxyClientClass": return java.lang.String.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "resteasymethod":
+        case "resteasyMethod": return java.lang.String.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        case "sethttpresponseduringprocessing":
+        case "setHttpResponseDuringProcessing": return java.lang.Boolean.class;
+        case "skipservletprocessing":
+        case "skipServletProcessing": return java.lang.Boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override
@@ -91,8 +103,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         ResteasyEndpoint target = (ResteasyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": return target.isAsync();
-        case "basicauth":
-        case "basicAuth": return target.getBasicAuth();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "eagercheckcontentavailable":
@@ -112,8 +122,6 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
         case "password": return target.getPassword();
         case "proxyclientclass":
         case "proxyClientClass": return target.getProxyClientClass();
-        case "proxymethod":
-        case "proxyMethod": return target.getProxyMethod();
         case "responsebuffersize":
         case "responseBufferSize": return target.getResponseBufferSize();
         case "resteasymethod":

@@ -16,17 +16,10 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Process payments using Braintree Payments.
@@ -38,835 +31,38 @@ public interface BraintreeEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Braintree component.
+     * Builder for endpoint for the Braintree component.
      */
-    public interface BraintreeEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedBraintreeEndpointConsumerBuilder advanced() {
-            return (AdvancedBraintreeEndpointConsumerBuilder) this;
+    public interface BraintreeEndpointBuilder extends EndpointProducerBuilder {
+        default AdvancedBraintreeEndpointBuilder advanced() {
+            return (AdvancedBraintreeEndpointBuilder) this;
         }
         /**
          * The environment Either SANDBOX or PRODUCTION.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
+         * 
+         * @param environment the value to set
+         * @return the dsl builder
          */
-        default BraintreeEndpointConsumerBuilder environment(String environment) {
+        default BraintreeEndpointBuilder environment(String environment) {
             doSetProperty("environment", environment);
             return this;
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
-        default BraintreeEndpointConsumerBuilder inBody(String inBody) {
+        default BraintreeEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * The merchant id provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointConsumerBuilder merchantId(String merchantId) {
-            doSetProperty("merchantId", merchantId);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * If the polling consumer did not poll any files, you can enable this
-         * option to send an empty message (no body) instead.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BraintreeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
-                boolean sendEmptyMessageWhenIdle) {
-            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
-            return this;
-        }
-        /**
-         * If the polling consumer did not poll any files, you can enable this
-         * option to send an empty message (no body) instead.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BraintreeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
-                String sendEmptyMessageWhenIdle) {
-            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder httpLogLevel(
-                String httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set log category to use to log http calls.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: Braintree
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder httpLogName(String httpLogName) {
-            doSetProperty("httpLogName", httpLogName);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
-                String logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * The proxy host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The number of subsequent error polls (failed due some error) that
-         * should happen before the backoffMultipler should kick-in.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder backoffErrorThreshold(
-                int backoffErrorThreshold) {
-            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
-            return this;
-        }
-        /**
-         * The number of subsequent error polls (failed due some error) that
-         * should happen before the backoffMultipler should kick-in.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder backoffErrorThreshold(
-                String backoffErrorThreshold) {
-            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
-            return this;
-        }
-        /**
-         * The number of subsequent idle polls that should happen before the
-         * backoffMultipler should kick-in.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder backoffIdleThreshold(
-                int backoffIdleThreshold) {
-            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
-            return this;
-        }
-        /**
-         * The number of subsequent idle polls that should happen before the
-         * backoffMultipler should kick-in.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder backoffIdleThreshold(
-                String backoffIdleThreshold) {
-            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
-            return this;
-        }
-        /**
-         * To let the scheduled polling consumer backoff if there has been a
-         * number of subsequent idles/errors in a row. The multiplier is then
-         * the number of polls that will be skipped before the next actual
-         * attempt is happening again. When this option is in use then
-         * backoffIdleThreshold and/or backoffErrorThreshold must also be
-         * configured.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder backoffMultiplier(
-                int backoffMultiplier) {
-            doSetProperty("backoffMultiplier", backoffMultiplier);
-            return this;
-        }
-        /**
-         * To let the scheduled polling consumer backoff if there has been a
-         * number of subsequent idles/errors in a row. The multiplier is then
-         * the number of polls that will be skipped before the next actual
-         * attempt is happening again. When this option is in use then
-         * backoffIdleThreshold and/or backoffErrorThreshold must also be
-         * configured.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder backoffMultiplier(
-                String backoffMultiplier) {
-            doSetProperty("backoffMultiplier", backoffMultiplier);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder delay(long delay) {
-            doSetProperty("delay", delay);
-            return this;
-        }
-        /**
-         * Milliseconds before the next poll.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 500
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder delay(String delay) {
-            doSetProperty("delay", delay);
-            return this;
-        }
-        /**
-         * If greedy is enabled, then the ScheduledPollConsumer will run
-         * immediately again, if the previous run polled 1 or more messages.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder greedy(boolean greedy) {
-            doSetProperty("greedy", greedy);
-            return this;
-        }
-        /**
-         * If greedy is enabled, then the ScheduledPollConsumer will run
-         * immediately again, if the previous run polled 1 or more messages.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder greedy(String greedy) {
-            doSetProperty("greedy", greedy);
-            return this;
-        }
-        /**
-         * Milliseconds before the first poll starts.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder initialDelay(long initialDelay) {
-            doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before the first poll starts.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
-            doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * Specifies a maximum limit of number of fires. So if you set it to 1,
-         * the scheduler will only fire once. If you set it to 5, it will only
-         * fire five times. A value of zero or negative means fire forever.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder repeatCount(long repeatCount) {
-            doSetProperty("repeatCount", repeatCount);
-            return this;
-        }
-        /**
-         * Specifies a maximum limit of number of fires. So if you set it to 1,
-         * the scheduler will only fire once. If you set it to 5, it will only
-         * fire five times. A value of zero or negative means fire forever.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder repeatCount(String repeatCount) {
-            doSetProperty("repeatCount", repeatCount);
-            return this;
-        }
-        /**
-         * The consumer logs a start/complete log line when it polls. This
-         * option allows you to configure the logging level for that.
-         * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: TRACE
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder runLoggingLevel(
-                LoggingLevel runLoggingLevel) {
-            doSetProperty("runLoggingLevel", runLoggingLevel);
-            return this;
-        }
-        /**
-         * The consumer logs a start/complete log line when it polls. This
-         * option allows you to configure the logging level for that.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
-         * 
-         * Default: TRACE
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder runLoggingLevel(
-                String runLoggingLevel) {
-            doSetProperty("runLoggingLevel", runLoggingLevel);
-            return this;
-        }
-        /**
-         * Allows for configuring a custom/shared thread pool to use for the
-         * consumer. By default each consumer has its own single threaded thread
-         * pool.
-         * 
-         * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder scheduledExecutorService(
-                ScheduledExecutorService scheduledExecutorService) {
-            doSetProperty("scheduledExecutorService", scheduledExecutorService);
-            return this;
-        }
-        /**
-         * Allows for configuring a custom/shared thread pool to use for the
-         * consumer. By default each consumer has its own single threaded thread
-         * pool.
-         * 
-         * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder scheduledExecutorService(
-                String scheduledExecutorService) {
-            doSetProperty("scheduledExecutorService", scheduledExecutorService);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: none
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder scheduler(String scheduler) {
-            doSetProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder schedulerProperties(
-                String key,
-                Object value) {
-            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
-            return this;
-        }
-        /**
-         * To configure additional properties when using a custom scheduler or
-         * any of the Quartz, Spring based scheduler.
-         * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
-         * The option is multivalued, and you can use the
-         * schedulerProperties(String, Object) method to add a value (call the
-         * method multiple times to set more values).
-         * 
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder schedulerProperties(Map values) {
-            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
-            return this;
-        }
-        /**
-         * Whether the scheduler should be auto started.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder startScheduler(
-                boolean startScheduler) {
-            doSetProperty("startScheduler", startScheduler);
-            return this;
-        }
-        /**
-         * Whether the scheduler should be auto started.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
-            doSetProperty("startScheduler", startScheduler);
-            return this;
-        }
-        /**
-         * Time unit for initialDelay and delay options.
-         * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
-         * 
-         * Default: MILLISECONDS
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            doSetProperty("timeUnit", timeUnit);
-            return this;
-        }
-        /**
-         * Time unit for initialDelay and delay options.
-         * 
-         * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
-         * 
-         * Default: MILLISECONDS
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder timeUnit(String timeUnit) {
-            doSetProperty("timeUnit", timeUnit);
-            return this;
-        }
-        /**
-         * Controls if fixed delay or fixed rate is used. See
-         * ScheduledExecutorService in JDK for details.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
-            doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * Controls if fixed delay or fixed rate is used. See
-         * ScheduledExecutorService in JDK for details.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BraintreeEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
-            doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * The access token granted by a merchant to another in order to process
-         * transactions on their behalf. Used in place of environment, merchant
-         * id, public key and private key fields.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BraintreeEndpointConsumerBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
-         * The private key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * The public key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the Braintree component.
-     */
-    public interface AdvancedBraintreeEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default BraintreeEndpointConsumerBuilder basic() {
-            return (BraintreeEndpointConsumerBuilder) this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
-                ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
-                ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder pollStrategy(
-                PollingConsumerPollStrategy pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder pollStrategy(
-                String pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Set read timeout for http calls.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
-                Integer httpReadTimeout) {
-            doSetProperty("httpReadTimeout", httpReadTimeout);
-            return this;
-        }
-        /**
-         * Set read timeout for http calls.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
-                String httpReadTimeout) {
-            doSetProperty("httpReadTimeout", httpReadTimeout);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the Braintree component.
-     */
-    public interface BraintreeEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedBraintreeEndpointProducerBuilder advanced() {
-            return (AdvancedBraintreeEndpointProducerBuilder) this;
-        }
-        /**
-         * The environment Either SANDBOX or PRODUCTION.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder environment(String environment) {
-            doSetProperty("environment", environment);
-            return this;
-        }
-        /**
-         * Sets the name of a parameter to be passed in the exchange In Body.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder inBody(String inBody) {
-            doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * The merchant id provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder merchantId(String merchantId) {
-            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -880,12 +76,15 @@ public interface BraintreeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
-        default BraintreeEndpointProducerBuilder lazyStartProducer(
+        default BraintreeEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -901,273 +100,29 @@ public interface BraintreeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
-        default BraintreeEndpointProducerBuilder lazyStartProducer(
+        default BraintreeEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointProducerBuilder httpLogLevel(
-                String httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set log category to use to log http calls.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: Braintree
-         * Group: logging
-         */
-        default BraintreeEndpointProducerBuilder httpLogName(String httpLogName) {
-            doSetProperty("httpLogName", httpLogName);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeEndpointProducerBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeEndpointProducerBuilder logHandlerEnabled(
-                String logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * The proxy host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The access token granted by a merchant to another in order to process
-         * transactions on their behalf. Used in place of environment, merchant
-         * id, public key and private key fields.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BraintreeEndpointProducerBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
-         * The private key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * The public key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the Braintree component.
-     */
-    public interface AdvancedBraintreeEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default BraintreeEndpointProducerBuilder basic() {
-            return (BraintreeEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Set read timeout for http calls.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
-                Integer httpReadTimeout) {
-            doSetProperty("httpReadTimeout", httpReadTimeout);
-            return this;
-        }
-        /**
-         * Set read timeout for http calls.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
-                String httpReadTimeout) {
-            doSetProperty("httpReadTimeout", httpReadTimeout);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder synchronous(
-                String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the Braintree component.
-     */
-    public interface BraintreeEndpointBuilder
-            extends
-                BraintreeEndpointConsumerBuilder,
-                BraintreeEndpointProducerBuilder {
-        default AdvancedBraintreeEndpointBuilder advanced() {
-            return (AdvancedBraintreeEndpointBuilder) this;
-        }
-        /**
-         * The environment Either SANDBOX or PRODUCTION.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointBuilder environment(String environment) {
-            doSetProperty("environment", environment);
-            return this;
-        }
-        /**
-         * Sets the name of a parameter to be passed in the exchange In Body.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointBuilder inBody(String inBody) {
-            doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
          * The merchant id provided by Braintree.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: producer
+         * 
+         * @param merchantId the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder merchantId(String merchantId) {
             doSetProperty("merchantId", merchantId);
@@ -1176,9 +131,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param httpLogLevel the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder httpLogLevel(String httpLogLevel) {
             doSetProperty("httpLogLevel", httpLogLevel);
@@ -1187,10 +145,13 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set log category to use to log http calls.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Braintree
          * Group: logging
+         * 
+         * @param httpLogName the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder httpLogName(String httpLogName) {
             doSetProperty("httpLogName", httpLogName);
@@ -1202,10 +163,13 @@ public interface BraintreeEndpointBuilderFactory {
          * on the classpath. This option can also be configured globally on the
          * BraintreeComponent.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: logging
+         * 
+         * @param logHandlerEnabled the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder logHandlerEnabled(
                 boolean logHandlerEnabled) {
@@ -1218,10 +182,14 @@ public interface BraintreeEndpointBuilderFactory {
          * on the classpath. This option can also be configured globally on the
          * BraintreeComponent.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: logging
+         * 
+         * @param logHandlerEnabled the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder logHandlerEnabled(
                 String logHandlerEnabled) {
@@ -1231,9 +199,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -1242,9 +213,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1253,10 +227,13 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1267,9 +244,12 @@ public interface BraintreeEndpointBuilderFactory {
          * transactions on their behalf. Used in place of environment, merchant
          * id, public key and private key fields.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1278,9 +258,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The private key provided by Braintree.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -1289,9 +272,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The public key provided by Braintree.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder publicKey(String publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -1304,45 +290,19 @@ public interface BraintreeEndpointBuilderFactory {
      */
     public interface AdvancedBraintreeEndpointBuilder
             extends
-                AdvancedBraintreeEndpointConsumerBuilder,
-                AdvancedBraintreeEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default BraintreeEndpointBuilder basic() {
             return (BraintreeEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Set read timeout for http calls.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -1352,10 +312,13 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set read timeout for http calls.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -1366,10 +329,13 @@ public interface BraintreeEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1379,10 +345,14 @@ public interface BraintreeEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1403,16 +373,25 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-         * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-         * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-         * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
-         * WEBHOOKNOTIFICATION
+         * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+         * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
+         * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
+         * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
+         * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
          * 
-         * Path parameter: methodName
+         * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
+         * There are 31 enums and the value can be one of: accept,
+         * addFileEvidence, addTextEvidence, cancel, cancelRelease,
+         * cloneTransaction, create, createForCurrency, credit, delete,
+         * fetchMerchantAccounts, finalize, find, generate, grant, holdInEscrow,
+         * parse, refund, releaseFromEscrow, removeEvidence, retryCharge,
+         * revoke, sale, search, submitForPartialSettlement,
+         * submitForSettlement, transactionLevelFees, update, updateDetails,
+         * verify, voidTransaction
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder braintree(String path) {
             return BraintreeEndpointBuilderFactory.endpointBuilder("braintree", path);
@@ -1429,18 +408,27 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-         * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-         * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-         * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
-         * WEBHOOKNOTIFICATION
+         * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
+         * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
+         * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
+         * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
+         * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
          * 
-         * Path parameter: methodName
+         * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
+         * There are 31 enums and the value can be one of: accept,
+         * addFileEvidence, addTextEvidence, cancel, cancelRelease,
+         * cloneTransaction, create, createForCurrency, credit, delete,
+         * fetchMerchantAccounts, finalize, find, generate, grant, holdInEscrow,
+         * parse, refund, releaseFromEscrow, removeEvidence, retryCharge,
+         * revoke, sale, search, submitForPartialSettlement,
+         * submitForSettlement, transactionLevelFees, update, updateDetails,
+         * verify, voidTransaction
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder braintree(
                 String componentName,

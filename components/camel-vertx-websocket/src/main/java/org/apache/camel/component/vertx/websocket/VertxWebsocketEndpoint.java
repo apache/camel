@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -27,6 +28,7 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.WebSocket;
+import io.vertx.core.http.WebSocketConnectOptions;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -36,10 +38,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket", syntax = "vertx-websocket:host:port/path", category = {Category.WEBSOCKET})
+@UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
+             syntax = "vertx-websocket:host:port/path", category = { Category.WEBSOCKET })
 public class VertxWebsocketEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketEndpoint.class);
@@ -104,8 +108,19 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
 
             client = getVertx().createHttpClient(options);
 
+            WebSocketConnectOptions connectOptions = new WebSocketConnectOptions();
+            connectOptions.setHost(configuration.getHost());
+            connectOptions.setPort(configuration.getPort());
+            connectOptions.setURI(configuration.getPath());
+            connectOptions.setSsl(options.isSsl());
+
+            String subProtocols = configuration.getClientSubProtocols();
+            if (ObjectHelper.isNotEmpty(subProtocols)) {
+                connectOptions.setSubProtocols(Arrays.asList(subProtocols.split(",")));
+            }
+
             CompletableFuture<WebSocket> future = new CompletableFuture<>();
-            client.webSocket(configuration.getPort(), configuration.getHost(), configuration.getPath(), result -> {
+            client.webSocket(connectOptions, result -> {
                 if (!result.failed()) {
                     LOG.info("Connected to WebSocket on {}:{}", configuration.getHost(), configuration.getPort());
                     future.complete(result.result());

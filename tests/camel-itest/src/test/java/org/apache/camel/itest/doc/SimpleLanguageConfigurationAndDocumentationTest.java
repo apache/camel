@@ -45,10 +45,10 @@ public class SimpleLanguageConfigurationAndDocumentationTest extends CamelTestSu
 
             assertTrue(json.contains("\"name\": \"simple\""));
             assertTrue(json.contains("\"modelName\": \"simple\""));
-            assertTrue(json.contains("\"resultType\": { \"kind\": \"attribute\", \"displayName\": \"Result Type\", \"required\": false, \"type\": \"string\""
+            assertTrue(json.contains(
+                    "\"resultType\": { \"kind\": \"attribute\", \"displayName\": \"Result Type\", \"required\": false, \"type\": \"string\""
                                      + ", \"javaType\": \"java.lang.String\", \"deprecated\": false"));
         }
     }
 
 }
-

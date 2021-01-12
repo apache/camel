@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.component.zookeepermaster.ZKContainer;
 import org.apache.camel.component.zookeepermaster.group.internal.ChildData;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -56,19 +56,20 @@ public class GroupTest {
             boolean master = group.isMaster();
             if (connected) {
                 Collection<NodeState> members = group.members().values();
-                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members + ")");
+                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members
+                            + ")");
             } else {
                 LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=false)");
             }
         }
     };
 
-    private ZKContainer startZooKeeper(int port, Path root) throws Exception {
+    private ZooKeeperContainer startZooKeeper(int port, Path root) throws Exception {
         LOGGER.info("****************************************");
         LOGGER.info("* Starting ZooKeeper container         *");
         LOGGER.info("****************************************");
 
-        ZKContainer container = new ZKContainer(port);
+        ZooKeeperContainer container = new ZooKeeperContainer(port);
         container.withNetworkAliases("zk-" + port);
 
         if (root != null) {
@@ -86,7 +87,8 @@ public class GroupTest {
             LOGGER.debug("datalog: {}", datalog);
 
             container.addFileSystemBind(data.toAbsolutePath().toString(), "/data", BindMode.READ_WRITE, SelinuxContext.SHARED);
-            container.addFileSystemBind(datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE, SelinuxContext.SHARED);
+            container.addFileSystemBind(datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE,
+                    SelinuxContext.SHARED);
         }
 
         container.start();
@@ -121,7 +123,6 @@ public class GroupTest {
                 .build();
         curator.start();
 
-
         final String path = "/singletons/test/Order" + System.currentTimeMillis();
         ArrayList<ZooKeeperGroup> members = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -135,7 +136,7 @@ public class GroupTest {
             assertFalse(group.isMaster());
         }
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -184,7 +185,8 @@ public class GroupTest {
                 .build();
         curator.start();
 
-        final Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+        final Group<NodeState> group
+                = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
         group.add(listener);
         group.start();
 
@@ -194,7 +196,7 @@ public class GroupTest {
         GroupCondition groupCondition = new GroupCondition();
         group.add(groupCondition);
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -207,7 +209,6 @@ public class GroupTest {
 
             group.update(new NodeState("foo"));
             assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
-
 
             group.close();
             curator.close();
@@ -234,7 +235,8 @@ public class GroupTest {
                 .build();
         curator.start();
 
-        Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+        Group<NodeState> group
+                = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
         group.add(listener);
         group.start();
 
@@ -245,7 +247,7 @@ public class GroupTest {
         assertFalse(group.isMaster());
         group.update(new NodeState("foo"));
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -277,12 +279,13 @@ public class GroupTest {
                 .build();
         curator.start();
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
             container = startZooKeeper(port, dataDir);
-            Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+            Group<NodeState> group
+                    = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
             group.add(listener);
             group.update(new NodeState("foo"));
             group.start();
@@ -328,17 +331,17 @@ public class GroupTest {
     @Test
     public void testGroupClose() throws Exception {
         int port = AvailablePortFinder.getNextAvailable();
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
             container = startZooKeeper(port, dataDir);
 
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                .connectString("localhost:" + port)
-                .connectionTimeoutMs(6000)
-                .sessionTimeoutMs(6000)
-                .retryPolicy(new RetryNTimes(10, 100));
+                    .connectString("localhost:" + port)
+                    .connectionTimeoutMs(6000)
+                    .sessionTimeoutMs(6000)
+                    .retryPolicy(new RetryNTimes(10, 100));
             CuratorFramework curator = builder.build();
             curator.start();
             curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
@@ -376,7 +379,7 @@ public class GroupTest {
     public void testAddFieldIgnoredOnParse() throws Exception {
 
         int port = AvailablePortFinder.getNextAvailable();
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {

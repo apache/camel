@@ -93,9 +93,11 @@ public class JettyFileConsumerTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice").to("file://target/test?fileName=temp.xml").setBody(constant("OK"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice").to("file://target/test?fileName=temp.xml")
+                        .setBody(constant("OK"));
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true").to("file://target/test?fileName=java.jpg").setBody(constant("OK"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true")
+                        .to("file://target/test?fileName=java.jpg").setBody(constant("OK"));
 
                 from("file://target/binary?noop=true").to("http://localhost:{{port}}/myapp/myservice2").to("mock:result");
             }

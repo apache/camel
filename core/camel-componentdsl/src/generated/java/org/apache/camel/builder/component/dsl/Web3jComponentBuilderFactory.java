@@ -37,6 +37,8 @@ public interface Web3jComponentBuilderFactory {
      * Category: bitcoin,blockchain,api
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
+     * 
+     * @return the dsl builder
      */
     static Web3jComponentBuilder web3j() {
         return new Web3jComponentBuilderImpl();
@@ -49,9 +51,13 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Contract address or a list of addresses.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param addresses the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder addresses(
                 java.util.List<java.lang.String> addresses) {
@@ -62,10 +68,12 @@ public interface Web3jComponentBuilderFactory {
          * Default configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.web3j.Web3jConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.web3j.Web3jConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder configuration(
                 org.apache.camel.component.web3j.Web3jConfiguration configuration) {
@@ -75,9 +83,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The address the transaction is send from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromAddress the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder fromAddress(java.lang.String fromAddress) {
             doSetProperty("fromAddress", fromAddress);
@@ -87,10 +98,13 @@ public interface Web3jComponentBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: latest
          * Group: common
+         * 
+         * @param fromBlock the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder fromBlock(java.lang.String fromBlock) {
             doSetProperty("fromBlock", fromBlock);
@@ -100,10 +114,13 @@ public interface Web3jComponentBuilderFactory {
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param fullTransactionObjects the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
@@ -113,9 +130,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The maximum gas allowed in this block.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param gasLimit the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder gasLimit(java.math.BigInteger gasLimit) {
             doSetProperty("gasLimit", gasLimit);
@@ -124,9 +144,13 @@ public interface Web3jComponentBuilderFactory {
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param privateFor the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder privateFor(
                 java.util.List<java.lang.String> privateFor) {
@@ -136,10 +160,13 @@ public interface Web3jComponentBuilderFactory {
         /**
          * If true, this will support Quorum API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param quorumAPI the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder quorumAPI(boolean quorumAPI) {
             doSetProperty("quorumAPI", quorumAPI);
@@ -148,9 +175,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The address the transaction is directed to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toAddress the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder toAddress(java.lang.String toAddress) {
             doSetProperty("toAddress", toAddress);
@@ -160,10 +190,13 @@ public interface Web3jComponentBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: latest
          * Group: common
+         * 
+         * @param toBlock the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder toBlock(java.lang.String toBlock) {
             doSetProperty("toBlock", toBlock);
@@ -173,9 +206,12 @@ public interface Web3jComponentBuilderFactory {
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param topics the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder topics(java.lang.String topics) {
             doSetProperty("topics", topics);
@@ -184,9 +220,13 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The preconfigured Web3j object.
          * 
-         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
+         * The option is a: &lt;code&gt;org.web3j.protocol.Web3j&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param web3j the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder web3j(org.web3j.protocol.Web3j web3j) {
             doSetProperty("web3j", web3j);
@@ -201,10 +241,13 @@ public interface Web3jComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -214,9 +257,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Contract address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param address the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder address(java.lang.String address) {
             doSetProperty("address", address);
@@ -226,10 +272,13 @@ public interface Web3jComponentBuilderFactory {
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: latest
          * Group: producer
+         * 
+         * @param atBlock the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder atBlock(java.lang.String atBlock) {
             doSetProperty("atBlock", atBlock);
@@ -238,9 +287,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Hash of the block where this transaction was in.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param blockHash the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder blockHash(java.lang.String blockHash) {
             doSetProperty("blockHash", blockHash);
@@ -249,9 +301,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * A random hexadecimal(32 bytes) ID identifying the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -261,9 +316,12 @@ public interface Web3jComponentBuilderFactory {
          * The compiled code of a contract OR the hash of the invoked method
          * signature and encoded parameters.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param data the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder data(java.lang.String data) {
             doSetProperty("data", data);
@@ -272,9 +330,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The local database name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param databaseName the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder databaseName(java.lang.String databaseName) {
             doSetProperty("databaseName", databaseName);
@@ -283,9 +344,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The filter id to use.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param filterId the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder filterId(java.math.BigInteger filterId) {
             doSetProperty("filterId", filterId);
@@ -294,9 +358,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Gas price used for each paid gas.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param gasPrice the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder gasPrice(java.math.BigInteger gasPrice) {
             doSetProperty("gasPrice", gasPrice);
@@ -305,9 +372,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * A hexadecimal string representation (32 bytes) of the hash rate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param hashrate the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder hashrate(java.lang.String hashrate) {
             doSetProperty("hashrate", hashrate);
@@ -317,9 +387,12 @@ public interface Web3jComponentBuilderFactory {
          * The header's pow-hash (256 bits) used for submitting a proof-of-work
          * solution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param headerPowHash the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder headerPowHash(
                 java.lang.String headerPowHash) {
@@ -329,9 +402,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The transactions/uncle index position in the block.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param index the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder index(java.math.BigInteger index) {
             doSetProperty("index", index);
@@ -340,9 +416,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The key name in the database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyName the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder keyName(java.lang.String keyName) {
             doSetProperty("keyName", keyName);
@@ -359,10 +438,13 @@ public interface Web3jComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -373,9 +455,12 @@ public interface Web3jComponentBuilderFactory {
          * The mix digest (256 bits) used for submitting a proof-of-work
          * solution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mixDigest the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder mixDigest(java.lang.String mixDigest) {
             doSetProperty("mixDigest", mixDigest);
@@ -385,9 +470,12 @@ public interface Web3jComponentBuilderFactory {
          * The nonce found (64 bits) used for submitting a proof-of-work
          * solution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param nonce the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder nonce(java.lang.String nonce) {
             doSetProperty("nonce", nonce);
@@ -396,10 +484,13 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Operation to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: transaction
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder operation(java.lang.String operation) {
             doSetProperty("operation", operation);
@@ -408,9 +499,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The transaction index position withing a block.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param position the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder position(java.math.BigInteger position) {
             doSetProperty("position", position);
@@ -419,9 +513,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The priority of a whisper message.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param priority the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder priority(java.math.BigInteger priority) {
             doSetProperty("priority", priority);
@@ -430,9 +527,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Message to sign by calculating an Ethereum specific signature.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sha3HashOfDataToSign the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder sha3HashOfDataToSign(
                 java.lang.String sha3HashOfDataToSign) {
@@ -443,9 +543,12 @@ public interface Web3jComponentBuilderFactory {
          * The signed transaction data for a new message call transaction or a
          * contract creation for signed transactions.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param signedTransactionData the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder signedTransactionData(
                 java.lang.String signedTransactionData) {
@@ -455,9 +558,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The source code to compile.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceCode the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder sourceCode(java.lang.String sourceCode) {
             doSetProperty("sourceCode", sourceCode);
@@ -466,9 +572,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The information about a transaction requested by transaction hash.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param transactionHash the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder transactionHash(
                 java.lang.String transactionHash) {
@@ -478,9 +587,12 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The time to live in seconds of a whisper message.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder ttl(java.math.BigInteger ttl) {
             doSetProperty("ttl", ttl);
@@ -489,26 +601,35 @@ public interface Web3jComponentBuilderFactory {
         /**
          * The value sent within a transaction.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default Web3jComponentBuilder value(java.math.BigInteger value) {
             doSetProperty("value", value);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Web3jComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Web3jComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -572,7 +693,7 @@ public interface Web3jComponentBuilderFactory {
             case "transactionHash": getOrCreateConfiguration((Web3jComponent) component).setTransactionHash((java.lang.String) value); return true;
             case "ttl": getOrCreateConfiguration((Web3jComponent) component).setTtl((java.math.BigInteger) value); return true;
             case "value": getOrCreateConfiguration((Web3jComponent) component).setValue((java.math.BigInteger) value); return true;
-            case "basicPropertyBinding": ((Web3jComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Web3jComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

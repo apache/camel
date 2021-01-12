@@ -151,7 +151,7 @@ with a slash ( / ) and the verb starts with a slash ( / ). But Apache
 Camel will take care of this and remove the duplicated slash.
 
 It is not required to use both base path and uri templates. You can omit
-the bast path and define the base path and uri template in the verbs
+the base path and define the base path and uri template in the verbs
 only. The example above can be defined as:
 
 [source,xml]
@@ -299,7 +299,7 @@ the needed data formats are included in the classpath. Notice that if
 for example `camel-jaxb` is not on the classpath, then XML binding is
 not enabled.
 
-|json |Binding to/from json is enabled, and requires a json capabile data
+|json |Binding to/from json is enabled, and requires a json capable data
 format on the classpath. By default Camel will use `json-jackson` as the
 data format. See the INFO box below for more details.
 
@@ -638,7 +638,7 @@ example to enable pretty print in the json data format.
 set. See below for the default values which are in used. If a custom
 header is set then that value takes precedence over the default value.
 
-You can set multiple options of the same level, so you can can for
+You can set multiple options of the same level, so you can for
 example configure 2 component options, and 3 endpoint options etc.
 
  

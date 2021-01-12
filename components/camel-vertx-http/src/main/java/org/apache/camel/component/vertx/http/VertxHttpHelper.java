@@ -145,8 +145,14 @@ public final class VertxHttpHelper {
      * Verifies whether the Content-Type exchange header value matches an expected value
      */
     public static boolean isContentTypeMatching(Exchange exchange, String expected) {
-        String contentType = ExchangeHelper.getContentType(exchange);
-        return contentType != null && contentType.equals(expected);
+        return isContentTypeMatching(expected, ExchangeHelper.getContentType(exchange));
+    }
+
+    /**
+     * Verifies whether the expected Content-Type value matches an expected value
+     */
+    public static boolean isContentTypeMatching(String expected, String actual) {
+        return actual != null && expected.equals(actual);
     }
 
     /**
@@ -178,10 +184,9 @@ public final class VertxHttpHelper {
         return answer;
     }
 
-
     /**
-     * Retrieves the charset from the exchange Content-Type header, or falls back to the CamelCharsetName
-     * exchange property when not available
+     * Retrieves the charset from the exchange Content-Type header, or falls back to the CamelCharsetName exchange
+     * property when not available
      */
     public static String getCharsetFromExchange(Exchange exchange) {
         String charset = null;

@@ -38,6 +38,8 @@ public interface CordaComponentBuilderFactory {
      * Category: blockchain,rpc
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-corda
+     * 
+     * @return the dsl builder
      */
     static CordaComponentBuilder corda() {
         return new CordaComponentBuilderImpl();
@@ -51,10 +53,12 @@ public interface CordaComponentBuilderFactory {
          * To use a shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.corda.CordaConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder configuration(
                 org.apache.camel.component.corda.CordaConfiguration configuration) {
@@ -70,10 +74,13 @@ public interface CordaComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -90,11 +97,13 @@ public interface CordaComponentBuilderFactory {
          * JVM memory footprint.
          * 
          * The option is a:
-         * <code>net.corda.core.node.services.vault.PageSpecification</code>
-         * type.
+         * &lt;code&gt;net.corda.core.node.services.vault.PageSpecification&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: consumer
+         * 
+         * @param pageSpecification the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder pageSpecification(
                 net.corda.core.node.services.vault.PageSpecification pageSpecification) {
@@ -104,10 +113,13 @@ public interface CordaComponentBuilderFactory {
         /**
          * Whether to process snapshots or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param processSnapshot the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder processSnapshot(boolean processSnapshot) {
             doSetProperty("processSnapshot", processSnapshot);
@@ -118,10 +130,14 @@ public interface CordaComponentBuilderFactory {
          * their associated directionality and null handling, to be applied upon
          * processing a query specification.
          * 
-         * The option is a: <code>net.corda.core.node.services.vault.Sort</code>
+         * The option is a:
+         * &lt;code&gt;net.corda.core.node.services.vault.Sort&lt;/code&gt;
          * type.
          * 
          * Group: consumer
+         * 
+         * @param sort the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder sort(
                 net.corda.core.node.services.vault.Sort sort) {
@@ -139,10 +155,12 @@ public interface CordaComponentBuilderFactory {
          * free.
          * 
          * The option is a:
-         * <code>java.lang.Class<net.corda.core.contracts.ContractState></code>
-         * type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.contracts.ContractState&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param contractStateClass the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder contractStateClass(
                 java.lang.Class<net.corda.core.contracts.ContractState> contractStateClass) {
@@ -155,9 +173,12 @@ public interface CordaComponentBuilderFactory {
          * flow. The flowLogicClass must be annotated with
          * net.corda.core.flows.StartableByRPC.
          * 
-         * The option is a: <code>java.lang.Object[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object[]&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param flowLogicArguments the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder flowLogicArguments(
                 java.lang.Object[] flowLogicArguments) {
@@ -171,9 +192,12 @@ public interface CordaComponentBuilderFactory {
          * net.corda.core.flows.StartableByRPC.
          * 
          * The option is a:
-         * <code>java.lang.Class<net.corda.core.flows.FlowLogic<java.lang.Object>></code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;net.corda.core.flows.FlowLogic&amp;lt;java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param flowLogicClass the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder flowLogicClass(
                 java.lang.Class<net.corda.core.flows.FlowLogic<java.lang.Object>> flowLogicClass) {
@@ -185,9 +209,12 @@ public interface CordaComponentBuilderFactory {
          * for performance.
          * 
          * The option is a:
-         * <code>net.corda.core.node.services.vault.QueryCriteria</code> type.
+         * &lt;code&gt;net.corda.core.node.services.vault.QueryCriteria&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param queryCriteria the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder queryCriteria(
                 net.corda.core.node.services.vault.QueryCriteria queryCriteria) {
@@ -205,10 +232,13 @@ public interface CordaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -218,34 +248,46 @@ public interface CordaComponentBuilderFactory {
         /**
          * Operation to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder operation(java.lang.String operation) {
             doSetProperty("operation", operation);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CordaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CordaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -254,9 +296,12 @@ public interface CordaComponentBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CordaComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
@@ -297,7 +342,7 @@ public interface CordaComponentBuilderFactory {
             case "queryCriteria": getOrCreateConfiguration((CordaComponent) component).setQueryCriteria((net.corda.core.node.services.vault.QueryCriteria) value); return true;
             case "lazyStartProducer": ((CordaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((CordaComponent) component).setOperation((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((CordaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CordaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((CordaComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((CordaComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;

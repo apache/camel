@@ -58,7 +58,7 @@ class RecordableInputStream extends FilterInputStream {
     public String getText(int pos) {
         String t = null;
         recording = false;
-        try {        
+        try {
             if (charset == null) {
                 t = new String(buf.getByteArray(), 0, pos);
             } else {
@@ -72,14 +72,14 @@ class RecordableInputStream extends FilterInputStream {
 
         return t;
     }
-    
+
     public byte[] getBytes(int pos) {
         recording = false;
         byte[] b = buf.toByteArray(pos);
         buf.trim(pos, 0);
         return b;
     }
-    
+
     public void record() {
         recording = true;
     }
@@ -93,7 +93,7 @@ class RecordableInputStream extends FilterInputStream {
             System.arraycopy(buf, head, buf, 0, count - head - tail);
             count -= head + tail;
         }
-        
+
         public byte[] toByteArray(int len) {
             byte[] b = new byte[len];
             System.arraycopy(buf, 0, b, 0, len);

@@ -37,6 +37,8 @@ public interface MsvComponentBuilderFactory {
      * Category: validation
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-msv
+     * 
+     * @return the dsl builder
      */
     static MsvComponentBuilder msv() {
         return new MsvComponentBuilderImpl();
@@ -57,27 +59,36 @@ public interface MsvComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MsvComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MsvComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -85,9 +96,12 @@ public interface MsvComponentBuilderFactory {
          * endpoint resource URI.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder resourceResolverFactory(
                 org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
@@ -97,10 +111,13 @@ public interface MsvComponentBuilderFactory {
         /**
          * To use the javax.xml.validation.SchemaFactory.
          * 
-         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaFactory the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder schemaFactory(
                 javax.xml.validation.SchemaFactory schemaFactory) {
@@ -125,7 +142,7 @@ public interface MsvComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((MsvComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MsvComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MsvComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "resourceResolverFactory": ((MsvComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
             case "schemaFactory": ((MsvComponent) component).setSchemaFactory((javax.xml.validation.SchemaFactory) value); return true;
             default: return false;

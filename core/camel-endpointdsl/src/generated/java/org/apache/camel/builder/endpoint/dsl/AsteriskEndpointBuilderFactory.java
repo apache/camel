@@ -44,10 +44,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * The hostname of the asterisk server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointConsumerBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -56,10 +59,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Login password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -68,10 +74,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Login username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -86,10 +95,13 @@ public interface AsteriskEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -105,10 +117,14 @@ public interface AsteriskEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -132,10 +148,13 @@ public interface AsteriskEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -149,9 +168,12 @@ public interface AsteriskEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -161,9 +183,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -174,9 +200,12 @@ public interface AsteriskEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -184,41 +213,16 @@ public interface AsteriskEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -229,10 +233,14 @@ public interface AsteriskEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -253,10 +261,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * The hostname of the asterisk server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -265,10 +276,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Login password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -277,10 +291,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Login username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -291,9 +308,12 @@ public interface AsteriskEndpointBuilderFactory {
          * extension state.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
+         * &lt;code&gt;org.apache.camel.component.asterisk.AsteriskAction&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder action(AsteriskAction action) {
             doSetProperty("action", action);
@@ -304,9 +324,12 @@ public interface AsteriskEndpointBuilderFactory {
          * extension state.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
+         * &lt;code&gt;org.apache.camel.component.asterisk.AsteriskAction&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder action(String action) {
             doSetProperty("action", action);
@@ -323,10 +346,13 @@ public interface AsteriskEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -344,10 +370,14 @@ public interface AsteriskEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -366,41 +396,16 @@ public interface AsteriskEndpointBuilderFactory {
             return (AsteriskEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -411,10 +416,14 @@ public interface AsteriskEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -436,10 +445,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * The hostname of the asterisk server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -448,10 +460,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Login password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -460,10 +475,13 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Login username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -482,41 +500,16 @@ public interface AsteriskEndpointBuilderFactory {
             return (AsteriskEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -526,10 +519,14 @@ public interface AsteriskEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAsteriskEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -562,6 +559,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Name of component
          * 
          * @param path name
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder asterisk(String path) {
             return AsteriskEndpointBuilderFactory.endpointBuilder("asterisk", path);
@@ -582,6 +580,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder asterisk(
                 String componentName,

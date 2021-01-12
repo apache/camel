@@ -23,27 +23,26 @@ import org.apache.camel.dataformat.bindy.FormattingOptions;
 
 public interface FormatFactoryInterface {
     /**
-     * Returns the list of supported classes.
-     * When the list doesn't contain elements the factory is supposed
-     * to support all kinds of classes. The factory must decide on other
-     * criteria whether it can build a {@link Format}.
+     * Returns the list of supported classes. When the list doesn't contain elements the factory is supposed to support
+     * all kinds of classes. The factory must decide on other criteria whether it can build a {@link Format}.
+     * 
      * @return the list of supported classes
      */
     Collection<Class<?>> supportedClasses();
 
     /**
-     * Can it build a {@link Format}.
-     * Answers the question about whether it can
-     * build a {@link Format}.
-     * @param formattingOptions
-     * @return can build
+     * Can it build a {@link Format}. Answers the question about whether it can build a {@link Format}.
+     * 
+     * @param  formattingOptions
+     * @return                   can build
      */
     boolean canBuild(FormattingOptions formattingOptions);
 
     /**
      * Builds the {@link Format}.
-     * @param formattingOptions
-     * @return the format
+     * 
+     * @param  formattingOptions
+     * @return                   the format
      */
     Format<?> build(FormattingOptions formattingOptions);
 }

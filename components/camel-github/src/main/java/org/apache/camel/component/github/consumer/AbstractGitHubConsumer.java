@@ -31,9 +31,9 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(AbstractGitHubConsumer.class);
 
     private final GitHubEndpoint endpoint;
-    
+
     private RepositoryService repositoryService;
-    
+
     private Repository repository;
 
     public AbstractGitHubConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
@@ -52,19 +52,15 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
         initService(repositoryService);
         repository = repositoryService.getRepository(endpoint.getRepoOwner(), endpoint.getRepoName());
     }
-    
+
     protected void initService(GitHubService service) {
-        if (endpoint.hasOauth()) {
-            service.getClient().setOAuth2Token(endpoint.getOauthToken());
-        } else {
-            service.getClient().setCredentials(endpoint.getUsername(), endpoint.getPassword());
-        }
+        service.getClient().setOAuth2Token(endpoint.getOauthToken());
     }
-    
+
     protected RepositoryService getRepositoryService() {
         return repositoryService;
     }
-    
+
     protected Repository getRepository() {
         return repository;
     }

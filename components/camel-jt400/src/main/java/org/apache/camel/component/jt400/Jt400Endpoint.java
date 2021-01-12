@@ -36,9 +36,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement for AS/400 and iSeries servers.
+ * Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement
+ * for AS/400 and iSeries servers.
  */
-@UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400",
+             syntax = "jt400:userID:password/systemName/objectPath.type", category = { Category.MESSAGING })
 public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleConsumersSupport {
 
     public static final String KEY = Jt400Constants.KEY;
@@ -48,8 +50,7 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     private final Jt400Configuration configuration;
 
     /**
-     * Creates a new IBM i data queue endpoint using a default connection pool
-     * provided by the component.
+     * Creates a new IBM i data queue endpoint using a default connection pool provided by the component.
      *
      * @throws NullPointerException if {@code component} is null
      */
@@ -58,10 +59,10 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     }
 
     /**
-     * Creates a new IBM i data queue endpoint using the specified connection
-     * pool.
+     * Creates a new IBM i data queue endpoint using the specified connection pool.
      */
-    protected Jt400Endpoint(String endpointUri, Jt400Component component, AS400ConnectionPool connectionPool) throws CamelException {
+    protected Jt400Endpoint(String endpointUri, Jt400Component component,
+                            AS400ConnectionPool connectionPool) throws CamelException {
         super(endpointUri, component);
         ObjectHelper.notNull(connectionPool, "connectionPool");
         try {
@@ -102,9 +103,8 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     }
 
     /**
-     * Obtains an {@code AS400} object that connects to this endpoint. Since
-     * these objects represent limited resources, clients have the
-     * responsibility of {@link #releaseSystem(AS400) releasing them} when done.
+     * Obtains an {@code AS400} object that connects to this endpoint. Since these objects represent limited resources,
+     * clients have the responsibility of {@link #releaseSystem(AS400) releasing them} when done.
      *
      * @return an {@code AS400} object that connects to this endpoint
      */
@@ -122,11 +122,9 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
     }
 
     /**
-     * Returns the fully qualified integrated file system path name of the data
-     * queue of this endpoint.
+     * Returns the fully qualified integrated file system path name of the data queue of this endpoint.
      *
-     * @return the fully qualified integrated file system path name of the data
-     *         queue of this endpoint
+     * @return the fully qualified integrated file system path name of the data queue of this endpoint
      */
     protected String getObjectPath() {
         return configuration.getObjectPath();

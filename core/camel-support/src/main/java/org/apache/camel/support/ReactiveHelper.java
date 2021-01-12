@@ -77,6 +77,7 @@ public final class ReactiveHelper {
             public void run() {
                 callback.done(false);
             }
+
             @Override
             public String toString() {
                 return "Callback[" + callback + "]";
@@ -90,6 +91,7 @@ public final class ReactiveHelper {
             public void run() {
                 runnable.run();
             }
+
             @Override
             public String toString() {
                 return description;
@@ -120,8 +122,8 @@ public final class ReactiveHelper {
             }
             if (!running || sync) {
                 running = true;
-//                Thread thread = Thread.currentThread();
-//                String name = thread.getName();
+                //                Thread thread = Thread.currentThread();
+                //                String name = thread.getName();
                 try {
                     for (;;) {
                         final Runnable polled = queue.poll();
@@ -134,14 +136,15 @@ public final class ReactiveHelper {
                             }
                         }
                         try {
-//                            thread.setName(name + " - " + polled.toString());
+                            //                            thread.setName(name + " - " + polled.toString());
                             polled.run();
                         } catch (Throwable t) {
-                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
+                            LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.",
+                                    t);
                         }
                     }
                 } finally {
-//                    thread.setName(name);
+                    //                    thread.setName(name);
                     running = false;
                 }
             } else {

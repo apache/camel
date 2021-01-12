@@ -71,14 +71,14 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .to("mock:error")
-                    .end()
-                    .delay(100)
-                    .choice()
+                        .end()
+                        .delay(100)
+                        .choice()
                         .when(body().isEqualTo("Kabom")).throwException(new IllegalArgumentException("Kabom"))
                         .otherwise().to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

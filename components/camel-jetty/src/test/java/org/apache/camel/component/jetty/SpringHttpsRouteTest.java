@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"/org/apache/camel/component/jetty/jetty-https.xml"})
+@ContextConfiguration(locations = { "/org/apache/camel/component/jetty/jetty-https.xml" })
 public class SpringHttpsRouteTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
@@ -84,9 +84,9 @@ public class SpringHttpsRouteTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String)key);
+                System.clearProperty((String) key);
             } else {
-                System.setProperty((String)key, (String)value);
+                System.setProperty((String) key, (String) value);
             }
         }
     }

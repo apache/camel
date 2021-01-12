@@ -45,8 +45,8 @@ public class BindySimpleFixedLengthMarshallWithClipAndTrimTest extends CamelTest
                 bindy.setLocale("en");
 
                 from("direct:start")
-                    .marshal(bindy)
-                    .to("mock:result");
+                        .marshal(bindy)
+                        .to("mock:result");
             }
         };
     }
@@ -122,7 +122,6 @@ public class BindySimpleFixedLengthMarshallWithClipAndTrimTest extends CamelTest
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
-
 
         public int getOrderNr() {
             return orderNr;
@@ -214,11 +213,12 @@ public class BindySimpleFixedLengthMarshallWithClipAndTrimTest extends CamelTest
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
-                    + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
+                   + String.valueOf(this.orderDate);
         }
     }
-
 
 }

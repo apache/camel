@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
@@ -37,13 +38,12 @@ import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.Scanner;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A number of useful helper methods for working with Objects
  */
 public final class ObjectHelper {
-  
+
     static {
         DEFAULT_PATTERN = Pattern.compile(",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))");
     }
@@ -57,20 +57,19 @@ public final class ObjectHelper {
     private ObjectHelper() {
     }
 
-
     /**
-     * A helper method for comparing objects for equality in which it uses type coercion to coerce
-     * types between the left and right values. This allows you test for equality for example with
-     * a String and Integer type as Camel will be able to coerce the types.
+     * A helper method for comparing objects for equality in which it uses type coercion to coerce types between the
+     * left and right values. This allows you test for equality for example with a String and Integer type as Camel will
+     * be able to coerce the types.
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue) {
         return typeCoerceEquals(converter, leftValue, rightValue, false);
     }
 
     /**
-     * A helper method for comparing objects for equality in which it uses type coercion to coerce
-     * types between the left and right values. This allows you test for equality for example with
-     * a String and Integer type as Camel will be able to coerce the types.
+     * A helper method for comparing objects for equality in which it uses type coercion to coerce types between the
+     * left and right values. This allows you test for equality for example with a String and Integer type as Camel will
+     * be able to coerce the types.
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         // sanity check
@@ -80,6 +79,69 @@ public final class ObjectHelper {
         } else if (leftValue == null || rightValue == null) {
             // only one of them is null so they are not equal
             return false;
+        }
+
+        // optimize for common combinations of comparing numbers
+        if (leftValue instanceof String && rightValue instanceof String) {
+            String leftNum = (String) leftValue;
+            String rightNum = (String) rightValue;
+            if (isNumber(leftNum) && isNumber(rightNum)) {
+                // favour to use numeric comparison
+                Long num1 = Long.parseLong(leftNum);
+                Long num2 = Long.parseLong(rightNum);
+                return num1.compareTo(num2) == 0;
+            }
+            if (ignoreCase) {
+                return leftNum.compareToIgnoreCase(rightNum) == 0;
+            } else {
+                return leftNum.compareTo(rightNum) == 0;
+            }
+        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
+            Integer leftNum = (Integer) leftValue;
+            Integer rightNum = (Integer) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if (leftValue instanceof Long && rightValue instanceof Long) {
+            Long leftNum = (Long) leftValue;
+            Long rightNum = (Long) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if (leftValue instanceof Double && rightValue instanceof Double) {
+            Double leftNum = (Double) leftValue;
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
+                (leftValue instanceof String && isNumber((String) leftValue))) {
+            if (rightValue instanceof Integer) {
+                Integer leftNum = Integer.valueOf((String) leftValue);
+                Integer rightNum = (Integer) rightValue;
+                return leftNum.compareTo(rightNum) == 0;
+            } else {
+                Long leftNum = Long.valueOf((String) leftValue);
+                Long rightNum = (Long) rightValue;
+                return leftNum.compareTo(rightNum) == 0;
+            }
+        } else if ((rightValue instanceof String) &&
+                (leftValue instanceof Integer || leftValue instanceof Long)) {
+            if (leftValue instanceof Integer) {
+                Integer leftNum = (Integer) leftValue;
+                Integer rightNum = Integer.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum) == 0;
+            } else {
+                Long leftNum = (Long) leftValue;
+                Long rightNum = Long.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum) == 0;
+            }
+        } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
+            Double leftNum = Double.valueOf((String) leftValue);
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if (rightValue instanceof Boolean && leftValue instanceof String) {
+            Boolean leftBool = Boolean.valueOf((String) leftValue);
+            Boolean rightBool = (Boolean) rightValue;
+            return leftBool.compareTo(rightBool) == 0;
+        } else if (rightValue instanceof String && leftValue instanceof Boolean) {
+            Boolean leftBool = (Boolean) leftValue;
+            Boolean rightBool = Boolean.valueOf((String) rightValue);
+            return leftBool.compareTo(rightBool) == 0;
         }
 
         // try without type coerce
@@ -107,21 +169,80 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method for comparing objects for inequality in which it uses type coercion to coerce
-     * types between the left and right values.  This allows you test for inequality for example with
-     * a String and Integer type as Camel will be able to coerce the types.
+     * A helper method for comparing objects for inequality in which it uses type coercion to coerce types between the
+     * left and right values. This allows you test for inequality for example with a String and Integer type as Camel
+     * will be able to coerce the types.
      */
     public static boolean typeCoerceNotEquals(TypeConverter converter, Object leftValue, Object rightValue) {
         return !typeCoerceEquals(converter, leftValue, rightValue);
     }
 
     /**
-     * A helper method for comparing objects ordering in which it uses type coercion to coerce
-     * types between the left and right values.  This allows you test for ordering for example with
-     * a String and Integer type as Camel will be able to coerce the types.
+     * A helper method for comparing objects ordering in which it uses type coercion to coerce types between the left
+     * and right values. This allows you test for ordering for example with a String and Integer type as Camel will be
+     * able to coerce the types.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
+
+        // optimize for common combinations of comparing numbers
+        if (leftValue instanceof String && rightValue instanceof String) {
+            String leftNum = (String) leftValue;
+            String rightNum = (String) rightValue;
+            if (isNumber(leftNum) && isNumber(rightNum)) {
+                // favour to use numeric comparison
+                Long num1 = Long.parseLong(leftNum);
+                Long num2 = Long.parseLong(rightNum);
+                return num1.compareTo(num2);
+            }
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
+            Integer leftNum = (Integer) leftValue;
+            Integer rightNum = (Integer) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Long && rightValue instanceof Long) {
+            Long leftNum = (Long) leftValue;
+            Long rightNum = (Long) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Double && rightValue instanceof Double) {
+            Double leftNum = (Double) leftValue;
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
+                (leftValue instanceof String && isNumber((String) leftValue))) {
+            if (rightValue instanceof Integer) {
+                Integer leftNum = Integer.valueOf((String) leftValue);
+                Integer rightNum = (Integer) rightValue;
+                return leftNum.compareTo(rightNum);
+            } else {
+                Long leftNum = Long.valueOf((String) leftValue);
+                Long rightNum = (Long) rightValue;
+                return leftNum.compareTo(rightNum);
+            }
+        } else if ((rightValue instanceof String) &&
+                (leftValue instanceof Integer || leftValue instanceof Long)) {
+            if (leftValue instanceof Integer) {
+                Integer leftNum = (Integer) leftValue;
+                Integer rightNum = Integer.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum);
+            } else {
+                Long leftNum = (Long) leftValue;
+                Long rightNum = Long.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum);
+            }
+        } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
+            Double leftNum = Double.valueOf((String) leftValue);
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (rightValue instanceof Boolean && leftValue instanceof String) {
+            Boolean leftBool = Boolean.valueOf((String) leftValue);
+            Boolean rightBool = (Boolean) rightValue;
+            return leftBool.compareTo(rightBool);
+        } else if (rightValue instanceof String && leftValue instanceof Boolean) {
+            Boolean leftBool = (Boolean) leftValue;
+            Boolean rightBool = Boolean.valueOf((String) rightValue);
+            return leftBool.compareTo(rightBool);
+        }
 
         // if both values is numeric then compare using numeric
         Long leftNum = converter.tryConvertTo(Long.class, leftValue);
@@ -168,13 +289,55 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to invoke a method via reflection and wrap any exceptions
-     * as {@link RuntimeCamelException} instances
+     * Checks whether the text is an integer number
+     */
+    public static boolean isNumber(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (i == 0 && ch == '-') {
+                // skip leading negative
+            } else if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks whether the text is a float point number
+     */
+    public static boolean isFloatingNumber(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        boolean dots = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (i == 0 && ch == '-') {
+                // skip leading negative
+            } else if (ch == '.') {
+                if (dots) {
+                    return false;
+                }
+                dots = true;
+            } else if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * A helper method to invoke a method via reflection and wrap any exceptions as {@link RuntimeCamelException}
+     * instances
      *
-     * @param method the method to invoke
-     * @param instance the object instance (or null for static methods)
-     * @param parameters the parameters to the method
-     * @return the result of the method invocation
+     * @param  method     the method to invoke
+     * @param  instance   the object instance (or null for static methods)
+     * @param  parameters the parameters to the method
+     * @return            the result of the method invocation
      */
     public static Object invokeMethod(Method method, Object instance, Object... parameters) {
         try {
@@ -191,16 +354,16 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to invoke a method via reflection in a safe way by allowing to invoke
-     * methods that are not accessible by default and wrap any exceptions
-     * as {@link RuntimeCamelException} instances
+     * A helper method to invoke a method via reflection in a safe way by allowing to invoke methods that are not
+     * accessible by default and wrap any exceptions as {@link RuntimeCamelException} instances
      *
-     * @param method the method to invoke
-     * @param instance the object instance (or null for static methods)
-     * @param parameters the parameters to the method
-     * @return the result of the method invocation
+     * @param  method     the method to invoke
+     * @param  instance   the object instance (or null for static methods)
+     * @param  parameters the parameters to the method
+     * @return            the result of the method invocation
      */
-    public static Object invokeMethodSafe(Method method, Object instance, Object... parameters) throws InvocationTargetException, IllegalAccessException {
+    public static Object invokeMethodSafe(Method method, Object instance, Object... parameters)
+            throws InvocationTargetException, IllegalAccessException {
         Object answer;
         if (!method.isAccessible()) {
             method.setAccessible(true);
@@ -214,8 +377,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to create a new instance of a type using the default
-     * constructor arguments.
+     * A helper method to create a new instance of a type using the default constructor arguments.
      */
     public static <T> T newInstance(Class<T> type) {
         try {
@@ -226,8 +388,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to create a new instance of a type using the default
-     * constructor arguments.
+     * A helper method to create a new instance of a type using the default constructor arguments.
      */
     public static <T> T newInstance(Class<?> actualType, Class<T> expectedType) {
         try {
@@ -239,22 +400,22 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method for performing an ordered comparison on the objects
-     * handling nulls and objects which do not handle sorting gracefully
+     * A helper method for performing an ordered comparison on the objects handling nulls and objects which do not
+     * handle sorting gracefully
      */
     public static int compare(Object a, Object b) {
         return compare(a, b, false);
     }
 
     /**
-     * A helper method for performing an ordered comparison on the objects
-     * handling nulls and objects which do not handle sorting gracefully
+     * A helper method for performing an ordered comparison on the objects handling nulls and objects which do not
+     * handle sorting gracefully
      *
-     * @param a  the first object
-     * @param b  the second object
-     * @param ignoreCase  ignore case for string comparison
+     * @param a          the first object
+     * @param b          the second object
+     * @param ignoreCase ignore case for string comparison
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static int compare(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return 0;
@@ -272,7 +433,7 @@ public final class ObjectHelper {
             return ((String) a).compareToIgnoreCase((String) b);
         }
         if (a instanceof Comparable) {
-            Comparable comparable = (Comparable)a;
+            Comparable comparable = (Comparable) a;
             return comparable.compareTo(b);
         }
         int answer = a.getClass().getName().compareTo(b.getClass().getName());
@@ -285,9 +446,9 @@ public final class ObjectHelper {
     /**
      * Calling the Callable with the setting of TCCL with the camel context application classloader.
      *
-     * @param call the Callable instance
-     * @param exchange the exchange
-     * @return the result of Callable return
+     * @param  call     the Callable instance
+     * @param  exchange the exchange
+     * @return          the result of Callable return
      */
     public static Object callWithTCCL(Callable<?> call, Exchange exchange) throws Exception {
         ClassLoader apcl = null;
@@ -300,9 +461,9 @@ public final class ObjectHelper {
     /**
      * Calling the Callable with the setting of TCCL with a given classloader.
      *
-     * @param call        the Callable instance
-     * @param classloader the class loader
-     * @return the result of Callable return
+     * @param  call        the Callable instance
+     * @param  classloader the class loader
+     * @return             the result of Callable return
      */
     public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
@@ -317,32 +478,29 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterable over the value if the value is a collection, an
-     * Object[], a String with values separated by comma,
-     * or a primitive type array; otherwise to simplify the caller's code,
-     * we just create a singleton collection iterator over a single value
+     * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
+     * comma, or a primitive type array; otherwise to simplify the caller's code, we just create a singleton collection
+     * iterator over a single value
      * <p/>
-     * Will default use comma for String separating String values.
-     * This method does <b>not</b> allow empty values
+     * Will default use comma for String separating String values. This method does <b>not</b> allow empty values
      *
-     * @param value  the value
-     * @return the iterable
+     * @param  value the value
+     * @return       the iterable
      */
     public static Iterable<?> createIterable(Object value) {
         return createIterable(value, DEFAULT_DELIMITER);
     }
 
     /**
-     * Creates an iterable over the value if the value is a collection, an
-     * Object[], a String with values separated by the given delimiter,
-     * or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
+     * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
+     * singleton collection iterator over a single value
      * <p/>
      * This method does <b>not</b> allow empty values
      *
-     * @param value      the value
-     * @param delimiter  delimiter for separating String values
-     * @return the iterable
+     * @param  value     the value
+     * @param  delimiter delimiter for separating String values
+     * @return           the iterable
      */
     public static Iterable<?> createIterable(Object value, String delimiter) {
         return createIterable(value, delimiter, false);
@@ -386,52 +544,48 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
-     * Object[], a String with values separated by comma,
-     * or a primitive type array; otherwise to simplify the caller's code,
-     * we just create a singleton collection iterator over a single value
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
+     * values separated by comma, or a primitive type array; otherwise to simplify the caller's code, we just create a
+     * singleton collection iterator over a single value
      * <p/>
-     * Will default use comma for String separating String values.
-     * This method does <b>not</b> allow empty values
+     * Will default use comma for String separating String values. This method does <b>not</b> allow empty values
      *
-     * @param value  the value
-     * @return the iterator
+     * @param  value the value
+     * @return       the iterator
      */
     public static Iterator<?> createIterator(Object value) {
         return createIterator(value, DEFAULT_DELIMITER);
     }
 
     /**
-     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
-     * Object[], a String with values separated by the given delimiter,
-     * or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
+     * values separated by the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we
+     * just create a singleton collection iterator over a single value
      * <p/>
      * This method does <b>not</b> allow empty values
      *
-     * @param value      the value
-     * @param delimiter  delimiter for separating String values
-     * @return the iterator
+     * @param  value     the value
+     * @param  delimiter delimiter for separating String values
+     * @return           the iterator
      */
     public static Iterator<?> createIterator(Object value, String delimiter) {
         return createIterator(value, delimiter, false);
     }
 
     /**
-     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
-     * Object[], a String with values separated by the given delimiter,
-     * or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
+     * values separated by the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we
+     * just create a singleton collection iterator over a single value
      *
-     * </p> In case of primitive type arrays the returned {@code Iterator} iterates
-     * over the corresponding Java primitive wrapper objects of the given elements
-     * inside the {@code value} array. That's we get an autoboxing of the primitive
-     * types here for free as it's also the case in Java language itself.
+     * </p>
+     * In case of primitive type arrays the returned {@code Iterator} iterates over the corresponding Java primitive
+     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * primitive types here for free as it's also the case in Java language itself.
      *
-     * @param value             the value
-     * @param delimiter         delimiter for separating String values
-     * @param allowEmptyValues  whether to allow empty values
-     * @return the iterator
+     * @param  value            the value
+     * @param  delimiter        delimiter for separating String values
+     * @param  allowEmptyValues whether to allow empty values
+     * @return                  the iterator
      */
     public static Iterator<?> createIterator(Object value, String delimiter, boolean allowEmptyValues) {
         if (value instanceof Stream) {
@@ -441,24 +595,24 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterator over the value if the value is a {@link Stream}, collection, an
-     * Object[], a String with values separated by the given delimiter,
-     * or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterator over the value if the value is a {@link Stream}, collection, an Object[], a String with
+     * values separated by the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we
+     * just create a singleton collection iterator over a single value
      *
-     * </p> In case of primitive type arrays the returned {@code Iterator} iterates
-     * over the corresponding Java primitive wrapper objects of the given elements
-     * inside the {@code value} array. That's we get an autoboxing of the primitive
-     * types here for free as it's also the case in Java language itself.
+     * </p>
+     * In case of primitive type arrays the returned {@code Iterator} iterates over the corresponding Java primitive
+     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * primitive types here for free as it's also the case in Java language itself.
      *
-     * @param value             the value
-     * @param delimiter         delimiter for separating String values
-     * @param allowEmptyValues  whether to allow empty values
-     * @param pattern           whether the delimiter is a pattern
-     * @return the iterator
+     * @param  value            the value
+     * @param  delimiter        delimiter for separating String values
+     * @param  allowEmptyValues whether to allow empty values
+     * @param  pattern          whether the delimiter is a pattern
+     * @return                  the iterator
      */
-    public static Iterator<?> createIterator(Object value, String delimiter,
-                                                  boolean allowEmptyValues, boolean pattern) {
+    public static Iterator<?> createIterator(
+            Object value, String delimiter,
+            boolean allowEmptyValues, boolean pattern) {
         if (value instanceof Stream) {
             return ((Stream) value).iterator();
         }
@@ -466,48 +620,48 @@ public final class ObjectHelper {
     }
 
     /**
-     * Creates an iterable over the value if the value is a collection, an
-     * Object[], a String with values separated by the given delimiter,
-     * or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
+     * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
+     * singleton collection iterator over a single value
      *
-     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
-     * over the corresponding Java primitive wrapper objects of the given elements
-     * inside the {@code value} array. That's we get an autoboxing of the primitive
-     * types here for free as it's also the case in Java language itself.
+     * </p>
+     * In case of primitive type arrays the returned {@code Iterable} iterates over the corresponding Java primitive
+     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * primitive types here for free as it's also the case in Java language itself.
      *
-     * @param value             the value
-     * @param delimiter         delimiter for separating String values
-     * @param allowEmptyValues  whether to allow empty values
-     * @return the iterable
-     * @see Iterable
+     * @param  value            the value
+     * @param  delimiter        delimiter for separating String values
+     * @param  allowEmptyValues whether to allow empty values
+     * @return                  the iterable
+     * @see                     Iterable
      */
-    public static Iterable<?> createIterable(Object value, String delimiter,
-                                                  final boolean allowEmptyValues) {
+    public static Iterable<?> createIterable(
+            Object value, String delimiter,
+            final boolean allowEmptyValues) {
         return createIterable(value, delimiter, allowEmptyValues, false);
     }
 
     /**
-     * Creates an iterable over the value if the value is a collection, an
-     * Object[], a String with values separated by the given delimiter,
-     * or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Creates an iterable over the value if the value is a collection, an Object[], a String with values separated by
+     * the given delimiter, or a primitive type array; otherwise to simplify the caller's code, we just create a
+     * singleton collection iterator over a single value
      *
-     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
-     * over the corresponding Java primitive wrapper objects of the given elements
-     * inside the {@code value} array. That's we get an autoboxing of the primitive
-     * types here for free as it's also the case in Java language itself.
+     * </p>
+     * In case of primitive type arrays the returned {@code Iterable} iterates over the corresponding Java primitive
+     * wrapper objects of the given elements inside the {@code value} array. That's we get an autoboxing of the
+     * primitive types here for free as it's also the case in Java language itself.
      *
-     * @param value             the value
-     * @param delimiter         delimiter for separating String values
-     * @param allowEmptyValues  whether to allow empty values
-     * @param pattern           whether the delimiter is a pattern
-     * @return the iterable
-     * @see Iterable
+     * @param  value            the value
+     * @param  delimiter        delimiter for separating String values
+     * @param  allowEmptyValues whether to allow empty values
+     * @param  pattern          whether the delimiter is a pattern
+     * @return                  the iterable
+     * @see                     Iterable
      */
     @SuppressWarnings("unchecked")
-    public static Iterable<?> createIterable(Object value, String delimiter,
-                                             final boolean allowEmptyValues, final boolean pattern) {
+    public static Iterable<?> createIterable(
+            Object value, String delimiter,
+            final boolean allowEmptyValues, final boolean pattern) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
@@ -517,7 +671,7 @@ public final class ObjectHelper {
         if (value == null) {
             return Collections.emptyList();
         } else if (value instanceof Iterator) {
-            final Iterator<Object> iterator = (Iterator<Object>)value;
+            final Iterator<Object> iterator = (Iterator<Object>) value;
             return new Iterable<Object>() {
                 @Override
                 public Iterator<Object> iterator() {
@@ -525,7 +679,7 @@ public final class ObjectHelper {
                 }
             };
         } else if (value instanceof Iterable) {
-            return (Iterable<Object>)value;
+            return (Iterable<Object>) value;
         } else if (value.getClass().isArray()) {
             if (org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
@@ -538,7 +692,8 @@ public final class ObjectHelper {
 
                     public Object next() {
                         if (!hasNext()) {
-                            throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
+                            throw new NoSuchElementException(
+                                    "no more element available for '" + array + "' at the index " + idx);
                         }
 
                         return Array.get(array, idx++);
@@ -563,7 +718,8 @@ public final class ObjectHelper {
 
                 public Node next() {
                     if (!hasNext()) {
-                        throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
+                        throw new NoSuchElementException(
+                                "no more element available for '" + nodeList + "' at the index " + idx);
                     }
 
                     return nodeList.item(idx++);
@@ -605,7 +761,8 @@ public final class ObjectHelper {
 
                         public Object next() {
                             if (!hasNext()) {
-                                throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
+                                throw new NoSuchElementException(
+                                        "no more element available for '" + s + "' at the index " + idx);
                             }
 
                             idx++;
@@ -625,10 +782,14 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the collection contains the specified value
+     * 
+     * @deprecated use {@link #typeCoerceContains(TypeConverter, Object, Object, boolean)}
      */
+    @Deprecated
     public static boolean contains(Object collectionOrArray, Object value) {
         // favor String types
-        if (collectionOrArray != null && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+        if (collectionOrArray != null
+                && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
             collectionOrArray = collectionOrArray.toString();
         }
         if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
@@ -636,11 +797,11 @@ public final class ObjectHelper {
         }
 
         if (collectionOrArray instanceof Collection) {
-            Collection<?> collection = (Collection<?>)collectionOrArray;
+            Collection<?> collection = (Collection<?>) collectionOrArray;
             return collection.contains(value);
         } else if (collectionOrArray instanceof String && value instanceof String) {
-            String str = (String)collectionOrArray;
-            String subStr = (String)value;
+            String str = (String) collectionOrArray;
+            String subStr = (String) value;
             return str.contains(subStr);
         } else {
             Iterator<?> iter = createIterator(collectionOrArray);
@@ -654,32 +815,52 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns true if the collection contains the specified value by considering case insensitivity
+     * Returns true if the collection contains the specified value
      */
-    public static boolean containsIgnoreCase(Object collectionOrArray, Object value) {
+    public static boolean typeCoerceContains(
+            TypeConverter typeConverter, Object collectionOrArray, Object value, boolean ignoreCase) {
         // favor String types
-        if (collectionOrArray != null && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+        if (collectionOrArray != null
+                && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
             collectionOrArray = collectionOrArray.toString();
         }
-        if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
+        if (value instanceof StringBuffer || value instanceof StringBuilder) {
             value = value.toString();
         }
 
         if (collectionOrArray instanceof Collection) {
-            Collection<?> collection = (Collection<?>)collectionOrArray;
-            return collection.contains(value);
-        } else if (collectionOrArray instanceof String && value instanceof String) {
-            String str = (String)collectionOrArray;
-            String subStr = (String)value;
-            return StringHelper.containsIgnoreCase(str, subStr);
-        } else {
-            Iterator<?> iter = createIterator(collectionOrArray);
-            while (iter.hasNext()) {
-                if (org.apache.camel.util.ObjectHelper.equalIgnoreCase(value, iter.next())) {
-                    return true;
+            Collection<?> collection = (Collection<?>) collectionOrArray;
+            if (ignoreCase) {
+                String lower = value.toString().toLowerCase(Locale.ENGLISH);
+                return collection.stream().anyMatch(c -> c.toString().toLowerCase(Locale.ENGLISH).contains(lower));
+            } else {
+                return collection.contains(value);
+            }
+        } else if (collectionOrArray instanceof String) {
+            String str = (String) collectionOrArray;
+            String subStr;
+            if (value instanceof String) {
+                subStr = (String) value;
+            } else {
+                subStr = typeConverter.tryConvertTo(String.class, value);
+            }
+            if (subStr != null) {
+                if (ignoreCase) {
+                    String lower = subStr.toLowerCase(Locale.ENGLISH);
+                    return str.toLowerCase(Locale.ENGLISH).contains(lower);
+                } else {
+                    return str.contains(subStr);
                 }
+            }
+        }
+
+        Iterator<?> iter = createIterator(collectionOrArray);
+        while (iter.hasNext()) {
+            if (typeCoerceEquals(typeConverter, value, iter.next(), ignoreCase)) {
+                return true;
             }
         }
         return false;
     }
+
 }

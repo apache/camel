@@ -53,7 +53,7 @@ public class JooqConsumerTest extends BaseJooqTest {
 
         assertMockEndpointsSatisfied();
         assertEquals(bookStoreRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
-        assertEquals(1, ((Result)mockResult.getExchanges().get(0).getMessage().getBody()).size());
+        assertEquals(1, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class JooqConsumerTest extends BaseJooqTest {
 
         assertMockEndpointsSatisfied();
         assertEquals(authorRecord, mockInserted.getExchanges().get(0).getMessage().getBody());
-        assertEquals(0, ((Result)mockResult.getExchanges().get(0).getMessage().getBody()).size());
+        assertEquals(0, ((Result) mockResult.getExchanges().get(0).getMessage().getBody()).size());
     }
 
     @Override

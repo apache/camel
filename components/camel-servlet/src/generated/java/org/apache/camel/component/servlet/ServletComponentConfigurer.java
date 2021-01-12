@@ -4,8 +4,10 @@ package org.apache.camel.component.servlet;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "filenameextwhitelist":
@@ -44,19 +46,30 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowJavaSerializedObject", boolean.class);
-        answer.put("attachmentMultipartBinding", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("fileNameExtWhitelist", java.lang.String.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        answer.put("httpRegistry", org.apache.camel.http.common.HttpRegistry.class);
-        answer.put("servletName", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "attachmentmultipartbinding":
+        case "attachmentMultipartBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "httpregistry":
+        case "httpRegistry": return org.apache.camel.http.common.HttpRegistry.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -67,8 +80,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "filenameextwhitelist":

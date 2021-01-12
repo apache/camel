@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.WaitContainerCmd;
-import com.github.dockerjava.core.command.WaitContainerResultCallback;
+import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 
 /**
@@ -40,7 +39,7 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
     @Mock
     private WaitContainerResultCallback callback;
-    
+
     @Test
     void waitContainerHeaderTest() {
 
@@ -48,7 +47,6 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
@@ -60,7 +58,6 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     protected void setupMocks() {
         Mockito.when(dockerClient.waitContainerCmd(anyString())).thenReturn(mockObject);
         Mockito.when(mockObject.exec(any())).thenReturn(callback);
-        Mockito.when(callback.awaitStatusCode()).thenReturn(anyInt());
     }
 
     @Override

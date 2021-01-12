@@ -21,16 +21,15 @@ import io.undertow.server.handlers.RedirectHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelRootHandlerTest {
 
     private static final HttpHandler DEFAULT_HANDLER = new NotFoundHandler();
 
     @Test
-    public void httpAndWsUnssupportedForTheSamePath() {
-
+    public void httpAndWsUnsupportedForTheSamePath() {
         final CamelRootHandler root = new CamelRootHandler(DEFAULT_HANDLER);
 
         final RedirectHandler httpHandler = new RedirectHandler("http://whereever");
@@ -39,11 +38,11 @@ public class CamelRootHandlerTest {
         root.add("/app1", null, false, httpHandler);
         assertFalse(root.isEmpty());
 
-        try {
-            root.add("/app1", null, false, new CamelWebSocketHandler());
-            fail(IllegalArgumentException.class.getName() + " expected");
-        } catch (IllegalArgumentException expected) {
-        }
+        CamelWebSocketHandler camelWebSocketHandler1 = new CamelWebSocketHandler();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> root.add("/app1", null, false, camelWebSocketHandler1),
+                "IllegalArgumentException expected");
 
         root.remove("/app1", null, false);
 
@@ -51,12 +50,10 @@ public class CamelRootHandlerTest {
 
         /* now the other way round: register wsHandler and try to register httpHandler for the same path */
         root.add("/app2", null, false, new CamelWebSocketHandler());
-        try {
-            root.add("/app2", null, false, httpHandler);
-            fail(IllegalArgumentException.class.getName() + " expected");
-        } catch (IllegalArgumentException expected) {
-        }
-
+        CamelWebSocketHandler camelWebSocketHandler2 = new CamelWebSocketHandler();
+        assertThrows(IllegalArgumentException.class,
+                () -> root.add("/app2", null, false, httpHandler),
+                "IllegalArgumentException expected");
     }
 
     @Test

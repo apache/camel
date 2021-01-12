@@ -45,10 +45,10 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Prepares camel-main by generating Camel Main configuration metadata for
- * tooling support.
+ * Prepares camel-main by generating Camel Main configuration metadata for tooling support.
  */
-@Mojo(name = "prepare-main-doc", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "prepare-main-doc", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
+      requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
 
     /**
@@ -70,7 +70,7 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
     public static List<MainModel.MainOptionModel> parseConfigurationSource(File file) throws IOException {
         final List<MainModel.MainOptionModel> answer = new ArrayList<>();
 
-        JavaClassSource clazz = (JavaClassSource)Roaster.parse(file);
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
         List<FieldSource<JavaClassSource>> fields = clazz.getFields();
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
@@ -93,7 +93,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             MethodSource<?> setter = clazz.getMethod(setterName, javaType);
             if (setter != null) {
                 String desc = setter.getJavaDoc().getFullText();
-                boolean deprecated = clazz.getAnnotation(Deprecated.class) != null || setter.getAnnotation(Deprecated.class) != null;
+                boolean deprecated
+                        = clazz.getAnnotation(Deprecated.class) != null || setter.getAnnotation(Deprecated.class) != null;
                 String type = fromMainToType(javaType);
                 MainModel.MainOptionModel model = new MainModel.MainOptionModel();
                 model.setName(name);
@@ -160,7 +161,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
     }
 
     @Override
-    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext)
+            throws MojoFailureException, MojoExecutionException {
         outFolder = new File(project.getBasedir(), "src/generated/resources");
         super.execute(project, projectHelper, buildContext);
     }
@@ -168,7 +170,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // scan for configuration files
-        File[] files = new File(project.getBasedir(), "src/main/java/org/apache/camel/main").listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
+        File[] files = new File(project.getBasedir(), "src/main/java/org/apache/camel/main")
+                .listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
         if (files == null || files.length == 0) {
             return;
         }
@@ -234,14 +237,28 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         if (!data.isEmpty()) {
             MainModel model = new MainModel();
             model.getOptions().addAll(data);
-            model.getGroups().add(new MainGroupModel("camel.main", "camel-main configurations.", "org.apache.camel.main.DefaultConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.faulttolerance", "camel-fault-tolerance configurations.", "org.apache.camel.main.FaultToleranceConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.hystrix", "camel-hystrix configurations.", "org.apache.camel.main.HystrixConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.resilience4j", "camel-resilience4j configurations.", "org.apache.camel.main.Resilience4jConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.rest", "camel-rest configurations.", "org.apache.camel.spi.RestConfiguration"));
-            model.getGroups().add(new MainGroupModel("camel.health", "camel-health configurations.", "org.apache.camel.main.HealthConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.lra", "camel-lra configurations.", "org.apache.camel.main.LraConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel("camel.threadpool", "camel-threadpool configurations.", "org.apache.camel.main.ThreadPoolConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.main", "camel-main configurations.", "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.faulttolerance", "camel-fault-tolerance configurations.",
+                            "org.apache.camel.main.FaultToleranceConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.hystrix", "camel-hystrix configurations.", "org.apache.camel.main.HystrixConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.resilience4j", "camel-resilience4j configurations.",
+                            "org.apache.camel.main.Resilience4jConfigurationProperties"));
+            model.getGroups().add(
+                    new MainGroupModel("camel.rest", "camel-rest configurations.", "org.apache.camel.spi.RestConfiguration"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.health", "camel-health configurations.", "org.apache.camel.main.HealthConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.lra", "camel-lra configurations.", "org.apache.camel.main.LraConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.threadpool", "camel-threadpool configurations.",
+                            "org.apache.camel.main.ThreadPoolConfigurationProperties"));
 
             String json = JsonMapper.createJsonSchema(model);
 

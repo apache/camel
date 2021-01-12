@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = {TimerRouteTest.TestConfig.class})
+                      classes = { TimerRouteTest.TestConfig.class })
 @MockEndpoints
 public class TimerRouteTest {
 
@@ -125,7 +125,6 @@ public class TimerRouteTest {
         assertTrue(timer.max(TimeUnit.MILLISECONDS) > 0.0D);
         endpoint.assertIsSatisfied();
     }
-
 
     @Test
     public void testOverrideNoAction() throws Exception {

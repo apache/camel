@@ -45,14 +45,10 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -72,8 +68,9 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
-        HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-            + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
+        HttpEndpoint endpoint = (HttpEndpoint) component
+                .createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                                + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
         HttpProducer producer = new HttpProducer(endpoint);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);

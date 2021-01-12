@@ -19,6 +19,8 @@ package org.apache.camel.component.mina;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 
@@ -27,10 +29,11 @@ import static org.apache.camel.test.junit5.TestSupport.isPlatform;
  *
  */
 public class MinaReverseProtocolHandler extends IoHandlerAdapter {
+    private static final Logger LOG = LoggerFactory.getLogger(MinaReverseProtocolHandler.class);
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) {
-        cause.printStackTrace();
+        LOG.warn("Unhandled exception: {}", cause.getMessage(), cause);
         // Close connection when unexpected exception is caught.
         session.closeNow();
     }

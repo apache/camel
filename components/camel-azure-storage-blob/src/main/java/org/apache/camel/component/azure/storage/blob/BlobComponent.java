@@ -55,27 +55,29 @@ public class BlobComponent extends DefaultComponent {
             throw new IllegalArgumentException("At least the account name must be specified.");
         }
 
-        final BlobConfiguration configuration = this.configuration != null ? this.configuration.copy() : new BlobConfiguration();
+        final BlobConfiguration config = this.configuration != null
+                ? this.configuration.copy()
+                : new BlobConfiguration();
 
         final String[] parts = remaining.split("/");
 
         // only account name is being set
-        configuration.setAccountName(parts[0]);
+        config.setAccountName(parts[0]);
 
         // also container name is being set
         if (parts.length > 1) {
-            configuration.setContainerName(parts[1]);
+            config.setContainerName(parts[1]);
         }
 
-        final BlobEndpoint endpoint = new BlobEndpoint(uri, this, configuration);
+        final BlobEndpoint endpoint = new BlobEndpoint(uri, this, config);
         setProperties(endpoint, parameters);
 
-        if (configuration.isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration);
+        if (config.isAutoDiscoverClient()) {
+            checkAndSetRegistryClient(config);
         }
 
-        checkCredentials(configuration);
-        validateConfigurations(configuration);
+        checkCredentials(config);
+        validateConfigurations(config);
 
         return endpoint;
     }
@@ -94,9 +96,10 @@ public class BlobComponent extends DefaultComponent {
     private void checkCredentials(final BlobConfiguration configuration) {
         final BlobServiceClient client = configuration.getServiceClient();
 
-        //if no azureBlobClient is provided fallback to credentials
+        // if no azureBlobClient is provided fallback to credentials
         if (client == null) {
-            Set<StorageSharedKeyCredential> storageSharedKeyCredentials = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
+            Set<StorageSharedKeyCredential> storageSharedKeyCredentials
+                    = getCamelContext().getRegistry().findByType(StorageSharedKeyCredential.class);
             if (storageSharedKeyCredentials.size() == 1) {
                 configuration.setCredentials(storageSharedKeyCredentials.stream().findFirst().get());
             }
@@ -119,7 +122,9 @@ public class BlobComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final BlobConfiguration configuration) {
-        if (configuration.getServiceClient() == null && configuration.getAccessKey() == null && configuration.getCredentials() == null) {
+        if (configuration.getServiceClient() == null
+                && configuration.getAccessKey() == null
+                && configuration.getCredentials() == null) {
             throw new IllegalArgumentException("Azure Storage accessKey or BlobServiceClient must be specified.");
         }
     }

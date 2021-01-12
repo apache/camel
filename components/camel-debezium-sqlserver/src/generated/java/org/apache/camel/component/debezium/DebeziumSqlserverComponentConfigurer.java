@@ -4,8 +4,10 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -28,12 +30,18 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": getOrCreateConfiguration(target).setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnexcludelist":
+        case "columnExcludeList": getOrCreateConfiguration(target).setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnincludelist":
+        case "columnIncludeList": getOrCreateConfiguration(target).setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": getOrCreateConfiguration(target).setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "columnwhitelist":
         case "columnWhitelist": getOrCreateConfiguration(target).setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
@@ -54,6 +62,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseHistoryKafkaTopic": getOrCreateConfiguration(target).setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseinstance":
+        case "databaseInstance": getOrCreateConfiguration(target).setDatabaseInstance(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
@@ -64,6 +74,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseServerTimezone": getOrCreateConfiguration(target).setDatabaseServerTimezone(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": getOrCreateConfiguration(target).setDatatypePropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
@@ -82,6 +94,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
         case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": getOrCreateConfiguration(target).setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -104,6 +118,10 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": getOrCreateConfiguration(target).setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": getOrCreateConfiguration(target).setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
@@ -112,10 +130,14 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": getOrCreateConfiguration(target).setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotisolationmode":
         case "snapshotIsolationMode": getOrCreateConfiguration(target).setSnapshotIsolationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
@@ -126,8 +148,12 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "sourceTimestampMode": getOrCreateConfiguration(target).setSourceTimestampMode(property(camelContext, java.lang.String.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": getOrCreateConfiguration(target).setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableexcludelist":
+        case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": getOrCreateConfiguration(target).setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
+        case "tableincludelist":
+        case "tableIncludeList": getOrCreateConfiguration(target).setTableIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tablewhitelist":
         case "tableWhitelist": getOrCreateConfiguration(target).setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
@@ -139,64 +165,142 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalProperties", java.util.Map.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("columnBlacklist", java.lang.String.class);
-        answer.put("columnWhitelist", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class);
-        answer.put("converters", java.lang.String.class);
-        answer.put("databaseDbname", java.lang.String.class);
-        answer.put("databaseHistory", java.lang.String.class);
-        answer.put("databaseHistoryFileFilename", java.lang.String.class);
-        answer.put("databaseHistoryKafkaBootstrapServers", java.lang.String.class);
-        answer.put("databaseHistoryKafkaRecoveryAttempts", int.class);
-        answer.put("databaseHistoryKafkaRecoveryPollIntervalMs", int.class);
-        answer.put("databaseHistoryKafkaTopic", java.lang.String.class);
-        answer.put("databaseHostname", java.lang.String.class);
-        answer.put("databasePassword", java.lang.String.class);
-        answer.put("databasePort", int.class);
-        answer.put("databaseServerName", java.lang.String.class);
-        answer.put("databaseServerTimezone", java.lang.String.class);
-        answer.put("databaseUser", java.lang.String.class);
-        answer.put("decimalHandlingMode", java.lang.String.class);
-        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        answer.put("heartbeatIntervalMs", int.class);
-        answer.put("heartbeatTopicsPrefix", java.lang.String.class);
-        answer.put("includeSchemaChanges", boolean.class);
-        answer.put("internalKeyConverter", java.lang.String.class);
-        answer.put("internalValueConverter", java.lang.String.class);
-        answer.put("maxBatchSize", int.class);
-        answer.put("maxQueueSize", int.class);
-        answer.put("messageKeyColumns", java.lang.String.class);
-        answer.put("offsetCommitPolicy", java.lang.String.class);
-        answer.put("offsetCommitTimeoutMs", long.class);
-        answer.put("offsetFlushIntervalMs", long.class);
-        answer.put("offsetStorage", java.lang.String.class);
-        answer.put("offsetStorageFileName", java.lang.String.class);
-        answer.put("offsetStoragePartitions", int.class);
-        answer.put("offsetStorageReplicationFactor", int.class);
-        answer.put("offsetStorageTopic", java.lang.String.class);
-        answer.put("pollIntervalMs", long.class);
-        answer.put("provideTransactionMetadata", boolean.class);
-        answer.put("sanitizeFieldNames", boolean.class);
-        answer.put("skippedOperations", java.lang.String.class);
-        answer.put("snapshotDelayMs", long.class);
-        answer.put("snapshotFetchSize", int.class);
-        answer.put("snapshotIsolationMode", java.lang.String.class);
-        answer.put("snapshotLockTimeoutMs", long.class);
-        answer.put("snapshotMode", java.lang.String.class);
-        answer.put("snapshotSelectStatementOverrides", java.lang.String.class);
-        answer.put("sourceStructVersion", java.lang.String.class);
-        answer.put("sourceTimestampMode", java.lang.String.class);
-        answer.put("tableBlacklist", java.lang.String.class);
-        answer.put("tableIgnoreBuiltin", boolean.class);
-        answer.put("tableWhitelist", java.lang.String.class);
-        answer.put("timePrecisionMode", java.lang.String.class);
-        answer.put("tombstonesOnDelete", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "columnblacklist":
+        case "columnBlacklist": return java.lang.String.class;
+        case "columnexcludelist":
+        case "columnExcludeList": return java.lang.String.class;
+        case "columnincludelist":
+        case "columnIncludeList": return java.lang.String.class;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return java.lang.String.class;
+        case "columnwhitelist":
+        case "columnWhitelist": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration.class;
+        case "converters": return java.lang.String.class;
+        case "databasedbname":
+        case "databaseDbname": return java.lang.String.class;
+        case "databasehistory":
+        case "databaseHistory": return java.lang.String.class;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": return java.lang.String.class;
+        case "databasehistorykafkabootstrapservers":
+        case "databaseHistoryKafkaBootstrapServers": return java.lang.String.class;
+        case "databasehistorykafkarecoveryattempts":
+        case "databaseHistoryKafkaRecoveryAttempts": return int.class;
+        case "databasehistorykafkarecoverypollintervalms":
+        case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
+        case "databasehistorykafkatopic":
+        case "databaseHistoryKafkaTopic": return java.lang.String.class;
+        case "databasehostname":
+        case "databaseHostname": return java.lang.String.class;
+        case "databaseinstance":
+        case "databaseInstance": return java.lang.String.class;
+        case "databasepassword":
+        case "databasePassword": return java.lang.String.class;
+        case "databaseport":
+        case "databasePort": return int.class;
+        case "databaseservername":
+        case "databaseServerName": return java.lang.String.class;
+        case "databaseservertimezone":
+        case "databaseServerTimezone": return java.lang.String.class;
+        case "databaseuser":
+        case "databaseUser": return java.lang.String.class;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return java.lang.String.class;
+        case "decimalhandlingmode":
+        case "decimalHandlingMode": return java.lang.String.class;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": return int.class;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "includeschemachanges":
+        case "includeSchemaChanges": return boolean.class;
+        case "internalkeyconverter":
+        case "internalKeyConverter": return java.lang.String.class;
+        case "internalvalueconverter":
+        case "internalValueConverter": return java.lang.String.class;
+        case "maxbatchsize":
+        case "maxBatchSize": return int.class;
+        case "maxqueuesize":
+        case "maxQueueSize": return int.class;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return long.class;
+        case "messagekeycolumns":
+        case "messageKeyColumns": return java.lang.String.class;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": return java.lang.String.class;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": return long.class;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": return long.class;
+        case "offsetstorage":
+        case "offsetStorage": return java.lang.String.class;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": return java.lang.String.class;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": return int.class;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": return int.class;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": return java.lang.String.class;
+        case "pollintervalms":
+        case "pollIntervalMs": return long.class;
+        case "providetransactionmetadata":
+        case "provideTransactionMetadata": return boolean.class;
+        case "queryfetchsize":
+        case "queryFetchSize": return int.class;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return long.class;
+        case "sanitizefieldnames":
+        case "sanitizeFieldNames": return boolean.class;
+        case "skippedoperations":
+        case "skippedOperations": return java.lang.String.class;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": return long.class;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": return int.class;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotisolationmode":
+        case "snapshotIsolationMode": return java.lang.String.class;
+        case "snapshotlocktimeoutms":
+        case "snapshotLockTimeoutMs": return long.class;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return int.class;
+        case "snapshotmode":
+        case "snapshotMode": return java.lang.String.class;
+        case "snapshotselectstatementoverrides":
+        case "snapshotSelectStatementOverrides": return java.lang.String.class;
+        case "sourcestructversion":
+        case "sourceStructVersion": return java.lang.String.class;
+        case "sourcetimestampmode":
+        case "sourceTimestampMode": return java.lang.String.class;
+        case "tableblacklist":
+        case "tableBlacklist": return java.lang.String.class;
+        case "tableexcludelist":
+        case "tableExcludeList": return java.lang.String.class;
+        case "tableignorebuiltin":
+        case "tableIgnoreBuiltin": return boolean.class;
+        case "tableincludelist":
+        case "tableIncludeList": return java.lang.String.class;
+        case "tablewhitelist":
+        case "tableWhitelist": return java.lang.String.class;
+        case "timeprecisionmode":
+        case "timePrecisionMode": return java.lang.String.class;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -205,12 +309,18 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
         case "columnBlacklist": return getOrCreateConfiguration(target).getColumnBlacklist();
+        case "columnexcludelist":
+        case "columnExcludeList": return getOrCreateConfiguration(target).getColumnExcludeList();
+        case "columnincludelist":
+        case "columnIncludeList": return getOrCreateConfiguration(target).getColumnIncludeList();
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return getOrCreateConfiguration(target).getColumnPropagateSourceType();
         case "columnwhitelist":
         case "columnWhitelist": return getOrCreateConfiguration(target).getColumnWhitelist();
         case "configuration": return target.getConfiguration();
@@ -231,6 +341,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseHistoryKafkaTopic": return getOrCreateConfiguration(target).getDatabaseHistoryKafkaTopic();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
+        case "databaseinstance":
+        case "databaseInstance": return getOrCreateConfiguration(target).getDatabaseInstance();
         case "databasepassword":
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
@@ -241,6 +353,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "databaseServerTimezone": return getOrCreateConfiguration(target).getDatabaseServerTimezone();
         case "databaseuser":
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return getOrCreateConfiguration(target).getDatatypePropagateSourceType();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "eventprocessingfailurehandlingmode":
@@ -259,6 +373,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxqueuesize":
         case "maxQueueSize": return getOrCreateConfiguration(target).getMaxQueueSize();
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return getOrCreateConfiguration(target).getMaxQueueSizeInBytes();
         case "messagekeycolumns":
         case "messageKeyColumns": return getOrCreateConfiguration(target).getMessageKeyColumns();
         case "offsetcommitpolicy":
@@ -281,6 +397,10 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "pollIntervalMs": return getOrCreateConfiguration(target).getPollIntervalMs();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return getOrCreateConfiguration(target).isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return getOrCreateConfiguration(target).getQueryFetchSize();
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
         case "skippedoperations":
@@ -289,10 +409,14 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return getOrCreateConfiguration(target).getSnapshotIncludeCollectionList();
         case "snapshotisolationmode":
         case "snapshotIsolationMode": return getOrCreateConfiguration(target).getSnapshotIsolationMode();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotselectstatementoverrides":
@@ -303,14 +427,27 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "sourceTimestampMode": return getOrCreateConfiguration(target).getSourceTimestampMode();
         case "tableblacklist":
         case "tableBlacklist": return getOrCreateConfiguration(target).getTableBlacklist();
+        case "tableexcludelist":
+        case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return getOrCreateConfiguration(target).isTableIgnoreBuiltin();
+        case "tableincludelist":
+        case "tableIncludeList": return getOrCreateConfiguration(target).getTableIncludeList();
         case "tablewhitelist":
         case "tableWhitelist": return getOrCreateConfiguration(target).getTableWhitelist();
         case "timeprecisionmode":
         case "timePrecisionMode": return getOrCreateConfiguration(target).getTimePrecisionMode();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
         default: return null;
         }
     }

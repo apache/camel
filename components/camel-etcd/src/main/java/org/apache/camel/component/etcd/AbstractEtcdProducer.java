@@ -48,7 +48,7 @@ public abstract class AbstractEtcdProducer extends DefaultProducer {
 
     protected EtcdClient getClient() throws Exception {
         if (client == null) {
-            client = ((EtcdEndpoint)getEndpoint()).createClient();
+            client = ((EtcdEndpoint) getEndpoint()).createClient();
         }
 
         return client;

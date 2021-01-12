@@ -56,8 +56,6 @@ public enum GmailUsersThreadsApiMethod implements ApiMethod {
         arg("userId", String.class),
         arg("id", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private GmailUsersThreadsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

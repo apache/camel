@@ -46,9 +46,9 @@ public final class CxfEndpointUtils {
         QName qName = null;
         if (name != null) {
             try {
-                qName =  QName.valueOf(name);
+                qName = QName.valueOf(name);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.warn("Cannot create QName: {}", ex.getMessage(), ex);
             }
         }
         return qName;
@@ -58,8 +58,8 @@ public final class CxfEndpointUtils {
     public static QName getPortName(final CxfEndpoint endpoint) {
         QName answer = endpoint.getPortNameAsQName();
         if (answer == null) {
-            String portLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.PORT_LOCALNAME);
-            String portNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.PORT_NAMESPACE);
+            String portLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.PORT_LOCALNAME);
+            String portNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.PORT_NAMESPACE);
             if (portLocalName != null) {
                 answer = new QName(portNamespace, portLocalName);
             }
@@ -71,8 +71,8 @@ public final class CxfEndpointUtils {
     public static QName getServiceName(final CxfEndpoint endpoint) {
         QName answer = endpoint.getServiceNameAsQName();
         if (answer == null) {
-            String serviceLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.SERVICE_LOCALNAME);
-            String serviceNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.SERVICE_NAMESPACE);
+            String serviceLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.SERVICE_LOCALNAME);
+            String serviceNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.SERVICE_NAMESPACE);
             if (serviceLocalName != null) {
                 answer = new QName(serviceNamespace, serviceLocalName);
             }
@@ -100,23 +100,23 @@ public final class CxfEndpointUtils {
         }
         return hasAnnotation(cls.getSuperclass(), annotation);
     }
-    
+
     // only used by test currently
     public static void checkServiceClassName(String className) throws CamelException {
         if (ObjectHelper.isEmpty(className)) {
             throw new CamelException("serviceClass is required for CXF endpoint configuration");
         }
     }
-    
+
     // only used by test currently
     public static String getCxfEndpointPropertyValue(CxfSpringEndpoint endpoint, String property) {
-        return (String)endpoint.getProperties().get(property);
+        return (String) endpoint.getProperties().get(property);
     }
 
     /**
-     * Get effective address for a client to invoke a service.  It first looks for the 
-     * {@link org.apache.camel.Exchange#DESTINATION_OVERRIDE_URL} in the IN message header.
-     * If the header is not found, it will return the default address.
+     * Get effective address for a client to invoke a service. It first looks for the
+     * {@link org.apache.camel.Exchange#DESTINATION_OVERRIDE_URL} in the IN message header. If the header is not found,
+     * it will return the default address.
      * 
      * @param exchange
      * @param defaultAddress
@@ -127,15 +127,14 @@ public final class CxfEndpointUtils {
             retval = defaultAddress;
         } else {
             LOG.trace("Client address is overridden by header '{}' to value '{}'",
-                Exchange.DESTINATION_OVERRIDE_URL, retval);
+                    Exchange.DESTINATION_OVERRIDE_URL, retval);
         }
         return retval;
     }
-    
+
     /**
-     * Create a CXF bus with either BusFactory or SpringBusFactory if Camel Context
-     * is SpringCamelContext.  In the latter case, this method updates the bus 
-     * configuration with the applicationContext which SpringCamelContext holds 
+     * Create a CXF bus with either BusFactory or SpringBusFactory if Camel Context is SpringCamelContext. In the latter
+     * case, this method updates the bus configuration with the applicationContext which SpringCamelContext holds
      * 
      * @param context - the Camel Context
      */
@@ -150,6 +149,3 @@ public final class CxfEndpointUtils {
         return busFactory.createBus();
     }
 }
-
-
-

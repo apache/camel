@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.beanio.BeanIODataFormat;
 
 public class CsvTestWithProperties extends CsvTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -36,14 +36,14 @@ public class CsvTestWithProperties extends CsvTest {
                 Properties properties = new Properties();
                 properties.setProperty("field1", "firstName");
                 properties.setProperty("field2", "lastName");
-                
+
                 format.setProperties(properties);
 
                 // a route which uses the bean io data format to format a CSV data
                 // to java objects
                 from("direct:unmarshal")
                         .unmarshal(format)
-                                // and then split the message body so we get a message for each row
+                        // and then split the message body so we get a message for each row
                         .split(body())
                         .to("mock:beanio-unmarshal");
 

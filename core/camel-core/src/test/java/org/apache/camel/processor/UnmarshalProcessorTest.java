@@ -42,7 +42,7 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         processor.process(exchange);
 
-        assertEquals("body", exchange.getOut().getBody(), "UnmarshalProcessor did not copy OUT from IN message");
+        assertEquals("body", exchange.getMessage().getBody(), "UnmarshalProcessor did not copy OUT from IN message");
     }
 
     @Test
@@ -58,7 +58,8 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         Exception e = exchange.getException();
         assertNotNull(e);
-        assertEquals("The returned exchange " + exchange2 + " is not the same as " + exchange + " provided to the DataFormat", e.getMessage());
+        assertEquals("The returned exchange " + exchange2 + " is not the same as " + exchange + " provided to the DataFormat",
+                e.getMessage());
     }
 
     @Test
@@ -69,8 +70,9 @@ public class UnmarshalProcessorTest extends TestSupport {
         Processor processor = new UnmarshalProcessor(new MyDataFormat(out));
 
         processor.process(exchange);
-        assertSame(out, exchange.getOut(), "UnmarshalProcessor did not make use of the returned OUT message");
-        assertSame(out.getBody(), exchange.getOut().getBody(), "UnmarshalProcessor did change the body bound to the OUT message");
+        assertSame(out, exchange.getMessage(), "UnmarshalProcessor did not make use of the returned OUT message");
+        assertSame(out.getBody(), exchange.getMessage().getBody(),
+                "UnmarshalProcessor did change the body bound to the OUT message");
     }
 
     @Test
@@ -80,7 +82,8 @@ public class UnmarshalProcessorTest extends TestSupport {
         Processor processor = new UnmarshalProcessor(new MyDataFormat(unmarshalled));
 
         processor.process(exchange);
-        assertSame(unmarshalled, exchange.getOut().getBody(), "UnmarshalProcessor did not make use of the returned object being returned while unmarshalling");
+        assertSame(unmarshalled, exchange.getMessage().getBody(),
+                "UnmarshalProcessor did not make use of the returned object being returned while unmarshalling");
     }
 
     private static class MyDataFormat extends ServiceSupport implements DataFormat {

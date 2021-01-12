@@ -30,7 +30,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PerformanceRoutePojoTest.class);
 
     private int size = 200;
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tuning/PerformanceRoutePojoTest-context.xml");

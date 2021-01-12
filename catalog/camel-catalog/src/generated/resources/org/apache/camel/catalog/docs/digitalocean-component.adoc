@@ -6,6 +6,7 @@
 :since: 2.19
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/digitalocean.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -47,7 +48,7 @@ The DigitalOcean component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -66,11 +67,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* | The operation to perform to the given resource. The value can be one of: create, update, delete, list, ownList, get, listBackups, listActions, listNeighbors, listSnapshots, listKernels, listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild, rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach, assign, unassign, tag, untag |  | DigitalOceanOperations
+| *operation* | The operation to perform to the given resource. There are 36 enums and the value can be one of: create, update, delete, list, ownList, get, listBackups, listActions, listNeighbors, listSnapshots, listKernels, listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild, rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach, assign, unassign, tag, untag |  | DigitalOceanOperations
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,8 +80,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *page* (producer) | Use for pagination. Force the page number. | 1 | Integer
 | *perPage* (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
-| *resource* (producer) | *Required* The DigitalOcean resource type on which perform the operation. The value can be one of: account, actions, blockStorages, droplets, mages, snapshots, keys, regions, sizes, floatingIPs, tags |  | DigitalOceanResources
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *resource* (producer) | *Required* The DigitalOcean resource type on which perform the operation. There are 11 enums and the value can be one of: account, actions, blockStorages, droplets, mages, snapshots, keys, regions, sizes, floatingIPs, tags |  | DigitalOceanResources
 | *digitalOceanClient* (advanced) | To use a existing configured DigitalOceanClient as client |  | DigitalOceanClient
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *httpProxyHost* (proxy) | Set a proxy host if needed |  | String

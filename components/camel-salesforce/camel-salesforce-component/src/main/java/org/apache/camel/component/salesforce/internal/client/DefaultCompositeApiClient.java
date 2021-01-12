@@ -71,9 +71,10 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private final XStream xStreamCompositeTree;
 
-    public DefaultCompositeApiClient(final SalesforceEndpointConfig configuration, final PayloadFormat format, final String version, final SalesforceSession session,
+    public DefaultCompositeApiClient(final SalesforceEndpointConfig configuration, final PayloadFormat format,
+                                     final String version, final SalesforceSession session,
                                      final SalesforceHttpClient httpClient, final SalesforceLoginConfig loginConfig)
-        throws SalesforceException {
+                                                                                                                     throws SalesforceException {
         super(version, session, httpClient, loginConfig);
         this.format = format;
 
@@ -92,9 +93,38 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         xStreamCompositeTree.alias("SObjectTreeResponse", SObjectTreeResponse.class);
     }
 
+    public void submitCompositeRaw(
+            final InputStream raw, final Map<String, List<String>> headers,
+            final ResponseCallback<InputStream> callback,
+            final String sObjectName, final String extId, String compositeMethod)
+            throws SalesforceException {
+        checkCompositeFormat(format, SObjectComposite.REQUIRED_PAYLOAD_FORMAT);
+
+        final String url = String.format("%s%s/%s/%s/%s", versionUrl(), "composite", "sobjects", sObjectName, extId);
+
+        Request request;
+        if (compositeMethod != null) {
+            request = createRequest(compositeMethod, url, headers);
+        } else {
+            request = createRequest(HttpMethod.POST, url, headers);
+        }
+
+        final ContentProvider content = new InputStreamContentProvider(raw);
+        request.content(content);
+
+        doHttpRequest(request, new ClientResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+                callback.onResponse(Optional.of(response), headers, ex);
+            }
+        });
+    }
+
     @Override
-    public void submitComposite(final SObjectComposite composite, final Map<String, List<String>> headers, final ResponseCallback<SObjectCompositeResponse> callback)
-        throws SalesforceException {
+    public void submitComposite(
+            final SObjectComposite composite, final Map<String, List<String>> headers,
+            final ResponseCallback<SObjectCompositeResponse> callback)
+            throws SalesforceException {
         // composite interface supports only json payload
         checkCompositeFormat(format, SObjectComposite.REQUIRED_PAYLOAD_FORMAT);
 
@@ -105,13 +135,17 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final ContentProvider content = serialize(NO_XSTREAM, composite, composite.objectTypes());
         post.content(content);
 
-        doHttpRequest(post, (response, responseHeaders, exception) -> callback.onResponse(tryToReadResponse(NO_XSTREAM, SObjectCompositeResponse.class, response), responseHeaders,
-                                                                                          exception));
+        doHttpRequest(post,
+                (response, responseHeaders, exception) -> callback.onResponse(
+                        tryToReadResponse(NO_XSTREAM, SObjectCompositeResponse.class, response), responseHeaders,
+                        exception));
     }
 
     @Override
-    public void submitCompositeBatch(final SObjectBatch batch, final Map<String, List<String>> headers, final ResponseCallback<SObjectBatchResponse> callback)
-        throws SalesforceException {
+    public void submitCompositeBatch(
+            final SObjectBatch batch, final Map<String, List<String>> headers,
+            final ResponseCallback<SObjectBatchResponse> callback)
+            throws SalesforceException {
         checkCompositeBatchVersion(version, batch.getVersion());
 
         final String url = versionUrl() + "composite/batch";
@@ -121,13 +155,17 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final ContentProvider content = serialize(xStreamCompositeBatch, batch, batch.objectTypes());
         post.content(content);
 
-        doHttpRequest(post, (response, responseHeaders, exception) -> callback.onResponse(tryToReadResponse(xStreamCompositeBatch, SObjectBatchResponse.class, response),
-                                                                                          responseHeaders, exception));
+        doHttpRequest(post,
+                (response, responseHeaders, exception) -> callback.onResponse(
+                        tryToReadResponse(xStreamCompositeBatch, SObjectBatchResponse.class, response),
+                        responseHeaders, exception));
     }
 
     @Override
-    public void submitCompositeTree(final SObjectTree tree, final Map<String, List<String>> headers, final ResponseCallback<SObjectTreeResponse> callback)
-        throws SalesforceException {
+    public void submitCompositeTree(
+            final SObjectTree tree, final Map<String, List<String>> headers,
+            final ResponseCallback<SObjectTreeResponse> callback)
+            throws SalesforceException {
         final String url = versionUrl() + "composite/tree/" + tree.getObjectType();
 
         final Request post = createRequest(HttpMethod.POST, url, headers);
@@ -135,13 +173,23 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final ContentProvider content = serialize(xStreamCompositeTree, tree, tree.objectTypes());
         post.content(content);
 
-        doHttpRequest(post, (response, responseHeaders, exception) -> callback.onResponse(tryToReadResponse(xStreamCompositeTree, SObjectTreeResponse.class, response),
-                                                                                          responseHeaders, exception));
+        doHttpRequest(post,
+                (response, responseHeaders, exception) -> callback.onResponse(
+                        tryToReadResponse(xStreamCompositeTree, SObjectTreeResponse.class, response),
+                        responseHeaders, exception));
+    }
+
+    Request createRequest(final String method, final String url, final Map<String, List<String>> headers) {
+        final Request request = getRequest(method, url, headers);
+        return populateRequest(request);
     }
 
     Request createRequest(final HttpMethod method, final String url, final Map<String, List<String>> headers) {
         final Request request = getRequest(method, url, headers);
+        return populateRequest(request);
+    }
 
+    private Request populateRequest(Request request) {
         // setup authorization
         setAccessToken(request);
 
@@ -173,7 +221,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return mapper.writerFor(type);
     }
 
-    ContentProvider serialize(final XStream xstream, final Object body, final Class<?>... additionalTypes) throws SalesforceException {
+    ContentProvider serialize(final XStream xstream, final Object body, final Class<?>... additionalTypes)
+            throws SalesforceException {
         // input stream as entity content is needed for authentication retries
         if (format == PayloadFormat.JSON) {
             return new InputStreamContentProvider(toJson(body));
@@ -248,23 +297,31 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         request.getHeaders().put("Authorization", "Bearer " + accessToken);
     }
 
-    static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion) throws SalesforceException {
+    static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion)
+            throws SalesforceException {
         if (Version.create(configuredVersion).compareTo(batchVersion) < 0) {
-            throw new SalesforceException("Component is configured with Salesforce API version " + configuredVersion
-                                          + ", but the payload of the Composite API batch operation requires at least " + batchVersion, 0);
+            throw new SalesforceException(
+                    "Component is configured with Salesforce API version " + configuredVersion
+                                          + ", but the payload of the Composite API batch operation requires at least "
+                                          + batchVersion,
+                    0);
         }
     }
 
-    static void checkCompositeFormat(final PayloadFormat configuredFormat, final PayloadFormat requiredFormat) throws SalesforceException {
+    static void checkCompositeFormat(final PayloadFormat configuredFormat, final PayloadFormat requiredFormat)
+            throws SalesforceException {
         if (configuredFormat != requiredFormat) {
-            throw new SalesforceException("Component is configured with Salesforce Composite API format " + configuredFormat
-                                          + ", but the payload of the Composite API operation requires format " + requiredFormat, 0);
+            throw new SalesforceException(
+                    "Component is configured with Salesforce Composite API format " + configuredFormat
+                                          + ", but the payload of the Composite API operation requires format "
+                                          + requiredFormat,
+                    0);
         }
     }
 
     static <T> T fromXml(final XStream xstream, final InputStream responseStream) {
         @SuppressWarnings("unchecked")
-        final T read = (T)xstream.fromXML(responseStream);
+        final T read = (T) xstream.fromXML(responseStream);
 
         return read;
     }

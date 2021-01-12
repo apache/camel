@@ -26,8 +26,6 @@ public enum AS2ServerManagerApiMethod implements ApiMethod {
         arg("requestUriPattern", String.class),
         arg("handler", org.apache.http.protocol.HttpRequestHandler.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AS2ServerManagerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

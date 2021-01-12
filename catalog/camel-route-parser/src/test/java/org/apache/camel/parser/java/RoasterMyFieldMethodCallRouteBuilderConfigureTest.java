@@ -36,7 +36,8 @@ public class RoasterMyFieldMethodCallRouteBuilderConfigureTest {
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyFieldMethodCallRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MyFieldMethodCallRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);

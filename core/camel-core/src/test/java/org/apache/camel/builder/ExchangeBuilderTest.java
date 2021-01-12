@@ -43,13 +43,14 @@ public class ExchangeBuilderTest {
     @Test
     public void testBuildAnExchangeWithBodyHeaderAndPattern() throws Exception {
 
-        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE).withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)
-            .build();
+        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE)
+                .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)
+                .build();
 
-        assertEquals(exchange.getIn().getBody(), BODY);
-        assertEquals(exchange.getIn().getHeader(KEY), VALUE);
-        assertEquals(exchange.getPattern(), ExchangePattern.InOut);
-        assertEquals(exchange.getProperty(PROPERTY_KEY), PROPERTY_VALUE);
+        assertEquals(BODY, exchange.getIn().getBody());
+        assertEquals(VALUE, exchange.getIn().getHeader(KEY));
+        assertEquals(ExchangePattern.InOut, exchange.getPattern());
+        assertEquals(PROPERTY_VALUE, exchange.getProperty(PROPERTY_KEY));
     }
 
 }

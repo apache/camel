@@ -20,7 +20,9 @@ import org.apache.camel.component.twitter.TwitterHelper;
 
 @Deprecated
 public enum TrendsType {
-    DAILY, WEEKLY, UNKNOWN;
+    DAILY,
+    WEEKLY,
+    UNKNOWN;
 
     private static final TrendsType[] VALUES = values();
 

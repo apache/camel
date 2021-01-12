@@ -200,16 +200,20 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                         String operation;
                         if (id == null) {
                             CamelContext camelContext = getEndpoint().getCamelContext();
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(camelContext);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForCamelContext(camelContext);
                             operation = "dumpRoutesStatsAsXml";
                         } else {
                             Route route = getEndpoint().getCamelContext().getRoute(id);
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForRoute(route);
                             operation = "dumpRouteStatsAsXml";
                         }
                         if (on != null) {
-                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-                            result = server.invoke(on, operation, new Object[]{true, true}, new String[]{"boolean", "boolean"});
+                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent()
+                                    .getMBeanServer();
+                            result = server.invoke(on, operation, new Object[] { true, true },
+                                    new String[] { "boolean", "boolean" });
                         } else {
                             result = "Cannot lookup route with id " + id;
                         }

@@ -20,6 +20,17 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum ConnectAppApiMethod implements ApiMethod {
 
+    DELETER(
+        com.twilio.rest.api.v2010.account.ConnectAppDeleter.class,
+        "deleter",
+        arg("pathSid", String.class)),
+
+    DELETER_1(
+        com.twilio.rest.api.v2010.account.ConnectAppDeleter.class,
+        "deleter",
+        arg("pathAccountSid", String.class),
+        arg("pathSid", String.class)),
+
     FETCHER(
         com.twilio.rest.api.v2010.account.ConnectAppFetcher.class,
         "fetcher",
@@ -50,8 +61,6 @@ public enum ConnectAppApiMethod implements ApiMethod {
         "updater",
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
-
-    
 
     private final ApiMethod apiMethod;
 

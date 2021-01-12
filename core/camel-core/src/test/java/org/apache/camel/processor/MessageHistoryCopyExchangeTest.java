@@ -39,8 +39,8 @@ public class MessageHistoryCopyExchangeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List listA = (List)a.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
-        List listB = (List)b.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
+        List listA = (List) a.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
+        List listB = (List) b.getReceivedExchanges().get(0).getProperty(Exchange.MESSAGE_HISTORY);
 
         assertNotSame(listA, listB);
     }

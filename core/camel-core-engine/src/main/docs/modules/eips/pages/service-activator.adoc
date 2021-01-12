@@ -14,7 +14,7 @@ Design a Service Activator that connects the messages on the channel to the serv
 Camel has several endpoint components that support the Service Activator from the EIP patterns.
 
 Components like  xref:components::bean-component.adoc[Bean] and xref:components::bean-component.adoc[CXF]
-provide a a way to bind the message exchange to a Java interface/service where the route defines the
+provide a way to bind the message exchange to a Java interface/service where the route defines the
 endpoints and wires it up to the bean.
 
 In addition you can use the xref:latest@manual:ROOT:bean-integration.adoc[Bean Integration] to wire messages

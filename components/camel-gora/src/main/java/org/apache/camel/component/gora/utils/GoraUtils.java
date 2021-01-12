@@ -30,14 +30,12 @@ import org.apache.gora.store.DataStore;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * GoraUtil class contain utility methods for the
- * camel component.
+ * GoraUtil class contain utility methods for the camel component.
  */
 public final class GoraUtils {
-    
+
     /**
-     * Private Constructor to prevent
-     * instantiation of the class.
+     * Private Constructor to prevent instantiation of the class.
      */
     private GoraUtils() {
         // utility Class
@@ -46,11 +44,11 @@ public final class GoraUtils {
     /**
      * Utility method to construct a new query from the exchange
      *
-     * <b>NOTE:</b> values used in order construct the query
-     * should be stored in the "in" message headers.
+     * <b>NOTE:</b> values used in order construct the query should be stored in the "in" message headers.
      */
-    public static Query<Object, Persistent> constractQueryFromConfiguration(final DataStore<Object, Persistent> dataStore, final GoraConfiguration conf)
-        throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static Query<Object, Persistent> constractQueryFromConfiguration(
+            final DataStore<Object, Persistent> dataStore, final GoraConfiguration conf)
+            throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         final Query<Object, Persistent> query = dataStore.newQuery();
 
@@ -96,12 +94,13 @@ public final class GoraUtils {
     /**
      * Utility method to construct a new query from the exchange
      *
-     * <b>NOTE:</b> values used in order construct the query
-     * should be stored in the "in" message headers.
+     * <b>NOTE:</b> values used in order construct the query should be stored in the "in" message headers.
      */
-    public static Query<Object, Persistent> constractQueryFromPropertiesMap(final Map<String, ?> propertiesMap,
-                                                                                 final DataStore<Object, Persistent> dataStore,
-                                                                                 final GoraConfiguration conf) throws ClassNotFoundException {
+    public static Query<Object, Persistent> constractQueryFromPropertiesMap(
+            final Map<String, ?> propertiesMap,
+            final DataStore<Object, Persistent> dataStore,
+            final GoraConfiguration conf)
+            throws ClassNotFoundException {
 
         final Query<Object, Persistent> query = dataStore.newQuery();
 
@@ -120,7 +119,7 @@ public final class GoraUtils {
         if (propertyExist(GoraAttribute.GORA_QUERY_TIME_RANGE_FROM, propertiesMap)
                 && propertyExist(GoraAttribute.GORA_QUERY_TIME_RANGE_TO, propertiesMap)) {
             query.setTimeRange(getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_FROM, propertiesMap),
-                               getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_TO, propertiesMap));
+                    getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_TO, propertiesMap));
         }
 
         if (propertyExist(GoraAttribute.GORA_QUERY_TIMESTAMP, propertiesMap)) {
@@ -147,81 +146,88 @@ public final class GoraUtils {
     /**
      * Utility method to check if a value exist in the configuration class
      *
-     * <b>NOTE:</>
-     * Checks only if is not null
+     * <b>NOTE:</> Checks only if is not null
      */
-    protected static boolean configurationExist(final GoraAttribute attr,
-                                                final GoraConfiguration conf) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    protected static boolean configurationExist(
+            final GoraAttribute attr,
+            final GoraConfiguration conf)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return PropertyUtils.getSimpleProperty(conf, attr.value) != null;
     }
 
     /**
      * Utility method to check if a value exist in the properties map
      */
-    protected static boolean propertyExist(final GoraAttribute attr,
-                                           final Map<String, ?> propertiesMap) {
+    protected static boolean propertyExist(
+            final GoraAttribute attr,
+            final Map<String, ?> propertiesMap) {
         return propertiesMap.containsKey(attr.value);
     }
-
 
     /**
      * Utility method to extract value from configuration
      */
-    protected static Object getAttribute(final GoraAttribute attr,
-                                         final GoraConfiguration conf) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    protected static Object getAttribute(
+            final GoraAttribute attr,
+            final GoraConfiguration conf)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return PropertyUtils.getSimpleProperty(conf, attr.value);
     }
 
     /**
      * Utility method to extract value from configuration as String
      */
-    protected static String getAttributeAsString(final GoraAttribute attr,
-                                                 final GoraConfiguration conf) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    protected static String getAttributeAsString(
+            final GoraAttribute attr,
+            final GoraConfiguration conf)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return String.valueOf(getAttribute(attr, conf));
     }
-
 
     /**
      * Utility method to extract value from configuration as Long
      */
-    protected static Long getAttributeAsLong(final GoraAttribute attr,
-                                           final GoraConfiguration conf) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    protected static Long getAttributeAsLong(
+            final GoraAttribute attr,
+            final GoraConfiguration conf)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         return Long.parseLong(getAttributeAsString(attr, conf));
     }
 
     /**
      * Utility method to extract value of a map
      */
-    protected static Object getProperty(final GoraAttribute attr,
-                                        final Map<String, ?> propertiesMap) {
+    protected static Object getProperty(
+            final GoraAttribute attr,
+            final Map<String, ?> propertiesMap) {
         return propertiesMap.get(attr.value);
     }
 
     /**
      * Utility method to extract value of a map as String
      */
-    protected static String getPropertyAsString(final GoraAttribute attr,
-                                              final Map<String, ?> propertiesMap) {
+    protected static String getPropertyAsString(
+            final GoraAttribute attr,
+            final Map<String, ?> propertiesMap) {
         return String.valueOf(getProperty(attr, propertiesMap));
     }
 
     /**
      * Utility method to extract value of a map as long
      */
-    protected static Long getPropertyAsLong(final GoraAttribute attr,
-                                          final Map<String, ?> propertiesMap) {
+    protected static Long getPropertyAsLong(
+            final GoraAttribute attr,
+            final Map<String, ?> propertiesMap) {
         return Long.parseLong(getPropertyAsString(attr, propertiesMap));
     }
-
 
     /**
      * Utility method to extract GORA key from the exchange
      *
-     * <b>NOTE:</b> key value expected to be stored
-     * in the "in" message headers.
+     * <b>NOTE:</b> key value expected to be stored in the "in" message headers.
      *
-     * @param exchange The Camel Exchange
-     * @return The key
+     * @param  exchange The Camel Exchange
+     * @return          The key
      */
     public static Object getKeyFromExchange(Exchange exchange) {
         final Object key = exchange.getIn().getHeader(GoraAttribute.GORA_KEY.value);
@@ -232,11 +238,10 @@ public final class GoraUtils {
     /**
      * Utility method to extract the value from the exchange
      *
-     * <b>NOTE:</b> the value expected to be instance
-     * of persistent type.
+     * <b>NOTE:</b> the value expected to be instance of persistent type.
      *
-     * @param exchange The Camel Exchange
-     * @return The value
+     * @param  exchange The Camel Exchange
+     * @return          The value
      */
     public static Persistent getValueFromExchange(Exchange exchange) {
         return exchange.getIn().getBody(Persistent.class);

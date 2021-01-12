@@ -6,6 +6,7 @@
 :since: 2.15
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dozer.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -73,7 +74,7 @@ The Dozer component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -96,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +110,6 @@ with the following path and query parameters:
 | *sourceModel* (producer) | Fully-qualified class name for the source type used in the mapping. If specified, the input to the mapping is converted to the specified type before being mapped with Dozer. |  | String
 | *targetModel* (producer) | *Required* Fully-qualified class name for the target type used in the mapping. |  | String
 | *unmarshalId* (producer) | The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a non-Java type. |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
@@ -286,7 +286,7 @@ An example of mapping a message header into a target field:
   <mapping>
     <class-a>org.apache.camel.component.dozer.ExpressionMapper</class-a>
     <class-b>org.example.B</class-b>
-    <field custom-converter-id="_expressionMapping" custom-converter-param="simple:\${header.customerNumber}">
+    <field custom-converter-id="_expressionMapping" custom-converter-param="simple:${header.customerNumber}">
       <a>expression</a>
       <b>custId</b>
     </field>

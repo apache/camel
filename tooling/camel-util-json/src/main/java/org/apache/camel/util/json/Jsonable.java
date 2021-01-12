@@ -35,7 +35,7 @@ public interface Jsonable {
     /**
      * Serialize to a JSON formatted stream.
      *
-     * @param writable where the resulting JSON text should be sent.
+     * @param  writable    where the resulting JSON text should be sent.
      * @throws IOException when the writable encounters an I/O error.
      */
     void toJson(Writer writable) throws IOException;

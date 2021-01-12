@@ -170,7 +170,7 @@ final class XJTestUtils {
                     if (toTest instanceof Comment) {
                         final Comment comment = (Comment) toTest;
                         final String text = comment.getNodeValue();
-                        
+
                         return text == null || !text.contains("License");
                     }
 

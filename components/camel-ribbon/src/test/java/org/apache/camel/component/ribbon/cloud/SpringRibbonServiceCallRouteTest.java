@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DirtiesContext
 public abstract class SpringRibbonServiceCallRouteTest extends CamelSpringTestSupport {
-    
+
     @PropertyInject("firstPort")
     private String firstPort;
 
@@ -63,21 +63,20 @@ public abstract class SpringRibbonServiceCallRouteTest extends CamelSpringTestSu
         assertNotNull(route, "ServiceCall Route should be present");
 
         return findServiceCallProcessor(route.navigate())
-            .orElseThrow(() -> new IllegalStateException("Unable to find a ServiceCallProcessor"));
+                .orElseThrow(() -> new IllegalStateException("Unable to find a ServiceCallProcessor"));
     }
 
     protected Optional<DefaultServiceCallProcessor> findServiceCallProcessor(Navigate<Processor> navigate) {
         for (Processor processor : navigate.next()) {
             if (processor instanceof DefaultServiceCallProcessor) {
-                return Optional.ofNullable((DefaultServiceCallProcessor)processor);
+                return Optional.ofNullable((DefaultServiceCallProcessor) processor);
             }
 
             if (processor instanceof Navigate) {
-                return findServiceCallProcessor((Navigate<Processor>)processor);
+                return findServiceCallProcessor((Navigate<Processor>) processor);
             }
         }
 
         return Optional.empty();
     }
 }
-

@@ -47,16 +47,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This aggregation strategy will aggregate all incoming messages into a TAR file.
- * <p>If the incoming exchanges contain {@link GenericFileMessage} file name will 
- * be taken from the body otherwise the body content will be treated as a byte 
- * array and the TAR entry will be named using the message id (unless the flag
- * useFilenameHeader is set to true.</p>
- * <p><b>NOTE 1:</b> Please note that this aggregation strategy requires eager
- * completion check to work properly.</p>
+ * <p>
+ * If the incoming exchanges contain {@link GenericFileMessage} file name will be taken from the body otherwise the body
+ * content will be treated as a byte array and the TAR entry will be named using the message id (unless the flag
+ * useFilenameHeader is set to true.
+ * </p>
+ * <p>
+ * <b>NOTE 1:</b> Please note that this aggregation strategy requires eager completion check to work properly.
+ * </p>
  *
- * <p><b>NOTE 2:</b> This implementation is very inefficient especially on big files since the tar
- * file is completely rewritten for each file that is added to it. Investigate if the
- * files can be collected and at completion stored to tar file.</p>
+ * <p>
+ * <b>NOTE 2:</b> This implementation is very inefficient especially on big files since the tar file is completely
+ * rewritten for each file that is added to it. Investigate if the files can be collected and at completion stored to
+ * tar file.
+ * </p>
  */
 public class TarAggregationStrategy implements AggregationStrategy {
 
@@ -73,18 +77,18 @@ public class TarAggregationStrategy implements AggregationStrategy {
     }
 
     /**
-     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
-     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is a type of
+     *                                {@link GenericFileMessage}. If used with a file, use recursive=true.
      */
     public TarAggregationStrategy(boolean preserveFolderStructure) {
         this(preserveFolderStructure, false);
     }
 
     /**
-     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
-     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
-     * @param useFilenameHeader if true, the filename header will be used to name aggregated byte arrays
-     * within the TAR file.
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is a type of
+     *                                {@link GenericFileMessage}. If used with a file, use recursive=true.
+     * @param useFilenameHeader       if true, the filename header will be used to name aggregated byte arrays within
+     *                                the TAR file.
      */
     public TarAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader) {
         this.preserveFolderStructure = preserveFolderStructure;
@@ -165,11 +169,12 @@ public class TarAggregationStrategy implements AggregationStrategy {
                 File appendFile = (File) body;
                 // do not try to append empty files
                 if (appendFile.length() > 0) {
-                    String entryName = preserveFolderStructure ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    String entryName = preserveFolderStructure
+                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                            : newExchange.getIn().getMessageId();
                     addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? entryName : null);
-                    GenericFile<File> genericFile =
-                            FileConsumer.asGenericFile(
-                                    tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
+                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
+                            tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
                     genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
@@ -181,7 +186,9 @@ public class TarAggregationStrategy implements AggregationStrategy {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
                 // do not try to append empty data
                 if (buffer.length > 0) {
-                    String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    String entryName = useFilenameHeader
+                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                            : newExchange.getIn().getMessageId();
                     addEntryToTar(tarFile, entryName, buffer, buffer.length);
                     GenericFile<File> genericFile = FileConsumer.asGenericFile(
                             tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
@@ -202,7 +209,8 @@ public class TarAggregationStrategy implements AggregationStrategy {
         }
 
         FileInputStream fis = new FileInputStream(tmpTar);
-        TarArchiveInputStream tin = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis);
+        TarArchiveInputStream tin
+                = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis);
         TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source));
         tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
         tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
@@ -237,7 +245,8 @@ public class TarAggregationStrategy implements AggregationStrategy {
         }
 
         FileInputStream fis = new FileInputStream(tmpTar);
-        TarArchiveInputStream tin = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis);
+        TarArchiveInputStream tin
+                = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, fis);
         TarArchiveOutputStream tos = new TarArchiveOutputStream(new FileOutputStream(source));
         tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
         tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);

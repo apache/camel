@@ -60,7 +60,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/nodes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new NodeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new NodeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
@@ -92,13 +92,14 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
 
         assertEquals("test", result.getMetadata().getName());
     }
-    
+
     @Test
     public void deleteNode() throws Exception {
         Node node1 = new NodeBuilder().withNewMetadata().withName("node1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/nodes/node1").andReturn(200, node1).once();
 
-        Exchange ex = template.request("direct:deleteNode", exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "node1"));
+        Exchange ex = template.request("direct:deleteNode",
+                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "node1"));
 
         boolean nodeDeleted = ex.getMessage().getBody(Boolean.class);
 
@@ -111,7 +112,8 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
-                from("direct:listByLabels").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
+                from("direct:listByLabels")
+                        .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
                 from("direct:createNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=createNode");
                 from("direct:deleteNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=deleteNode");
             }

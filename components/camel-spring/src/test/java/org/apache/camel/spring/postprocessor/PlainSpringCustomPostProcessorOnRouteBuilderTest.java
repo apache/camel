@@ -28,7 +28,8 @@ public class PlainSpringCustomPostProcessorOnRouteBuilderTest {
     @Test
     public void testShouldProcessAnnotatedFields() {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                "classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");
         assertNotNull(context, "Context not created");
         assertNotNull(context.getBeansOfType(MagicAnnotationPostProcessor.class), "Post processor not registered");
 

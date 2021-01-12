@@ -93,7 +93,7 @@ public class AbstractClientBaseTest {
         final Exchange exchange = new DefaultExchange(context);
         final Message in = new DefaultMessage(context);
         in.setHeader("sforce-auto-assign", "TRUE");
-        in.setHeader("SFORCE-CALL-OPTIONS", new String[] {"client=SampleCaseSensitiveToken/100", "defaultNamespace=battle"});
+        in.setHeader("SFORCE-CALL-OPTIONS", new String[] { "client=SampleCaseSensitiveToken/100", "defaultNamespace=battle" });
         in.setHeader("Sforce-Limit-Info", singletonList("per-app-api-usage"));
         in.setHeader("x-sfdc-packageversion-clientPackage", "1.0");
         in.setHeader("Sforce-Query-Options", "batchSize=1000");
@@ -103,9 +103,10 @@ public class AbstractClientBaseTest {
         final Map<String, List<String>> headers = AbstractClientBase.determineHeaders(exchange);
 
         assertThat(headers).containsOnly(entry("sforce-auto-assign", singletonList("TRUE")),
-                                         entry("SFORCE-CALL-OPTIONS", asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
-                                         entry("Sforce-Limit-Info", singletonList("per-app-api-usage")), entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
-                                         entry("Sforce-Query-Options", singletonList("batchSize=1000")));
+                entry("SFORCE-CALL-OPTIONS", asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
+                entry("Sforce-Limit-Info", singletonList("per-app-api-usage")),
+                entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
+                entry("Sforce-Query-Options", singletonList("batchSize=1000")));
     }
 
     @Test
@@ -145,7 +146,8 @@ public class AbstractClientBaseTest {
         final HttpConversation conversation = mock(HttpConversation.class);
         when(salesforceRequest.getConversation()).thenReturn(conversation);
 
-        when(conversation.getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE)).thenReturn(salesforceRequest);
+        when(conversation.getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE))
+                .thenReturn(salesforceRequest);
 
         // completes the request
         listener.getValue().onComplete(result);

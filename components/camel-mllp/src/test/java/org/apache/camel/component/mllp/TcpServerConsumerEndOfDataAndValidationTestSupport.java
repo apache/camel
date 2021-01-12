@@ -51,7 +51,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     static final int READ_TIMEOUT = 500;
 
     Logger log = LoggerFactory.getLogger(TcpServerConsumerEndOfDataAndValidationTestSupport.class);
-    
+
     @RegisterExtension
     MllpClientResource mllpClient = new MllpClientResource();
 
@@ -90,22 +90,23 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
                 String routeId = "mllp-test-receiver-route";
 
                 onException(MllpInvalidMessageException.class)
-                    .to(invalid);
+                        .to(invalid);
 
                 onCompletion().onFailureOnly()
-                    .to(failed);
+                        .to(failed);
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT, validatePayload(), requireEndOfData())
-                    .routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Test route received message")
-                    .to(complete);
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), CONNECT_TIMEOUT, RECEIVE_TIMEOUT, READ_TIMEOUT,
+                        validatePayload(), requireEndOfData())
+                                .routeId(routeId)
+                                .log(LoggingLevel.INFO, routeId, "Test route received message")
+                                .to(complete);
             }
         };
     }
 
-
     abstract boolean validatePayload();
+
     abstract boolean requireEndOfData();
 
     protected void setExpectedCounts() {
@@ -132,7 +133,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
     }
 
-
     @Test
     public void testReceiveSingleMessageWithDelayAfterConnection() throws Exception {
         expectedCompleteCount = 1;
@@ -145,13 +145,11 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
     }
 
-
     @Test
     public void testReceiveMultipleMessages() throws Exception {
         expectedCompleteCount = 5;
 
         setExpectedCounts();
-
 
         mllpClient.connect();
 
@@ -159,7 +157,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
             mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(i));
         }
     }
-
 
     @Test
     public void testOpenMllpEnvelopeWithReset() throws Exception {
@@ -213,7 +210,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         assertTrue(acknowledgement5.contains("MSA|AA|00005"), "Should be acknowledgment for message 5");
     }
 
-
     @Test
     public void testMessageReadTimeout() throws Exception {
         expectedCompleteCount = 1;
@@ -237,7 +233,6 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         assertTrue(twoDone.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS), "Two exchanges should have completed");
     }
 
-
     @Test
     public void testInitialMessageReadTimeout() throws Exception {
         expectedCompleteCount = 1;
@@ -257,10 +252,12 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         try {
             log.info("Attempting to send second message");
-            String acknowledgement = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
+            String acknowledgement
+                    = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
             assertEquals("", acknowledgement, "If the send doesn't throw an exception, the acknowledgement should be empty");
         } catch (MllpJUnitResourceException expected) {
-            assertThat("If the send throws an exception, the cause should be a SocketException", expected.getCause(), instanceOf(SocketException.class));
+            assertThat("If the send throws an exception, the cause should be a SocketException", expected.getCause(),
+                    instanceOf(SocketException.class));
         }
 
         mllpClient.disconnect();
@@ -297,11 +294,13 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
             if (i == invalidMessageNumber) {
                 mllpClient.sendFramedData("INVALID PAYLOAD");
                 // The component will reset the connection in this case, so we need to reconnect
-                assertTrue(invalidMessageDone.matches(5, TimeUnit.SECONDS), "Exchange with invalid payload should have completed");
+                assertTrue(invalidMessageDone.matches(5, TimeUnit.SECONDS),
+                        "Exchange with invalid payload should have completed");
                 mllpClient.disconnect();
                 mllpClient.connect();
             } else {
-                String acknowledgement = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(i));
+                String acknowledgement
+                        = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(i));
                 assertNotNull(acknowledgement, "The acknowledgement returned should not be null");
                 assertNotEquals(0, acknowledgement.length(), "An acknowledgement should be received for a valid HL7 message");
             }
@@ -316,11 +315,11 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.START_OF_BLOCK));
+        mllpClient.sendMessageAndWaitForAcknowledgement(
+                Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.START_OF_BLOCK));
 
         assertTrue(done.matches(15, TimeUnit.SECONDS), "Exchange should have completed");
     }
-
 
     @Test
     public abstract void testNthMessageContainingEmbeddedStartOfBlock() throws Exception;
@@ -334,8 +333,9 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < messageCount; ++i) {
             String message = (i == (messageCount / 2))
-                ? Hl7TestMessageGenerator.generateMessage(i + 1).replaceFirst("PID", "PID" + MllpProtocolConstants.START_OF_BLOCK)
-                : Hl7TestMessageGenerator.generateMessage(i + 1);
+                    ? Hl7TestMessageGenerator.generateMessage(i + 1).replaceFirst("PID",
+                            "PID" + MllpProtocolConstants.START_OF_BLOCK)
+                    : Hl7TestMessageGenerator.generateMessage(i + 1);
 
             log.debug("Sending message {}", Hl7Util.convertToPrintFriendlyString(message));
 
@@ -365,7 +365,8 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
             if (i == invalidMessageNumber) {
                 mllpClient.sendFramedData(message.replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
-                assertTrue(invalidMessageDone.matches(5, TimeUnit.SECONDS), "Exchange containing invalid message should have completed");
+                assertTrue(invalidMessageDone.matches(5, TimeUnit.SECONDS),
+                        "Exchange containing invalid message should have completed");
                 // The component may reset the connection in this case, so reconnect if needed
                 /*
                 // TODO: Figure out why this isn't working
@@ -435,4 +436,3 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
     }
 }
-

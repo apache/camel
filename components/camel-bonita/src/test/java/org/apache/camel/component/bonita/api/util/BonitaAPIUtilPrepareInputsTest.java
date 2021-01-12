@@ -100,7 +100,7 @@ public class BonitaAPIUtilPrepareInputsTest {
         uploadFileResponse.setTempPath("temp");
         doReturn(uploadFileResponse).when(bonitaApiUtilMod).uploadFile(any(), any());
         Map<String, Serializable> inputs = bonitaApiUtilMod.prepareInputs(processDefinition, rawInputs);
-        Map<String, Serializable> fileMap = (Map<String, Serializable>)inputs.get("filename");
+        Map<String, Serializable> fileMap = (Map<String, Serializable>) inputs.get("filename");
         assertEquals("temp", fileMap.get("tempPath"));
     }
 }

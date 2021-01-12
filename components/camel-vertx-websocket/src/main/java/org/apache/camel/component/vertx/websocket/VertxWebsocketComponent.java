@@ -28,8 +28,6 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.createHostKey;
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.extractHostName;
@@ -39,17 +37,17 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.ex
 @Component("vertx-websocket")
 public class VertxWebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketComponent.class);
-
     private final Map<VertxWebsocketHostKey, VertxWebsocketHost> vertxHostRegistry = new ConcurrentHashMap<>();
+    private boolean managedVertx;
 
     @Metadata(label = "advanced")
     private Vertx vertx;
     @Metadata(label = "advanced")
     private VertxOptions vertxOptions;
+    @Metadata(label = "advanced")
+    private Router router;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    private boolean managedVertx;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -69,6 +67,30 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (vertx == null) {
+            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
+            if (vertxes.size() == 1) {
+                vertx = vertxes.iterator().next();
+            }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (vertx == null) {
+            if (vertxOptions != null) {
+                vertx = Vertx.vertx(vertxOptions);
+            } else {
+                vertx = Vertx.vertx();
+            }
+            managedVertx = true;
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 
@@ -83,21 +105,25 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
         VertxWebsocketHostKey hostKey = createHostKey(configuration);
         VertxWebsocketHost host = vertxHostRegistry.computeIfAbsent(hostKey, key -> {
-            Router router = configuration.getRouter();
-            if (router == null) {
-                Set<Router> routers = getCamelContext().getRegistry().findByType(Router.class);
-                if (routers.size() == 1) {
-                    router = routers.iterator().next();
+            Router vertxRouter = configuration.getRouter();
+            if (vertxRouter == null) {
+                vertxRouter = router;
+
+                if (vertxRouter == null) {
+                    Set<Router> routers = getCamelContext().getRegistry().findByType(Router.class);
+                    if (routers.size() == 1) {
+                        vertxRouter = routers.iterator().next();
+                    }
                 }
 
-                if (router == null) {
-                    router = Router.router(getVertx());
+                if (vertxRouter == null) {
+                    vertxRouter = Router.router(getVertx());
                 }
             }
 
             VertxWebsocketHostConfiguration hostConfiguration = new VertxWebsocketHostConfiguration(
                     getVertx(),
-                    router,
+                    vertxRouter,
                     configuration.getServerOptions(),
                     configuration.getSslContextParameters());
 
@@ -124,22 +150,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     }
 
     public Vertx getVertx() {
-        if (vertx == null) {
-            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
-            if (vertxes.size() == 1) {
-                vertx  = vertxes.iterator().next();
-            }
-        }
-
-        if (vertx == null) {
-            if (vertxOptions != null) {
-                vertx = Vertx.vertx(vertxOptions);
-            } else {
-                vertx = Vertx.vertx();
-            }
-            managedVertx = true;
-        }
-
         return vertx;
     }
 
@@ -161,6 +171,17 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         this.vertxOptions = vertxOptions;
     }
 
+    public Router getRouter() {
+        return router;
+    }
+
+    /**
+     * To provide a custom vertx router to use on the WebSocket server
+     */
+    public void setRouter(Router router) {
+        this.router = router;
+    }
+
     @Override
     public boolean isUseGlobalSslContextParameters() {
         return this.useGlobalSslContextParameters;
@@ -178,7 +199,8 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         return this.vertxHostRegistry;
     }
 
-    protected VertxWebsocketHost createVertxWebsocketHost(VertxWebsocketHostConfiguration hostConfiguration, VertxWebsocketHostKey hostKey) {
+    protected VertxWebsocketHost createVertxWebsocketHost(
+            VertxWebsocketHostConfiguration hostConfiguration, VertxWebsocketHostKey hostKey) {
         return new VertxWebsocketHost(hostConfiguration, hostKey);
     }
 }

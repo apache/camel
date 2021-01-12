@@ -58,7 +58,7 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
     @Test
     public void testWithInvalidOperation() {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBodyAndHeader("direct:putInvalid", "my-foo", HazelcastConstants.OBJECT_ID, "4711"));
+                () -> template.sendBodyAndHeader("direct:putInvalid", "my-foo", HazelcastConstants.OBJECT_ID, "4711"));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
 
     @Test
     public void testGet() {
-        when(map.get("4711")).thenReturn(Arrays.<Object>asList("my-foo"));
+        when(map.get("4711")).thenReturn(Arrays.<Object> asList("my-foo"));
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
         verify(map).get("4711");
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
@@ -93,13 +93,13 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         verify(map).remove(4711);
     }
-    
+
     @Test
     public void testClear() {
         template.sendBody("direct:clear", "test");
         verify(map).clear();
     }
-    
+
     @Test
     public void testContainsKey() {
         when(map.containsKey("testOk")).thenReturn(true);
@@ -113,7 +113,7 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
         verify(map).containsKey("testKo");
         assertEquals(false, body);
     }
-    
+
     @Test
     public void testContainsValue() {
         when(map.containsValue("testOk")).thenReturn(true);
@@ -134,11 +134,14 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT)).to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
+                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET)).to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
                         .to("seda:out");
 
                 from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
@@ -146,17 +149,20 @@ public class HazelcastReplicatedmapProducerTest extends HazelcastCamelTestSuppor
 
                 from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
-                
+
                 from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
                         .to("seda:out");
-        
-                from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_VALUE))
+
+                from("direct:containsValue")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_VALUE))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX))
                         .to("seda:out");
-                
-                from("direct:putWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastOperation.PUT);
-                from("direct:putWithOperationName").toF("hazelcast-%sbar?operation=PUT", HazelcastConstants.REPLICATEDMAP_PREFIX);
+
+                from("direct:putWithOperationNumber").toF("hazelcast-%sbar?operation=%s",
+                        HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastOperation.PUT);
+                from("direct:putWithOperationName").toF("hazelcast-%sbar?operation=PUT",
+                        HazelcastConstants.REPLICATEDMAP_PREFIX);
             }
         };
     }

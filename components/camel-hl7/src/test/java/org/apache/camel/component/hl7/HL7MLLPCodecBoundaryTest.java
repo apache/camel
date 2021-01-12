@@ -31,8 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test for situation where the two end bytes are split across different byte
- * buffers.
+ * Test for situation where the two end bytes are split across different byte buffers.
  */
 public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
 

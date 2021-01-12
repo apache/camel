@@ -45,8 +45,8 @@ public class XsltPerformanceTest extends AbstractBasePerformanceTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:xslt")
-                    .to("xslt://META-INF/xslt/transform.xslt")
-                    .to("mock:end");
+                        .to("xslt://META-INF/xslt/transform.xslt")
+                        .to("mock:end");
             }
         };
     }

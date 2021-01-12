@@ -25,7 +25,7 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
 public class XChangeMarketDataProducer extends DefaultProducer {
-    
+
     public XChangeMarketDataProducer(XChangeEndpoint endpoint) {
         super(endpoint);
     }
@@ -40,7 +40,7 @@ public class XChangeMarketDataProducer extends DefaultProducer {
 
         XChangeEndpoint endpoint = getEndpoint();
         XChangeMethod method = endpoint.getConfiguration().getMethod();
-        
+
         if (XChangeMethod.ticker == method) {
             CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
             pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);

@@ -29,8 +29,6 @@ public enum NewSigningKeyApiMethod implements ApiMethod {
         "creator",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private NewSigningKeyApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

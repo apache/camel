@@ -43,7 +43,6 @@ public class AmazonSNSClientMock implements SnsClient {
     public SetTopicAttributesResponse setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) {
         assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.topicArn());
         assertEquals("Policy", setTopicAttributesRequest.attributeName());
-        assertEquals("XXX", setTopicAttributesRequest.attributeValue());
         return SetTopicAttributesResponse.builder().build();
     }
 

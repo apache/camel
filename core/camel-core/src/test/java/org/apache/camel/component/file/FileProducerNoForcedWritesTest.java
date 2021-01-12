@@ -46,10 +46,12 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertFileExists("target/data/file/output.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/output.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/output.txt")));
 
         assertFileExists("target/data/file/output2.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/output2.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File("target/data/file/output2.txt")));
     }
 
     @Override
@@ -58,8 +60,9 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/file?initialDelay=0&delay=10&noop=true").multicast()
-                    .to("file:target/data/file/?fileName=output.txt&forceWrites=false", "file:target/data/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
-                    .to("mock:result");
+                        .to("file:target/data/file/?fileName=output.txt&forceWrites=false",
+                                "file:target/data/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
+                        .to("mock:result");
             }
         };
     }

@@ -29,8 +29,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ResourceHelper;
 
 /**
- * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
- * for performing transforming messages
+ * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a> for performing transforming messages
  */
 @Component("xquery")
 public class XQueryComponent extends DefaultComponent {

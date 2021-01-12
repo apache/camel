@@ -50,7 +50,7 @@ public class ServiceInterfaceStrategyTest {
         QName elName3 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllCustomers",
                 null);
         assertNull(elName3);
-        
+
         QName elName4 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllAmericanCustomers",
                 null);
         assertNull(elName4);
@@ -113,15 +113,17 @@ public class ServiceInterfaceStrategyTest {
             LOG.debug("Caught expected message: " + e.getMessage());
         }
     }
-    
+
     @Test
     public void testMultiPart() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(MultiPartCustomerService.class, true);
-        QName custNameQName = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                                                                    com.example.customerservice.multipart.GetCustomersByName.class);
-        QName custTypeQName = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                                                                    com.example.customerservice.multipart.Product.class);
-        
+        QName custNameQName
+                = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
+                        com.example.customerservice.multipart.GetCustomersByName.class);
+        QName custTypeQName
+                = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
+                        com.example.customerservice.multipart.Product.class);
+
         assertEquals("http://multipart.customerservice.example.com/", custNameQName.getNamespaceURI());
         assertEquals("getCustomersByName", custNameQName.getLocalPart());
 

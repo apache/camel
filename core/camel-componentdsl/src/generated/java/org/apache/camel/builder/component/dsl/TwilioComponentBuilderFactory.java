@@ -37,6 +37,8 @@ public interface TwilioComponentBuilderFactory {
      * Category: api,messaging,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-twilio
+     * 
+     * @return the dsl builder
      */
     static TwilioComponentBuilder twilio() {
         return new TwilioComponentBuilderImpl();
@@ -49,6 +51,22 @@ public interface TwilioComponentBuilderFactory {
             extends
                 ComponentBuilder<TwilioComponent> {
         /**
+         * To use the shared configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.twilio.TwilioConfiguration&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default TwilioComponentBuilder configuration(
+                org.apache.camel.component.twilio.TwilioConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -57,10 +75,13 @@ public interface TwilioComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +99,13 @@ public interface TwilioComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,39 +113,35 @@ public interface TwilioComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
-         */
-        default TwilioComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use the shared configuration.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.twilio.TwilioConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default TwilioComponentBuilder configuration(
-                org.apache.camel.component.twilio.TwilioConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default TwilioComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use the shared REST client.
          * 
-         * The option is a: <code>com.twilio.http.TwilioRestClient</code> type.
+         * The option is a:
+         * &lt;code&gt;com.twilio.http.TwilioRestClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param restClient the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder restClient(
                 com.twilio.http.TwilioRestClient restClient) {
@@ -131,9 +151,12 @@ public interface TwilioComponentBuilderFactory {
         /**
          * The account SID to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accountSid the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder accountSid(java.lang.String accountSid) {
             doSetProperty("accountSid", accountSid);
@@ -142,9 +165,12 @@ public interface TwilioComponentBuilderFactory {
         /**
          * Auth token for the account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -153,9 +179,12 @@ public interface TwilioComponentBuilderFactory {
         /**
          * The account to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
@@ -178,10 +207,10 @@ public interface TwilioComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((TwilioComponent) component).setConfiguration((org.apache.camel.component.twilio.TwilioConfiguration) value); return true;
             case "bridgeErrorHandler": ((TwilioComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((TwilioComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((TwilioComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((TwilioComponent) component).setConfiguration((org.apache.camel.component.twilio.TwilioConfiguration) value); return true;
+            case "autowiredEnabled": ((TwilioComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "restClient": ((TwilioComponent) component).setRestClient((com.twilio.http.TwilioRestClient) value); return true;
             case "accountSid": ((TwilioComponent) component).setAccountSid((java.lang.String) value); return true;
             case "password": ((TwilioComponent) component).setPassword((java.lang.String) value); return true;

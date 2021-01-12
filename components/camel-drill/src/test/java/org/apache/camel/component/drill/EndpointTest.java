@@ -33,19 +33,20 @@ public class EndpointTest extends CamelTestSupport {
 
     @Test
     void testZKJdbcURL() {
-        Endpoint endpoint = context.getEndpoint("drill://" + HOST + "?port=" + PORT + "&directory=" + DIRECTORY + "&clusterId=" + CLUSTERID + "&mode=" + MODE);
+        Endpoint endpoint = context.getEndpoint(
+                "drill://" + HOST + "?port=" + PORT + "&directory=" + DIRECTORY + "&clusterId=" + CLUSTERID + "&mode=" + MODE);
 
         final String uri = "jdbc:drill:zk=" + HOST + ":" + PORT + "/" + DIRECTORY + "/" + CLUSTERID;
 
         assertTrue(endpoint instanceof DrillEndpoint);
 
-        assertEquals(HOST, ((DrillEndpoint)endpoint).getHost());
-        assertEquals(PORT, ((DrillEndpoint)endpoint).getPort());
-        assertEquals(DIRECTORY, ((DrillEndpoint)endpoint).getDirectory());
-        assertEquals(CLUSTERID, ((DrillEndpoint)endpoint).getClusterId());
-        assertEquals(MODE, ((DrillEndpoint)endpoint).getMode());
+        assertEquals(HOST, ((DrillEndpoint) endpoint).getHost());
+        assertEquals(PORT, ((DrillEndpoint) endpoint).getPort());
+        assertEquals(DIRECTORY, ((DrillEndpoint) endpoint).getDirectory());
+        assertEquals(CLUSTERID, ((DrillEndpoint) endpoint).getClusterId());
+        assertEquals(MODE, ((DrillEndpoint) endpoint).getMode());
 
-        assertEquals(uri, ((DrillEndpoint)endpoint).toJDBCUri());
+        assertEquals(uri, ((DrillEndpoint) endpoint).toJDBCUri());
     }
 
 }

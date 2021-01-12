@@ -48,7 +48,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         strategy = new DefaultSqlPrepareStatementStrategy() {
             @Override
@@ -57,7 +57,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
                 super.populateStatement(ps, iterator, expectedParams);
             }
         };
-        
+
         super.setUp();
     }
 
@@ -65,7 +65,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -96,8 +96,8 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=true&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=true&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
+                        .to("mock:result");
             }
         };
     }

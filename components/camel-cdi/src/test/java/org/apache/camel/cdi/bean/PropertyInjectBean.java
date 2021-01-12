@@ -31,7 +31,7 @@ public class PropertyInjectBean {
     public void process(@Headers Map<String, Object> headers) {
         headers.put("header", property);
     }
-    
+
     public String getProperty() {
         return property;
     }

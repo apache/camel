@@ -39,6 +39,8 @@ public interface ServiceComponentBuilderFactory {
      * Category: cloud
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-service
+     * 
+     * @return the dsl builder
      */
     static ServiceComponentBuilder service() {
         return new ServiceComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ServiceComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,26 +75,36 @@ public interface ServiceComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ServiceComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ServiceComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Inject the service to use.
          * 
-         * The option is a: <code>org.apache.camel.cloud.ServiceRegistry</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.cloud.ServiceRegistry&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param service the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder service(
                 org.apache.camel.cloud.ServiceRegistry service) {
@@ -101,9 +116,12 @@ public interface ServiceComponentBuilderFactory {
          * use.
          * 
          * The option is a:
-         * <code>org.apache.camel.cloud.ServiceRegistry.Selector</code> type.
+         * &lt;code&gt;org.apache.camel.cloud.ServiceRegistry.Selector&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param serviceSelector the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder serviceSelector(
                 org.apache.camel.cloud.ServiceRegistry.Selector serviceSelector) {
@@ -128,7 +146,7 @@ public interface ServiceComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((ServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "basicPropertyBinding": ((ServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ServiceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "service": ((ServiceComponent) component).setService((org.apache.camel.cloud.ServiceRegistry) value); return true;
             case "serviceSelector": ((ServiceComponent) component).setServiceSelector((org.apache.camel.cloud.ServiceRegistry.Selector) value); return true;
             default: return false;

@@ -54,7 +54,8 @@ public class BindySingleQuotesCsvUnmarshallTest {
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
+        BindyCsvDataFormat camelDataFormat
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
         @Override
         public void configure() {

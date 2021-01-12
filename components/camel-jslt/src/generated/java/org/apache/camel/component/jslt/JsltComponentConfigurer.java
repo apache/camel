@@ -4,8 +4,10 @@ package org.apache.camel.component.jslt;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,8 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "functions": target.setFunctions(property(camelContext, java.util.Collection.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -33,14 +35,19 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowTemplateFromHeader", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("functions", java.util.Collection.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("objectFilter", com.schibsted.spt.data.jslt.filters.JsonFilter.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "functions": return java.util.Collection.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "objectfilter":
+        case "objectFilter": return com.schibsted.spt.data.jslt.filters.JsonFilter.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -49,13 +56,21 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "functions": return target.getFunctions();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "objectfilter":
         case "objectFilter": return target.getObjectFilter();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "functions": return com.schibsted.spt.data.jslt.Function.class;
         default: return null;
         }
     }

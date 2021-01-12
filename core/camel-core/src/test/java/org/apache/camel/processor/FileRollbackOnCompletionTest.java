@@ -97,7 +97,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             assertEquals("Simulated fatal error", e.getCause().getMessage());
         }
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // onCompletion is async so we gotta wait a bit for the file to be
         // deleted
@@ -114,16 +114,17 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:confirm")
-                    // use a route scoped onCompletion to be executed when the
-                    // Exchange failed
-                    .onCompletion().onFailureOnly()
-                    // and call the onFailure method on this bean
-                    .bean(FileRollback.class, "onFailure")
-                    // must use end to denote the end of the onCompletion route
-                    .end()
-                    // here starts the regular route
-                    .bean(OrderService.class, "createMail").log("Saving mail backup file").to("file:target/data/mail/backup").log("Trying to send mail to ${header.to}")
-                    .bean(OrderService.class, "sendMail").log("Mail send to ${header.to}");
+                        // use a route scoped onCompletion to be executed when the
+                        // Exchange failed
+                        .onCompletion().onFailureOnly()
+                        // and call the onFailure method on this bean
+                        .bean(FileRollback.class, "onFailure")
+                        // must use end to denote the end of the onCompletion route
+                        .end()
+                        // here starts the regular route
+                        .bean(OrderService.class, "createMail").log("Saving mail backup file")
+                        .to("file:target/data/mail/backup").log("Trying to send mail to ${header.to}")
+                        .bean(OrderService.class, "sendMail").log("Mail send to ${header.to}");
             }
         };
     }

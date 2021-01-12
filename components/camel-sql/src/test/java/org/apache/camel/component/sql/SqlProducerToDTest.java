@@ -75,10 +75,10 @@ public class SqlProducerToDTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:query")
-                    .setHeader("myQuery", constant("select * from projects where project = :#foo order by id"))
-                    .toD("sql:${header.myQuery}?dataSource=#myDS")
-                    .to("log:query")
-                    .to("mock:query");
+                        .setHeader("myQuery", constant("select * from projects where project = :#foo order by id"))
+                        .toD("sql:${header.myQuery}?dataSource=#myDS")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

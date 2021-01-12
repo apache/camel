@@ -78,8 +78,9 @@ public class RouteStopTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").when(body().contains("Bye")).to("mock:bye").stop().otherwise().to("mock:other").end()
-                    .to("mock:result");
+                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").when(body().contains("Bye"))
+                        .to("mock:bye").stop().otherwise().to("mock:other").end()
+                        .to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:foo").to("mock:foo").process(e -> e.setRouteStop(true)).to("mock:result");

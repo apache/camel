@@ -45,8 +45,8 @@ public final class ResultErrorHelper {
 
     /**
      *
-     * @param parameterName the required option
-     * @param parameters the
+     * @param  parameterName the required option
+     * @param  parameters    the
      * @return
      */
     public static Optional<VerificationError> requiresOption(String parameterName, Map<String, Object> parameters) {
@@ -58,49 +58,46 @@ public final class ResultErrorHelper {
     }
 
     /**
-     * Validates that the given parameters satisfy any grouped options
-     * ({@link OptionsGroup}). A parameter set is valid if it is
-     * present and required by least one of the groups.
+     * Validates that the given parameters satisfy any grouped options ({@link OptionsGroup}). A parameter set is valid
+     * if it is present and required by least one of the groups.
      *
-     * <p>As an example consider that there are two option groups that
-     * can be specified:
+     * <p>
+     * As an example consider that there are two option groups that can be specified:
      * <ul>
      * <li>optionA: requires param1 and param2
      * <li>optionB: requires param1 and param3
      * </ul>
      *
-     * Valid parameters are those that include param1 and either param2
-     * and/or param3.
+     * Valid parameters are those that include param1 and either param2 and/or param3.
      *
-     * <p>Note the special syntax of {@link OptionsGroup#getOptions()}
-     * that can require an property ({@code "propertyName"}) or can
-     * forbid the presence of a property ({@code "!propertyName"}).
+     * <p>
+     * Note the special syntax of {@link OptionsGroup#getOptions()} that can require an property
+     * ({@code "propertyName"}) or can forbid the presence of a property ({@code "!propertyName"}).
      *
-     * <p>With that if in the example above if param2 is specified
-     * specifying param3 is not allowed, and vice versa option groups
-     * should be defined with options:
+     * <p>
+     * With that if in the example above if param2 is specified specifying param3 is not allowed, and vice versa option
+     * groups should be defined with options:
      * <ul>
      * <li>optionA: ["param1", "param2", "!param3"]
      * <li>optionB: ["param1", "!param2", "param3"]
      * </ul>
      *
      * @param parameters given parameters of a component
-     * @param groups groups of options
-     * @see OptionsGroup
+     * @param groups     groups of options
+     * @see              OptionsGroup
      */
     public static List<VerificationError> requiresAny(Map<String, Object> parameters, OptionsGroup... groups) {
         return requiresAny(parameters, Arrays.asList(groups));
     }
 
     /**
-     * Validates that the given parameters satisfy any grouped options
-     * ({@link OptionsGroup}). A parameter set is valid if it is
-     * present and required by least one of the groups.
+     * Validates that the given parameters satisfy any grouped options ({@link OptionsGroup}). A parameter set is valid
+     * if it is present and required by least one of the groups.
      *
      * @param parameters given parameters of a component
-     * @param groups groups of options
-     * @see #requiresAny(Map, OptionsGroup...)
-     * @see OptionsGroup
+     * @param groups     groups of options
+     * @see              #requiresAny(Map, OptionsGroup...)
+     * @see              OptionsGroup
      */
     public static List<VerificationError> requiresAny(Map<String, Object> parameters, Collection<OptionsGroup> groups) {
         final List<VerificationError> verificationErrors = new ArrayList<>();
@@ -111,9 +108,9 @@ public final class ResultErrorHelper {
             final Set<String> excluded = excluded(group.getOptions());
 
             final ResultErrorBuilder builder = new ResultErrorBuilder()
-                .code(VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION)
-                .detail(VerificationError.GroupAttribute.GROUP_NAME, group.getName())
-                .detail(VerificationError.GroupAttribute.GROUP_OPTIONS, String.join(",", parameters(group.getOptions())));
+                    .code(VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION)
+                    .detail(VerificationError.GroupAttribute.GROUP_NAME, group.getName())
+                    .detail(VerificationError.GroupAttribute.GROUP_OPTIONS, String.join(",", parameters(group.getOptions())));
 
             if (keys.containsAll(required)) {
                 // All the options of this group are found so we are good

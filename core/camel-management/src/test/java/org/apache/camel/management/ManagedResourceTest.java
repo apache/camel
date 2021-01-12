@@ -67,11 +67,13 @@ public class ManagedResourceTest extends ManagementTestSupport {
         LOG.info("managementName = {}", managementName);
 
         // Get the Camel Context MBean
-        ObjectName onContext = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=" + managementName + ",type=context,name=\"" + context.getName() + "\"");
+        ObjectName onContext = ObjectName.getInstance(
+                mBeanServerDefaultDomain + ":context=" + managementName + ",type=context,name=\"" + context.getName() + "\"");
         assertTrue(mBeanServer.isRegistered(onContext), "Should be registered");
 
         // Get myManagedBean
-        ObjectName onManagedBean = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=" + managementName + ",type=processors,name=\"myManagedBean\"");
+        ObjectName onManagedBean = ObjectName.getInstance(
+                mBeanServerDefaultDomain + ":context=" + managementName + ",type=processors,name=\"myManagedBean\"");
         LOG.info("Canonical Name = {}", onManagedBean.getCanonicalName());
         assertTrue(mBeanServer.isRegistered(onManagedBean), "Should be registered");
 

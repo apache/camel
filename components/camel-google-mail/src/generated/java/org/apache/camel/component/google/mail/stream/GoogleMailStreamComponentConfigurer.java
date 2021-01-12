@@ -4,8 +4,10 @@ package org.apache.camel.component.google.mail.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -30,8 +32,8 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientfactory":
@@ -54,22 +56,33 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientFactory", org.apache.camel.component.google.mail.GoogleMailClientFactory.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class);
-        answer.put("labels", java.lang.String.class);
-        answer.put("markAsRead", boolean.class);
-        answer.put("maxResults", long.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("refreshToken", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.mail.GoogleMailClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration.class;
+        case "labels": return java.lang.String.class;
+        case "markasread":
+        case "markAsRead": return boolean.class;
+        case "maxresults":
+        case "maxResults": return long.class;
+        case "query": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -80,8 +93,8 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
         case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfactory":

@@ -25,21 +25,21 @@ public final class Constants {
     public static final SOAPHeaderData OUT_HEADER_DATA = new SOAPHeaderData();
     public static final SOAPHeaderData IN_OUT_REQUEST_HEADER_DATA = new SOAPHeaderData();
     public static final SOAPHeaderData IN_OUT_RESPONSE_HEADER_DATA = new SOAPHeaderData();
-    
+
     static {
-        IN_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInHeader");        
+        IN_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInHeader");
         IN_HEADER_DATA.setMessage("Invoking CxfSoapHeaderRoutePropagationTest.testInHeader()");
-        OUT_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testOutHeader");        
+        OUT_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testOutHeader");
         OUT_HEADER_DATA.setMessage("Invoking CxfSoapHeaderRoutePropagationTest.testOutHeader()");
-        IN_OUT_REQUEST_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInOutHeader Requestor");        
+        IN_OUT_REQUEST_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInOutHeader Requestor");
         IN_OUT_REQUEST_HEADER_DATA.setMessage("Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Request");
-        IN_OUT_RESPONSE_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInOutHeader Responser");        
+        IN_OUT_RESPONSE_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInOutHeader Responser");
         IN_OUT_RESPONSE_HEADER_DATA.setMessage("Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Responser");
     }
-    
+
     private Constants() {
     }
-    
+
     public static boolean equals(SOAPHeaderData lhs, SOAPHeaderData rhs) {
         if (compare(lhs, rhs)) {
             return true;
@@ -52,7 +52,7 @@ public final class Constants {
         }
         return false;
     }
-    
+
     public static <L, R> boolean compare(L lhs, R rhs) {
         if (lhs == rhs) {
             return true;
@@ -60,6 +60,6 @@ public final class Constants {
         if (lhs == null || rhs == null && lhs != rhs) {
             return false;
         }
-        return lhs.equals(rhs);        
+        return lhs.equals(rhs);
     }
 }

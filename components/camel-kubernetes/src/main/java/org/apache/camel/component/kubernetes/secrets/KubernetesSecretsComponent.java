@@ -24,7 +24,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesSecretsComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesSecretsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
+    protected KubernetesSecretsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config)
+            throws Exception {
         KubernetesSecretsEndpoint endpoint = new KubernetesSecretsEndpoint(uri, this, config);
         return endpoint;
     }

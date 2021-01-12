@@ -51,7 +51,8 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
 
                 from("direct:start").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Forced bar error"));
+                from("direct:bar").routeId("bar").to("mock:bar")
+                        .throwException(new IllegalArgumentException("Forced bar error"));
             }
         });
         context.start();
@@ -84,7 +85,8 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
                     }
                 });
 
-                from("direct:start").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
+                from("direct:start").routeId("foo").to("mock:foo")
+                        .throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
 

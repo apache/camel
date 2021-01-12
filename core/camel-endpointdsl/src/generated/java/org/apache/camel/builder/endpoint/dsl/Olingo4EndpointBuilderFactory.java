@@ -50,10 +50,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -63,10 +66,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
@@ -77,10 +83,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -90,10 +99,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
@@ -104,10 +116,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
@@ -118,10 +134,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
@@ -133,10 +152,13 @@ public interface Olingo4EndpointBuilderFactory {
          * OAuth tokens, etc.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(String httpHeaders) {
             doSetProperty("httpHeaders", httpHeaders);
@@ -145,9 +167,12 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -156,9 +181,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: <code>org.apache.http.HttpHost</code> type.
+         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder proxy(Object proxy) {
             doSetProperty("proxy", proxy);
@@ -168,9 +197,12 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP proxy server configuration.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.HttpHost</code> type.
+         * &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder proxy(String proxy) {
             doSetProperty("proxy", proxy);
@@ -180,9 +212,12 @@ public interface Olingo4EndpointBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceUri the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder serviceUri(String serviceUri) {
             doSetProperty("serviceUri", serviceUri);
@@ -192,10 +227,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -205,10 +243,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
@@ -224,10 +265,13 @@ public interface Olingo4EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -243,10 +287,14 @@ public interface Olingo4EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -257,10 +305,13 @@ public interface Olingo4EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -271,10 +322,14 @@ public interface Olingo4EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -286,10 +341,13 @@ public interface Olingo4EndpointBuilderFactory {
          * will map every element to distinct messages, unless splitResult is
          * set to false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param splitResult the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder splitResult(boolean splitResult) {
             doSetProperty("splitResult", splitResult);
@@ -300,10 +358,14 @@ public interface Olingo4EndpointBuilderFactory {
          * will map every element to distinct messages, unless splitResult is
          * set to false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param splitResult the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder splitResult(String splitResult) {
             doSetProperty("splitResult", splitResult);
@@ -313,9 +375,12 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -326,9 +391,12 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -339,9 +407,12 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -352,9 +423,12 @@ public interface Olingo4EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -369,9 +443,12 @@ public interface Olingo4EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -386,9 +463,12 @@ public interface Olingo4EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -398,10 +478,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -410,10 +493,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -423,10 +509,13 @@ public interface Olingo4EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -436,10 +525,14 @@ public interface Olingo4EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -448,10 +541,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -460,10 +556,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -474,10 +573,13 @@ public interface Olingo4EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -488,10 +590,13 @@ public interface Olingo4EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -501,10 +606,14 @@ public interface Olingo4EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -516,10 +625,13 @@ public interface Olingo4EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -532,9 +644,12 @@ public interface Olingo4EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -547,9 +662,12 @@ public interface Olingo4EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -558,12 +676,32 @@ public interface Olingo4EndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default Olingo4EndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -573,13 +711,17 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -591,13 +733,16 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -606,10 +751,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -619,10 +767,14 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -632,10 +784,14 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -645,10 +801,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -658,10 +817,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -672,10 +834,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -686,9 +852,12 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -699,9 +868,12 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -725,10 +897,13 @@ public interface Olingo4EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -742,9 +917,12 @@ public interface Olingo4EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -754,9 +932,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -767,9 +949,12 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -783,9 +968,12 @@ public interface Olingo4EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -799,41 +987,16 @@ public interface Olingo4EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOlingo4EndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOlingo4EndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -843,10 +1006,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
@@ -860,10 +1025,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
@@ -877,9 +1044,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
@@ -893,9 +1063,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder httpClientBuilder(
                 String httpClientBuilder) {
@@ -906,10 +1079,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -920,10 +1096,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -945,10 +1125,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -958,10 +1141,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -972,10 +1158,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -985,10 +1174,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
@@ -999,10 +1191,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
@@ -1013,10 +1209,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
@@ -1028,10 +1227,13 @@ public interface Olingo4EndpointBuilderFactory {
          * OAuth tokens, etc.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder httpHeaders(String httpHeaders) {
             doSetProperty("httpHeaders", httpHeaders);
@@ -1040,9 +1242,12 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1051,9 +1256,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: <code>org.apache.http.HttpHost</code> type.
+         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder proxy(Object proxy) {
             doSetProperty("proxy", proxy);
@@ -1063,9 +1272,12 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP proxy server configuration.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.HttpHost</code> type.
+         * &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder proxy(String proxy) {
             doSetProperty("proxy", proxy);
@@ -1075,9 +1287,12 @@ public interface Olingo4EndpointBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceUri the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder serviceUri(String serviceUri) {
             doSetProperty("serviceUri", serviceUri);
@@ -1087,10 +1302,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -1100,10 +1318,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
@@ -1121,10 +1342,13 @@ public interface Olingo4EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1142,10 +1366,14 @@ public interface Olingo4EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1156,9 +1384,12 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1169,9 +1400,12 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1190,44 +1424,18 @@ public interface Olingo4EndpointBuilderFactory {
             return (Olingo4EndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Custom HTTP async client builder for more complex HTTP client
          * configuration, overrides connectionTimeout, socketTimeout, proxy and
          * sslContext. Note that a socketTimeout MUST be specified in the
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
@@ -1241,10 +1449,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
@@ -1258,9 +1468,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
@@ -1274,9 +1487,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder httpClientBuilder(
                 String httpClientBuilder) {
@@ -1287,10 +1503,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1301,10 +1520,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1327,10 +1550,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -1340,10 +1566,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -1353,10 +1582,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -1366,10 +1598,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
@@ -1380,10 +1615,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
@@ -1394,10 +1633,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
@@ -1409,10 +1651,13 @@ public interface Olingo4EndpointBuilderFactory {
          * OAuth tokens, etc.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder httpHeaders(String httpHeaders) {
             doSetProperty("httpHeaders", httpHeaders);
@@ -1421,9 +1666,12 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1432,9 +1680,13 @@ public interface Olingo4EndpointBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: <code>org.apache.http.HttpHost</code> type.
+         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder proxy(Object proxy) {
             doSetProperty("proxy", proxy);
@@ -1444,9 +1696,12 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP proxy server configuration.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.HttpHost</code> type.
+         * &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder proxy(String proxy) {
             doSetProperty("proxy", proxy);
@@ -1456,9 +1711,12 @@ public interface Olingo4EndpointBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceUri the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder serviceUri(String serviceUri) {
             doSetProperty("serviceUri", serviceUri);
@@ -1468,10 +1726,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -1481,10 +1742,13 @@ public interface Olingo4EndpointBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder socketTimeout(String socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -1494,9 +1758,12 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1507,9 +1774,12 @@ public interface Olingo4EndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1529,44 +1799,18 @@ public interface Olingo4EndpointBuilderFactory {
             return (Olingo4EndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Custom HTTP async client builder for more complex HTTP client
          * configuration, overrides connectionTimeout, socketTimeout, proxy and
          * sslContext. Note that a socketTimeout MUST be specified in the
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
@@ -1580,10 +1824,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
@@ -1597,9 +1843,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder httpClientBuilder(
                 Object httpClientBuilder) {
@@ -1613,9 +1862,12 @@ public interface Olingo4EndpointBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder httpClientBuilder(
                 String httpClientBuilder) {
@@ -1626,10 +1878,13 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1639,10 +1894,14 @@ public interface Olingo4EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOlingo4EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1663,12 +1922,13 @@ public interface Olingo4EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: DEFAULT
+         * There are 1 enums and the value can be one of: DEFAULT
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder olingo4(String path) {
             return Olingo4EndpointBuilderFactory.endpointBuilder("olingo4", path);
@@ -1685,7 +1945,7 @@ public interface Olingo4EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: DEFAULT
+         * There are 1 enums and the value can be one of: DEFAULT
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1693,6 +1953,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder olingo4(String componentName, String path) {
             return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);

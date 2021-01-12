@@ -39,7 +39,8 @@ import org.apache.camel.util.ObjectHelper;
  * Manage and invoke AWS Lambda functions.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "aws-lambda", title = "AWS Lambda",
-    syntax = "aws-lambda:function", producerOnly = true, category = {Category.CLOUD, Category.COMPUTING, Category.SERVERLESS})
+             syntax = "aws-lambda:function", producerOnly = true,
+             category = { Category.CLOUD, Category.COMPUTING, Category.SERVERLESS })
 public class LambdaEndpoint extends DefaultEndpoint {
 
     private AWSLambda awsLambdaClient;
@@ -79,7 +80,8 @@ public class LambdaEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsLambdaClient = configuration.getAwsLambdaClient() != null ? configuration.getAwsLambdaClient() : createLambdaClient();
+        awsLambdaClient
+                = configuration.getAwsLambdaClient() != null ? configuration.getAwsLambdaClient() : createLambdaClient();
     }
 
     @Override

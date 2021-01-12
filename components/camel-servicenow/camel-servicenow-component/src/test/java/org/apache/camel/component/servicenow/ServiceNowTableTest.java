@@ -17,9 +17,11 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.Incident;
@@ -29,8 +31,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServiceNowTableTest extends ServiceNowTestSupport {
 
@@ -40,15 +42,14 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         mock.expectedMessageCount(1);
 
         template().sendBodyAndHeaders(
-            "direct:servicenow",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, "table")
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowParams.SYSPARM_LIMIT, 10)
-                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                .build()
-        );
+                "direct:servicenow",
+                null,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, "table")
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .put(ServiceNowParams.SYSPARM_LIMIT, 10)
+                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                        .build());
 
         mock.assertIsSatisfied();
 
@@ -69,17 +70,16 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         mock.expectedMessageCount(1);
 
         template().sendBodyAndHeaders(
-            "direct:servicenow",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, "table")
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowParams.SYSPARM_LIMIT, 10)
-                .put(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, false)
-                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                .put(ServiceNowConstants.MODEL, IncidentWithParms.class)
-                .build()
-        );
+                "direct:servicenow",
+                null,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, "table")
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .put(ServiceNowParams.SYSPARM_LIMIT, 10)
+                        .put(ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK, false)
+                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                        .put(ServiceNowConstants.MODEL, IncidentWithParms.class)
+                        .build());
 
         mock.assertIsSatisfied();
 
@@ -101,13 +101,12 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         mock.expectedMessageCount(1);
 
         template().sendBodyAndHeaders(
-            "direct:servicenow-defaults",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowParams.SYSPARM_LIMIT, 10)
-                .build()
-        );
+                "direct:servicenow-defaults",
+                null,
+                kvBuilder()
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .put(ServiceNowParams.SYSPARM_LIMIT, 10)
+                        .build());
 
         mock.assertIsSatisfied();
 
@@ -141,14 +140,13 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             incident.setImpact(1);
 
             template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                    .put(ServiceNowConstants.RESOURCE, "table")
-                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                    .build()
-            );
+                    "direct:servicenow",
+                    incident,
+                    kvBuilder()
+                            .put(ServiceNowConstants.RESOURCE, "table")
+                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                            .build());
 
             mock.assertIsSatisfied();
 
@@ -174,15 +172,14 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             mock.expectedMessageCount(1);
 
             template().sendBodyAndHeaders(
-                "direct:servicenow",
-                null,
-                kvBuilder()
-                    .put(ServiceNowConstants.RESOURCE, "table")
-                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + number)
-                    .build()
-            );
+                    "direct:servicenow",
+                    null,
+                    kvBuilder()
+                            .put(ServiceNowConstants.RESOURCE, "table")
+                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + number)
+                            .build());
 
             mock.assertIsSatisfied();
 
@@ -209,15 +206,14 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             incident.setImpact(3);
 
             template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                    .put(ServiceNowConstants.RESOURCE, "table")
-                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_MODIFY)
-                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
-                    .build()
-            );
+                    "direct:servicenow",
+                    incident,
+                    kvBuilder()
+                            .put(ServiceNowConstants.RESOURCE, "table")
+                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_MODIFY)
+                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                            .put(ServiceNowParams.PARAM_SYS_ID, sysId)
+                            .build());
 
             mock.assertIsSatisfied();
 
@@ -239,15 +235,14 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             mock.expectedMessageCount(1);
 
             template().sendBodyAndHeaders(
-                "direct:servicenow",
-                null,
-                kvBuilder()
-                    .put(ServiceNowConstants.RESOURCE, "table")
-                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + number)
-                    .build()
-            );
+                    "direct:servicenow",
+                    null,
+                    kvBuilder()
+                            .put(ServiceNowConstants.RESOURCE, "table")
+                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + number)
+                            .build());
 
             mock.assertIsSatisfied();
 
@@ -271,15 +266,14 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             mock.expectedMessageCount(1);
 
             template().sendBodyAndHeaders(
-                "direct:servicenow",
-                null,
-                kvBuilder()
-                    .put(ServiceNowConstants.RESOURCE, "table")
-                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
-                    .build()
-            );
+                    "direct:servicenow",
+                    null,
+                    kvBuilder()
+                            .put(ServiceNowConstants.RESOURCE, "table")
+                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                            .put(ServiceNowParams.PARAM_SYS_ID, sysId)
+                            .build());
 
             mock.assertIsSatisfied();
 
@@ -301,15 +295,14 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             mock.expectedMessageCount(1);
 
             template().sendBodyAndHeaders(
-                "direct:servicenow",
-                null,
-                kvBuilder()
-                    .put(ServiceNowConstants.RESOURCE, "table")
-                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE)
-                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
-                    .build()
-            );
+                    "direct:servicenow",
+                    null,
+                    kvBuilder()
+                            .put(ServiceNowConstants.RESOURCE, "table")
+                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE)
+                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                            .put(ServiceNowParams.PARAM_SYS_ID, sysId)
+                            .build());
 
             mock.assertIsSatisfied();
         }
@@ -321,23 +314,19 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         {
             LOGGER.info("Find the record {}, should fail", sysId);
 
-            try {
-                template().sendBodyAndHeaders(
-                    "direct:servicenow",
-                    null,
-                    kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, "table")
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                        .put(ServiceNowParams.PARAM_SYS_ID, sysId)
-                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                        .build()
-                );
+            Map<String, Object> build = kvBuilder()
+                    .put(ServiceNowConstants.RESOURCE, "table")
+                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .build();
 
-                fail("Record " + number + " should have been deleted");
-            } catch (CamelExecutionException e) {
-                assertTrue(e.getCause() instanceof ServiceNowException);
-                // we are good
-            }
+            ProducerTemplate producerTemplate = template();
+
+            Exception ex = assertThrows(CamelExecutionException.class,
+                    () -> producerTemplate.sendBodyAndHeaders("direct:servicenow", null, build));
+
+            assertTrue(ex.getCause() instanceof ServiceNowException);
         }
     }
 
@@ -350,17 +339,17 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?model.incident=org.apache.camel.component.servicenow.model.Incident")
-                    .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
-                    .to("mock:servicenow");
+                        .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
+                            + "?model.incident=org.apache.camel.component.servicenow.model.Incident")
+                        .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
+                        .to("mock:servicenow");
                 from("direct:servicenow-defaults")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?model.incident=org.apache.camel.component.servicenow.model.Incident"
-                        + "&resource=table"
-                        + "&table=incident")
-                    .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
-                    .to("mock:servicenow-defaults");
+                        .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
+                            + "?model.incident=org.apache.camel.component.servicenow.model.Incident"
+                            + "&resource=table"
+                            + "&table=incident")
+                        .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
+                        .to("mock:servicenow-defaults");
             }
         };
     }

@@ -43,8 +43,6 @@ public enum DriveParentsApiMethod implements ApiMethod {
         "list",
         arg("fileId", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveParentsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

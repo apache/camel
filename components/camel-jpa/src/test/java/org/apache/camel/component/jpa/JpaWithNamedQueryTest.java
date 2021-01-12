@@ -45,9 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaWithNamedQueryTest {
-    
+
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
-    
+
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
@@ -88,7 +88,7 @@ public class JpaWithNamedQueryTest {
         // now lets assert that there is a result
         results = entityManager.createQuery(queryText).getResultList();
         assertEquals(1, results.size(), "Should have results: " + results);
-        MultiSteps mail = (MultiSteps)results.get(0);
+        MultiSteps mail = (MultiSteps) results.get(0);
         assertEquals("foo@bar.com", mail.getAddress(), "address property");
 
         // now lets create a consumer to consume it
@@ -113,7 +113,8 @@ public class JpaWithNamedQueryTest {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 // make use of the EntityManager having the relevant persistence-context
-                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+                EntityManager entityManager2
+                        = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
                 if (!entityManager2.isOpen()) {
                     entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
                 }
@@ -152,11 +153,11 @@ public class JpaWithNamedQueryTest {
         assertNotNull(result, "Received a POJO");
         assertEquals("foo@bar.com", result.getAddress(), "address property");
     }
-    
+
     protected int getUpdatedStepValue() {
         return 2;
     }
-    
+
     protected void assertURIQueryOption(JpaConsumer jpaConsumer) {
         assertEquals("step1", jpaConsumer.getNamedQuery());
     }
@@ -169,7 +170,7 @@ public class JpaWithNamedQueryTest {
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull(value, "Could not find endpoint!");
         assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
-        endpoint = (JpaEndpoint)value;
+        endpoint = (JpaEndpoint) value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();

@@ -49,7 +49,7 @@ import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = { CounterRouteTest.TestConfig.class })
+                      classes = { CounterRouteTest.TestConfig.class })
 @MockEndpoints
 public class CounterRouteTest {
 

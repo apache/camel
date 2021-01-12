@@ -25,12 +25,13 @@ import org.apache.camel.maven.packaging.AbstractGeneratorMojo;
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
 /**
- * Used to generate the main ComponentBuilderFactory which is the main entry of the DSLs.
- * E.g: ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").build()
+ * Used to generate the main ComponentBuilderFactory which is the main entry of the DSLs. E.g:
+ * ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").build()
  */
 public final class ComponentsBuilderFactoryGenerator {
     private static final String CLASS_NAME = "ComponentsBuilderFactory";
@@ -39,7 +40,8 @@ public final class ComponentsBuilderFactoryGenerator {
     private final Set<ComponentModel> componentModels;
     private JavaClass javaClass;
 
-    private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
+    private ComponentsBuilderFactoryGenerator(final Set<ComponentModel> componentModels, final ClassLoader classLoader,
+                                              final String packageName) {
         this.componentModels = componentModels;
         this.packageName = packageName;
 
@@ -48,7 +50,8 @@ public final class ComponentsBuilderFactoryGenerator {
         generateJavaClass();
     }
 
-    public static ComponentsBuilderFactoryGenerator generateClass(final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
+    public static ComponentsBuilderFactoryGenerator generateClass(
+            final Set<ComponentModel> componentModels, final ClassLoader classLoader, final String packageName) {
         Objects.requireNonNull(componentModels);
         Objects.requireNonNull(classLoader);
         Objects.requireNonNull(packageName);
@@ -82,8 +85,23 @@ public final class ComponentsBuilderFactoryGenerator {
     }
 
     private void setJavaDoc() {
-        final String doc = "Component entry DSL builder. You can build a component like this: ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build()" + "\n\n"
-                + AbstractGeneratorMojo.GENERATED_MSG;
+        final String doc = "Component DSL builder."
+                           + "\n"
+                           + "\nYou can build a component as follows:"
+                           + "\n<pre>"
+                           + "\n    KafkaComponent kafka = ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build();"
+                           + "\n</pre>"
+                           + "\nThis creates a new Kafka component, but often you want to register the component to CamelContext, which can be done as follows:"
+                           + "\n<pre>"
+                           + "\n    ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").register(camelContext, \"kafka\");"
+                           + "\n</pre>"
+                           + "\nThis configures and registers the component to CamelContext with the name kafka. If you have separate Kafka brokers you can register more components with their own name:"
+                           + "\n<pre>"
+                           + "\n    ComponentBuilderFactory.kafka().setBrokers(\"{{host2:port}}\").register(camelContext, \"kafka2\");"
+                           + "\n</pre>"
+                           + "\n"
+                           + "\n"
+                           + AbstractGeneratorMojo.GENERATED_MSG;
         javaClass.getJavaDoc().setText(doc);
     }
 
@@ -99,8 +117,9 @@ public final class ComponentsBuilderFactoryGenerator {
 
     private void setComponentsDslMethods() {
         componentModels.forEach(componentModel -> {
-            final String returnType = packageName + ".dsl." + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
-                    + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
+            final String returnType = packageName + ".dsl."
+                                      + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
+                                      + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
 
             final Method componentEntryMethod = javaClass.addMethod();
 
@@ -116,7 +135,11 @@ public final class ComponentsBuilderFactoryGenerator {
                 componentEntryMethod.addAnnotation(Deprecated.class);
             }
 
-            componentEntryMethod.getJavaDoc().setFullText(DslHelper.getMainDescriptionWithoutPathOptions(componentModel));
+            String doc = DslHelper.getMainDescriptionWithoutPathOptions(componentModel);
+            // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+            doc = JavadocHelper.xmlEncode(doc);
+            doc += "\n\n@return the dsl builder\n";
+            componentEntryMethod.getJavaDoc().setText(doc);
         });
     }
 }

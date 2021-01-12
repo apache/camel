@@ -42,8 +42,7 @@ EIP book as a reference.
 == Online documentation for Camel
 
 The documentation is all under the Documentation category on the
-right-side menu of the Camel website (also available in
-http://camel.apache.org/manual.html[PDF form]).
+right-side menu of the Camel website.
 Camel-related books are also available, in particular
 the http://manning.com/ibsen[Camel in Action] book, presently serving as
 the Camel bible -- it has a

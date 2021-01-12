@@ -83,8 +83,6 @@ public enum AddressApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AddressApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

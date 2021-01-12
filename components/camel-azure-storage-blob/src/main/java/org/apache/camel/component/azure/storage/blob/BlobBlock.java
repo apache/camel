@@ -37,11 +37,11 @@ public final class BlobBlock {
     }
 
     public static BlobBlock createBlobBlock(final String blockId, final InputStream inputStream) throws IOException {
-        return createBlobBlock(blockId, BlobUtils.getInputStreamLength(inputStream).intValue(), inputStream);
+        return createBlobBlock(blockId, BlobUtils.getInputStreamLength(inputStream), inputStream);
     }
 
-    public static BlobBlock createBlobBlock(final String blockId, final int size, final InputStream inputStream) {
-        final Block block = new Block().setName(blockId).setSize(size);
+    public static BlobBlock createBlobBlock(final String blockId, final long size, final InputStream inputStream) {
+        final Block block = new Block().setName(blockId).setSizeLong(size);
 
         return new BlobBlock(block, inputStream);
     }

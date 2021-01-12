@@ -20,13 +20,11 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirCapabilitiesApiMethod implements ApiMethod {
 
-    OFTYPE(
+    OF_TYPE(
         org.hl7.fhir.instance.model.api.IBaseConformance.class,
         "ofType",
         arg("type", Class.class),
         arg("extraParameters", java.util.Map.class));
-
-    
 
     private final ApiMethod apiMethod;
 

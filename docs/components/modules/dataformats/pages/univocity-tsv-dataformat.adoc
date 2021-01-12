@@ -7,11 +7,12 @@
 :description: Marshal and unmarshal Java objects from and to TSV (Tab-Separated Values) records using UniVocity Parsers.
 :since: 2.15
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/univocity-tsv.adoc[opts=optional]
 
 *Since Camel {since}*
 
 This xref:manual::data-format.adoc[Data
-Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
+Format] uses https://www.univocity.com/pages/univocity_parsers_tutorial.html[uniVocity-parsers]
 for reading and writing 3 kinds of tabular data text files:
 
 * CSV (Comma Separated Values), where the values are separated by a
@@ -39,7 +40,7 @@ substituting the version number for the latest and greatest release.
 Most configuration options of the uniVocity-parsers are available in the
 data formats. If you want more information about a particular option,
 please refer to their
-http://www.univocity.com/pages/parsers-documentation[documentation
+https://www.univocity.com/pages/univocity_parsers_tutorial#settings[documentation
 page].
 
 The 3 data formats share common options and have dedicated ones, this
@@ -49,7 +50,7 @@ section presents them all.
 
 
 // dataformat options: START
-The uniVocity TSV dataformat supports 15 options, which are listed below.
+The uniVocity TSV dataformat supports 14 options, which are listed below.
 
 
 
@@ -70,7 +71,6 @@ The uniVocity TSV dataformat supports 15 options, which are listed below.
 | comment | # | String | The comment symbol. The default value is #
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false
 | asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
 |===
 // dataformat options: END
 
@@ -80,7 +80,7 @@ The uniVocity TSV dataformat supports 15 options, which are listed below.
 
 The marshalling accepts either:
 
-* A list of maps (L`ist<Map<String, ?>>`), one for each line
+* A list of maps (`List<Map<String, ?>>`), one for each line
 * A single map (`Map<String, ?>`), for a single line
 
 Any other body will throws an exception.

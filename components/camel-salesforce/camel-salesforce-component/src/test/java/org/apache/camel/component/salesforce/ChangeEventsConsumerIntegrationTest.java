@@ -34,15 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * During integration tests setup, Salesforce has been configured to fire change
- * events for Account objects. This test merely uses some API calls to trigger
- * some change events, and then perform assertion on the received events.
+ * During integration tests setup, Salesforce has been configured to fire change events for Account objects. This test
+ * merely uses some API calls to trigger some change events, and then perform assertion on the received events.
  */
 @Standalone
 public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final String ACCOUNT_NAME = "ChangeEventsConsumerIntegrationTest-TestAccount";
-    private static final String ACCOUNT_DESCRIPTION = "Account used to check that creation, update and deletion fire change events";
+    private static final String ACCOUNT_DESCRIPTION
+            = "Account used to check that creation, update and deletion fire change events";
 
     @EndpointInject(value = "mock:capturedChangeEvents")
     private MockEndpoint capturedChangeEvents;
@@ -53,7 +53,8 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         // Trigger a CREATE event for an Account
         final Account account = new Account();
         account.setName(ACCOUNT_NAME);
-        final CreateSObjectResult result = template.requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class);
+        final CreateSObjectResult result
+                = template.requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class);
         assertNotNull(result.getId());
 
         // Trigger an UPDATE event for an Account

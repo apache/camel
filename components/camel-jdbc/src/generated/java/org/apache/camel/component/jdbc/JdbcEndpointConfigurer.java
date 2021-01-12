@@ -4,8 +4,10 @@ package org.apache.camel.component.jdbc;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "beanrowmapper":
         case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
         case "lazystartproducer":
@@ -51,24 +51,35 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowNamedParameters", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("beanRowMapper", org.apache.camel.component.jdbc.BeanRowMapper.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outputClass", java.lang.String.class);
-        answer.put("outputType", org.apache.camel.component.jdbc.JdbcOutputType.class);
-        answer.put("parameters", java.util.Map.class);
-        answer.put("prepareStatementStrategy", org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class);
-        answer.put("readSize", int.class);
-        answer.put("resetAutoCommit", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transacted", boolean.class);
-        answer.put("useGetBytesForBlob", boolean.class);
-        answer.put("useHeadersAsParameters", boolean.class);
-        answer.put("useJDBC4ColumnNameAndLabelSemantics", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownamedparameters":
+        case "allowNamedParameters": return boolean.class;
+        case "beanrowmapper":
+        case "beanRowMapper": return org.apache.camel.component.jdbc.BeanRowMapper.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outputclass":
+        case "outputClass": return java.lang.String.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.jdbc.JdbcOutputType.class;
+        case "parameters": return java.util.Map.class;
+        case "preparestatementstrategy":
+        case "prepareStatementStrategy": return org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class;
+        case "readsize":
+        case "readSize": return int.class;
+        case "resetautocommit":
+        case "resetAutoCommit": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "transacted": return boolean.class;
+        case "usegetbytesforblob":
+        case "useGetBytesForBlob": return boolean.class;
+        case "useheadersasparameters":
+        case "useHeadersAsParameters": return boolean.class;
+        case "usejdbc4columnnameandlabelsemantics":
+        case "useJDBC4ColumnNameAndLabelSemantics": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -77,8 +88,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return target.isAllowNamedParameters();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "beanrowmapper":
         case "beanRowMapper": return target.getBeanRowMapper();
         case "lazystartproducer":
@@ -102,6 +111,14 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useHeadersAsParameters": return target.isUseHeadersAsParameters();
         case "usejdbc4columnnameandlabelsemantics":
         case "useJDBC4ColumnNameAndLabelSemantics": return target.isUseJDBC4ColumnNameAndLabelSemantics();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "parameters": return java.lang.Object.class;
         default: return null;
         }
     }

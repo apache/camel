@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
 
-    private static final String INPUT = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
+    private static final String INPUT
+            = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
 
     private MockEndpoint mockEndpoint;
     private final FhirContext fhirContext = FhirContext.forDstu3();
@@ -71,7 +72,8 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
         Patient patient = (Patient) exchange.getIn().getBody();
         assertEquals(1, patient.getExtension().size());
         assertEquals(null, patient.getExtension().get(0).getUrl());
-        assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());    }
+        assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {

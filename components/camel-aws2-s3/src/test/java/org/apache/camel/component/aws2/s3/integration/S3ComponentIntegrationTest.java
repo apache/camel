@@ -115,7 +115,8 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String s3EndpointUri = "aws2-s3://mycamelbucket?accessKey=xxx&secretKey=yyy&region=us-west-1&autoCreateBucket=false";
+                String s3EndpointUri
+                        = "aws2-s3://mycamelbucket?accessKey=xxx&secretKey=yyy&region=us-west-1&autoCreateBucket=false";
 
                 from("direct:start").to(s3EndpointUri);
 

@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import io.smallrye.metrics.TagsUtils;
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
@@ -73,10 +74,11 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         assertTrue(fooSnapshot.getMax() > DELAY_FOO);
 
         String contextTag = "camelContext=" + context.getName();
-        String[] tagStrings = new String[] {contextTag, "routeId=foo"};
+        String[] tagStrings = new String[] { contextTag, "routeId=foo" };
         Tag[] tags = TagsUtils.parseTagsAsArray(tagStrings);
 
-        Timer barTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_ROUTE_POLICY_PROCESSING_METRIC_NAME, Timer.class, Arrays.asList(tags));
+        Timer barTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_ROUTE_POLICY_PROCESSING_METRIC_NAME,
+                Timer.class, Arrays.asList(tags));
         assertEquals(count / 2, barTimer.getCount());
 
         Snapshot barSnapshot = fooTimer.getSnapshot();
@@ -99,17 +101,25 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         assertEquals(6, countRouteMetrics("bar"));
     }
 
+    @Test
+    public void adviceWithTest() throws Exception {
+        AdviceWith.adviceWith(context, "foo", advisor -> {
+            advisor.replaceFromWith("direct:replaced");
+        });
+        assertEquals(6, countRouteMetrics("foo"));
+    }
+
     private long countRouteMetrics(String routeId) {
         return metricRegistry.getMetricIDs()
-            .stream()
-            .filter(metricID -> metricID.getTags().containsValue(routeId))
-            .count();
+                .stream()
+                .filter(metricID -> metricID.getTags().containsValue(routeId))
+                .count();
     }
 
     private void assertRouteExchangeMetrics(String routeId, int expectedFailuresHandled) {
         Tag[] tags = new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, context.getName()),
-            new Tag(ROUTE_ID_TAG, routeId)
+                new Tag(CAMEL_CONTEXT_TAG, context.getName()),
+                new Tag(ROUTE_ID_TAG, routeId)
         };
 
         Counter exchangesCompleted = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_COMPLETED_METRIC_NAME, tags);
@@ -121,13 +131,16 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         Counter exchangesTotal = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_TOTAL_METRIC_NAME, tags);
         assertEquals(5, exchangesTotal.getCount());
 
-        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_INFLIGHT_METRIC_NAME, tags);
+        AtomicIntegerGauge exchangesInflight
+                = getAtomicIntegerGauge(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_INFLIGHT_METRIC_NAME, tags);
         assertEquals(0, exchangesInflight.getValue().intValue());
 
-        Counter externalRedeliveries = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, tags);
+        Counter externalRedeliveries
+                = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, tags);
         assertEquals(0, externalRedeliveries.getCount());
 
-        Counter failuresHandled = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, tags);
+        Counter failuresHandled
+                = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, tags);
         assertEquals(expectedFailuresHandled, failuresHandled.getCount());
     }
 
@@ -137,36 +150,33 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
             @Override
             public void configure() {
                 onException(IllegalStateException.class)
-                    .handled(true);
+                        .handled(true);
 
                 from("direct:foo").routeId("foo")
-                    .process(exchange -> {
-                        Integer count = exchange.getIn().getBody(Integer.class);
-                        if (count % 3 == 0) {
-                            throw new IllegalStateException("Invalid count");
-                        }
-                    })
-                    .delay(DELAY_FOO).to("mock:result");
+                        .process(exchange -> {
+                            Integer count = exchange.getIn().getBody(Integer.class);
+                            if (count % 3 == 0) {
+                                throw new IllegalStateException("Invalid count");
+                            }
+                        })
+                        .delay(DELAY_FOO).to("mock:result");
 
                 from("direct:bar").routeId("bar")
-                    .process(exchange -> {
-                        Integer count = exchange.getIn().getBody(Integer.class);
-                        if (count % 5 == 0) {
-                            throw new IllegalStateException("Invalid count");
-                        }
-                    })
-                    .delay(DELAY_BAR).to("mock:result");
+                        .process(exchange -> {
+                            Integer count = exchange.getIn().getBody(Integer.class);
+                            if (count % 5 == 0) {
+                                throw new IllegalStateException("Invalid count");
+                            }
+                        })
+                        .delay(DELAY_BAR).to("mock:result");
             }
         };
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsRoutePolicyFactory factory = new MicroProfileMetricsRoutePolicyFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addRoutePolicyFactory(factory);
+        camelContext.addRoutePolicyFactory(new MicroProfileMetricsRoutePolicyFactory());
         return camelContext;
     }
 }

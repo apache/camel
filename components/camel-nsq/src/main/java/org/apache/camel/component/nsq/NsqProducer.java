@@ -40,7 +40,7 @@ public class NsqProducer extends DefaultProducer {
 
     @Override
     public NsqEndpoint getEndpoint() {
-        return (NsqEndpoint)super.getEndpoint();
+        return (NsqEndpoint) super.getEndpoint();
     }
 
     @Override

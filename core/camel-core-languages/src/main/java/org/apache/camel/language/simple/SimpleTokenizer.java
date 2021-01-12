@@ -32,7 +32,7 @@ public final class SimpleTokenizer {
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
     // optimise to be able to quick check for start functions
-    private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};
+    private static final String[] FUNCTION_START = new String[] { "${", "$simple{" };
 
     static {
         // add known tokens
@@ -102,8 +102,8 @@ public final class SimpleTokenizer {
     /**
      * Does the expression include a simple function.
      *
-     * @param expression the expression
-     * @return <tt>true</tt> if one or more simple function is included in the expression
+     * @param  expression the expression
+     * @return            <tt>true</tt> if one or more simple function is included in the expression
      */
     public static boolean hasFunctionStartToken(String expression) {
         if (expression != null) {
@@ -115,11 +115,11 @@ public final class SimpleTokenizer {
     /**
      * Create the next token
      *
-     * @param expression  the input expression
-     * @param index       the current index
-     * @param allowEscape whether to allow escapes
-     * @param filter      defines the accepted token types to be returned (character is always used as fallback)
-     * @return the created token, will always return a token
+     * @param  expression  the input expression
+     * @param  index       the current index
+     * @param  allowEscape whether to allow escapes
+     * @param  filter      defines the accepted token types to be returned (character is always used as fallback)
+     * @return             the created token, will always return a token
      */
     public static SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
         return doNextToken(expression, index, allowEscape, filter);
@@ -128,10 +128,10 @@ public final class SimpleTokenizer {
     /**
      * Create the next token
      *
-     * @param expression  the input expression
-     * @param index       the current index
-     * @param allowEscape whether to allow escapes
-     * @return the created token, will always return a token
+     * @param  expression  the input expression
+     * @param  index       the current index
+     * @param  allowEscape whether to allow escapes
+     * @return             the created token, will always return a token
      */
     public static SimpleToken nextToken(String expression, int index, boolean allowEscape) {
         return doNextToken(expression, index, allowEscape);

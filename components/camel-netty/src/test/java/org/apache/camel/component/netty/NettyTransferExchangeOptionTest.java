@@ -67,7 +67,8 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder");
+        Endpoint endpoint = context
+                .getEndpoint("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder");
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -103,7 +104,6 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
             assertEquals("nihao", fault.getHeader("hello"));
         }
 
-
         // in should stay the same
         Message in = exchange.getIn();
         assertNotNull(in);
@@ -118,31 +118,30 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder").process(new Processor() {
-                    public void process(Exchange e) throws InterruptedException {
-                        assertNotNull(e.getIn().getBody());
-                        assertNotNull(e.getIn().getHeaders());
-                        assertNotNull(e.getProperties());
-                        assertEquals("Hello!", e.getIn().getBody());
-                        assertEquals("feta", e.getIn().getHeader("cheese"));
-                        assertEquals("old", e.getProperty("ham"));
-                        assertEquals(ExchangePattern.InOut, e.getPattern());
-                        Boolean setException = (Boolean) e.getProperty("setException");
+                from("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder")
+                        .process(new Processor() {
+                            public void process(Exchange e) throws InterruptedException {
+                                assertNotNull(e.getIn().getBody());
+                                assertNotNull(e.getIn().getHeaders());
+                                assertNotNull(e.getProperties());
+                                assertEquals("Hello!", e.getIn().getBody());
+                                assertEquals("feta", e.getIn().getHeader("cheese"));
+                                assertEquals("old", e.getProperty("ham"));
+                                assertEquals(ExchangePattern.InOut, e.getPattern());
+                                Boolean setException = (Boolean) e.getProperty("setException");
 
-                        if (setException) {
-                            e.getOut().setBody(new InterruptedException());
-                            e.getOut().setHeader("hello", "nihao");
-                        } else {
-                            e.getOut().setBody("Goodbye!");
-                            e.getOut().setHeader("cheese", "cheddar");
-                        }
-                        e.setProperty("salami", "fresh");
-                        e.setProperty("Charset", Charset.defaultCharset());
-                    }
-                });
+                                if (setException) {
+                                    e.getOut().setBody(new InterruptedException());
+                                    e.getOut().setHeader("hello", "nihao");
+                                } else {
+                                    e.getOut().setBody("Goodbye!");
+                                    e.getOut().setHeader("cheese", "cheddar");
+                                }
+                                e.setProperty("salami", "fresh");
+                                e.setProperty("Charset", Charset.defaultCharset());
+                            }
+                        });
             }
         };
     }
 }
-
-

@@ -106,6 +106,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
                 from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
                         .process(new Processor() {
                             private int counter;
+
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 Map<String, DataHandler> map = exchange.getIn(AttachmentMessage.class).getAttachments();

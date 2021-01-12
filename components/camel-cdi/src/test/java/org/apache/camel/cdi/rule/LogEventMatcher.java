@@ -43,9 +43,9 @@ public final class LogEventMatcher extends DiagnosingMatcher<LogEvent> {
 
         if (!match(target)) {
             description.appendText(" was LogEvent with ")
-                .appendText("level [" + Objects.toString(target.getLevel(), "n/a") + "], ")
-                .appendText("logger [" + Objects.toString(target.getLogger(), "n/a") + "], ")
-                .appendText("message [" + Objects.toString(target.getMessage(), "n/a") + "]");
+                    .appendText("level [" + Objects.toString(target.getLevel(), "n/a") + "], ")
+                    .appendText("logger [" + Objects.toString(target.getLogger(), "n/a") + "], ")
+                    .appendText("message [" + Objects.toString(target.getMessage(), "n/a") + "]");
             return false;
         }
         return true;
@@ -54,9 +54,9 @@ public final class LogEventMatcher extends DiagnosingMatcher<LogEvent> {
     @Override
     public void describeTo(Description description) {
         description.appendText("LogEvent with ")
-            .appendText("level [" + Objects.toString(level, "n/a") + "], ")
-            .appendText("logger [" + Objects.toString(logger, "n/a") + "], ")
-            .appendText("message [" + Objects.toString(message, "n/a") + "]");
+                .appendText("level [" + Objects.toString(level, "n/a") + "], ")
+                .appendText("logger [" + Objects.toString(logger, "n/a") + "], ")
+                .appendText("message [" + Objects.toString(message, "n/a") + "]");
     }
 
     public LogEventMatcher withLevel(String level) {

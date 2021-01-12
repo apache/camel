@@ -51,9 +51,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -65,9 +68,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
@@ -79,9 +85,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
@@ -91,9 +100,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Client ID of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -102,9 +114,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -115,10 +130,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder scopes(List<String> scopes) {
             doSetProperty("scopes", scopes);
@@ -130,9 +148,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * https://developers.google.com/drive/web/scopes for more info.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -147,10 +168,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -166,10 +190,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -180,10 +208,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -194,10 +225,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -208,9 +243,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -221,9 +259,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -234,9 +275,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -247,9 +291,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -264,9 +311,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -281,9 +331,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -293,10 +346,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -305,10 +361,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -318,10 +377,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -331,10 +393,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -343,10 +409,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
@@ -356,10 +425,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -371,10 +443,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -385,10 +460,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder repeatCount(
                 String repeatCount) {
@@ -399,10 +477,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -414,10 +496,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -430,9 +515,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -445,9 +533,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -456,12 +547,32 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default GoogleDriveEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -471,13 +582,17 @@ public interface GoogleDriveEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -489,13 +604,16 @@ public interface GoogleDriveEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder schedulerProperties(
                 Map values) {
@@ -505,10 +623,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -518,10 +639,14 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -531,10 +656,14 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -544,10 +673,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -557,10 +689,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -571,10 +706,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -585,9 +724,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -597,9 +739,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Client secret of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -611,9 +756,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -637,10 +785,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -654,9 +805,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -666,9 +820,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -679,9 +837,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -695,9 +856,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -711,9 +875,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -721,41 +888,16 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -766,10 +908,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -791,9 +937,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -805,9 +954,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
@@ -819,9 +971,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
                 String clientFactory) {
@@ -831,9 +986,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Client ID of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -842,9 +1000,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -855,10 +1016,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder scopes(List<String> scopes) {
             doSetProperty("scopes", scopes);
@@ -870,9 +1034,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * https://developers.google.com/drive/web/scopes for more info.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -889,10 +1056,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -910,10 +1080,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -924,9 +1098,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -936,9 +1113,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Client secret of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -950,9 +1130,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -971,41 +1154,16 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (GoogleDriveEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1016,10 +1174,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1042,9 +1204,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder applicationName(
                 String applicationName) {
@@ -1056,9 +1221,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder clientFactory(Object clientFactory) {
             doSetProperty("clientFactory", clientFactory);
@@ -1069,9 +1237,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder clientFactory(String clientFactory) {
             doSetProperty("clientFactory", clientFactory);
@@ -1080,9 +1251,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Client ID of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -1091,9 +1265,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1104,10 +1281,13 @@ public interface GoogleDriveEndpointBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
             doSetProperty("scopes", scopes);
@@ -1119,9 +1299,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * https://developers.google.com/drive/web/scopes for more info.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -1131,9 +1314,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1142,9 +1328,12 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Client secret of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -1155,9 +1344,12 @@ public interface GoogleDriveEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
@@ -1176,41 +1368,16 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (GoogleDriveEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1221,10 +1388,14 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(
                 String synchronous) {
@@ -1246,17 +1417,19 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: drive-about, drive-apps, drive-changes,
-         * drive-channels, drive-children, drive-comments, drive-files,
-         * drive-parents, drive-permissions, drive-properties, drive-realtime,
-         * drive-replies, drive-revisions
+         * There are 13 enums and the value can be one of: DRIVE_ABOUT,
+         * DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN,
+         * DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS,
+         * DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: copy, delete, get, getIdForEmail, insert,
-         * list, patch, stop, touch, trash, untrash, update, watch
+         * There are 13 enums and the value can be one of: copy, delete, get,
+         * getIdForEmail, insert, list, patch, stop, touch, trash, untrash,
+         * update, watch
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder googleDrive(String path) {
             return GoogleDriveEndpointBuilderFactory.endpointBuilder("google-drive", path);
@@ -1273,19 +1446,21 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: drive-about, drive-apps, drive-changes,
-         * drive-channels, drive-children, drive-comments, drive-files,
-         * drive-parents, drive-permissions, drive-properties, drive-realtime,
-         * drive-replies, drive-revisions
+         * There are 13 enums and the value can be one of: DRIVE_ABOUT,
+         * DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN,
+         * DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS,
+         * DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: copy, delete, get, getIdForEmail, insert,
-         * list, patch, stop, touch, trash, untrash, update, watch
+         * There are 13 enums and the value can be one of: copy, delete, get,
+         * getIdForEmail, insert, list, patch, stop, touch, trash, untrash,
+         * update, watch
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder googleDrive(
                 String componentName,

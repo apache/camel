@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Unit test for consuming files but the exchange fails and is handled by the
- * failure handler (usually the DeadLetterChannel)
+ * Unit test for consuming files but the exchange fails and is handled by the failure handler (usually the
+ * DeadLetterChannel)
  */
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
@@ -52,7 +52,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/messages/input/", "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         assertFiles("paris.txt", true);
     }
@@ -66,7 +66,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/messages/input/", "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // london should be deleted as we have failure handled it
         assertFiles("london.txt", true);
@@ -81,7 +81,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/messages/input/", "Dublin", Exchange.FILE_NAME, "dublin.txt");
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // dublin should NOT be deleted, but should be retired on next consumer
         assertFiles("dublin.txt", false);
@@ -96,7 +96,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/messages/input/", "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // madrid should be deleted as the DLC handles it
         assertFiles("madrid.txt", true);
@@ -123,13 +123,15 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 // special for not handled when we got beer
-                onException(ValidationException.class).onWhen(exceptionMessage().contains("beer")).handled(false).to("mock:beer");
+                onException(ValidationException.class).onWhen(exceptionMessage().contains("beer")).handled(false)
+                        .to("mock:beer");
 
                 // special failure handler for ValidationException
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/data/messages/input/?initialDelay=0&delay=10&delete=true").process(new MyValidatorProcessor()).to("mock:valid");
+                from("file:target/data/messages/input/?initialDelay=0&delay=10&delete=true").process(new MyValidatorProcessor())
+                        .to("mock:valid");
             }
         };
     }

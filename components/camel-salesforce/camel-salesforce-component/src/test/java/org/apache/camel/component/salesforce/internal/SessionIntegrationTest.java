@@ -45,7 +45,8 @@ public class SessionIntegrationTest implements SalesforceSession.SalesforceSessi
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
 
-        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
+        final SalesforceSession session
+                = new SalesforceSession(new DefaultCamelContext(), httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
         session.addListener(this);
         httpClient.setSession(session);
 

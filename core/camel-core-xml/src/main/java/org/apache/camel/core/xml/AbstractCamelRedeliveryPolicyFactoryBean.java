@@ -39,30 +39,37 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "1000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String redeliveryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether asynchronous delayed redelivery is allowed. This is disabled by default. "
-        + "When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from blocking while waiting. "
-        + "Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must execute in the same thread context.")
+    @Metadata(defaultValue = "false",
+              description = "Sets whether asynchronous delayed redelivery is allowed. This is disabled by default. "
+                            + "When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from blocking while waiting. "
+                            + "Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must execute in the same thread context.")
     private String asyncDelayedRedelivery;
     @XmlAttribute
-    @Metadata(defaultValue = "2", description = "Sets the multiplier used to increase the delay between redeliveries if useExponentialBackOff is enabled")
+    @Metadata(defaultValue = "2",
+              description = "Sets the multiplier used to increase the delay between redeliveries if useExponentialBackOff is enabled")
     private String backOffMultiplier;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Enables/disables exponential backoff using the backOffMultiplier to increase the time between retries")
+    @Metadata(defaultValue = "false",
+              description = "Enables/disables exponential backoff using the backOffMultiplier to increase the time between retries")
     private String useExponentialBackOff;
     @XmlAttribute
-    @Metadata(defaultValue = "0.15", description = "Sets the factor used for collision avoidance if enabled via useCollisionAvoidance.")
+    @Metadata(defaultValue = "0.15",
+              description = "Sets the factor used for collision avoidance if enabled via useCollisionAvoidance.")
     private String collisionAvoidanceFactor;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Enables/disables collision avoidance which adds some randomization to the backoff timings to reduce contention probability")
+    @Metadata(defaultValue = "false",
+              description = "Enables/disables collision avoidance which adds some randomization to the backoff timings to reduce contention probability")
     private String useCollisionAvoidance;
     @XmlAttribute
     @Metadata(defaultValue = "60000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String maximumRedeliveryDelay;
     @XmlAttribute
-    @Metadata(defaultValue = "ERROR", description = "Sets the logging level to use for log messages when retries have been exhausted.")
+    @Metadata(defaultValue = "ERROR",
+              description = "Sets the logging level to use for log messages when retries have been exhausted.")
     private String retriesExhaustedLogLevel;
     @XmlAttribute
-    @Metadata(defaultValue = "DEBUG", description = "Sets the logging level to use for log messages when retries are attempted.")
+    @Metadata(defaultValue = "DEBUG",
+              description = "Sets the logging level to use for log messages when retries are attempted.")
     private String retryAttemptedLogLevel;
     @XmlAttribute
     @Metadata(defaultValue = "0", description = "Sets the interval for log messages when retries are attempted.")
@@ -80,7 +87,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "false", description = "Sets whether errors should be logged even if its handled")
     private String logHandled;
     @XmlAttribute
-    @Metadata(defaultValue = "true", description = "Sets whether errors should be logged when a new exception occurred during handling a previous exception")
+    @Metadata(defaultValue = "true",
+              description = "Sets whether errors should be logged when a new exception occurred during handling a previous exception")
     private String logNewException;
     @XmlAttribute
     @Metadata(defaultValue = "false", description = "Sets whether errors should be logged even if its continued")
@@ -92,7 +100,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(defaultValue = "false", description = "Sets whether to log exhausted errors including message history")
     private String logExhaustedMessageHistory;
     @XmlAttribute
-    @Metadata(defaultValue = "false", description = "Sets whether exhausted message body/headers should be logged with message history included")
+    @Metadata(defaultValue = "false",
+              description = "Sets whether exhausted message body/headers should be logged with message history included")
     private String logExhaustedMessageBody;
     @XmlAttribute
     @Metadata(defaultValue = "false", description = "Disables redelivery by setting maximum redeliveries to 0.")
@@ -101,7 +110,8 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(description = "Sets an optional delay pattern to use instead of fixed delay.")
     private String delayPattern;
     @XmlAttribute
-    @Metadata(defaultValue = "true", description = "Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.")
+    @Metadata(defaultValue = "true",
+              description = "Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.")
     private String allowRedeliveryWhileStopping;
     @XmlAttribute
     @Metadata(description = "Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.")

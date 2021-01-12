@@ -18,13 +18,14 @@ package org.apache.camel.maven.packaging.dsl.component;
 
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * DSL Generator class that generates component specific builder interface that contains the fluent methods, placed as inner
- * of the main component builder factory. E.g: KafkaComponentBuilderFactory.KafkaComponentBuilder
+ * DSL Generator class that generates component specific builder interface that contains the fluent methods, placed as
+ * inner of the main component builder factory. E.g: KafkaComponentBuilderFactory.KafkaComponentBuilder
  */
 public final class ComponentDslInnerBuilderGenerator {
     private static final String BUILDER_SUFFIX = "Builder";
@@ -39,7 +40,8 @@ public final class ComponentDslInnerBuilderGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslInnerBuilderGenerator generateClass(final JavaClass javaClass, final ComponentModel componentModel) {
+    public static ComponentDslInnerBuilderGenerator generateClass(
+            final JavaClass javaClass, final ComponentModel componentModel) {
         return new ComponentDslInnerBuilderGenerator(javaClass, componentModel);
     }
 
@@ -75,28 +77,35 @@ public final class ComponentDslInnerBuilderGenerator {
                     .setReturnType(getGeneratedInterfaceName())
                     .setName(StringUtils.uncapitalize(componentOptionModel.getName()))
                     .addParameter(componentOptionModel.getJavaType(), componentOptionModel.getName())
-                    .setBody(String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(), componentOptionModel.getName()), "return this;");
+                    .setBody(String.format("doSetProperty(\"%s\", %s);", componentOptionModel.getName(),
+                            componentOptionModel.getName()), "return this;");
             if (componentOptionModel.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
-            method.getJavaDoc().setFullText(generateOptionDescription(componentOptionModel));
+            String doc = generateOptionDescription(componentOptionModel);
+            doc = JavadocHelper.xmlEncode(doc);
+            doc += "\n\n@param " + componentOptionModel.getName() + " the value to set";
+            doc += "\n@return the dsl builder\n";
+            method.getJavaDoc().setText(doc);
         });
     }
 
     private String generateOptionDescription(final ComponentModel.ComponentOptionModel componentOptionModel) {
-        String desc = componentOptionModel.getDescription();
+        String desc = JavadocHelper.xmlEncode(componentOptionModel.getDescription());
         if (!desc.endsWith(".")) {
             desc += ".";
         }
         desc += "\n";
-        desc += "\nThe option is a: <code>" + componentOptionModel.getJavaType() + "</code> type.";
+        desc += "\nThe option is a: <code>" + JavadocHelper.xmlEncode(componentOptionModel.getJavaType()) + "</code> type.";
         desc += "\n";
         if ("parameter".equals(componentOptionModel.getKind()) && componentOptionModel.isRequired()) {
             desc += "\nRequired: true";
         }
         // include default value (if any)
         if (componentOptionModel.getDefaultValue() != null) {
-            desc += "\nDefault: " + componentOptionModel.getDefaultValue();
+            // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+            String text = JavadocHelper.xmlEncode(componentOptionModel.getDefaultValue().toString());
+            desc += "\nDefault: " + text;
         }
         desc += "\nGroup: " + componentOptionModel.getGroup();
 

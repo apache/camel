@@ -42,7 +42,8 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Receive messages from AWS DynamoDB Stream service using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true, syntax = "aws2-ddbstream:tableName", category = {Category.CLOUD, Category.MESSAGING, Category.STREAMS})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true,
+             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING, Category.STREAMS })
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -79,7 +80,8 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null ? configuration.getAmazonDynamoDbStreamsClient() : createDdbStreamClient();
+        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null
+                ? configuration.getAmazonDynamoDbStreamsClient() : createDdbStreamClient();
     }
 
     @Override
@@ -105,7 +107,9 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
             case AFTER_SEQUENCE_NUMBER:
             case AT_SEQUENCE_NUMBER:
                 if (null == configuration.getSequenceNumberProvider()) {
-                    throw new IllegalStateException("sequenceNumberProvider must be" + " provided, either as an implementation of" + " SequenceNumberProvider or a literal String.");
+                    throw new IllegalStateException(
+                            "sequenceNumberProvider must be" + " provided, either as an implementation of"
+                                                    + " SequenceNumberProvider or a literal String.");
                 } else {
                     return configuration.getSequenceNumberProvider().getSequenceNumber();
                 }
@@ -122,7 +126,8 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -130,7 +135,8 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -147,8 +153,7 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }
@@ -158,8 +163,10 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public String toString() {
-        return "DdbStreamEndpoint{" + "tableName=" + configuration.getTableName() + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
-                + configuration.getMaxResultsPerRequest() + ", iteratorType=" + configuration.getIteratorType() + ", sequenceNumberProvider="
-                + configuration.getSequenceNumberProvider() + ", uri=" + getEndpointUri() + '}';
+        return "DdbStreamEndpoint{" + "tableName=" + configuration.getTableName()
+               + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
+               + configuration.getMaxResultsPerRequest() + ", iteratorType=" + configuration.getIteratorType()
+               + ", sequenceNumberProvider="
+               + configuration.getSequenceNumberProvider() + ", uri=" + getEndpointUri() + '}';
     }
 }

@@ -1,0 +1,33 @@
+[[LambdaRouteBuilder-LambdaRouteBuilder]]
+= LambdaRouteBuilder
+
+The `LambdaRouteBuilder` is a functional interface which is used for creating a routing rule using the DSL,
+using Java lambda style.
+
+[source,java]
+----
+rb -> rb.from("timer:foo").log("Hello Lambda");
+----
+
+Instances of `LambdaRouteBuilder` are discovered and transformed into `RouteBuilder` instances
+which are added to the CamelContext.
+
+== Usage
+
+To use `LambdaRouteBuilder` you need to create a method that returns `LambdaRouteBuilder` which then
+allows to use Java lambda style to define a single route.
+
+In the example below the method myRoute is used to create a Camel route that consume from Kafka and send the messages to JMS.
+
+To make the route discoverable by Camel during startup, then the method must be annotated. In standalone mode with `camel-main`
+you should use `@BindToRegistry` and with Spring Boot use `@Bean` and with Quarkus then use `@Produce`.
+
+[source,java]
+----
+public class MyConfiguration {
+    @BindToRegistry
+    public LambdaRouteBuilder myRoute() {
+        return rb -> rb.from("kafka:cheese").to("jms:queue:foo");
+    }
+}
+----

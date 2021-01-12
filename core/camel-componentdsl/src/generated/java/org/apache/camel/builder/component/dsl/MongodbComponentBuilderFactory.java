@@ -37,6 +37,8 @@ public interface MongodbComponentBuilderFactory {
      * Category: database,nosql
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
+     * 
+     * @return the dsl builder
      */
     static MongodbComponentBuilder mongodb() {
         return new MongodbComponentBuilderImpl();
@@ -52,9 +54,13 @@ public interface MongodbComponentBuilderFactory {
          * Shared client used for connection. All endpoints generated from the
          * component will share this connection client.
          * 
-         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
+         * The option is a:
+         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mongoConnection the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder mongoConnection(
                 com.mongodb.client.MongoClient mongoConnection) {
@@ -70,10 +76,13 @@ public interface MongodbComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -91,10 +100,13 @@ public interface MongodbComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -102,17 +114,24 @@ public interface MongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MongodbComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MongodbComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -135,7 +154,7 @@ public interface MongodbComponentBuilderFactory {
             case "mongoConnection": ((MongoDbComponent) component).setMongoConnection((com.mongodb.client.MongoClient) value); return true;
             case "bridgeErrorHandler": ((MongoDbComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MongoDbComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MongoDbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MongoDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

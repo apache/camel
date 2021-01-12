@@ -20,6 +20,17 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum CallRecordingApiMethod implements ApiMethod {
 
+    CREATOR(
+        com.twilio.rest.api.v2010.account.call.RecordingCreator.class,
+        "creator",
+        arg("pathCallSid", String.class)),
+
+    CREATOR_1(
+        com.twilio.rest.api.v2010.account.call.RecordingCreator.class,
+        "creator",
+        arg("pathAccountSid", String.class),
+        arg("pathCallSid", String.class)),
+
     DELETER(
         com.twilio.rest.api.v2010.account.call.RecordingDeleter.class,
         "deleter",
@@ -55,9 +66,22 @@ public enum CallRecordingApiMethod implements ApiMethod {
         com.twilio.rest.api.v2010.account.call.RecordingReader.class,
         "reader",
         arg("pathAccountSid", String.class),
-        arg("pathCallSid", String.class));
+        arg("pathCallSid", String.class)),
 
-    
+    UPDATER(
+        com.twilio.rest.api.v2010.account.call.RecordingUpdater.class,
+        "updater",
+        arg("pathCallSid", String.class),
+        arg("pathSid", String.class),
+        arg("status", com.twilio.rest.api.v2010.account.call.Recording.Status.class)),
+
+    UPDATER_1(
+        com.twilio.rest.api.v2010.account.call.RecordingUpdater.class,
+        "updater",
+        arg("pathAccountSid", String.class),
+        arg("pathCallSid", String.class),
+        arg("pathSid", String.class),
+        arg("status", com.twilio.rest.api.v2010.account.call.Recording.Status.class));
 
     private final ApiMethod apiMethod;
 

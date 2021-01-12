@@ -37,8 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Unit test for HL7 DataFormat.
  */
 public class HL7DataFormatTest extends CamelTestSupport {
-    private static final String NONE_ISO_8859_1 = 
-        "\u221a\u00c4\u221a\u00e0\u221a\u00e5\u221a\u00ed\u221a\u00f4\u2248\u00ea";
+    private static final String NONE_ISO_8859_1 = "\u221a\u00c4\u221a\u00e0\u221a\u00e5\u221a\u00ed\u221a\u00f4\u2248\u00ea";
 
     private HL7DataFormat hl7 = new HL7DataFormat();
     private HL7DataFormat hl7big5 = new HL7DataFormat() {
@@ -61,7 +60,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMarshalISO8859() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
@@ -85,12 +84,12 @@ public class HL7DataFormatTest extends CamelTestSupport {
         template.sendBodyAndProperty("direct:marshal", message, Exchange.CHARSET_NAME, charsetName);
         assertMockEndpointsSatisfied();
 
-        byte[] body = (byte[])mock.getExchanges().get(0).getIn().getBody();
+        byte[] body = (byte[]) mock.getExchanges().get(0).getIn().getBody();
         String msg = new String(body, Charset.forName(charsetName));
         assertTrue(msg.contains("MSA|AA|123"));
         assertTrue(msg.contains("QRD|20080805120000"));
     }
-    
+
     @Test
     public void testMarshalUTF8() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
@@ -199,7 +198,8 @@ public class HL7DataFormatTest extends CamelTestSupport {
 
     private static String createHL7WithCharsetAsString(HL7Charset charset) {
         String hl7Charset = charset == null ? "" : charset.getHL7CharsetName();
-        String line1 = String.format("MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||QRY^A19|1234|P|2.4||||||%s", hl7Charset);
+        String line1 = String.format(
+                "MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||QRY^A19|1234|P|2.4||||||%s", hl7Charset);
         String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
 
         StringBuilder body = new StringBuilder();
@@ -211,7 +211,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
 
     private static ADR_A19 createHL7AsMessage() throws Exception {
         ADR_A19 adr = new ADR_A19();
-       
+
         // Populate the MSH Segment
         MSH mshSegment = adr.getMSH();
         mshSegment.getFieldSeparator().setValue("|");

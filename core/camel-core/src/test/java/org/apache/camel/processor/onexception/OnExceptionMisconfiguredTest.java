@@ -196,7 +196,8 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end().to("mock:result");
+                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end()
+                        .to("mock:result");
             }
         });
         context.start();

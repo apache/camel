@@ -4,8 +4,10 @@ package org.apache.camel.component.smpp;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -22,8 +24,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "addressrange":
         case "addressRange": target.getConfiguration().setAddressRange(property(camelContext, java.lang.String.class, value)); return true;
         case "alphabet": target.getConfiguration().setAlphabet(property(camelContext, byte.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datacoding":
@@ -100,49 +100,84 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("addressRange", java.lang.String.class);
-        answer.put("alphabet", byte.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("dataCoding", byte.class);
-        answer.put("destAddr", java.lang.String.class);
-        answer.put("destAddrNpi", byte.class);
-        answer.put("destAddrTon", byte.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("enquireLinkTimer", java.lang.Integer.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyUsername", java.lang.String.class);
-        answer.put("initialReconnectDelay", long.class);
-        answer.put("lazySessionCreation", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxReconnect", int.class);
-        answer.put("numberingPlanIndicator", byte.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("priorityFlag", byte.class);
-        answer.put("protocolId", byte.class);
-        answer.put("proxyHeaders", java.util.Map.class);
-        answer.put("reconnectDelay", long.class);
-        answer.put("registeredDelivery", byte.class);
-        answer.put("replaceIfPresentFlag", byte.class);
-        answer.put("serviceType", java.lang.String.class);
-        answer.put("sessionStateListener", org.jsmpp.session.SessionStateListener.class);
-        answer.put("sourceAddr", java.lang.String.class);
-        answer.put("sourceAddrNpi", byte.class);
-        answer.put("sourceAddrTon", byte.class);
-        answer.put("splittingPolicy", org.apache.camel.component.smpp.SmppSplittingPolicy.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("systemId", java.lang.String.class);
-        answer.put("systemType", java.lang.String.class);
-        answer.put("transactionTimer", java.lang.Integer.class);
-        answer.put("typeOfNumber", byte.class);
-        answer.put("usingSSL", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addressrange":
+        case "addressRange": return java.lang.String.class;
+        case "alphabet": return byte.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "datacoding":
+        case "dataCoding": return byte.class;
+        case "destaddr":
+        case "destAddr": return java.lang.String.class;
+        case "destaddrnpi":
+        case "destAddrNpi": return byte.class;
+        case "destaddrton":
+        case "destAddrTon": return byte.class;
+        case "encoding": return java.lang.String.class;
+        case "enquirelinktimer":
+        case "enquireLinkTimer": return java.lang.Integer.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyusername":
+        case "httpProxyUsername": return java.lang.String.class;
+        case "initialreconnectdelay":
+        case "initialReconnectDelay": return long.class;
+        case "lazysessioncreation":
+        case "lazySessionCreation": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxreconnect":
+        case "maxReconnect": return int.class;
+        case "numberingplanindicator":
+        case "numberingPlanIndicator": return byte.class;
+        case "password": return java.lang.String.class;
+        case "priorityflag":
+        case "priorityFlag": return byte.class;
+        case "protocolid":
+        case "protocolId": return byte.class;
+        case "proxyheaders":
+        case "proxyHeaders": return java.util.Map.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return long.class;
+        case "registereddelivery":
+        case "registeredDelivery": return byte.class;
+        case "replaceifpresentflag":
+        case "replaceIfPresentFlag": return byte.class;
+        case "servicetype":
+        case "serviceType": return java.lang.String.class;
+        case "sessionstatelistener":
+        case "sessionStateListener": return org.jsmpp.session.SessionStateListener.class;
+        case "sourceaddr":
+        case "sourceAddr": return java.lang.String.class;
+        case "sourceaddrnpi":
+        case "sourceAddrNpi": return byte.class;
+        case "sourceaddrton":
+        case "sourceAddrTon": return byte.class;
+        case "splittingpolicy":
+        case "splittingPolicy": return org.apache.camel.component.smpp.SmppSplittingPolicy.class;
+        case "synchronous": return boolean.class;
+        case "systemid":
+        case "systemId": return java.lang.String.class;
+        case "systemtype":
+        case "systemType": return java.lang.String.class;
+        case "transactiontimer":
+        case "transactionTimer": return java.lang.Integer.class;
+        case "typeofnumber":
+        case "typeOfNumber": return byte.class;
+        case "usingssl":
+        case "usingSSL": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -152,8 +187,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "addressrange":
         case "addressRange": return target.getConfiguration().getAddressRange();
         case "alphabet": return target.getConfiguration().getAlphabet();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datacoding":
@@ -225,6 +258,15 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "typeOfNumber": return target.getConfiguration().getTypeOfNumber();
         case "usingssl":
         case "usingSSL": return target.getConfiguration().isUsingSSL();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "proxyheaders":
+        case "proxyHeaders": return java.lang.String.class;
         default: return null;
         }
     }

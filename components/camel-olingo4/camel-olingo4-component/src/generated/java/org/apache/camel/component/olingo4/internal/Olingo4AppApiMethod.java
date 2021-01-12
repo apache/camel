@@ -98,8 +98,6 @@ public enum Olingo4AppApiMethod implements ApiMethod {
         arg("endpointHttpHeaders", java.util.Map.class),
         arg("responseHandler", org.apache.camel.component.olingo4.api.Olingo4ResponseHandler.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private Olingo4AppApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

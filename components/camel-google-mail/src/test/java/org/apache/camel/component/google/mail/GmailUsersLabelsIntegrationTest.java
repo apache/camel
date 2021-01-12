@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Labels} APIs.
@@ -37,7 +37,8 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
     private static final String CAMEL_TEST_LABEL = "CamelTestLabel";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersLabelsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
 
     @Test
     public void testLabels() throws Exception {
@@ -49,7 +50,8 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
             Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelGoogleMail.userId", CURRENT_USERID);
-            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show").setLabelListVisibility("labelShow");
+            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show")
+                    .setLabelListVisibility("labelShow");
             // parameter type is com.google.api.services.gmail.model.Label
             headers.put("CamelGoogleMail.content", label);
 
@@ -63,7 +65,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
         // using String message body for single parameter "userId"
         labels = requestBody("direct://LIST", CURRENT_USERID);
-        assertTrue(getTestLabel(labels) != null);
+        assertNotNull(getTestLabel(labels));
 
         Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -75,7 +77,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
         // using String message body for single parameter "userId"
         labels = requestBody("direct://LIST", CURRENT_USERID);
-        assertTrue(getTestLabel(labels) == null);
+        assertNull(getTestLabel(labels));
     }
 
     private Label getTestLabel(com.google.api.services.gmail.model.ListLabelsResponse labels) {

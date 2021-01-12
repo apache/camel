@@ -19,7 +19,7 @@ package org.apache.camel.component.atom;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for AtomProducer.
@@ -27,13 +27,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class AtomProducerTest extends CamelTestSupport {
 
     @Test
-    void testNotYetImplemented() throws Exception {
-        try {
-            context.getEndpoint("atom:file://target/out.atom").createProducer();
-            fail("Should have thrown an UnsupportedOperationException");
-        } catch (UnsupportedOperationException e) {
-            // ok
-        }
+    void testNotYetImplemented() {
+        assertThrows(UnsupportedOperationException.class,
+                () -> context.getEndpoint("atom:file://target/out.atom").createProducer());
     }
 
 }

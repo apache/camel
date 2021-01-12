@@ -30,29 +30,27 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 public class DeleteTableCommandTest {
 
     private DeleteTableCommand command;
     private AmazonDDBClientMock ddbClient;
     private DdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new DdbConfiguration();
         configuration.setTableName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new DeleteTableCommand(ddbClient, configuration, exchange);
     }
 
     @Test
     public void testExecute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", ddbClient.deleteTableRequest.getTableName());
         assertEquals(new ProvisionedThroughputDescription(), exchange.getIn().getHeader(
                 DdbConstants.PROVISIONED_THROUGHPUT));

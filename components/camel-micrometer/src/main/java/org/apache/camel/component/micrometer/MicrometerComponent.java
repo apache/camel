@@ -52,7 +52,8 @@ public class MicrometerComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
+            metricsRegistry
+                    = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
         String metricsName = getMetricsName(remaining);
         Meter.Type metricsType = getMetricsType(remaining);

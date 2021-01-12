@@ -16,8 +16,22 @@
  */
 package org.apache.camel.util.function;
 
+/**
+ * Represents a function that produces a long-valued result and may thrown an exception.
+ *
+ * @param <I> the type of the input of the function
+ * @param <T> the type of the exception the accept method may throw
+ *
+ * @see       java.util.function.ToLongFunction
+ */
 @FunctionalInterface
 public interface ThrowingToLongFunction<I, T extends Throwable> {
+    /**
+     * Applies this function to the given argument, potentially throwing an exception.
+     *
+     * @param  in the function argument
+     * @return    the function result
+     * @throws T  the exception that may be thrown
+     */
     long apply(I in) throws T;
 }
-

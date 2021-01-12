@@ -34,9 +34,9 @@ public class MultiQueueWithTopicThreadPool {
     private List<PoolWorker> workers = new ArrayList<>();
 
     public MultiQueueWithTopicThreadPool(int poolSize, int capacity, String namePrefix) {
-        if (log.isDebugEnabled()) {
-            log.debug("creating MultiQueueWithTopicThreadPool with size " + poolSize + " and capacity of each queue is set to " + capacity);
-        }
+        log.debug("creating MultiQueueWithTopicThreadPool with size {} and capacity of each queue is set to {}",
+                poolSize, capacity);
+
         this.poolSize = poolSize;
         //create a pool of thread and start them
         for (int i = 0; i < poolSize; i++) {
@@ -48,15 +48,14 @@ public class MultiQueueWithTopicThreadPool {
     }
 
     /**
-     * add the runnable into corresponding queue and it when it reach to the head of queue
-     * the queue is decided based on {@code topic}. if topic is instance of Integer,
-     * it uses (topic%poolSize) to determine corresponding queue otherwise it uses
-     * (topic.hashCode()%poolsize) do determine corresponding queue.
+     * add the runnable into corresponding queue and it when it reach to the head of queue the queue is decided based on
+     * {@code topic}. if topic is instance of Integer, it uses (topic%poolSize) to determine corresponding queue
+     * otherwise it uses (topic.hashCode()%poolsize) do determine corresponding queue.
      *
-     * @param topic    tasks are organized between threads based on this parameter
-     * @param runnable the task that should be executed
-     * @throws IllegalStateException if the {@code runnable} cannot be added at this
-     *                               time due to queue capacity restrictions
+     * @param  topic                 tasks are organized between threads based on this parameter
+     * @param  runnable              the task that should be executed
+     * @throws IllegalStateException if the {@code runnable} cannot be added at this time due to queue capacity
+     *                               restrictions
      */
     public void execute(Object topic, Runnable runnable) throws IllegalStateException {
         if (shutdown) {
@@ -80,8 +79,7 @@ public class MultiQueueWithTopicThreadPool {
 }
 
 /**
- * Each PoolWorker is a thread that when it is idle, it pick the head from its and
- * execute it.
+ * Each PoolWorker is a thread that when it is idle, it pick the head from its and execute it.
  */
 class PoolWorker extends Thread {
     private static Logger log = LoggerFactory.getLogger(PoolWorker.class);
@@ -97,8 +95,7 @@ class PoolWorker extends Thread {
     }
 
     /**
-     * ad new runnable to queue and notify corresponding thread to execute newly added
-     * runnable if the thread is idle.
+     * ad new runnable to queue and notify corresponding thread to execute newly added runnable if the thread is idle.
      *
      * @param r a runnable to execute by this threadPool
      */
@@ -119,7 +116,7 @@ class PoolWorker extends Thread {
                     try {
                         queue.wait();
                     } catch (InterruptedException e) {
-                        log.error("An interrupt occurred while queue is waiting: " + e.getMessage());
+                        log.error("An interrupt occurred while queue is waiting: {}", e.getMessage());
                         //interrupt current thread to prevent the interrupt being swallowed.
                         Thread.currentThread().interrupt();
                     }
@@ -135,7 +132,7 @@ class PoolWorker extends Thread {
                 task.run();
             } catch (RuntimeException e) {
                 //catch RuntimeException that may thrown in the task
-                log.error("Thread pool is interrupted due to an issue: " + e.getMessage());
+                log.error("Thread pool is interrupted due to an issue: {}", e.getMessage());
             }
 
         }

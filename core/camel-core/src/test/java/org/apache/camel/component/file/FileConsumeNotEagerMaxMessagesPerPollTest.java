@@ -29,7 +29,8 @@ import org.junit.jupiter.api.Test;
 public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSupport {
 
     // sort by name and not eager, then we should pickup the files in order
-    private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&" + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name";
+    private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&"
+                             + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name";
 
     @Override
     @BeforeEach

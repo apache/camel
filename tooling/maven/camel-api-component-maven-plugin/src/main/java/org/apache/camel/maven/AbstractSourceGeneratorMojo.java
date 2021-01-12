@@ -32,7 +32,10 @@ public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo 
     protected File generatedTestDir;
 
     enum CompileRoots {
-        source, test, all, none
+        source,
+        test,
+        all,
+        none
     }
 
     @Parameter(defaultValue = "all", property = PREFIX + "addCompileSourceRoots")

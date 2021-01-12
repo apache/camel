@@ -51,10 +51,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
@@ -65,10 +67,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
@@ -76,41 +80,45 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
+         * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
-        default Kinesis2EndpointConsumerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+        default Kinesis2EndpointConsumerBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
+         * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
-        default Kinesis2EndpointConsumerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+        default Kinesis2EndpointConsumerBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -119,9 +127,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -130,10 +141,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -142,11 +156,14 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder proxyProtocol(
                 Protocol proxyProtocol) {
@@ -157,10 +174,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder proxyProtocol(
                 String proxyProtocol) {
@@ -173,9 +193,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
@@ -185,10 +208,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -199,10 +225,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -218,10 +248,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -237,10 +270,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -251,10 +288,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * Defines where in the Kinesis stream to start getting records.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: TRIM_HORIZON
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder iteratorType(
                 ShardIteratorType iteratorType) {
@@ -265,10 +305,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * Defines where in the Kinesis stream to start getting records.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: TRIM_HORIZON
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder iteratorType(String iteratorType) {
             doSetProperty("iteratorType", iteratorType);
@@ -277,10 +320,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -290,10 +336,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder maxResultsPerRequest(
                 String maxResultsPerRequest) {
@@ -304,10 +353,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -318,10 +370,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -332,9 +388,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * The sequence number to start polling from. Required if iteratorType
          * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumber the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder sequenceNumber(
                 String sequenceNumber) {
@@ -350,10 +409,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * raised.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum&lt;/code&gt; type.
          * 
          * Default: ignore
          * Group: consumer
+         * 
+         * @param shardClosed the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder shardClosed(
                 Kinesis2ShardClosedStrategyEnum shardClosed) {
@@ -369,10 +431,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * raised.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum&lt;/code&gt; type.
          * 
          * Default: ignore
          * Group: consumer
+         * 
+         * @param shardClosed the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder shardClosed(String shardClosed) {
             doSetProperty("shardClosed", shardClosed);
@@ -381,9 +446,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Defines which shardId in the Kinesis stream to get records from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param shardId the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder shardId(String shardId) {
             doSetProperty("shardId", shardId);
@@ -393,9 +461,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -406,9 +477,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -419,9 +493,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -432,9 +509,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -449,9 +529,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -466,9 +549,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -478,10 +564,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -490,10 +579,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -503,10 +595,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -516,10 +611,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -528,10 +627,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -540,10 +642,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -554,10 +659,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -568,10 +676,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -581,10 +692,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -596,10 +711,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -612,9 +730,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -627,9 +748,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -638,12 +762,32 @@ public interface Kinesis2EndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default Kinesis2EndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -653,13 +797,17 @@ public interface Kinesis2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -671,13 +819,16 @@ public interface Kinesis2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -686,10 +837,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -699,10 +853,14 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -712,10 +870,14 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -725,10 +887,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -738,10 +903,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -752,10 +920,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -765,9 +937,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -776,9 +951,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -801,10 +979,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -818,9 +999,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -830,9 +1014,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -843,9 +1031,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -859,9 +1050,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -875,9 +1069,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -885,41 +1082,16 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKinesis2EndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKinesis2EndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -930,10 +1102,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -955,10 +1131,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
@@ -969,10 +1147,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
@@ -980,41 +1160,45 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
+         * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
-        default Kinesis2EndpointProducerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+        default Kinesis2EndpointProducerBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
+         * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
-        default Kinesis2EndpointProducerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+        default Kinesis2EndpointProducerBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -1023,9 +1207,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1034,10 +1221,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1046,11 +1236,14 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder proxyProtocol(
                 Protocol proxyProtocol) {
@@ -1061,10 +1254,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder proxyProtocol(
                 String proxyProtocol) {
@@ -1077,9 +1273,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
@@ -1089,10 +1288,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -1103,10 +1305,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -1124,10 +1330,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1145,10 +1354,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1158,9 +1371,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1169,9 +1385,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1189,41 +1408,16 @@ public interface Kinesis2EndpointBuilderFactory {
             return (Kinesis2EndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKinesis2EndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKinesis2EndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1234,10 +1428,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1260,10 +1458,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
@@ -1274,10 +1474,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
@@ -1285,41 +1487,45 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
+         * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
-        default Kinesis2EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+        default Kinesis2EndpointBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
+         * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
-        default Kinesis2EndpointBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
+        default Kinesis2EndpointBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -1328,9 +1534,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1339,10 +1548,13 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1351,11 +1563,14 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -1365,10 +1580,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -1380,9 +1598,12 @@ public interface Kinesis2EndpointBuilderFactory {
          * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -1392,10 +1613,13 @@ public interface Kinesis2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -1406,10 +1630,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -1419,9 +1647,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1430,9 +1661,12 @@ public interface Kinesis2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1451,41 +1685,16 @@ public interface Kinesis2EndpointBuilderFactory {
             return (Kinesis2EndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKinesis2EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKinesis2EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1495,10 +1704,14 @@ public interface Kinesis2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesis2EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1553,6 +1766,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * Name of the stream
          * 
          * @param path streamName
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder aws2Kinesis(String path) {
             return Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis", path);
@@ -1574,6 +1788,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path streamName
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder aws2Kinesis(
                 String componentName,

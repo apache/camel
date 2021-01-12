@@ -36,7 +36,8 @@ public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:result-activemq").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:dead").message(0).body(String.class)
-                .startsWith("Poison JMS message payload: Failed to extract body due to: javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
+                .startsWith(
+                        "Poison JMS message payload: Failed to extract body due to: javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
 
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
         Connection conn = factory.createConnection();
@@ -60,7 +61,8 @@ public class PoisonJMSPayloadTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-createbody.xml");
+        AbstractApplicationContext context
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jms-createbody.xml");
         return context;
     }
 }

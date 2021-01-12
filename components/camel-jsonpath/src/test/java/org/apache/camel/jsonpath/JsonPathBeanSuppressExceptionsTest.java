@@ -50,9 +50,10 @@ public class JsonPathBeanSuppressExceptionsTest extends CamelTestSupport {
 
     protected static class FullNameBean {
         // middle name is optional
-        public static String getName(@JsonPath("person.firstname") String first,
-                                     @JsonPath(value = "person.middlename", suppressExceptions = true) String middle,
-                                     @JsonPath("person.lastname") String last) {
+        public static String getName(
+                @JsonPath("person.firstname") String first,
+                @JsonPath(value = "person.middlename", suppressExceptions = true) String middle,
+                @JsonPath("person.lastname") String last) {
             if (middle != null) {
                 return first + " " + middle + " " + last;
             }

@@ -46,9 +46,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * attachId to use when retrieving attachments.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param attachmentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder attachmentId(Long attachmentId) {
             doSetProperty("attachmentId", attachmentId);
@@ -57,9 +60,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * attachId to use when retrieving attachments.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param attachmentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder attachmentId(String attachmentId) {
             doSetProperty("attachmentId", attachmentId);
@@ -68,9 +75,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * contentId to use when retrieving attachments.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder contentId(Long contentId) {
             doSetProperty("contentId", contentId);
@@ -79,9 +89,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * contentId to use when retrieving attachments.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder contentId(String contentId) {
             doSetProperty("contentId", contentId);
@@ -90,10 +104,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The id of the deployment.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param deploymentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder deploymentId(String deploymentId) {
             doSetProperty("deploymentId", deploymentId);
@@ -103,9 +120,12 @@ public interface JBPMEndpointBuilderFactory {
          * Sets if event produced by emitter should be sent as single items or
          * complete collection.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emitterSendItems the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder emitterSendItems(
                 Boolean emitterSendItems) {
@@ -116,10 +136,13 @@ public interface JBPMEndpointBuilderFactory {
          * Sets if event produced by emitter should be sent as single items or
          * complete collection.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emitterSendItems the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder emitterSendItems(
                 String emitterSendItems) {
@@ -130,9 +153,12 @@ public interface JBPMEndpointBuilderFactory {
          * the data associated with this event when signalEvent operation is
          * performed.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param event the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder event(Object event) {
             doSetProperty("event", event);
@@ -142,9 +168,13 @@ public interface JBPMEndpointBuilderFactory {
          * the data associated with this event when signalEvent operation is
          * performed.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param event the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder event(String event) {
             doSetProperty("event", event);
@@ -153,9 +183,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the type of event to use when signalEvent operation is performed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder eventType(String eventType) {
             doSetProperty("eventType", eventType);
@@ -164,9 +197,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * identifier the global identifier.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param identifier the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder identifier(String identifier) {
             doSetProperty("identifier", identifier);
@@ -175,9 +211,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the maximum number of rules that should be fired.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxNumber the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder maxNumber(Integer maxNumber) {
             doSetProperty("maxNumber", maxNumber);
@@ -186,10 +225,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the maximum number of rules that should be fired.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxNumber the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder maxNumber(String maxNumber) {
             doSetProperty("maxNumber", maxNumber);
@@ -198,9 +240,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page to use when retrieving user tasks.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder page(Integer page) {
             doSetProperty("page", page);
@@ -209,10 +254,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page to use when retrieving user tasks.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder page(String page) {
             doSetProperty("page", page);
@@ -221,9 +269,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page size to use when retrieving user tasks.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder pageSize(Integer pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -232,10 +283,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page size to use when retrieving user tasks.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -244,9 +298,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process that should be acted upon.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder processId(String processId) {
             doSetProperty("processId", processId);
@@ -255,9 +312,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process instance.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processInstanceId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder processInstanceId(
                 Long processInstanceId) {
@@ -267,9 +327,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process instance.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processInstanceId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder processInstanceId(
                 String processInstanceId) {
@@ -279,9 +343,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The targetUserId used when delegating a task.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param targetUserId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder targetUserId(String targetUserId) {
             doSetProperty("targetUserId", targetUserId);
@@ -290,9 +357,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The task instance to use with task operations.
          * 
-         * The option is a: <code>org.kie.api.task.model.Task</code> type.
+         * The option is a: &lt;code&gt;org.kie.api.task.model.Task&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param task the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder task(Object task) {
             doSetProperty("task", task);
@@ -302,9 +373,12 @@ public interface JBPMEndpointBuilderFactory {
          * The task instance to use with task operations.
          * 
          * The option will be converted to a
-         * <code>org.kie.api.task.model.Task</code> type.
+         * &lt;code&gt;org.kie.api.task.model.Task&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param task the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder task(String task) {
             doSetProperty("task", task);
@@ -313,9 +387,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the task.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder taskId(Long taskId) {
             doSetProperty("taskId", taskId);
@@ -324,9 +401,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the task.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder taskId(String taskId) {
             doSetProperty("taskId", taskId);
@@ -335,9 +416,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * A timeout value.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder timeout(Integer timeout) {
             doSetProperty("timeout", timeout);
@@ -346,10 +430,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * A timeout value.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -358,9 +445,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * userId to use with task operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -369,9 +459,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the value to assign to the global identifier.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder value(Object value) {
             doSetProperty("value", value);
@@ -380,9 +473,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the value to assign to the global identifier.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder value(String value) {
             doSetProperty("value", value);
@@ -391,9 +488,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the work item.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workItemId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder workItemId(Long workItemId) {
             doSetProperty("workItemId", workItemId);
@@ -402,9 +502,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the work item.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workItemId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder workItemId(String workItemId) {
             doSetProperty("workItemId", workItemId);
@@ -419,10 +523,13 @@ public interface JBPMEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -438,10 +545,14 @@ public interface JBPMEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -451,10 +562,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The list of status to use when filtering tasks.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param statuses the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder statuses(List<String> statuses) {
             doSetProperty("statuses", statuses);
@@ -464,9 +578,12 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param statuses the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder statuses(String statuses) {
             doSetProperty("statuses", statuses);
@@ -475,9 +592,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Password for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -486,9 +606,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Username for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointConsumerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -511,10 +634,13 @@ public interface JBPMEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -528,9 +654,12 @@ public interface JBPMEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -540,9 +669,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -553,9 +686,12 @@ public interface JBPMEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -563,40 +699,15 @@ public interface JBPMEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The potentialOwners when nominateTask operation is performed.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entities the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(
                 List<String> entities) {
@@ -607,9 +718,12 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entities the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(String entities) {
             doSetProperty("entities", entities);
@@ -618,9 +732,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * To load additional classes when working with XML.
          * 
-         * The option is a: <code>java.lang.Class[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extraJaxbClasses the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
@@ -630,10 +747,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * To load additional classes when working with XML.
          * 
-         * The option will be converted to a <code>java.lang.Class[]</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extraJaxbClasses the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
@@ -643,10 +763,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the variables that should be set for various operations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
@@ -657,10 +780,13 @@ public interface JBPMEndpointBuilderFactory {
          * the variables that should be set for various operations.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(String parameters) {
             doSetProperty("parameters", parameters);
@@ -670,10 +796,13 @@ public interface JBPMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -684,10 +813,14 @@ public interface JBPMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -708,9 +841,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * attachId to use when retrieving attachments.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param attachmentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder attachmentId(Long attachmentId) {
             doSetProperty("attachmentId", attachmentId);
@@ -719,9 +855,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * attachId to use when retrieving attachments.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param attachmentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder attachmentId(String attachmentId) {
             doSetProperty("attachmentId", attachmentId);
@@ -730,9 +870,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * contentId to use when retrieving attachments.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder contentId(Long contentId) {
             doSetProperty("contentId", contentId);
@@ -741,9 +884,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * contentId to use when retrieving attachments.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder contentId(String contentId) {
             doSetProperty("contentId", contentId);
@@ -752,10 +899,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The id of the deployment.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param deploymentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder deploymentId(String deploymentId) {
             doSetProperty("deploymentId", deploymentId);
@@ -765,9 +915,12 @@ public interface JBPMEndpointBuilderFactory {
          * Sets if event produced by emitter should be sent as single items or
          * complete collection.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emitterSendItems the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder emitterSendItems(
                 Boolean emitterSendItems) {
@@ -778,10 +931,13 @@ public interface JBPMEndpointBuilderFactory {
          * Sets if event produced by emitter should be sent as single items or
          * complete collection.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emitterSendItems the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder emitterSendItems(
                 String emitterSendItems) {
@@ -792,9 +948,12 @@ public interface JBPMEndpointBuilderFactory {
          * the data associated with this event when signalEvent operation is
          * performed.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param event the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder event(Object event) {
             doSetProperty("event", event);
@@ -804,9 +963,13 @@ public interface JBPMEndpointBuilderFactory {
          * the data associated with this event when signalEvent operation is
          * performed.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param event the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder event(String event) {
             doSetProperty("event", event);
@@ -815,9 +978,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the type of event to use when signalEvent operation is performed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder eventType(String eventType) {
             doSetProperty("eventType", eventType);
@@ -826,9 +992,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * identifier the global identifier.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param identifier the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder identifier(String identifier) {
             doSetProperty("identifier", identifier);
@@ -837,9 +1006,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the maximum number of rules that should be fired.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxNumber the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder maxNumber(Integer maxNumber) {
             doSetProperty("maxNumber", maxNumber);
@@ -848,10 +1020,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the maximum number of rules that should be fired.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxNumber the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder maxNumber(String maxNumber) {
             doSetProperty("maxNumber", maxNumber);
@@ -860,9 +1035,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page to use when retrieving user tasks.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder page(Integer page) {
             doSetProperty("page", page);
@@ -871,10 +1049,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page to use when retrieving user tasks.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder page(String page) {
             doSetProperty("page", page);
@@ -883,9 +1064,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page size to use when retrieving user tasks.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder pageSize(Integer pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -894,10 +1078,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page size to use when retrieving user tasks.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -906,9 +1093,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process that should be acted upon.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder processId(String processId) {
             doSetProperty("processId", processId);
@@ -917,9 +1107,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process instance.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processInstanceId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder processInstanceId(
                 Long processInstanceId) {
@@ -929,9 +1122,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process instance.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processInstanceId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder processInstanceId(
                 String processInstanceId) {
@@ -941,9 +1138,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The targetUserId used when delegating a task.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param targetUserId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder targetUserId(String targetUserId) {
             doSetProperty("targetUserId", targetUserId);
@@ -952,9 +1152,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The task instance to use with task operations.
          * 
-         * The option is a: <code>org.kie.api.task.model.Task</code> type.
+         * The option is a: &lt;code&gt;org.kie.api.task.model.Task&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param task the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder task(Object task) {
             doSetProperty("task", task);
@@ -964,9 +1168,12 @@ public interface JBPMEndpointBuilderFactory {
          * The task instance to use with task operations.
          * 
          * The option will be converted to a
-         * <code>org.kie.api.task.model.Task</code> type.
+         * &lt;code&gt;org.kie.api.task.model.Task&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param task the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder task(String task) {
             doSetProperty("task", task);
@@ -975,9 +1182,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the task.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder taskId(Long taskId) {
             doSetProperty("taskId", taskId);
@@ -986,9 +1196,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the task.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder taskId(String taskId) {
             doSetProperty("taskId", taskId);
@@ -997,9 +1211,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * A timeout value.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder timeout(Integer timeout) {
             doSetProperty("timeout", timeout);
@@ -1008,10 +1225,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * A timeout value.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1020,9 +1240,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * userId to use with task operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -1031,9 +1254,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the value to assign to the global identifier.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder value(Object value) {
             doSetProperty("value", value);
@@ -1042,9 +1268,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the value to assign to the global identifier.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder value(String value) {
             doSetProperty("value", value);
@@ -1053,9 +1283,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the work item.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workItemId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder workItemId(Long workItemId) {
             doSetProperty("workItemId", workItemId);
@@ -1064,9 +1297,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the work item.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workItemId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder workItemId(String workItemId) {
             doSetProperty("workItemId", workItemId);
@@ -1083,10 +1320,13 @@ public interface JBPMEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1104,10 +1344,14 @@ public interface JBPMEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1117,10 +1361,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The operation to perform.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: startProcess
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -1129,10 +1376,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The list of status to use when filtering tasks.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param statuses the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder statuses(List<String> statuses) {
             doSetProperty("statuses", statuses);
@@ -1142,9 +1392,12 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param statuses the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder statuses(String statuses) {
             doSetProperty("statuses", statuses);
@@ -1153,9 +1406,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Password for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1164,9 +1420,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Username for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointProducerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1184,40 +1443,15 @@ public interface JBPMEndpointBuilderFactory {
             return (JBPMEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The potentialOwners when nominateTask operation is performed.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entities the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder entities(
                 List<String> entities) {
@@ -1228,9 +1462,12 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entities the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder entities(String entities) {
             doSetProperty("entities", entities);
@@ -1239,9 +1476,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * To load additional classes when working with XML.
          * 
-         * The option is a: <code>java.lang.Class[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extraJaxbClasses the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
@@ -1251,10 +1491,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * To load additional classes when working with XML.
          * 
-         * The option will be converted to a <code>java.lang.Class[]</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extraJaxbClasses the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
@@ -1264,10 +1507,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the variables that should be set for various operations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
@@ -1278,10 +1524,13 @@ public interface JBPMEndpointBuilderFactory {
          * the variables that should be set for various operations.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(String parameters) {
             doSetProperty("parameters", parameters);
@@ -1291,10 +1540,13 @@ public interface JBPMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1305,10 +1557,14 @@ public interface JBPMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1330,9 +1586,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * attachId to use when retrieving attachments.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param attachmentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder attachmentId(Long attachmentId) {
             doSetProperty("attachmentId", attachmentId);
@@ -1341,9 +1600,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * attachId to use when retrieving attachments.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param attachmentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder attachmentId(String attachmentId) {
             doSetProperty("attachmentId", attachmentId);
@@ -1352,9 +1615,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * contentId to use when retrieving attachments.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder contentId(Long contentId) {
             doSetProperty("contentId", contentId);
@@ -1363,9 +1629,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * contentId to use when retrieving attachments.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder contentId(String contentId) {
             doSetProperty("contentId", contentId);
@@ -1374,10 +1644,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The id of the deployment.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param deploymentId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder deploymentId(String deploymentId) {
             doSetProperty("deploymentId", deploymentId);
@@ -1387,9 +1660,12 @@ public interface JBPMEndpointBuilderFactory {
          * Sets if event produced by emitter should be sent as single items or
          * complete collection.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emitterSendItems the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder emitterSendItems(Boolean emitterSendItems) {
             doSetProperty("emitterSendItems", emitterSendItems);
@@ -1399,10 +1675,13 @@ public interface JBPMEndpointBuilderFactory {
          * Sets if event produced by emitter should be sent as single items or
          * complete collection.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emitterSendItems the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder emitterSendItems(String emitterSendItems) {
             doSetProperty("emitterSendItems", emitterSendItems);
@@ -1412,9 +1691,12 @@ public interface JBPMEndpointBuilderFactory {
          * the data associated with this event when signalEvent operation is
          * performed.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param event the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder event(Object event) {
             doSetProperty("event", event);
@@ -1424,9 +1706,13 @@ public interface JBPMEndpointBuilderFactory {
          * the data associated with this event when signalEvent operation is
          * performed.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param event the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder event(String event) {
             doSetProperty("event", event);
@@ -1435,9 +1721,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the type of event to use when signalEvent operation is performed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventType the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder eventType(String eventType) {
             doSetProperty("eventType", eventType);
@@ -1446,9 +1735,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * identifier the global identifier.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param identifier the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder identifier(String identifier) {
             doSetProperty("identifier", identifier);
@@ -1457,9 +1749,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the maximum number of rules that should be fired.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxNumber the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder maxNumber(Integer maxNumber) {
             doSetProperty("maxNumber", maxNumber);
@@ -1468,10 +1763,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the maximum number of rules that should be fired.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxNumber the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder maxNumber(String maxNumber) {
             doSetProperty("maxNumber", maxNumber);
@@ -1480,9 +1778,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page to use when retrieving user tasks.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder page(Integer page) {
             doSetProperty("page", page);
@@ -1491,10 +1792,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page to use when retrieving user tasks.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param page the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder page(String page) {
             doSetProperty("page", page);
@@ -1503,9 +1807,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page size to use when retrieving user tasks.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder pageSize(Integer pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -1514,10 +1821,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The page size to use when retrieving user tasks.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -1526,9 +1836,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process that should be acted upon.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder processId(String processId) {
             doSetProperty("processId", processId);
@@ -1537,9 +1850,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process instance.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processInstanceId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder processInstanceId(Long processInstanceId) {
             doSetProperty("processInstanceId", processInstanceId);
@@ -1548,9 +1864,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the process instance.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param processInstanceId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder processInstanceId(String processInstanceId) {
             doSetProperty("processInstanceId", processInstanceId);
@@ -1559,9 +1879,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The targetUserId used when delegating a task.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param targetUserId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder targetUserId(String targetUserId) {
             doSetProperty("targetUserId", targetUserId);
@@ -1570,9 +1893,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The task instance to use with task operations.
          * 
-         * The option is a: <code>org.kie.api.task.model.Task</code> type.
+         * The option is a: &lt;code&gt;org.kie.api.task.model.Task&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param task the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder task(Object task) {
             doSetProperty("task", task);
@@ -1582,9 +1909,12 @@ public interface JBPMEndpointBuilderFactory {
          * The task instance to use with task operations.
          * 
          * The option will be converted to a
-         * <code>org.kie.api.task.model.Task</code> type.
+         * &lt;code&gt;org.kie.api.task.model.Task&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param task the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder task(String task) {
             doSetProperty("task", task);
@@ -1593,9 +1923,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the task.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder taskId(Long taskId) {
             doSetProperty("taskId", taskId);
@@ -1604,9 +1937,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the task.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder taskId(String taskId) {
             doSetProperty("taskId", taskId);
@@ -1615,9 +1952,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * A timeout value.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder timeout(Integer timeout) {
             doSetProperty("timeout", timeout);
@@ -1626,10 +1966,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * A timeout value.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1638,9 +1981,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * userId to use with task operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -1649,9 +1995,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the value to assign to the global identifier.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder value(Object value) {
             doSetProperty("value", value);
@@ -1660,9 +2009,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the value to assign to the global identifier.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder value(String value) {
             doSetProperty("value", value);
@@ -1671,9 +2024,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the work item.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workItemId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder workItemId(Long workItemId) {
             doSetProperty("workItemId", workItemId);
@@ -1682,9 +2038,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the id of the work item.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workItemId the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder workItemId(String workItemId) {
             doSetProperty("workItemId", workItemId);
@@ -1693,10 +2053,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * The list of status to use when filtering tasks.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param statuses the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder statuses(List<String> statuses) {
             doSetProperty("statuses", statuses);
@@ -1706,9 +2069,12 @@ public interface JBPMEndpointBuilderFactory {
          * The list of status to use when filtering tasks.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param statuses the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder statuses(String statuses) {
             doSetProperty("statuses", statuses);
@@ -1717,9 +2083,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Password for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1728,9 +2097,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * Username for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1749,40 +2121,15 @@ public interface JBPMEndpointBuilderFactory {
             return (JBPMEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJBPMEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJBPMEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * The potentialOwners when nominateTask operation is performed.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entities the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder entities(List<String> entities) {
             doSetProperty("entities", entities);
@@ -1792,9 +2139,12 @@ public interface JBPMEndpointBuilderFactory {
          * The potentialOwners when nominateTask operation is performed.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entities the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder entities(String entities) {
             doSetProperty("entities", entities);
@@ -1803,9 +2153,12 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * To load additional classes when working with XML.
          * 
-         * The option is a: <code>java.lang.Class[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extraJaxbClasses the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
@@ -1815,10 +2168,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * To load additional classes when working with XML.
          * 
-         * The option will be converted to a <code>java.lang.Class[]</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Class[]&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extraJaxbClasses the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
@@ -1828,10 +2184,13 @@ public interface JBPMEndpointBuilderFactory {
         /**
          * the variables that should be set for various operations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder parameters(
                 Map<String, Object> parameters) {
@@ -1842,10 +2201,13 @@ public interface JBPMEndpointBuilderFactory {
          * the variables that should be set for various operations.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder parameters(String parameters) {
             doSetProperty("parameters", parameters);
@@ -1855,10 +2217,13 @@ public interface JBPMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1868,10 +2233,14 @@ public interface JBPMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJBPMEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1897,6 +2266,7 @@ public interface JBPMEndpointBuilderFactory {
          * Sets the event listener type to attach to
          * 
          * @param path connectionURL
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder jbpm(String path) {
             return JBPMEndpointBuilderFactory.endpointBuilder("jbpm", path);
@@ -1920,6 +2290,7 @@ public interface JBPMEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionURL
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder jbpm(String componentName, String path) {
             return JBPMEndpointBuilderFactory.endpointBuilder(componentName, path);

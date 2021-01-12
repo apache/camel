@@ -34,6 +34,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,15 +53,6 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex1";
     private static final String ROUTE = "route1";
     private static final String CUSTOM_HEADER = "CustomHeader";
-    private static final String BASIC_URI_FORMAT = "rabbitmq:localhost:5672/%s?routingKey=%s&username=cameltest&password=cameltest&skipQueueDeclare=true";
-    private static final String BASIC_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, ROUTE);
-    private static final String ALLOW_NULL_HEADERS = BASIC_URI + "&allowNullHeaders=true&allowCustomHeaders=false";
-    private static final String ALLOW_CUSTOM_HEADERS = BASIC_URI + "&allowCustomHeaders=true";
-    private static final String PUBLISHER_ACKNOWLEDGES_URI = BASIC_URI + "&mandatory=true&publisherAcknowledgements=true";
-    private static final String PUBLISHER_ACKNOWLEDGES_BAD_ROUTE_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&publisherAcknowledgements=true";
-    private static final String GUARANTEED_DELIVERY_URI = BASIC_URI + "&mandatory=true&guaranteedDeliveries=true";
-    private static final String GUARANTEED_DELIVERY_BAD_ROUTE_NOT_MANDATORY_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&guaranteedDeliveries=true";
-    private static final String GUARANTEED_DELIVERY_BAD_ROUTE_URI = String.format(BASIC_URI_FORMAT, EXCHANGE, "route2") + "&mandatory=true&guaranteedDeliveries=true";
 
     @Produce("direct:start")
     protected ProducerTemplate template;
@@ -92,21 +84,39 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     private Connection connection;
     private Channel channel;
 
+    private String getBasicURI(String route) {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
+        return String.format("rabbitmq:%s:%d/%s?routingKey=%s&username=%s&password=%s&skipQueueDeclare=true",
+                connectionProperties.hostname(), connectionProperties.port(),
+                EXCHANGE, route, connectionProperties.username(), connectionProperties.password());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        String basicURI = getBasicURI(ROUTE);
+        String allowNullHeaders = basicURI + "&allowNullHeaders=true&allowCustomHeaders=false";
+        String allowCustomHeaders = basicURI + "&allowCustomHeaders=true";
+        String publisherAcknowledgesUri = basicURI + "&mandatory=true&publisherAcknowledgements=true";
+        String publisherAcknowledgesBadRouteUri = getBasicURI("route2") + "&publisherAcknowledgements=true";
+        String guaranteedDeliveryUri = basicURI + "&mandatory=true&guaranteedDeliveries=true";
+        String guaranteedDeliveryBadRouteNotMandatoryUri = getBasicURI("route2") + "&guaranteedDeliveries=true";
+        String guaranteedDeliveryBadRouteUri = getBasicURI("route2") + "&mandatory=true&guaranteedDeliveries=true";
+
         context().setTracing(true);
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to(BASIC_URI);
-                from("direct:start-allow-null-headers").to(ALLOW_NULL_HEADERS);
-                from("direct:start-not-allow-custom-headers").to(ALLOW_NULL_HEADERS);
-                from("direct:start-allow-custom-headers").to(ALLOW_CUSTOM_HEADERS);
-                from("direct:start-with-confirms").to(PUBLISHER_ACKNOWLEDGES_URI);
-                from("direct:start-with-confirms-bad-route").to(PUBLISHER_ACKNOWLEDGES_BAD_ROUTE_URI);
-                from("direct:start-with-guaranteed-delivery").to(GUARANTEED_DELIVERY_URI);
-                from("direct:start-with-guaranteed-delivery-bad-route").to(GUARANTEED_DELIVERY_BAD_ROUTE_URI);
-                from("direct:start-with-guaranteed-delivery-bad-route-but-not-mandatory").to(GUARANTEED_DELIVERY_BAD_ROUTE_NOT_MANDATORY_URI);
+                from("direct:start").to(basicURI);
+                from("direct:start-allow-null-headers").to(allowNullHeaders);
+                from("direct:start-not-allow-custom-headers").to(allowNullHeaders);
+                from("direct:start-allow-custom-headers").to(allowCustomHeaders);
+                from("direct:start-with-confirms").to(publisherAcknowledgesUri);
+                from("direct:start-with-confirms-bad-route").to(publisherAcknowledgesBadRouteUri);
+                from("direct:start-with-guaranteed-delivery").to(guaranteedDeliveryUri);
+                from("direct:start-with-guaranteed-delivery-bad-route").to(guaranteedDeliveryBadRouteUri);
+                from("direct:start-with-guaranteed-delivery-bad-route-but-not-mandatory")
+                        .to(guaranteedDeliveryBadRouteNotMandatoryUri);
             }
         };
     }
@@ -214,9 +224,10 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         }
     }
 
-    private void assertThatBodiesAndHeadersReceivedIn(Map<String, Object> receivedHeaders, Map<String, Object> expectedHeaders, final List<String> received,
-                                                      final String... expected)
-        throws InterruptedException {
+    private void assertThatBodiesAndHeadersReceivedIn(
+            Map<String, Object> receivedHeaders, Map<String, Object> expectedHeaders, final List<String> received,
+            final String... expected)
+            throws InterruptedException {
         Thread.sleep(500);
 
         assertListSize(received, expected.length);
@@ -228,13 +239,15 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
             Object receivedValue = receivedHeaders.get(headers.getKey());
             Object expectedValue = headers.getValue();
             assertTrue(receivedHeaders.containsKey(headers.getKey()), "Header key " + headers.getKey() + " not found");
-            assertEquals(0, ObjectHelper.compare(receivedValue == null ? "" : receivedValue.toString(), expectedValue == null ? "" : expectedValue.toString()));
+            assertEquals(0, ObjectHelper.compare(receivedValue == null ? "" : receivedValue.toString(),
+                    expectedValue == null ? "" : expectedValue.toString()));
         }
 
     }
 
     @Test
-    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabled() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabled()
+            throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -244,7 +257,8 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Test
-    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed() throws InterruptedException, IOException, TimeoutException {
+    public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed()
+            throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -254,7 +268,8 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Test
-    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedAndMessageIsMarkedAsMandatory() throws InterruptedException, IOException, TimeoutException {
+    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedAndMessageIsMarkedAsMandatory()
+            throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
@@ -266,15 +281,17 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     @Test
     public void shouldFailIfMessageIsMarkedAsMandatoryAndGuaranteedDeliveryIsActiveButNoQueueIsBound() {
         assertThrows(RuntimeCamelException.class,
-            () -> templateWithGuranteedDeliveryAndBadRoute.sendBody("publish with ack and return message"));
+                () -> templateWithGuranteedDeliveryAndBadRoute.sendBody("publish with ack and return message"));
     }
 
     @Test
-    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory() throws InterruptedException, IOException, TimeoutException {
+    public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory()
+            throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
-        templateWithGuranteedDeliveryBadRouteButNotMandatory.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
+        templateWithGuranteedDeliveryBadRouteButNotMandatory.sendBodyAndHeader("publisher ack message",
+                RabbitMQConstants.EXCHANGE_NAME, "ex1");
 
         assertThatBodiesReceivedIn(received);
     }
@@ -296,7 +313,8 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+                throws IOException {
             LOGGER.info("AMQP.BasicProperties: {}", properties);
 
             receivedHeaders.putAll(properties.getHeaders());

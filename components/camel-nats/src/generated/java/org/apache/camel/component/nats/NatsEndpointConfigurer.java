@@ -4,8 +4,10 @@ package org.apache.camel.component.nats;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NatsEndpoint target = (NatsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connection": target.getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
@@ -67,51 +67,73 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "traceconnection":
+        case "traceConnection": target.getConfiguration().setTraceConnection(property(camelContext, boolean.class, value)); return true;
         case "verbose": target.getConfiguration().setVerbose(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connection", io.nats.client.Connection.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("flushConnection", boolean.class);
-        answer.put("flushTimeout", int.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxMessages", java.lang.String.class);
-        answer.put("maxPingsOut", int.class);
-        answer.put("maxReconnectAttempts", int.class);
-        answer.put("noEcho", boolean.class);
-        answer.put("noRandomizeServers", boolean.class);
-        answer.put("pedantic", boolean.class);
-        answer.put("pingInterval", int.class);
-        answer.put("poolSize", int.class);
-        answer.put("queueName", java.lang.String.class);
-        answer.put("reconnect", boolean.class);
-        answer.put("reconnectTimeWait", int.class);
-        answer.put("replySubject", java.lang.String.class);
-        answer.put("replyToDisabled", boolean.class);
-        answer.put("requestCleanupInterval", int.class);
-        answer.put("secure", boolean.class);
-        answer.put("servers", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("verbose", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connection": return io.nats.client.Connection.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flushconnection":
+        case "flushConnection": return boolean.class;
+        case "flushtimeout":
+        case "flushTimeout": return int.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessages":
+        case "maxMessages": return java.lang.String.class;
+        case "maxpingsout":
+        case "maxPingsOut": return int.class;
+        case "maxreconnectattempts":
+        case "maxReconnectAttempts": return int.class;
+        case "noecho":
+        case "noEcho": return boolean.class;
+        case "norandomizeservers":
+        case "noRandomizeServers": return boolean.class;
+        case "pedantic": return boolean.class;
+        case "pinginterval":
+        case "pingInterval": return int.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "queuename":
+        case "queueName": return java.lang.String.class;
+        case "reconnect": return boolean.class;
+        case "reconnecttimewait":
+        case "reconnectTimeWait": return int.class;
+        case "replysubject":
+        case "replySubject": return java.lang.String.class;
+        case "replytodisabled":
+        case "replyToDisabled": return boolean.class;
+        case "requestcleanupinterval":
+        case "requestCleanupInterval": return int.class;
+        case "secure": return boolean.class;
+        case "servers": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "traceconnection":
+        case "traceConnection": return boolean.class;
+        case "verbose": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NatsEndpoint target = (NatsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connection": return target.getConfiguration().getConnection();
@@ -158,6 +180,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "synchronous": return target.isSynchronous();
+        case "traceconnection":
+        case "traceConnection": return target.getConfiguration().isTraceConnection();
         case "verbose": return target.getConfiguration().isVerbose();
         default: return null;
         }

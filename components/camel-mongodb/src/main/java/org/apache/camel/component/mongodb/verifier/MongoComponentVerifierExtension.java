@@ -66,9 +66,12 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
         ConnectionParamsConfiguration mongoConf = new ConnectionParamsConfiguration(cast(parameters));
 
         MongoClientSettings.Builder optionsBuilder = MongoClientSettings.builder();
-        optionsBuilder.applyToSocketSettings(socketBuilder -> socketBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
-        optionsBuilder.applyToConnectionPoolSettings(connectionPoolBuilder -> connectionPoolBuilder.maxWaitTime(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
-        optionsBuilder.applyToClusterSettings(clusterBuilder -> clusterBuilder.serverSelectionTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
+        optionsBuilder.applyToSocketSettings(
+                socketBuilder -> socketBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
+        optionsBuilder.applyToConnectionPoolSettings(
+                connectionPoolBuilder -> connectionPoolBuilder.maxWaitTime(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
+        optionsBuilder.applyToClusterSettings(
+                clusterBuilder -> clusterBuilder.serverSelectionTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS));
 
         ConnectionString connectionString = new ConnectionString(mongoConf.getMongoClientURI());
         optionsBuilder.applyConnectionString(connectionString);
@@ -82,7 +85,8 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
         } catch (MongoSecurityException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
                     VerificationError.StandardCode.AUTHENTICATION,
-                    String.format("Unable to authenticate %s against %s authentication database!", mongoConf.getUser(), mongoConf.getAdminDB()));
+                    String.format("Unable to authenticate %s against %s authentication database!", mongoConf.getUser(),
+                            mongoConf.getAdminDB()));
             builder.error(errorBuilder.build());
         } catch (MongoTimeoutException e) {
             // When there is any connection exception, the driver tries to reconnect until timeout is reached
@@ -91,7 +95,8 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
             VerificationError.StandardCode code = VerificationError.StandardCode.GENERIC;
             if (e.getMessage().contains("com.mongodb.MongoSecurityException")) {
                 code = VerificationError.StandardCode.AUTHENTICATION;
-                description = String.format("Unable to authenticate %s against %s authentication database!", mongoConf.getUser(), mongoConf.getAdminDB());
+                description = String.format("Unable to authenticate %s against %s authentication database!",
+                        mongoConf.getUser(), mongoConf.getAdminDB());
             } else if (e.getMessage().contains("com.mongodb.MongoSocket") && e.getMessage().contains("Exception")) {
                 description = String.format("Unable to connect to %s!", mongoConf.getHost());
             } else {
@@ -104,4 +109,3 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
         }
     }
 }
-

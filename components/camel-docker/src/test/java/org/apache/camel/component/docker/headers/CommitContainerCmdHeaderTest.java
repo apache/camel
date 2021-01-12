@@ -36,7 +36,6 @@ import static org.mockito.ArgumentMatchers.anyString;
  */
 public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd> {
 
-
     @Mock
     private CommitCmd mockObject;
 
@@ -66,7 +65,6 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
         Volumes volumes = new Volumes(new Volume("/example"));
         boolean tty = true;
         String hostname = "dockerhostname";
-
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);

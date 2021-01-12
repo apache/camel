@@ -34,12 +34,16 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BodyTypesTest extends PubsubTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(BodyTypesTest.class);
 
     private static final String TOPIC_NAME = "typesSend";
     private static final String SUBSCRIPTION_NAME = "TypesReceive";
@@ -64,7 +68,12 @@ public class BodyTypesTest extends PubsubTestSupport {
 
     @Override
     public void createTopicSubscription() {
-        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
+        try {
+            createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
+        } catch (Exception e) {
+            // May be ignored because it could have been created. 
+            LOG.warn("Failed to create the subscription pair {}", e.getMessage());
+        }
     }
 
     @Override
@@ -85,7 +94,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
 
-        byte[] body = {1, 2, 3};
+        byte[] body = { 1, 2, 3 };
 
         exchange.getIn().setBody(body);
 
@@ -100,7 +109,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         assertTrue(sentExchange.getIn().getBody() instanceof byte[], "Sent body type is byte[]");
 
-        assertTrue(sentExchange.getIn().getBody() == body, "Sent body type is the one sent");
+        assertSame(body, sentExchange.getIn().getBody(), "Sent body type is the one sent");
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -149,7 +158,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
 
-        assertTrue(((Map) bodyReceived).get("KEY").equals("VALUE1212"), "Received body is a Map");
+        assertEquals("VALUE1212", ((Map) bodyReceived).get("KEY"), "Received body is a Map");
 
     }
 

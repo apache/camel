@@ -16,7 +16,9 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -32,6 +34,10 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
         this.block = new CompositeNodes(token);
     }
 
+    public CompositeNodes getBlock() {
+        return block;
+    }
+
     @Override
     public String toString() {
         // output a nice toString so it makes debugging easier as we can see the entire block
@@ -39,10 +45,10 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         Expression answer = null;
         if (block != null) {
-            answer = block.createExpression(expression);
+            answer = block.createExpression(camelContext, expression);
         }
         if (answer == null) {
             // there quoted literal is empty
@@ -57,4 +63,18 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
         return true;
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        String answer = null;
+        if (block != null) {
+            answer = block.createCode(expression);
+        }
+        // use double quote as this become used as string literals in the generated code
+        if (answer == null) {
+            answer = "\"\"";
+        } else {
+            answer = "\"" + answer + "\"";
+        }
+        return answer;
+    }
 }

@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitComment;
@@ -46,16 +45,13 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
 
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullRequestCommentProducerProcessor())
-                        .to("github://pullRequestComment?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
+                        .to("github://pullRequestComment?repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
 
         };
     }
-
 
     @Test
     public void testPullRequestCommentProducer() throws Exception {
@@ -78,7 +74,6 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
         assertEquals(commentText, commitComment.getBodyText(), "Comment text did not match");
     }
 
-
     public class MockPullRequestCommentProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -87,6 +82,5 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
-
 
 }

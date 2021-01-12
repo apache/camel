@@ -4,8 +4,10 @@ package org.apache.camel.component.file.remote;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.file.remote.FtpEndpointConfigurer;
 
@@ -39,17 +41,25 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("disableSecureDataChannelDefaults", boolean.class);
-        answer.put("execPbsz", java.lang.Long.class);
-        answer.put("execProt", java.lang.String.class);
-        answer.put("ftpClientKeyStoreParameters", java.util.Map.class);
-        answer.put("ftpClientTrustStoreParameters", java.util.Map.class);
-        answer.put("implicit", boolean.class);
-        answer.put("securityProtocol", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablesecuredatachanneldefaults":
+        case "disableSecureDataChannelDefaults": return boolean.class;
+        case "execpbsz":
+        case "execPbsz": return java.lang.Long.class;
+        case "execprot":
+        case "execProt": return java.lang.String.class;
+        case "ftpclientkeystoreparameters":
+        case "ftpClientKeyStoreParameters": return java.util.Map.class;
+        case "ftpclienttruststoreparameters":
+        case "ftpClientTrustStoreParameters": return java.util.Map.class;
+        case "implicit": return boolean.class;
+        case "securityprotocol":
+        case "securityProtocol": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override
@@ -72,6 +82,17 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         default: return super.getOptionValue(obj, name, ignoreCase);
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ftpclientkeystoreparameters":
+        case "ftpClientKeyStoreParameters": return java.lang.Object.class;
+        case "ftpclienttruststoreparameters":
+        case "ftpClientTrustStoreParameters": return java.lang.Object.class;
+        default: return super.getCollectionValueType(target, name, ignoreCase);
         }
     }
 }

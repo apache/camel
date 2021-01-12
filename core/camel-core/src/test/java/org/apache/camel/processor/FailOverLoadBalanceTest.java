@@ -72,10 +72,11 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:exception").loadBalance()
-                    // catch all the exception here
-                    .failover().to("direct:x", "direct:y", "direct:z");
+                        // catch all the exception here
+                        .failover().to("direct:x", "direct:y", "direct:z");
 
-                from("direct:customerException").loadBalance().failover(MyException.class).to("direct:x", "direct:y", "direct:z");
+                from("direct:customerException").loadBalance().failover(MyException.class).to("direct:x", "direct:y",
+                        "direct:z");
 
                 from("direct:x").process(new MyExceptionProcessor()).to("mock:x");
 

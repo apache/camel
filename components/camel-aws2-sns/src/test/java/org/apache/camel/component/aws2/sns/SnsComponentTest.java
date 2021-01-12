@@ -60,7 +60,7 @@ public class SnsComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&policy=XXX");
+                from("direct:start").to("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
             }
         };
     }

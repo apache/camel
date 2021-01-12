@@ -56,7 +56,7 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        NumberModel bd = (NumberModel)result.getExchanges().get(0).getIn().getBody();
+        NumberModel bd = (NumberModel) result.getExchanges().get(0).getIn().getBody();
         assertEquals(bigDecimal, bd.getGrouping().toString());
     }
 
@@ -72,8 +72,8 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
                         .locale("en");
 
                 from(URI_DIRECT_START)
-                    .unmarshal(bindy)
-                    .to(URI_MOCK_RESULT);
+                        .unmarshal(bindy)
+                        .to(URI_MOCK_RESULT);
             }
 
         };
@@ -83,10 +83,10 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
     public static class NumberModel {
 
         @DataField(pos = 1, precision = 2,
-                rounding = "CEILING",
-                pattern = "###,###.###",
-                decimalSeparator = ",",
-                groupingSeparator = ".")
+                   rounding = "CEILING",
+                   pattern = "###,###.###",
+                   decimalSeparator = ",",
+                   groupingSeparator = ".")
         private BigDecimal grouping;
 
         public BigDecimal getGrouping() {
@@ -96,7 +96,6 @@ public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
         public void setGrouping(BigDecimal grouping) {
             this.grouping = grouping;
         }
-
 
         @Override
         public String toString() {

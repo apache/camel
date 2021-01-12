@@ -27,11 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.jupiter.api.MethodOrderer.Alphanumeric;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class AckModeNoneTest extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "ackNoneTopic";
@@ -69,10 +69,9 @@ public class AckModeNoneTest extends PubsubTestSupport {
     }
 
     /**
-     * Expecting two messages received for the one sent. With Ack mode set to
-     * NONE the same message will be delivered again and again, after the
-     * deadline expiration. Setting deadline to 1 second and waiting for more
-     * than 2 to ensure the message has been resent.
+     * Expecting two messages received for the one sent. With Ack mode set to NONE the same message will be delivered
+     * again and again, after the deadline expiration. Setting deadline to 1 second and waiting for more than 2 to
+     * ensure the message has been resent.
      *
      * @throws Exception
      */

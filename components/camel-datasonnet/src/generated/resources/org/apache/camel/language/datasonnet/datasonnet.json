@@ -1,0 +1,26 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "datasonnet",
+    "title": "DataSonnet",
+    "description": "To use DataSonnet scripts in Camel expressions or predicates.",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "label": "language,script",
+    "javaType": "org.apache.camel.language.datasonnet.DatasonnetLanguage",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-datasonnet",
+    "version": "3.8.0-SNAPSHOT",
+    "modelName": "datasonnet",
+    "modelJavaType": "org.apache.camel.model.language.DatasonnetExpression"
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "bodyMediaType": { "kind": "attribute", "displayName": "Body Media Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The String representation of the message's body MediaType" },
+    "outputMediaType": { "kind": "attribute", "displayName": "Output Media Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The String representation of the MediaType to output" },
+    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class name of the result type (type from output) The default result type is com.datasonnet.document.Document" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

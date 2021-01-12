@@ -31,17 +31,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test to verify:
  * 
- * 1.  The JMX consumer can actively connect (via polling) to a JMX server that is not listening 
- *     for connections when the route is started
- *     
- * 2.  The JMX consumer can detect a lost JMX connection, and will reconnect to the JMX server
- *     when the server is listening for connections again on the configured port
+ * 1. The JMX consumer can actively connect (via polling) to a JMX server that is not listening for connections when the
+ * route is started
+ * 
+ * 2. The JMX consumer can detect a lost JMX connection, and will reconnect to the JMX server when the server is
+ * listening for connections again on the configured port
  */
 public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
 
@@ -49,7 +50,7 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     JMXConnectorServer connector;
     Registry registry;
     int port;
-    
+
     @BeforeEach
     @Override
     public void setUp() throws Exception {
@@ -59,7 +60,7 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         initContext();
         startContext();
     }
-    
+
     @Override
     @AfterEach
     public void tearDown() throws Exception {
@@ -71,32 +72,33 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     protected void initServer() throws Exception {
         if (registry == null) {
             registry = LocateRegistry.createRegistry(port);
-        }    
+        }
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean
-        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object>emptyMap(), server);
+        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object> emptyMap(), server);
         connector.start();
     }
 
     @Override
     protected JMXUriBuilder buildFromURI() {
         String uri = url.toString();
-        return super.buildFromURI().withServerName(uri).withTestConnectionOnStartup(false).withReconnectDelay(1).withReconnectOnConnectionFailure(true);
+        return super.buildFromURI().withServerName(uri).withTestConnectionOnStartup(false).withReconnectDelay(1)
+                .withReconnectOnConnectionFailure(true);
     }
 
     @Test
     public void testRobustConnection() throws Exception {
-        
+
         // the JMX service should not be started
         try {
             getSimpleMXBean().touch();
             fail("The mxbean should not be available.");
         } catch (Exception e) {
             assertTrue(e instanceof java.lang.IllegalArgumentException);
-            assertTrue(e.getMessage().equals("Null connection"));
+            assertEquals("Null connection", e.getMessage());
         }
-        
+
         // start the server;  the JMX consumer should connect and start;  the mock should receive a notification
         initServer();
         initBean();
@@ -121,5 +123,5 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/consumer-test/touched.xml"));
     }
-    
+
 }

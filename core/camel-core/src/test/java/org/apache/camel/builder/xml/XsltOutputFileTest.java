@@ -42,7 +42,8 @@ public class XsltOutputFileTest extends ContextTestSupport {
         mock.expectedFileExists("target/data/xslt/xsltme.xml");
         mock.message(0).body().isInstanceOf(File.class);
 
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltme.xml");
+        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
+                "target/data/xslt/xsltme.xml");
 
         mock.assertIsSatisfied();
     }

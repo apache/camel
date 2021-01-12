@@ -47,7 +47,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // file should be moved
         File file = new File("target/data/pollenrich/hello.txt");
@@ -59,14 +59,15 @@ public class FilePollEnrichTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo").pollEnrich("file:target/data/pollenrich?move=done", 5000).convertBodyTo(String.class)
-                    .log("Polled filed ${file:name}").to("mock:result").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // force stop route after use to prevent firing
-                            // timer again
-                            exchange.getContext().getRouteController().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
-                        }
-                    });
+                from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo")
+                        .pollEnrich("file:target/data/pollenrich?move=done", 5000).convertBodyTo(String.class)
+                        .log("Polled filed ${file:name}").to("mock:result").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // force stop route after use to prevent firing
+                                // timer again
+                                exchange.getContext().getRouteController().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
+                            }
+                        });
             }
         };
     }

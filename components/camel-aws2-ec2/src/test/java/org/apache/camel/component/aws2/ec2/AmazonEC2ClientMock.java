@@ -70,7 +70,8 @@ public class AmazonEC2ClientMock implements Ec2Client {
             ins.instanceType(runInstancesRequest.instanceType());
             ins.instanceId("instance-1");
             if (runInstancesRequest.securityGroups() != null) {
-                if (runInstancesRequest.securityGroups().contains("secgroup-1") && runInstancesRequest.securityGroups().contains("secgroup-2")) {
+                if (runInstancesRequest.securityGroups().contains("secgroup-1")
+                        && runInstancesRequest.securityGroups().contains("secgroup-2")) {
                     GroupIdentifier.Builder id1 = GroupIdentifier.builder();
                     id1.groupId("id-1");
                     id1.groupName("secgroup-1");

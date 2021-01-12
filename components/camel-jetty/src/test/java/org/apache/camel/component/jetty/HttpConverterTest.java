@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpConverterTest extends BaseJettyTest {
 
@@ -47,18 +46,18 @@ public class HttpConverterTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/test")
-                    // add this node to make sure the convert can work within
-                    // DefaultMessageImpl
-                    .convertBodyTo(String.class).process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
-                            assertNotNull(request, "We should get request object here");
-                            HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
-                            assertNotNull(response, "We should get response object here");
-                            String s = exchange.getIn().getBody(String.class);
-                            assertEquals("Hello World", s);
-                        }
-                    }).transform(constant("Bye World"));
+                        // add this node to make sure the convert can work within
+                        // DefaultMessageImpl
+                        .convertBodyTo(String.class).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
+                                assertNotNull(request, "We should get request object here");
+                                HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
+                                assertNotNull(response, "We should get response object here");
+                                String s = exchange.getIn().getBody(String.class);
+                                assertEquals("Hello World", s);
+                            }
+                        }).transform(constant("Bye World"));
             }
         });
         context.start();
@@ -80,7 +79,7 @@ public class HttpConverterTest extends BaseJettyTest {
                         assertNotNull(sis);
                         // The ServletInputStream should be cached and you can't
                         // read message here
-                        assertTrue(sis.available() == 0);
+                        assertEquals(0, sis.available());
                         String s = msg.getBody(String.class);
 
                         assertEquals("Hello World", s);

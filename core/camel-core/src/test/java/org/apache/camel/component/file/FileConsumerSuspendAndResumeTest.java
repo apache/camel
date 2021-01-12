@@ -51,7 +51,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/data/suspended/").list();
@@ -67,7 +67,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         myPolicy.resumeConsumer();
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // and the file is now deleted
         files = new File("target/data/suspended/").list();
@@ -80,8 +80,9 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10").routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
+                        .routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

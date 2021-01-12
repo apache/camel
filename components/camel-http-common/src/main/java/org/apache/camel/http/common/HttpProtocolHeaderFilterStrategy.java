@@ -19,15 +19,15 @@ package org.apache.camel.http.common;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-    
+
     public HttpProtocolHeaderFilterStrategy() {
-        initialize();  
+        initialize();
     }
 
     // Just add the http headers here 
     protected void initialize() {
         getInFilter().add("host");
-        
+
         getInFilter().add("content-encoding");
         getInFilter().add("content-language");
         getInFilter().add("content-location");
@@ -35,7 +35,7 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         getInFilter().add("content-length");
         getInFilter().add("content-type");
         getInFilter().add("content-range");
-        
+
         getInFilter().add("dav");
         getInFilter().add("depth");
         getInFilter().add("destination");
@@ -64,12 +64,12 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         getInFilter().add("status-uri");
         getInFilter().add("te");
         getInFilter().add("timeout");
-      
+
         getInFilter().add("user-agent");
         getInFilter().add("vary");
-  
+
         getInFilter().add("www-authenticate");
-        
+
         // Add the filter for the Generic Message header
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
         getInFilter().add("cache-control");
@@ -81,7 +81,7 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         getInFilter().add("upgrade");
         getInFilter().add("via");
         getInFilter().add("warning");
-               
+
         setLowerCase(true);
     }
 }

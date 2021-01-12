@@ -43,10 +43,12 @@ public interface IgniteSetEndpointBuilderFactory {
          * options.
          * 
          * The option is a:
-         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.CollectionConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder configuration(Object configuration) {
             doSetProperty("configuration", configuration);
@@ -58,10 +60,12 @@ public interface IgniteSetEndpointBuilderFactory {
          * options.
          * 
          * The option will be converted to a
-         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.CollectionConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder configuration(String configuration) {
             doSetProperty("configuration", configuration);
@@ -78,10 +82,13 @@ public interface IgniteSetEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -99,10 +106,14 @@ public interface IgniteSetEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -116,10 +127,12 @@ public interface IgniteSetEndpointBuilderFactory {
          * RETAIN_ALL, ARRAY.The set operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.set.IgniteSetOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder operation(IgniteSetOperation operation) {
             doSetProperty("operation", operation);
@@ -132,10 +145,12 @@ public interface IgniteSetEndpointBuilderFactory {
          * RETAIN_ALL, ARRAY.The set operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.set.IgniteSetOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -145,10 +160,13 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -159,10 +177,14 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -173,10 +195,13 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -187,10 +212,14 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -209,41 +238,16 @@ public interface IgniteSetEndpointBuilderFactory {
             return (IgniteSetEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIgniteSetEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIgniteSetEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteSetEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -253,10 +257,14 @@ public interface IgniteSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteSetEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -295,6 +303,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * The set name.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder igniteSet(String path) {
             return IgniteSetEndpointBuilderFactory.endpointBuilder("ignite-set", path);
@@ -315,6 +324,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder igniteSet(
                 String componentName,

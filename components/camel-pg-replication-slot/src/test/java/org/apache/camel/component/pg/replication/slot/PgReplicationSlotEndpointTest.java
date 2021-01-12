@@ -69,6 +69,6 @@ public class PgReplicationSlotEndpointTest {
     public void testParsingBadUri() {
         PgReplicationSlotComponent component = mock(PgReplicationSlotComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> new PgReplicationSlotEndpoint("pg-replication-slot:/database/slot", component));
+                () -> new PgReplicationSlotEndpoint("pg-replication-slot:/database/slot", component));
     }
 }

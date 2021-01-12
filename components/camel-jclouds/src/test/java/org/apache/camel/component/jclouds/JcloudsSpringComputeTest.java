@@ -41,7 +41,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint result;
-    
+
     @EndpointInject("mock:resultlist")
     protected MockEndpoint resultlist;
 
@@ -123,7 +123,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
     }
 
-
     @Test
     public void testCreateAndListWithPredicates() throws InterruptedException {
         result.expectedMessageCount(6);
@@ -161,7 +160,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
             }
         }
     }
-    
+
     @Test
     public void testCreateAndRebootNode() throws InterruptedException {
         result.expectedMessageCount(1);
@@ -181,7 +180,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
             }
         }
     }
-    
+
     @Test
     public void testCreateAndSuspendNode() throws InterruptedException {
         result.expectedMessageCount(1);
@@ -201,7 +200,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
             }
         }
     }
-    
+
     @Test
     public void testCreateSuspendAndResumeNode() throws InterruptedException {
         result.expectedMessageCount(1);
@@ -220,7 +219,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
                 }
             }
         }
-    }   
+    }
 
     @SuppressWarnings("unchecked")
     @Disabled("For now not possible to combine stub provider with ssh module, required for runScript")
@@ -229,7 +228,8 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         Map<String, Object> runScriptHeaders = new HashMap<>();
         runScriptHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RUN_SCRIPT);
 
-        Set<? extends NodeMetadata> nodeMetadatas = (Set<? extends NodeMetadata>) template.requestBodyAndHeaders("direct:in-out", null, createHeaders("1", "default"));
+        Set<? extends NodeMetadata> nodeMetadatas = (Set<? extends NodeMetadata>) template
+                .requestBodyAndHeaders("direct:in-out", null, createHeaders("1", "default"));
         assertEquals(1, nodeMetadatas.size(), "There should be a node running");
         for (NodeMetadata nodeMetadata : nodeMetadatas) {
             runScriptHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
@@ -237,7 +237,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
             template.sendBodyAndHeaders("direct:in-out", null, destroyHeaders(nodeMetadata.getId(), null));
         }
     }
-
 
     /**
      * Returns a {@Map} with the create headers.
@@ -252,7 +251,6 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         createHeaders.put(JcloudsConstants.GROUP, group);
         return createHeaders;
     }
-
 
     /**
      * Returns a {@Map} with the destroy headers.
@@ -295,7 +293,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
         return listHeaders;
     }
-    
+
     /**
      * Returns a {@Map} with the reboot headers.
      *
@@ -313,7 +311,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
         return rebootHeaders;
     }
-    
+
     /**
      * Returns a {@Map} with the suspend headers.
      *
@@ -331,7 +329,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
         return rebootHeaders;
     }
-    
+
     /**
      * Returns a {@Map} with the suspend headers.
      *

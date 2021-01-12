@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't
- * require the HAPI library). The message format can be java.lang.String.
+ * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't require the HAPI library). The message
+ * format can be java.lang.String.
  */
 public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
@@ -45,7 +45,8 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         // send plain hello world as String
-        Object out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World", String.class);
+        Object out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World",
+                String.class);
 
         assertMockEndpointsSatisfied();
 

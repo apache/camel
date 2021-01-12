@@ -50,8 +50,8 @@ public class NettyHttpMuteExceptionTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?muteException=true")
-                    .to("mock:input")
-                    .throwException(new IllegalArgumentException("Camel cannot do this"));
+                        .to("mock:input")
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

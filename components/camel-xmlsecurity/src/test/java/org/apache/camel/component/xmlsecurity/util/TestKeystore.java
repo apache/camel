@@ -33,7 +33,6 @@ public final class TestKeystore {
         // helper class
     }
 
- 
     public static KeyAccessor getKeyAccessor(String alias) throws Exception {
 
         DefaultKeyAccessor accessor = new DefaultKeyAccessor();
@@ -57,7 +56,8 @@ public final class TestKeystore {
     public static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
 
         KeyStore ks = KeyStore.getInstance("JKS");
-        InputStream is = TestKeystore.class.getClassLoader().getResourceAsStream("org/apache/camel/component/xmlsecurity/keystore.jks");
+        InputStream is = TestKeystore.class.getClassLoader()
+                .getResourceAsStream("org/apache/camel/component/xmlsecurity/keystore.jks");
         ks.load(is, null);
 
         return ks;

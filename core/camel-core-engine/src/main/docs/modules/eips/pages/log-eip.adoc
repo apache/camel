@@ -2,7 +2,7 @@
 = Log EIP
 :docTitle: Log
 :description: Logs the defined message to the logger
-:since: 
+:since:
 :supportLevel: Stable
 
 How can I log the processing of a xref:message.adoc[Message]?
@@ -52,7 +52,7 @@ Which will construct a String message at runtime using the Simple language. The 
 ====
 *Logging message body with streamed messages:*
 
-If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this FAQ. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
+If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this xref:manual:faq:why-is-my-message-body-empty.adoc[FAQ]. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
 ====
 
 The log DSL have overloaded methods to set the logging level and/or name as well.
@@ -113,7 +113,7 @@ Since Camel *2.12.4/2.13.1* it is possible to reference logger instance. For exa
 <bean id="myLogger" class="org.slf4j.LoggerFactory" factory-method="getLogger" xmlns="http://www.springframework.org/schema/beans">
     <constructor-arg value="com.mycompany.mylogger" />
 </bean>
- 
+
 <route id="moo" xmlns="http://camel.apache.org/schema/spring">
     <from uri="direct:moo"/>
     <log message="Me Got ${body}" loggingLevel="INFO" loggerRef="myLogger"/>

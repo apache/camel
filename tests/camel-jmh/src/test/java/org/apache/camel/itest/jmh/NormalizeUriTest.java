@@ -42,22 +42,22 @@ public class NormalizeUriTest {
     @Test
     public void launchBenchmark() throws Exception {
         Options opt = new OptionsBuilder()
-            // Specify which benchmarks to run.
-            // You can be more specific if you'd like to run only one benchmark per test.
-            .include(this.getClass().getName() + ".*")
-            // Set the following options as needed
-            .mode(Mode.All)
-            .timeUnit(TimeUnit.MICROSECONDS)
-            .warmupTime(TimeValue.seconds(1))
-            .warmupIterations(2)
-            .measurementTime(TimeValue.seconds(1))
-            .measurementIterations(2)
-            .threads(2)
-            .forks(1)
-            .shouldFailOnError(true)
-            .shouldDoGC(false)
-            .measurementBatchSize(100000)
-            .build();
+                // Specify which benchmarks to run.
+                // You can be more specific if you'd like to run only one benchmark per test.
+                .include(this.getClass().getName() + ".*")
+                // Set the following options as needed
+                .mode(Mode.All)
+                .timeUnit(TimeUnit.MICROSECONDS)
+                .warmupTime(TimeValue.seconds(1))
+                .warmupIterations(2)
+                .measurementTime(TimeValue.seconds(1))
+                .measurementIterations(2)
+                .threads(2)
+                .forks(1)
+                .shouldFailOnError(true)
+                .shouldDoGC(false)
+                .measurementBatchSize(100000)
+                .build();
 
         new Runner(opt).run();
     }
@@ -122,14 +122,18 @@ public class NormalizeUriTest {
         bh.consume(URISupport.normalizeUri("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us@r"));
         bh.consume(URISupport.normalizeUri("ftp://us@r:t%st@localhost:21000/tmp3/camel?foo=us@r"));
         bh.consume(URISupport.normalizeUri("ftp://us@r:t%25st@localhost:21000/tmp3/camel?foo=us@r"));
-        bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat"));
-        bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat"));
-        bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat"));
+        bh.consume(URISupport
+                .normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat"));
+        bh.consume(URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat"));
+        bh.consume(URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat"));
     }
 
     @Benchmark
     public void sorting(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
-        bh.consume(URISupport.normalizeUri("log:foo?zzz=123&xxx=222&hhh=444&aaa=tru&d=yes&cc=no&Camel=awesome&foo.hey=bar&foo.bar=blah"));
+        bh.consume(URISupport
+                .normalizeUri("log:foo?zzz=123&xxx=222&hhh=444&aaa=tru&d=yes&cc=no&Camel=awesome&foo.hey=bar&foo.bar=blah"));
     }
 
 }

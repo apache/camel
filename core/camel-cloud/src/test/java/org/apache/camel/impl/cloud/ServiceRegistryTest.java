@@ -41,7 +41,6 @@ public class ServiceRegistryTest extends ContextTestSupport {
         return false;
     }
 
-
     // *********************
     // Tests
     // *********************
@@ -53,17 +52,16 @@ public class ServiceRegistryTest extends ContextTestSupport {
         final int port = 9090;
 
         context.addRouteDefinition(
-            new RouteDefinition()
-                .from("direct:start")
-                .routeGroup(serviceName)
-                .routeId(serviceId)
-                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
-                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
-                .routeProperty("service.meta1", "meta1")
-                .routeProperty("meta2", "meta2")
-                .routePolicy(new ServiceRegistrationRoutePolicy())
-                .to("mock:end")
-        );
+                new RouteDefinition()
+                        .from("direct:start")
+                        .routeGroup(serviceName)
+                        .routeId(serviceId)
+                        .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                        .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                        .routeProperty("service.meta1", "meta1")
+                        .routeProperty("meta2", "meta2")
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
+                        .to("mock:end"));
 
         InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
 
@@ -96,19 +94,18 @@ public class ServiceRegistryTest extends ContextTestSupport {
         final int port = 9090;
 
         context.addRouteDefinition(
-            new RouteDefinition()
-                .from("direct:start")
-                .routeGroup("service-name")
-                .routeId("service-id")
-                .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
-                .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
-                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
-                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
-                .routeProperty("service.meta1", "meta1")
-                .routeProperty("meta2", "meta2")
-                .routePolicy(new ServiceRegistrationRoutePolicy())
-                .to("mock:end")
-        );
+                new RouteDefinition()
+                        .from("direct:start")
+                        .routeGroup("service-name")
+                        .routeId("service-id")
+                        .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
+                        .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
+                        .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                        .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                        .routeProperty("service.meta1", "meta1")
+                        .routeProperty("meta2", "meta2")
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
+                        .to("mock:end"));
 
         InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
 
@@ -145,17 +142,16 @@ public class ServiceRegistryTest extends ContextTestSupport {
         final int port = 9090;
 
         context.addRouteDefinition(
-            new RouteDefinition()
-                .from("direct:start")
-                .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
-                .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
-                .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
-                .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
-                .routeProperty("service.meta1", "meta1")
-                .routeProperty("meta2", "meta2")
-                .routePolicy(new ServiceRegistrationRoutePolicy())
-                .to("mock:end")
-        );
+                new RouteDefinition()
+                        .from("direct:start")
+                        .routeProperty(ServiceDefinition.SERVICE_META_NAME, serviceName)
+                        .routeProperty(ServiceDefinition.SERVICE_META_ID, serviceId)
+                        .routeProperty(ServiceDefinition.SERVICE_META_HOST, "localhost")
+                        .routeProperty(ServiceDefinition.SERVICE_META_PORT, "" + port)
+                        .routeProperty("service.meta1", "meta1")
+                        .routeProperty("meta2", "meta2")
+                        .routePolicy(new ServiceRegistrationRoutePolicy())
+                        .to("mock:end"));
 
         InMemoryServiceRegistry sr = new InMemoryServiceRegistry();
 

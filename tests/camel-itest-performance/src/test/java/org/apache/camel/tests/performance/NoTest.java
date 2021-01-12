@@ -16,7 +16,6 @@
  */
 package org.apache.camel.tests.performance;
 
-import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 
 public class NoTest {

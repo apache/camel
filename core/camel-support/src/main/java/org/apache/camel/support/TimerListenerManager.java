@@ -32,11 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link TimerListener} manager which triggers the
- * {@link org.apache.camel.TimerListener} listeners once every second.
+ * A {@link TimerListener} manager which triggers the {@link org.apache.camel.TimerListener} listeners once every
+ * second.
  * <p/>
- * Also ensure when adding and remove listeners, that they are correctly removed to avoid
- * leaking memory.
+ * Also ensure when adding and remove listeners, that they are correctly removed to avoid leaking memory.
  *
  * @see TimerListener
  * @see org.apache.camel.management.ManagedLoadTimer
@@ -98,7 +97,8 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
                 listener.onTimer();
             } catch (Throwable e) {
                 // ignore
-                LOG.debug("Error occurred during onTimer for TimerListener: " + listener + ". This exception will be ignored.", e);
+                LOG.debug("Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
+                        listener, e);
             }
         }
     }
@@ -106,8 +106,8 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
     /**
      * Adds the listener.
      * <p/>
-     * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener
-     * to ensure that we can remove the same listener again, when invoking remove.
+     * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener to ensure that
+     * we can remove the same listener again, when invoking remove.
      * 
      * @param listener listener
      */
@@ -119,8 +119,8 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
     /**
      * Removes the listener.
      * <p/>
-     * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener
-     * to ensure that we can remove the same listener again, when invoking remove.
+     * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener to ensure that
+     * we can remove the same listener again, when invoking remove.
      *
      * @param listener listener.
      */
@@ -157,4 +157,3 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
         listeners.clear();
     }
 }
-

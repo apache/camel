@@ -115,14 +115,14 @@ public class IncomingSticker {
     @Override
     public String toString() {
         return "IncomingSticker{"
-            + "fileId='" + fileId + '\''
-            + ", width=" + width
-            + ", height=" + height
-            + ", isAnimated=" + isAnimated
-            + ", thumb=" + thumb
-            + ", emoji='" + emoji + '\''
-            + ", setName='" + setName + '\''
-            + ", maskPosition=" + maskPosition
-            + '}';
+               + "fileId='" + fileId + '\''
+               + ", width=" + width
+               + ", height=" + height
+               + ", isAnimated=" + isAnimated
+               + ", thumb=" + thumb
+               + ", emoji='" + emoji + '\''
+               + ", setName='" + setName + '\''
+               + ", maskPosition=" + maskPosition
+               + '}';
     }
 }

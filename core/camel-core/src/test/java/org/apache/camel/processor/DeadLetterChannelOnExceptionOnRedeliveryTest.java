@@ -27,8 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for testing possibility to modify exchange before redelivering
- * specific per on exception
+ * Unit test for testing possibility to modify exchange before redelivering specific per on exception
  */
 public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSupport {
 
@@ -72,10 +71,10 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
                 // special
                 // code before the redeliver attempt
                 onException(IOException.class)
-                    // try to redeliver at most 3 times
-                    .maximumRedeliveries(3)
-                    // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0).onRedelivery(new MyIORedeliverProcessor());
+                        // try to redeliver at most 3 times
+                        .maximumRedeliveries(3)
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0).onRedelivery(new MyIORedeliverProcessor());
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
@@ -83,8 +82,8 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).onRedelivery(new MyRedeliverProcessor())
-                    // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0L));
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0L));
                 // END SNIPPET: e2
 
                 from("direct:start").process(new ThrowExceptionProcessor()).to("mock:result");

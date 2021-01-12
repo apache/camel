@@ -34,7 +34,7 @@ public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     protected String getMessageId(Exchange exchange) {
-        return (String)exchange.getIn().getHeader(JMS_MESSAGE_ID);
+        return (String) exchange.getIn().getHeader(JMS_MESSAGE_ID);
     }
 
 }

@@ -49,11 +49,9 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 
 /**
- * Implementation of {@link AggregationRepository} using Cassandra table to
- * store exchanges. Advice: use LeveledCompaction for this table and tune
- * read/write consistency levels. Warning: Cassandra is not the best tool for
- * queuing use cases See:
- * http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
+ * Implementation of {@link AggregationRepository} using Cassandra table to store exchanges. Advice: use
+ * LeveledCompaction for this table and tune read/write consistency levels. Warning: Cassandra is not the best tool for
+ * queuing use cases See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
 public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
     /**
@@ -83,7 +81,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     /**
      * Primary key columns
      */
-    private String[] pkColumns = {"KEY"};
+    private String[] pkColumns = { "KEY" };
     /**
      * Exchange marshaller/unmarshaller
      */
@@ -184,7 +182,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
             ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
-            Object[] cqlParams = concat(idValues, new Object[] {exchange.getExchangeId(), marshalledExchange});
+            Object[] cqlParams = concat(idValues, new Object[] { exchange.getExchangeId(), marshalledExchange });
             getSession().execute(insertStatement.bind(cqlParams));
             return exchange;
         } catch (IOException iOException) {
@@ -267,21 +265,21 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         Object[] idValues = getPKValues(key);
-        LOGGER.debug("Deleting key {}", (Object)idValues);
+        LOGGER.debug("Deleting key {}", (Object) idValues);
         getSession().execute(deleteStatement.bind(idValues));
     }
 
     // -------------------------------------------------------------------------
     private void initSelectKeyIdStatement() {
-        Select select = generateSelect(table, new String[] {getKeyColumn(), exchangeIdColumn}, // Key
-                                                                                               // +
-                                                                                               // Exchange
-                                                                                               // Id
-                                                                                               // columns
-                                       pkColumns, pkColumns.length - 1); // Where
-                                                                         // fixed
-                                                                         // PK
-                                                                         // columns
+        Select select = generateSelect(table, new String[] { getKeyColumn(), exchangeIdColumn }, // Key
+                // +
+                // Exchange
+                // Id
+                // columns
+                pkColumns, pkColumns.length - 1); // Where
+                                                 // fixed
+                                                 // PK
+                                                 // columns
         SimpleStatement statement = applyConsistencyLevel(select.build(), readConsistencyLevel);
         LOGGER.debug("Generated Select keys {}", statement);
         selectKeyIdStatement = getSession().prepare(statement);

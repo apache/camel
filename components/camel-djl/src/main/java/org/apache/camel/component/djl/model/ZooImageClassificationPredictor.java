@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.djl.model;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-
 import ai.djl.Application;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.Classifications;
+import ai.djl.modality.cv.Image;
+import ai.djl.modality.cv.ImageFactory;
 import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
@@ -42,17 +38,17 @@ import org.slf4j.LoggerFactory;
 public class ZooImageClassificationPredictor extends AbstractPredictor {
     private static final Logger LOG = LoggerFactory.getLogger(ZooImageClassificationPredictor.class);
 
-    private final ZooModel<BufferedImage, Classifications> model;
+    private final ZooModel<Image, Classifications> model;
 
     public ZooImageClassificationPredictor(String artifactId) throws Exception {
-        Criteria<BufferedImage, Classifications> criteria =
-                Criteria.builder()
-                        .optApplication(Application.CV.IMAGE_CLASSIFICATION)
-                        .setTypes(BufferedImage.class, Classifications.class)
-                        .optArtifactId(artifactId)
-                        .optProgress(new ProgressBar())
-                        .build();
+        Criteria<Image, Classifications> criteria = Criteria.builder()
+                .optApplication(Application.CV.IMAGE_CLASSIFICATION)
+                .setTypes(Image.class, Classifications.class)
+                .optArtifactId(artifactId)
+                .optProgress(new ProgressBar())
+                .build();
         this.model = ModelZoo.loadModel(criteria);
+        //        model.save(Paths.get("src/test/resources/models/mnist"), "mlp");
     }
 
     @Override
@@ -74,7 +70,8 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
 
     public Map<String, Float> classify(File input) throws Exception {
         try {
-            return classify(ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+            return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
@@ -83,18 +80,20 @@ public class ZooImageClassificationPredictor extends AbstractPredictor {
 
     public Map<String, Float> classify(InputStream input) throws Exception {
         try {
-            return classify(ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(input);
+            return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
         }
     }
 
-    public Map<String, Float> classify(BufferedImage input) throws Exception {
-        try (Predictor<BufferedImage, Classifications> predictor = model.newPredictor()) {
-            Classifications classifications = predictor.predict(input);
+    public Map<String, Float> classify(Image image) throws Exception {
+        try (Predictor<Image, Classifications> predictor = model.newPredictor()) {
+            Classifications classifications = predictor.predict(image);
             List<Classifications.Classification> list = classifications.items();
-            return list.stream().collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
+            return list.stream()
+                    .collect(Collectors.toMap(Classifications.Classification::getClassName, x -> (float) x.getProbability()));
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
             throw new RuntimeException("Could not process input or output", e);

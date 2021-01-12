@@ -4,8 +4,10 @@ package org.apache.camel.component.spark;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SparkEndpoint target = (SparkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "collect": target.setCollect(property(camelContext, boolean.class, value)); return true;
         case "dataframe":
         case "dataFrame": target.setDataFrame(property(camelContext, org.apache.spark.sql.Dataset.class, value)); return true;
@@ -37,25 +37,27 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("collect", boolean.class);
-        answer.put("dataFrame", org.apache.spark.sql.Dataset.class);
-        answer.put("dataFrameCallback", org.apache.camel.component.spark.DataFrameCallback.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("rdd", org.apache.spark.api.java.JavaRDDLike.class);
-        answer.put("rddCallback", org.apache.camel.component.spark.RddCallback.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "collect": return boolean.class;
+        case "dataframe":
+        case "dataFrame": return org.apache.spark.sql.Dataset.class;
+        case "dataframecallback":
+        case "dataFrameCallback": return org.apache.camel.component.spark.DataFrameCallback.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "rdd": return org.apache.spark.api.java.JavaRDDLike.class;
+        case "rddcallback":
+        case "rddCallback": return org.apache.camel.component.spark.RddCallback.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SparkEndpoint target = (SparkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "collect": return target.isCollect();
         case "dataframe":
         case "dataFrame": return target.getDataFrame();
@@ -67,6 +69,15 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rddcallback":
         case "rddCallback": return target.getRddCallback();
         case "synchronous": return target.isSynchronous();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "dataframe":
+        case "dataFrame": return org.apache.spark.sql.Row.class;
         default: return null;
         }
     }

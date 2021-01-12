@@ -332,7 +332,8 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
                         try {
                             clientSocket.close();
                         } catch (Exception ex) {
-                            log.warn("Exception encountered closing socket after receiving END_OF_STREAM while waiting for START_OF_BLOCK");
+                            log.warn(
+                                    "Exception encountered closing socket after receiving END_OF_STREAM while waiting for START_OF_BLOCK");
                         }
                         return "";
                     } else {
@@ -365,7 +366,8 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
             if (0 < acknowledgement.length()) {
                 log.error("Timeout waiting for acknowledgement", timeoutEx);
             } else {
-                log.error("Timeout while reading acknowledgement\n" + acknowledgement.toString().replace('\r', '\n'), timeoutEx);
+                log.error("Timeout while reading acknowledgement\n" + acknowledgement.toString().replace('\r', '\n'),
+                        timeoutEx);
             }
             throw new MllpJUnitResourceTimeoutException("Timeout while reading acknowledgement", timeoutEx);
         } catch (IOException e) {
@@ -424,7 +426,8 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
         return receiveFramedData();
     }
 
-    public String sendMessageAndWaitForAcknowledgement(String hl7Data, int acknwoledgementTimeout) throws SocketException, SocketTimeoutException {
+    public String sendMessageAndWaitForAcknowledgement(String hl7Data, int acknwoledgementTimeout)
+            throws SocketException, SocketTimeoutException {
         sendFramedData(hl7Data);
         return receiveFramedData(acknwoledgementTimeout);
     }

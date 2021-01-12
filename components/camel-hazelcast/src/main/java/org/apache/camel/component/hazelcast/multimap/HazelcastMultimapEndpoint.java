@@ -29,10 +29,12 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed multimap.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-multimap", title = "Hazelcast Multimap", syntax = "hazelcast-multimap:cacheName", category = {Category.CACHE, Category.DATAGRID})
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-multimap", title = "Hazelcast Multimap",
+             syntax = "hazelcast-multimap:cacheName", category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastMultimapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastMultimapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {
+    public HazelcastMultimapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,
+                                     HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.multimap);
     }

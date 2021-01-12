@@ -32,8 +32,6 @@ public enum BoxApiName implements ApiName {
     USERS("users");
 
 
-    private static final BoxApiName[] VALUES = values();
-    
     private final String name;
 
     private BoxApiName(String name) {
@@ -45,12 +43,4 @@ public enum BoxApiName implements ApiName {
         return name;
     }
 
-    public static BoxApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

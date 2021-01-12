@@ -49,8 +49,8 @@ public class MyBatisSelectListTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:selectAllAccounts?statementType=SelectList")
-                    .to("mock:result");
+                        .to("mybatis:selectAllAccounts?statementType=SelectList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

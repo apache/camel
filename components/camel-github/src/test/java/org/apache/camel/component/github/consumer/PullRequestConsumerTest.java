@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.User;
@@ -37,14 +36,12 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
 
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
-                from("github://pullRequest?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo")
+                from("github://pullRequest?repoOwner=anotherguy&repoName=somerepo")
                         .process(new MockPullRequestProcessor())
                         .to(mockResultEndpoint);
             }
         };
     }
-
 
     @Test
     public void pullRequestTest() throws Exception {
@@ -68,7 +65,8 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             pullRequest.getHtmlUrl();
             pullRequest.getUser().getLogin();
             pullRequest.getUser().getHtmlUrl();
-            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From " + pullRequestUser.getLogin());
+            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From "
+                      + pullRequestUser.getLogin());
         }
     }
 }

@@ -26,8 +26,10 @@ public class ComponentVerifierTest {
 
     @Test
     public void testGetErrorDetails() {
-        VerificationError error = ResultErrorBuilder.withCodeAndDescription(VerificationError.asCode("test_code"), "test error desc")
-            .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1").detail(VerificationError.HttpAttribute.HTTP_CODE, "test_detail_2").build();
+        VerificationError error
+                = ResultErrorBuilder.withCodeAndDescription(VerificationError.asCode("test_code"), "test error desc")
+                        .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1")
+                        .detail(VerificationError.HttpAttribute.HTTP_CODE, "test_detail_2").build();
 
         assertEquals("test_detail_1", error.getDetail(VerificationError.asAttribute("test_attr_1")));
         assertEquals("test_detail_1", error.getDetail("test_attr_1"));

@@ -68,7 +68,8 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         LOG.info(payload);
 
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
+        assertTrue(payload.contains(
+                "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
         assertTrue(payload.contains("<firstName>Christian</firstName>"));
         assertTrue(payload.contains("<lastName>Mueller</lastName>"));
         assertTrue(payload.contains("<age>36</age>"));
@@ -83,15 +84,15 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         mockUnmarshall.expectedMessageCount(testCount);
 
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-            .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
-            .append("<firstName>Christian</firstName>")
-            .append("<lastName>Mueller</lastName>")
-            .append("<age>36</age>")
-            .append("<address>")
-            .append("<ns2:addressLine1>Hauptstr. 1; 01129 Entenhausen</ns2:addressLine1>")
-            .append("</address>")
-            .append("</person>")
-            .toString();
+                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
+                .append("<firstName>Christian</firstName>")
+                .append("<lastName>Mueller</lastName>")
+                .append("<age>36</age>")
+                .append("<address>")
+                .append("<ns2:addressLine1>Hauptstr. 1; 01129 Entenhausen</ns2:addressLine1>")
+                .append("</address>")
+                .append("</person>")
+                .toString();
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < testCount; i++) {
@@ -117,12 +118,12 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
 
                 from("seda:marshall?concurrentConsumers=" + concurrencyLevel)
-                    .marshal(jaxbDataFormat)
-                    .to("mock:marshall");
+                        .marshal(jaxbDataFormat)
+                        .to("mock:marshall");
 
                 from("seda:unmarshall?concurrentConsumers=" + concurrencyLevel)
-                    .unmarshal(jaxbDataFormat)
-                    .to("mock:unmarshall");
+                        .unmarshal(jaxbDataFormat)
+                        .to("mock:unmarshall");
             }
         };
     }

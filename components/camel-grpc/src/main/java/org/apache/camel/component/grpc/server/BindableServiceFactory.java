@@ -20,9 +20,9 @@ import io.grpc.BindableService;
 import org.apache.camel.component.grpc.GrpcConsumer;
 
 /**
- * A factory interface for generating and instantiating a gRPC BindableService. Provides the means of
- * generating a BindableService in a customized way. The default implementation uses Javassist but other runtimes
- * such as Quarkus may prefer, or need an alternative.
+ * A factory interface for generating and instantiating a gRPC BindableService. Provides the means of generating a
+ * BindableService in a customized way. The default implementation uses Javassist but other runtimes such as Quarkus may
+ * prefer, or need an alternative.
  */
 public interface BindableServiceFactory {
 

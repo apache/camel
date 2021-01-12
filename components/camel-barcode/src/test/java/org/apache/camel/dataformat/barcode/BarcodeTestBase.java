@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BarcodeTestBase extends CamelTestSupport {
 
     protected static final String MSG = "This is a testmessage!";
-    
+
     protected static final String PATH = "target/out";
     protected static final String FILE_ENDPOINT = "file:" + PATH;
 
@@ -81,7 +81,7 @@ public class BarcodeTestBase extends CamelTestSupport {
 
         FileUtil.deleteFile(in);
     }
-    
+
     private void checkFormat(File file, BarcodeFormat format) throws IOException {
         Reader reader = new MultiFormatReader();
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(file))));
@@ -91,10 +91,10 @@ public class BarcodeTestBase extends CamelTestSupport {
         } catch (ReaderException ex) {
             throw new IOException(ex);
         }
-        
+
         assertEquals(format, result.getBarcodeFormat());
     }
-    
+
     private void checkType(File file, String type) throws IOException {
         ImageInputStream iis = ImageIO.createImageInputStream(file);
         ImageReader reader = ImageIO.getImageReaders(iis).next();

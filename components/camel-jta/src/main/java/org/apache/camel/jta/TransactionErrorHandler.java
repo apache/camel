@@ -19,7 +19,6 @@ package org.apache.camel.jta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledExecutorService;
 
 import javax.transaction.TransactionRolledbackException;
 
@@ -32,7 +31,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
+import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.ExchangeHelper;
@@ -43,54 +42,48 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Does transactional execution according given policy. This class is based on
- * {@link org.apache.camel.spring.spi.TransactionErrorHandler} excluding
- * redelivery functionality. In the Spring implementation redelivering is done
- * within the transaction which is not appropriate in JTA since every error
- * breaks the current transaction.
+ * org.apache.camel.spring.spi.TransactionErrorHandler excluding redelivery functionality. In the Spring implementation
+ * redelivering is done within the transaction which is not appropriate in JTA since every error breaks the current
+ * transaction.
  */
 public class TransactionErrorHandler extends ErrorHandlerSupport
         implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandler.class);
 
+    protected final CamelContext camelContext;
     protected final Processor output;
-
     protected volatile boolean preparingShutdown;
-
-    private ExceptionPolicyStrategy exceptionPolicy;
-
     private JtaTransactionPolicy transactionPolicy;
-
     private final String transactionKey;
-
     private final LoggingLevel rollbackLoggingLevel;
 
     /**
      * Creates the transaction error handler.
      *
-     * @param camelContext
-     *            the camel context
-     * @param output
-     *            outer processor that should use this default error handler
-     * @param exceptionPolicyStrategy
-     *            strategy for onException handling
-     * @param transactionPolicy
-     *            the transaction policy
-     * @param executorService
-     *            the {@link java.util.concurrent.ScheduledExecutorService} to
-     *            be used for redelivery thread pool. Can be <tt>null</tt>.
-     * @param rollbackLoggingLevel
-     *            logging level to use for logging transaction rollback occurred
+     * @param camelContext         the camel context
+     * @param output               outer processor that should use this default error handler
+     * @param transactionPolicy    the transaction policy
+     * @param rollbackLoggingLevel logging level to use for logging transaction rollback occurred
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output,
-            ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
-            ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel) {
+                                   JtaTransactionPolicy transactionPolicy, LoggingLevel rollbackLoggingLevel) {
+        this.camelContext = camelContext;
         this.output = output;
         this.transactionPolicy = transactionPolicy;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionPolicy);
+    }
 
-        setExceptionPolicy(exceptionPolicyStrategy);
+    @Override
+    public ErrorHandler clone(Processor output) {
+        TransactionErrorHandler answer = new TransactionErrorHandler(
+                camelContext, output, transactionPolicy, rollbackLoggingLevel);
+        // shallow clone is okay as we do not mutate these
+        if (exceptionPolicies != null) {
+            answer.exceptionPolicies = exceptionPolicies;
+        }
+        return answer;
     }
 
     @Override
@@ -167,12 +160,12 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                 Exception cause = exchange.getException();
                 if (cause != null) {
                     LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
-                        + "due exchange was marked for rollbackOnlyLast and caught: ",
-                        transactionKey, redelivered, ids, cause);
+                              + "due exchange was marked for rollbackOnlyLast and caught: ",
+                            transactionKey, redelivered, ids, cause);
                 } else {
                     LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
-                        + "due exchange was marked for rollbackOnlyLast",
-                        transactionKey, redelivered, ids);
+                              + "due exchange was marked for rollbackOnlyLast",
+                            transactionKey, redelivered, ids);
                 }
             }
             // remove caused exception due we was marked as rollback only last
@@ -230,12 +223,10 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     /**
      * Processes the {@link Exchange} using the error handler.
      * <p/>
-     * This implementation will invoke ensure this occurs synchronously, that
-     * means if the async routing engine did kick in, then this implementation
-     * will wait for the task to complete before it continues.
+     * This implementation will invoke ensure this occurs synchronously, that means if the async routing engine did kick
+     * in, then this implementation will wait for the task to complete before it continues.
      *
-     * @param exchange
-     *            the exchange
+     * @param exchange the exchange
      */
     protected void processByErrorHandler(final Exchange exchange) {
         try {
@@ -324,15 +315,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                         transactionKey, redelivered, ids, e.getMessage());
             }
         }
-    }
-
-    @Override
-    public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {
-        this.exceptionPolicy = exceptionPolicy;
-    }
-
-    public ExceptionPolicyStrategy getExceptionPolicy() {
-        return exceptionPolicy;
     }
 
     @Override

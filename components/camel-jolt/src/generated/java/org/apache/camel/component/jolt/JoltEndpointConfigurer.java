@@ -4,8 +4,10 @@ package org.apache.camel.component.jolt;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,6 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "inputtype":
@@ -41,18 +41,25 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("allowTemplateFromHeader", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("inputType", org.apache.camel.component.jolt.JoltInputOutputType.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outputType", org.apache.camel.component.jolt.JoltInputOutputType.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transformDsl", org.apache.camel.component.jolt.JoltTransformType.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "inputtype":
+        case "inputType": return org.apache.camel.component.jolt.JoltInputOutputType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.jolt.JoltInputOutputType.class;
+        case "synchronous": return boolean.class;
+        case "transformdsl":
+        case "transformDsl": return org.apache.camel.component.jolt.JoltTransformType.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -63,8 +70,6 @@ public class JoltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "inputtype":

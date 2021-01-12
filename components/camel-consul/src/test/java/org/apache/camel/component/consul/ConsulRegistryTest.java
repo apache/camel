@@ -24,10 +24,11 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
-import org.junit.jupiter.api.AfterAll;
+import org.apache.camel.test.infra.consul.services.ConsulService;
+import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,10 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Unit test for Camel Registry implementation for Consul
  */
 public class ConsulRegistryTest implements Serializable {
+    @RegisterExtension
+    public static ConsulService consulService = ConsulServiceFactory.createService();
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
-    private static GenericContainer container;
 
     public class ConsulTestClass implements Serializable {
         private static final long serialVersionUID = -4815945688487114891L;
@@ -53,21 +55,13 @@ public class ConsulRegistryTest implements Serializable {
 
     @BeforeAll
     public static void setUp() {
-        container = ConsulTestSupport.consulContainer();
-        container.start();
-
-        registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        container.stop();
+        registry = new ConsulRegistry(consulService.host(), consulService.port());
     }
 
     @Test
     public void storeString() {
         registry.put("stringTestKey", "stringValue");
-        String result = (String)registry.lookupByName("stringTestKey");
+        String result = (String) registry.lookupByName("stringTestKey");
         registry.remove("stringTestKey");
         assertNotNull(result);
         assertEquals("stringValue", result);
@@ -77,7 +71,7 @@ public class ConsulRegistryTest implements Serializable {
     public void overrideExistingKey() {
         registry.put("uniqueKey", "stringValueOne");
         registry.put("uniqueKey", "stringValueTwo");
-        String result = (String)registry.lookupByName("uniqueKey");
+        String result = (String) registry.lookupByName("uniqueKey");
         registry.remove("uniqueKey");
         assertNotNull(result);
         assertEquals("stringValueTwo", result);
@@ -86,7 +80,7 @@ public class ConsulRegistryTest implements Serializable {
     @Test
     public void checkLookupByName() {
         registry.put("namedKey", "namedValue");
-        String result = (String)registry.lookupByName("namedKey");
+        String result = (String) registry.lookupByName("namedKey");
         registry.remove("namedKey");
         assertNotNull(result);
         assertEquals("namedValue", result);
@@ -96,7 +90,7 @@ public class ConsulRegistryTest implements Serializable {
     public void checkFailedLookupByName() {
         registry.put("namedKey", "namedValue");
         registry.remove("namedKey");
-        String result = (String)registry.lookupByName("namedKey");
+        String result = (String) registry.lookupByName("namedKey");
         assertNull(result);
     }
 
@@ -142,7 +136,7 @@ public class ConsulRegistryTest implements Serializable {
     public void storeObject() {
         ConsulTestClass testObject = new ConsulTestClass();
         registry.put("objectTestClass", testObject);
-        ConsulTestClass clone = (ConsulTestClass)registry.lookupByName("objectTestClass");
+        ConsulTestClass clone = (ConsulTestClass) registry.lookupByName("objectTestClass");
         assertEquals(clone.hello("World"), "Hello World");
         registry.remove("objectTestClass");
     }

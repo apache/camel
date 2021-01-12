@@ -37,6 +37,8 @@ public interface ZookeeperComponentBuilderFactory {
      * Category: clustering,management,bigdata
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
+     * 
+     * @return the dsl builder
      */
     static ZookeeperComponentBuilder zookeeper() {
         return new ZookeeperComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface ZookeeperComponentBuilderFactory {
         /**
          * Whether the children of the node should be listed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param listChildren the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder listChildren(boolean listChildren) {
             doSetProperty("listChildren", listChildren);
@@ -63,10 +68,13 @@ public interface ZookeeperComponentBuilderFactory {
         /**
          * The time interval to wait on connection before timing out.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -75,10 +83,13 @@ public interface ZookeeperComponentBuilderFactory {
         /**
          * The time interval to backoff for after an error before retrying.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param backoff the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder backoff(long backoff) {
             doSetProperty("backoff", backoff);
@@ -93,10 +104,13 @@ public interface ZookeeperComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -106,10 +120,13 @@ public interface ZookeeperComponentBuilderFactory {
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param repeat the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder repeat(boolean repeat) {
             doSetProperty("repeat", repeat);
@@ -119,10 +136,13 @@ public interface ZookeeperComponentBuilderFactory {
          * Upon the delete of a znode, should an empty message be send to the
          * consumer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param sendEmptyMessageOnDelete the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder sendEmptyMessageOnDelete(
                 boolean sendEmptyMessageOnDelete) {
@@ -132,10 +152,13 @@ public interface ZookeeperComponentBuilderFactory {
         /**
          * Should the endpoint create the node if it does not currently exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param create the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder create(boolean create) {
             doSetProperty("create", create);
@@ -144,10 +167,13 @@ public interface ZookeeperComponentBuilderFactory {
         /**
          * The create mode that should be used for the newly created node.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: EPHEMERAL
          * Group: producer
+         * 
+         * @param createMode the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder createMode(java.lang.String createMode) {
             doSetProperty("createMode", createMode);
@@ -164,10 +190,13 @@ public interface ZookeeperComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -175,26 +204,36 @@ public interface ZookeeperComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ZookeeperComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ZookeeperComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a shared ZooKeeperConfiguration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.zookeeper.ZooKeeperConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.zookeeper.ZooKeeperConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default ZookeeperComponentBuilder configuration(
                 org.apache.camel.component.zookeeper.ZooKeeperConfiguration configuration) {
@@ -234,7 +273,7 @@ public interface ZookeeperComponentBuilderFactory {
             case "create": getOrCreateConfiguration((ZooKeeperComponent) component).setCreate((boolean) value); return true;
             case "createMode": getOrCreateConfiguration((ZooKeeperComponent) component).setCreateMode((java.lang.String) value); return true;
             case "lazyStartProducer": ((ZooKeeperComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((ZooKeeperComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ZooKeeperComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ZooKeeperComponent) component).setConfiguration((org.apache.camel.component.zookeeper.ZooKeeperConfiguration) value); return true;
             default: return false;
             }

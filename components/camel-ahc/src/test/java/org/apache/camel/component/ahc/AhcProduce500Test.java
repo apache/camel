@@ -55,8 +55,8 @@ public class AhcProduce500Test extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {

@@ -39,14 +39,14 @@ public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTest 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         Object answer = template.requestBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
         assertNotNull(answer);
-        String answerString = new String((byte[])answer);
+        String answerString = new String((byte[]) answer);
         assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
         assertMockEndpointsSatisfied();
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
@@ -62,9 +62,9 @@ public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTest 
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 rest("/users/")
-                    // REST binding converts from JSON to UserPojo
-                    .post("new").type(UserPojo.class)
-                    .route()
+                        // REST binding converts from JSON to UserPojo
+                        .post("new").type(UserPojo.class)
+                        .route()
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class)
                         .to("mock:input");

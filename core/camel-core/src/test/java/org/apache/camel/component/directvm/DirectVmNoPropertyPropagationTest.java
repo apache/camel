@@ -40,9 +40,11 @@ public class DirectVmNoPropertyPropagationTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // Starters.
-                from("direct-vm:start.noprops").setProperty("abc", constant("def")).to("direct-vm:foo.noprops?propagateProperties=false&block=false");
+                from("direct-vm:start.noprops").setProperty("abc", constant("def"))
+                        .to("direct-vm:foo.noprops?propagateProperties=false&block=false");
 
-                from("direct-vm:start.props").setProperty("abc", constant("def")).to("direct-vm:foo.props?propagateProperties=true");
+                from("direct-vm:start.props").setProperty("abc", constant("def"))
+                        .to("direct-vm:foo.props?propagateProperties=true");
 
                 from("direct-vm:start.default").setProperty("abc", constant("def")).to("direct-vm:foo.props");
 

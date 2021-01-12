@@ -37,8 +37,8 @@ public class ThreadsDefaultTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // will use a cached thread pool which can grown/shrink
-                    .threads().to("log:foo").to("mock:result");
+                        // will use a cached thread pool which can grown/shrink
+                        .threads().to("log:foo").to("mock:result");
             }
         };
     }

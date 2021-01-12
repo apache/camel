@@ -34,20 +34,24 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
  *
- * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly
- * into the browser using an AJAX based mechanism.
+ * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly into
+ * the browser using an AJAX based mechanism.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", category = {Category.WEBSOCKET})
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName",
+             category = { Category.WEBSOCKET })
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;
 
     private URI uri;
-    @UriPath(description = "Hostname") @Metadata(required = true)
+    @UriPath(description = "Hostname")
+    @Metadata(required = true)
     private String host;
-    @UriPath(description = "Host port number") @Metadata(required = true)
+    @UriPath(description = "Host port number")
+    @Metadata(required = true)
     private int port;
-    @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.") @Metadata(required = true)
+    @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.")
+    @Metadata(required = true)
     private String channelName;
     @UriParam
     private String baseResource;
@@ -143,9 +147,9 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The root directory for the web resources or classpath. Use the protocol file: or classpath: depending
-     * if you want that the component loads the resource from file system or classpath.
-     * Classpath is required for OSGI deployment where the resources are packaged in the jar
+     * The root directory for the web resources or classpath. Use the protocol file: or classpath: depending if you want
+     * that the component loads the resource from file system or classpath. Classpath is required for OSGI deployment
+     * where the resources are packaged in the jar
      */
     public void setBaseResource(String baseResource) {
         this.baseResource = baseResource;
@@ -156,7 +160,8 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before responding.
+     * The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before
+     * responding.
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
@@ -178,7 +183,8 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in this time.
+     * The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in
+     * this time.
      */
     public void setMaxInterval(int maxInterval) {
         this.maxInterval = maxInterval;
@@ -200,14 +206,16 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If true, the server will accept JSON wrapped in a comment and will generate JSON wrapped in a comment. This is a defence against Ajax Hijacking.
+     * If true, the server will accept JSON wrapped in a comment and will generate JSON wrapped in a comment. This is a
+     * defence against Ajax Hijacking.
      */
     public void setJsonCommented(boolean commented) {
         jsonCommented = commented;
     }
 
     /**
-     * Whether to include the server session headers in the Camel message when creating a Camel Message for incoming requests.
+     * Whether to include the server session headers in the Camel message when creating a Camel Message for incoming
+     * requests.
      */
     public void setSessionHeadersEnabled(boolean enable) {
         this.sessionHeadersEnabled = enable;
@@ -266,8 +274,8 @@ public class CometdEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether to disconnect local sessions after publishing a message to its channel.
-     * Disconnecting local session is needed as they are not swept by default by CometD, and therefore you can run out of memory.
+     * Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is
+     * needed as they are not swept by default by CometD, and therefore you can run out of memory.
      */
     public void setDisconnectLocalSession(boolean disconnectLocalSession) {
         this.disconnectLocalSession = disconnectLocalSession;

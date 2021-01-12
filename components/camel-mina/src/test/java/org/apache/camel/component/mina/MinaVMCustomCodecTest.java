@@ -47,7 +47,8 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
 
-        Object out = template.requestBody(String.format("mina:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
+        Object out = template.requestBody(String.format("mina:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort()),
+                "Hello World");
         assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
@@ -89,7 +90,8 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
+                from(String.format("mina:vm://localhost:%1$s?sync=true&codec=#myCodec", getPort()))
+                        .transform(constant("Bye World")).to("mock:result");
             }
         };
     }
@@ -102,7 +104,7 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
 
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String)message;
+                    String s = (String) message;
                     bb.put(s.getBytes("US-ASCII"));
                     bb.flip();
                     out.write(bb);

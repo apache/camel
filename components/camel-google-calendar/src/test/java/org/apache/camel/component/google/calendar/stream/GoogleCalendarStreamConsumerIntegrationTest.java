@@ -27,7 +27,7 @@ public class GoogleCalendarStreamConsumerIntegrationTest extends AbstractGoogleC
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         Thread.sleep(10000);
-        
+
         assertMockEndpointsSatisfied();
     }
 

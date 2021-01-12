@@ -26,8 +26,6 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 /**
  * Unit test for expression option for file producer.
  */
@@ -50,7 +48,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     @Test
     public void testProducerFileNameHeaderNotEvaluated() {
         if (!isPlatform("windows")) {
-            template.sendBodyAndHeader("file://target/data/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${id}}.txt");
+            template.sendBodyAndHeader("file://target/data/filelanguage", "Hello World", Exchange.FILE_NAME,
+                    "$simple{myfile-${id}}.txt");
             assertFileExists("target/data/filelanguage/$simple{myfile-${id}}.txt");
         }
     }
@@ -64,7 +63,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Test
     public void testProducerDateByHeader() throws Exception {
-        template.sendBodyAndHeader("file://target/data/filelanguage", "Hello World", Exchange.FILE_NAME, simple("myfile-${date:now:yyyyMMdd}.txt"));
+        template.sendBodyAndHeader("file://target/data/filelanguage", "Hello World", Exchange.FILE_NAME,
+                context.resolveLanguage("simple").createExpression("myfile-${date:now:yyyyMMdd}.txt"));
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists("target/data/filelanguage/myfile-" + date + ".txt");
@@ -89,7 +89,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=myfile-${in.header.foo}.txt", "Hello World", "foo", "abc");
+        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=myfile-${in.header.foo}.txt", "Hello World", "foo",
+                "abc");
 
         assertFileExists("target/data/filelanguage/myfile-abc.txt");
     }
@@ -100,7 +101,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
+        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt",
+                "Hello World", "birthday", date);
 
         assertFileExists("target/data/filelanguage/mybirthday-19740420.txt");
     }

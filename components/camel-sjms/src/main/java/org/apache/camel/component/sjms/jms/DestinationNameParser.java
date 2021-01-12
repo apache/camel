@@ -16,32 +16,32 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-/**
- * @author jkorab
- */
-public class DestinationNameParser {
+public final class DestinationNameParser {
 
-    public boolean isTopic(String destinationName) {
+    private DestinationNameParser() {
+    }
+
+    public static boolean isTopic(String destinationName) {
         if (destinationName == null) {
             throw new IllegalArgumentException("destinationName is null");
         }
         return destinationName.startsWith("topic:");
     }
-    
-    public boolean isNamedReplyToTopic(String namedReplyTo, boolean isDestinationTopic) {
-        if (namedReplyTo == null) {
-            throw new IllegalArgumentException("namedReplyTo is null");
+
+    public static boolean isReplyToTopic(String replyTo, boolean isDestinationTopic) {
+        if (replyTo == null) {
+            throw new IllegalArgumentException("replyTo is null");
         }
-        if (namedReplyTo.startsWith("topic:")) {
+        if (replyTo.startsWith("topic:")) {
             return true;
-        } else if (namedReplyTo.startsWith("queue:")) {
+        } else if (replyTo.startsWith("queue:")) {
             return false;
         } else {
             return isDestinationTopic;
         }
     }
 
-    public String getShortName(String destinationName) {
+    public static String getShortName(String destinationName) {
         if (destinationName == null) {
             throw new IllegalArgumentException("destinationName is null");
         }

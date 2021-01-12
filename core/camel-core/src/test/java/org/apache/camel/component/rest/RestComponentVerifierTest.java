@@ -85,7 +85,8 @@ public class RestComponentVerifierTest extends ContextTestSupport {
 
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertEquals(1, result.getErrors().size());
-        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
@@ -99,8 +100,9 @@ public class RestComponentVerifierTest extends ContextTestSupport {
             registerExtension(new ComponentVerifierExtension() {
                 @Override
                 public Result verify(Scope scope, Map<String, Object> parameters) {
-                    return ResultBuilder.withStatusAndScope(RestComponentVerifierExtension.Result.Status.OK, scope).error(ResultErrorHelper.requiresOption("authProxy", parameters))
-                        .build();
+                    return ResultBuilder.withStatusAndScope(RestComponentVerifierExtension.Result.Status.OK, scope)
+                            .error(ResultErrorHelper.requiresOption("authProxy", parameters))
+                            .build();
                 }
             });
         }
@@ -111,16 +113,20 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer(CamelContext camelContext, String host, String verb, String basePath, String uriTemplate, String queryParameters, String consumes,
-                                       String produces, RestConfiguration configuration, Map<String, Object> parameters)
-            throws Exception {
+        public Producer createProducer(
+                CamelContext camelContext, String host, String verb, String basePath, String uriTemplate,
+                String queryParameters, String consumes,
+                String produces, RestConfiguration configuration, Map<String, Object> parameters)
+                throws Exception {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes, String produces,
-                                       RestConfiguration configuration, Map<String, Object> parameters)
-            throws Exception {
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                String consumes, String produces,
+                RestConfiguration configuration, Map<String, Object> parameters)
+                throws Exception {
             throw new UnsupportedOperationException();
         }
     }

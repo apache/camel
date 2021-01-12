@@ -21,10 +21,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-
-
-
-
 public class CamelURIParserTest {
 
     @Test
@@ -122,6 +118,5 @@ public class CamelURIParserTest {
         assertEquals("relative", out2[1]);
         assertEquals(null, out2[2]);
     }
-
 
 }

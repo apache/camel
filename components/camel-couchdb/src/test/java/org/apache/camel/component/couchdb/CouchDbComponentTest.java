@@ -41,7 +41,8 @@ public class CouchDbComponentTest extends CamelTestSupport {
         String uri = "couchdb:http://localhost:5984/db";
         String remaining = "http://localhost:5984/db";
 
-        CouchDbEndpoint endpoint = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint
+                = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertNotNull(endpoint);
     }
 
@@ -59,7 +60,8 @@ public class CouchDbComponentTest extends CamelTestSupport {
         String uri = "couchdb:http://localhost:14/db";
         String remaining = "http://localhost:14/db";
 
-        CouchDbEndpoint endpoint = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint
+                = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertEquals("http", endpoint.getProtocol());
         assertEquals("localhost", endpoint.getHostname());
         assertEquals("db", endpoint.getDatabase());

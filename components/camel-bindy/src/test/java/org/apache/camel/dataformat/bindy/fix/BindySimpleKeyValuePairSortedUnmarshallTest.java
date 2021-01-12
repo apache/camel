@@ -28,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest {
-    
-    
+
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
@@ -39,7 +38,8 @@ public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest
         Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
 
         assertTrue(order.getTrailer().toString().contains("10: 220"));
-        assertTrue(order.toString().contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
+        assertTrue(order.toString()
+                .contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
         assertTrue(order.getHeader().toString().contains("FIX.4.1, 9: 20, 34: 1 , 35: 0, 49: INVMGR, 56: BRKR"));
     }
 

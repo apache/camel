@@ -33,7 +33,7 @@ public class SimpleMainShutdownStrategy implements MainShutdownStrategy {
     private final CountDownLatch latch;
 
     public SimpleMainShutdownStrategy() {
-        this.completed = new AtomicBoolean(false);
+        this.completed = new AtomicBoolean();
         this.latch = new CountDownLatch(1);
     }
 

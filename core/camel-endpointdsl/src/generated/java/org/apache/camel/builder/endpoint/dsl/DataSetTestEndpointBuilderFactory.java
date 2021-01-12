@@ -44,10 +44,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param anyOrder the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder anyOrder(boolean anyOrder) {
             doSetProperty("anyOrder", anyOrder);
@@ -57,10 +60,14 @@ public interface DataSetTestEndpointBuilderFactory {
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param anyOrder the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder anyOrder(String anyOrder) {
             doSetProperty("anyOrder", anyOrder);
@@ -76,10 +83,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param assertPeriod the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder assertPeriod(long assertPeriod) {
             doSetProperty("assertPeriod", assertPeriod);
@@ -95,10 +105,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param assertPeriod the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder assertPeriod(String assertPeriod) {
             doSetProperty("assertPeriod", assertPeriod);
@@ -109,9 +122,12 @@ public interface DataSetTestEndpointBuilderFactory {
          * delimiter is new line based. The delimiter can be a regular
          * expression.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder delimiter(String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -131,10 +147,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param expectedCount the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder expectedCount(int expectedCount) {
             doSetProperty("expectedCount", expectedCount);
@@ -154,10 +173,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param expectedCount the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder expectedCount(String expectedCount) {
             doSetProperty("expectedCount", expectedCount);
@@ -170,10 +192,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder failFast(boolean failFast) {
             doSetProperty("failFast", failFast);
@@ -186,10 +211,14 @@ public interface DataSetTestEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder failFast(String failFast) {
             doSetProperty("failFast", failFast);
@@ -206,10 +235,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -227,10 +259,14 @@ public interface DataSetTestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -241,9 +277,12 @@ public interface DataSetTestEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder reportGroup(int reportGroup) {
             doSetProperty("reportGroup", reportGroup);
@@ -253,9 +292,12 @@ public interface DataSetTestEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder reportGroup(String reportGroup) {
             doSetProperty("reportGroup", reportGroup);
@@ -265,10 +307,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder resultMinimumWaitTime(
                 long resultMinimumWaitTime) {
@@ -279,10 +324,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder resultMinimumWaitTime(
                 String resultMinimumWaitTime) {
@@ -293,10 +341,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder resultWaitTime(long resultWaitTime) {
             doSetProperty("resultWaitTime", resultWaitTime);
@@ -306,10 +357,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder resultWaitTime(String resultWaitTime) {
             doSetProperty("resultWaitTime", resultWaitTime);
@@ -331,10 +385,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder retainFirst(int retainFirst) {
             doSetProperty("retainFirst", retainFirst);
@@ -356,10 +413,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder retainFirst(String retainFirst) {
             doSetProperty("retainFirst", retainFirst);
@@ -381,10 +441,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder retainLast(int retainLast) {
             doSetProperty("retainLast", retainLast);
@@ -406,10 +469,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder retainLast(String retainLast) {
             doSetProperty("retainLast", retainLast);
@@ -419,10 +485,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder sleepForEmptyTest(
                 long sleepForEmptyTest) {
@@ -433,10 +502,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder sleepForEmptyTest(
                 String sleepForEmptyTest) {
@@ -449,10 +521,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * example to use a file endpoint to load a file where each line is an
          * expected message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param split the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder split(boolean split) {
             doSetProperty("split", split);
@@ -464,10 +539,14 @@ public interface DataSetTestEndpointBuilderFactory {
          * example to use a file endpoint to load a file where each line is an
          * expected message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param split the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder split(String split) {
             doSetProperty("split", split);
@@ -476,10 +555,13 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * The timeout to use when polling for message bodies from the URI.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -488,10 +570,13 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * The timeout to use when polling for message bodies from the URI.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -512,10 +597,13 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param copyOnExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetTestEndpointBuilder copyOnExchange(
                 boolean copyOnExchange) {
@@ -526,10 +614,14 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param copyOnExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetTestEndpointBuilder copyOnExchange(
                 String copyOnExchange) {
@@ -537,41 +629,16 @@ public interface DataSetTestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetTestEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -582,10 +649,14 @@ public interface DataSetTestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetTestEndpointBuilder synchronous(
                 String synchronous) {
@@ -611,6 +682,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * messages used for testing
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder datasetTest(String path) {
             return DataSetTestEndpointBuilderFactory.endpointBuilder("dataset-test", path);
@@ -633,6 +705,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder datasetTest(
                 String componentName,

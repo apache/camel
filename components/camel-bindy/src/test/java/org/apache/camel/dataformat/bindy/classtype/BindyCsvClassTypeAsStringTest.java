@@ -115,12 +115,12 @@ public class BindyCsvClassTypeAsStringTest extends CamelTestSupport {
                         .csv();
 
                 from("direct:in")
-                    .marshal(bindy)
-                    .to("mock:in");
+                        .marshal(bindy)
+                        .to("mock:in");
 
                 from("direct:out")
-                    .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
-                    .to("mock:out");
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
+                        .to("mock:out");
 
             }
         };

@@ -33,7 +33,6 @@ import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -42,8 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> (
- * {@link DataFormat}) using Bindy to marshal to and from Fixed Length
+ * Marshal and unmarshal between POJOs and fixed field length format using Camel Bindy
  */
 @Dataformat("bindy-fixed")
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
@@ -160,7 +158,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     private boolean isPreparedList(Object object) {
         if (List.class.isAssignableFrom(object.getClass())) {
             List<?> list = (List<?>) object;
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 // Check first entry, should be enough
                 Object entry = list.get(0);
                 if (Map.class.isAssignableFrom(entry.getClass())) {
@@ -197,7 +195,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             isEolSet = true;
         }
 
-        AtomicInteger count = new AtomicInteger(0);
+        AtomicInteger count = new AtomicInteger();
 
         try {
 
@@ -263,7 +261,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     private String getNextNonEmptyLine(Scanner scanner, AtomicInteger count, boolean isEolSet) {
         String line = "";
-        while (org.apache.camel.util.ObjectHelper.isEmpty(line) && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
+        while (org.apache.camel.util.ObjectHelper.isEmpty(line)
+                && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
             count.incrementAndGet();
             if (!isEolSet) {
                 line = scanner.nextLine();
@@ -293,8 +292,10 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             }
             if ((myLine.length() < factory.recordLength()
                     && !factory.isIgnoreMissingChars()) || (myLine.length() > factory.recordLength())) {
-                throw new java.lang.IllegalArgumentException("Size of the record: " + myLine.length()
-                        + " is not equal to the value provided in the model: " + factory.recordLength());
+                throw new java.lang.IllegalArgumentException(
+                        "Size of the record: " + myLine.length()
+                                                             + " is not equal to the value provided in the model: "
+                                                             + factory.recordLength());
             }
         }
 

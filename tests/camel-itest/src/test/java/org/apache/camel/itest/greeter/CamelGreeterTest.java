@@ -18,21 +18,17 @@ package org.apache.camel.itest.greeter;
 
 import java.util.List;
 
-import javax.xml.ws.Endpoint;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.itest.utils.extensions.GreeterServiceExtension;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -42,40 +38,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @CamelSpringTest
 @ContextConfiguration
 public class CamelGreeterTest {
-    private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
-    
-    private static Endpoint endpoint;
-    
-    private static int port = AvailablePortFinder.getNextAvailable();
-    static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
-        System.setProperty("CamelGreeterTest.port", Integer.toString(port));
-    }
-    
+    @RegisterExtension
+    public static GreeterServiceExtension greeterServiceExtension
+            = GreeterServiceExtension.createExtension("CamelGreeterTest.port");
+
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     @Autowired
     protected CamelContext camelContext;
 
     @EndpointInject("mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
-
-    @BeforeAll
-    public static void startServer() {
-        // Start the Greeter Server
-        Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + port + "/SoapContext/SoapPort";
-        endpoint = Endpoint.publish(address, implementor);
-        LOG.info("The WS endpoint is published! ");
-    }
-
-    @AfterAll
-    public static void stopServer() {
-        // Shutdown the Greeter Server
-        if (endpoint != null) {
-            endpoint.stop();
-            endpoint = null;
-        }
-    }
 
     @Test
     void testMocksAreValid() throws Exception {
@@ -91,10 +65,10 @@ public class CamelGreeterTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals(list.size(), 1, "Should get one message");
+        assertEquals(1, list.size(), "Should get one message");
         for (Exchange exchange : list) {
             String result = (String) exchange.getIn().getBody();
-            assertEquals(result, "Hello Willem", "Get the wrong result ");
+            assertEquals("Hello Willem", result, "Get the wrong result ");
         }
     }
 

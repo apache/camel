@@ -33,7 +33,7 @@ import static org.awaitility.Awaitility.await;
 
 @ContextConfiguration
 public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
-    
+
     @Produce("direct:startSimple")
     protected ProducerTemplate template;
 
@@ -51,7 +51,7 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertDirectoryExists("target/outBoxSimple/"));
     }
-    
+
     @Disabled(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
     @Test
     @DirtiesContext
@@ -66,5 +66,5 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
         String s = sdf.format(new Date());
         return "test-" + s + ".txt";
     }
-    
+
 }

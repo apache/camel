@@ -18,8 +18,6 @@ package org.apache.camel.support;
 
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -68,8 +66,12 @@ public final class EventHelper {
         if (notifiers == null || notifiers.isEmpty()) {
             return false;
         }
-
-        return true;
+        // is there any notifiers that would receive exchange events
+        boolean exchange = false;
+        for (EventNotifier en : notifiers) {
+            exchange |= !en.isIgnoreExchangeEvents();
+        }
+        return exchange;
     }
 
     public static boolean notifyCamelContextInitializing(CamelContext context) {
@@ -104,7 +106,8 @@ public final class EventHelper {
         return notifyCamelContext(context, (ef, ctx) -> ef.createCamelContextStopFailureEvent(ctx, cause));
     }
 
-    private static boolean notifyCamelContext(CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier) {
+    private static boolean notifyCamelContext(
+            CamelContext context, BiFunction<EventFactory, CamelContext, CamelEvent> eventSupplier) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -515,8 +518,9 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
-                                                        boolean deadLetterChannel, String deadLetterUri) {
+    public static boolean notifyExchangeFailureHandling(
+            CamelContext context, Exchange exchange, Processor failureHandler,
+            boolean deadLetterChannel, String deadLetterUri) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -562,8 +566,9 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
-                                                       boolean deadLetterChannel, String deadLetterUri) {
+    public static boolean notifyExchangeFailureHandled(
+            CamelContext context, Exchange exchange, Processor failureHandler,
+            boolean deadLetterChannel, String deadLetterUri) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;

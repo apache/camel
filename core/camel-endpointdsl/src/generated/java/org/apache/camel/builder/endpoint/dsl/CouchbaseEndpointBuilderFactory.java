@@ -50,9 +50,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The bucket to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
+         * 
+         * @param bucket the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder bucket(String bucket) {
             doSetProperty("bucket", bucket);
@@ -61,9 +65,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The collection to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -72,9 +79,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The key to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder key(String key) {
             doSetProperty("key", key);
@@ -83,9 +93,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The scope to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder scope(String scope) {
             doSetProperty("scope", scope);
@@ -100,10 +113,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -119,10 +135,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -132,10 +152,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the consumer Processed strategy to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: none
          * Group: consumer
+         * 
+         * @param consumerProcessedStrategy the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder consumerProcessedStrategy(
                 String consumerProcessedStrategy) {
@@ -145,10 +168,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define if this operation is descending or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param descending the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder descending(boolean descending) {
             doSetProperty("descending", descending);
@@ -157,10 +183,14 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define if this operation is descending or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param descending the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder descending(String descending) {
             doSetProperty("descending", descending);
@@ -169,10 +199,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The design document name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: beer
          * Group: consumer
+         * 
+         * @param designDocumentName the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder designDocumentName(
                 String designDocumentName) {
@@ -180,12 +213,50 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true consumer will return complete document instead data defined
+         * in view.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param fullDocument the value to set
+         * @return the dsl builder
+         */
+        default CouchbaseEndpointConsumerBuilder fullDocument(
+                boolean fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
+         * If true consumer will return complete document instead data defined
+         * in view.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param fullDocument the value to set
+         * @return the dsl builder
+         */
+        default CouchbaseEndpointConsumerBuilder fullDocument(
+                String fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
          * The output limit to use.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder limit(int limit) {
             doSetProperty("limit", limit);
@@ -194,10 +265,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The output limit to use.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder limit(String limit) {
             doSetProperty("limit", limit);
@@ -206,9 +280,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define a range for the end key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param rangeEndKey the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder rangeEndKey(String rangeEndKey) {
             doSetProperty("rangeEndKey", rangeEndKey);
@@ -217,9 +294,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define a range for the start key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param rangeStartKey the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder rangeStartKey(
                 String rangeStartKey) {
@@ -230,10 +310,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -244,10 +327,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -257,10 +344,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the skip to use.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param skip the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder skip(int skip) {
             doSetProperty("skip", skip);
@@ -269,10 +359,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the skip to use.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param skip the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder skip(String skip) {
             doSetProperty("skip", skip);
@@ -281,10 +374,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The view name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: brewery_beers
          * Group: consumer
+         * 
+         * @param viewName the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder viewName(String viewName) {
             doSetProperty("viewName", viewName);
@@ -294,9 +390,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -307,9 +406,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -320,9 +422,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -333,9 +438,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -350,9 +458,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -367,9 +478,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -379,10 +493,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -391,10 +508,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -404,10 +524,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -417,10 +540,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -429,10 +556,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -441,10 +571,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -456,10 +589,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -470,10 +606,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -483,10 +622,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -498,10 +641,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -514,9 +660,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -529,9 +678,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -540,12 +692,32 @@ public interface CouchbaseEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default CouchbaseEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -555,13 +727,17 @@ public interface CouchbaseEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -573,13 +749,16 @@ public interface CouchbaseEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -588,10 +767,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -601,10 +783,14 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -614,10 +800,14 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -627,10 +817,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -640,10 +833,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -654,10 +850,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -667,9 +867,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The password to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -678,9 +881,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The username to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -703,10 +909,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -720,9 +929,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -732,9 +944,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -745,9 +961,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -761,9 +980,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -777,9 +999,12 @@ public interface CouchbaseEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -789,9 +1014,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The additional hosts.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param additionalHosts the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder additionalHosts(
                 String additionalHosts) {
@@ -799,40 +1027,47 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
-        default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointConsumerBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
-        default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointConsumerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
          * Define the operation timeout in milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2500
          * Group: advanced
+         * 
+         * @param queryTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder queryTimeout(
                 long queryTimeout) {
@@ -842,10 +1077,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the operation timeout in milliseconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2500
          * Group: advanced
+         * 
+         * @param queryTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder queryTimeout(
                 String queryTimeout) {
@@ -856,10 +1094,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -870,10 +1111,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -894,9 +1139,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The bucket to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
+         * 
+         * @param bucket the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder bucket(String bucket) {
             doSetProperty("bucket", bucket);
@@ -905,9 +1154,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The collection to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -916,9 +1168,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The key to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder key(String key) {
             doSetProperty("key", key);
@@ -927,9 +1182,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The scope to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder scope(String scope) {
             doSetProperty("scope", scope);
@@ -939,10 +1197,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * Define if we want an autostart Id when we are doing an insert
          * operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param autoStartIdForInserts the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
                 boolean autoStartIdForInserts) {
@@ -953,10 +1214,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * Define if we want an autostart Id when we are doing an insert
          * operation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param autoStartIdForInserts the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
                 String autoStartIdForInserts) {
@@ -974,10 +1239,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -995,10 +1263,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1008,10 +1280,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The operation to do.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CCB_PUT
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -1020,10 +1295,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Where to persist the data.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param persistTo the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder persistTo(int persistTo) {
             doSetProperty("persistTo", persistTo);
@@ -1032,10 +1310,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Where to persist the data.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param persistTo the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder persistTo(String persistTo) {
             doSetProperty("persistTo", persistTo);
@@ -1044,10 +1325,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the number of retry attempts.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: producer
+         * 
+         * @param producerRetryAttempts the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder producerRetryAttempts(
                 int producerRetryAttempts) {
@@ -1057,10 +1341,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the number of retry attempts.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: producer
+         * 
+         * @param producerRetryAttempts the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder producerRetryAttempts(
                 String producerRetryAttempts) {
@@ -1070,10 +1357,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the retry pause between different attempts.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param producerRetryPause the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder producerRetryPause(
                 int producerRetryPause) {
@@ -1083,10 +1373,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the retry pause between different attempts.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param producerRetryPause the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder producerRetryPause(
                 String producerRetryPause) {
@@ -1096,10 +1389,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Where to replicate the data.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param replicateTo the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder replicateTo(int replicateTo) {
             doSetProperty("replicateTo", replicateTo);
@@ -1108,10 +1404,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Where to replicate the data.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param replicateTo the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder replicateTo(String replicateTo) {
             doSetProperty("replicateTo", replicateTo);
@@ -1120,9 +1419,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the starting Id where we are doing an insert operation.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param startingIdForInsertsFrom the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
                 long startingIdForInsertsFrom) {
@@ -1132,9 +1434,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the starting Id where we are doing an insert operation.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param startingIdForInsertsFrom the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
                 String startingIdForInsertsFrom) {
@@ -1144,9 +1449,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The password to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1155,9 +1463,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The username to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -1177,9 +1488,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The additional hosts.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param additionalHosts the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointProducerBuilder additionalHosts(
                 String additionalHosts) {
@@ -1187,40 +1501,47 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
-        default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointProducerBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
-        default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointProducerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
          * Define the operation timeout in milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2500
          * Group: advanced
+         * 
+         * @param queryTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointProducerBuilder queryTimeout(
                 long queryTimeout) {
@@ -1230,10 +1551,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the operation timeout in milliseconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2500
          * Group: advanced
+         * 
+         * @param queryTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointProducerBuilder queryTimeout(
                 String queryTimeout) {
@@ -1244,10 +1568,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1258,10 +1585,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1283,9 +1614,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The bucket to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
+         * 
+         * @param bucket the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder bucket(String bucket) {
             doSetProperty("bucket", bucket);
@@ -1294,9 +1629,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The collection to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -1305,9 +1643,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The key to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder key(String key) {
             doSetProperty("key", key);
@@ -1316,9 +1657,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The scope to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder scope(String scope) {
             doSetProperty("scope", scope);
@@ -1327,9 +1671,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The password to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1338,9 +1685,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The username to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -1361,9 +1711,12 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * The additional hosts.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param additionalHosts the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointBuilder additionalHosts(
                 String additionalHosts) {
@@ -1371,40 +1724,47 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
-        default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
-        default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
          * Define the operation timeout in milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2500
          * Group: advanced
+         * 
+         * @param queryTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointBuilder queryTimeout(long queryTimeout) {
             doSetProperty("queryTimeout", queryTimeout);
@@ -1413,10 +1773,13 @@ public interface CouchbaseEndpointBuilderFactory {
         /**
          * Define the operation timeout in milliseconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2500
          * Group: advanced
+         * 
+         * @param queryTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointBuilder queryTimeout(
                 String queryTimeout) {
@@ -1427,10 +1790,13 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1440,10 +1806,14 @@ public interface CouchbaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchbaseEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1474,6 +1844,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Default value: 8091
          * 
          * @param path protocol:hostname:port
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder couchbase(String path) {
             return CouchbaseEndpointBuilderFactory.endpointBuilder("couchbase", path);
@@ -1502,6 +1873,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:hostname:port
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder couchbase(
                 String componentName,

@@ -28,7 +28,7 @@ public class EnumFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        @SuppressWarnings({"rawtypes", "unchecked"})
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         EnumFormat enumFormat = new EnumFormat(formattingOptions.getClazz());
         return enumFormat;
     }

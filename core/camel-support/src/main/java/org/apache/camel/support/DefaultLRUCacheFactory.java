@@ -26,18 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link LRUCacheFactory} which uses a {@link LinkedHashMap}.
- * You can use camel-caffeine-lrucache instead which has a better LRUCache implementation.
+ * Default {@link LRUCacheFactory} which uses a {@link LinkedHashMap}. You can use camel-caffeine-lrucache instead which
+ * has a better LRUCache implementation.
  */
 public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLRUCacheFactory.class);
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -47,10 +46,9 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -60,11 +58,11 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize, and will
+     * stop on eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -74,25 +72,26 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
+     * and ordering mode.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param stopOnEviction   whether to stop service on eviction.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
+                maximumCacheSize, stopOnEviction);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
     /**
-     * Constructs an empty <tt>LRUSoftCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUSoftCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -109,15 +108,16 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
+                maximumCacheSize, stopOnEviction);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
     /**
-     * Constructs an empty <tt>LRUWeakCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUWeakCache</tt> instance with the specified maximumCacheSize, and will stop on
+     * eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     @Override
@@ -134,7 +134,8 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
     @Override
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
+                maximumCacheSize, stopOnEviction);
         return new SimpleLRUCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
@@ -154,7 +155,8 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
         }
 
         public SimpleLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-            this(initialCapacity, maximumCacheSize, stopOnEviction ? DefaultLRUCacheFactory.this::doStop : DefaultLRUCacheFactory.this::doNothing);
+            this(initialCapacity, maximumCacheSize,
+                 stopOnEviction ? DefaultLRUCacheFactory.this::doStop : DefaultLRUCacheFactory.this::doNothing);
         }
 
         public SimpleLRUCache(int initialCapacity, int maximumCacheSize, Consumer<V> evicted) {

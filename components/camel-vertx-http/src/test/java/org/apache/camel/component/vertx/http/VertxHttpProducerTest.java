@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,12 +50,12 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
 
     @Test
     public void testVertxHttpProducerWithContentType() {
-        String expectedBody = "Hello World";
+        String expectedBody = "{\"foo\": \"bar\"}";
 
-        Exchange exchange = template.request(getProducerUri(), new Processor() {
+        Exchange exchange = template.request(getProducerUri() + "/content/type", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/html; charset=iso-8859-4");
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json; charset=iso-8859-4");
             }
         });
 
@@ -66,7 +67,8 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
         assertEquals(String.valueOf(expectedBody.length()), headers.get(Exchange.CONTENT_LENGTH));
         assertEquals(200, headers.get(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("OK", headers.get(Exchange.HTTP_RESPONSE_TEXT));
-        assertEquals(expectedBody, message.getBody(String.class));    }
+        assertEquals(expectedBody, message.getBody(String.class));
+    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -75,6 +77,20 @@ public class VertxHttpProducerTest extends VertxHttpTestSupport {
             public void configure() throws Exception {
                 from(getTestServerUri())
                         .setBody(constant("Hello World"));
+
+                from(getTestServerUri() + "/content/type")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String contentType = ExchangeHelper.getContentType(exchange);
+                                if (!contentType.startsWith("application/json")) {
+                                    throw new IllegalStateException("Unexpected Content-Type header");
+                                }
+
+                                Message message = exchange.getMessage();
+                                message.setBody("{\"foo\": \"bar\"}");
+                            }
+                        });
             }
         };
     }

@@ -38,7 +38,6 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
     @Mock
     private PassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
 
-
     @Override
     protected boolean useJmx() {
         return true;

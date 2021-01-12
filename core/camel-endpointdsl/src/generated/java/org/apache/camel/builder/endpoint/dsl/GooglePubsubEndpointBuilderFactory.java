@@ -46,10 +46,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: common
+         * 
+         * @param ackMode the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
             doSetProperty("ackMode", ackMode);
@@ -60,10 +63,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: common
+         * 
+         * @param ackMode the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder ackMode(String ackMode) {
             doSetProperty("ackMode", ackMode);
@@ -72,10 +78,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
@@ -85,11 +94,14 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -99,9 +111,12 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Logger ID to use when a match to the parent route required.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggerId the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
@@ -111,10 +126,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
@@ -125,11 +143,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -139,10 +160,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Synchronously pull batches of messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder synchronousPull(
                 boolean synchronousPull) {
@@ -152,10 +176,14 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Synchronously pull batches of messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder synchronousPull(
                 String synchronousPull) {
@@ -171,10 +199,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -190,10 +221,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -217,10 +252,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -234,9 +272,12 @@ public interface GooglePubsubEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -246,9 +287,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -259,9 +304,12 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -269,41 +317,16 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -314,10 +337,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -340,10 +367,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: common
+         * 
+         * @param ackMode the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder ackMode(AckMode ackMode) {
             doSetProperty("ackMode", ackMode);
@@ -354,10 +384,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: common
+         * 
+         * @param ackMode the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder ackMode(String ackMode) {
             doSetProperty("ackMode", ackMode);
@@ -366,10 +399,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
@@ -379,11 +415,14 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -393,9 +432,12 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Logger ID to use when a match to the parent route required.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggerId the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
@@ -405,10 +447,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
@@ -419,11 +464,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -433,10 +481,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Synchronously pull batches of messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder synchronousPull(
                 boolean synchronousPull) {
@@ -446,10 +497,14 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Synchronously pull batches of messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder synchronousPull(
                 String synchronousPull) {
@@ -467,10 +522,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -488,10 +546,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -510,41 +572,50 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * A custom GooglePubsubSerializer to use for serializing message
+         * payloads in the producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: producer (advanced)
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
-        default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedGooglePubsubEndpointProducerBuilder serializer(
+                Object serializer) {
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * A custom GooglePubsubSerializer to use for serializing message
+         * payloads in the producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer&lt;/code&gt; type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: producer (advanced)
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
-        default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedGooglePubsubEndpointProducerBuilder serializer(
+                String serializer) {
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -555,10 +626,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -582,10 +657,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: common
+         * 
+         * @param ackMode the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder ackMode(AckMode ackMode) {
             doSetProperty("ackMode", ackMode);
@@ -596,10 +674,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * process has to ack/nack explicitly.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode&lt;/code&gt; type.
          * 
          * Default: AUTO
          * Group: common
+         * 
+         * @param ackMode the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder ackMode(String ackMode) {
             doSetProperty("ackMode", ackMode);
@@ -608,10 +689,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
@@ -621,11 +705,14 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The number of parallel streams consuming from the subscription.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -635,9 +722,12 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Logger ID to use when a match to the parent route required.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loggerId the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder loggerId(String loggerId) {
             doSetProperty("loggerId", loggerId);
@@ -647,10 +737,13 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
@@ -661,11 +754,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The max number of messages to receive from the server in a single API
          * call.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -675,10 +771,13 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Synchronously pull batches of messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder synchronousPull(
                 boolean synchronousPull) {
@@ -688,10 +787,14 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Synchronously pull batches of messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param synchronousPull the value to set
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder synchronousPull(
                 String synchronousPull) {
@@ -711,41 +814,16 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -756,10 +834,14 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGooglePubsubEndpointBuilder synchronous(
                 String synchronous) {
@@ -796,6 +878,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Destination Name
          * 
          * @param path projectId:destinationName
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder googlePubsub(String path) {
             return GooglePubsubEndpointBuilderFactory.endpointBuilder("google-pubsub", path);
@@ -820,6 +903,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path projectId:destinationName
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder googlePubsub(
                 String componentName,

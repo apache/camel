@@ -16,20 +16,18 @@
  */
 package org.apache.camel.component.sjms2.consumer;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms2.Sjms2Component;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.sjms2.support.Jms2TestSupport;
 import org.junit.jupiter.api.Test;
+import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 
-public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
-    
+public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
+
     private static final String CONNECTION_ID = "test-connection-1";
-    private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=false";
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -51,25 +49,18 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
-        ConnectionFactoryResource connectionResource = new ConnectionFactoryResource();
-        connectionResource.setConnectionFactory(connectionFactory);
-        connectionResource.setClientId(CONNECTION_ID);
-        CamelContext camelContext = super.createCamelContext();
-        Sjms2Component component = new Sjms2Component();
-        component.setConnectionResource(connectionResource);
-        component.setConnectionCount(1);
-        camelContext.addComponent("sjms2", component);
-        return camelContext;
+        CamelContext context = super.createCamelContext();
+        Sjms2Component sjms = context.getComponent("sjms2", Sjms2Component.class);
+
+        // need to use a pooled CF so we reuse same connection for multiple client connections
+        JmsPoolConnectionFactory pcf = new JmsPoolConnectionFactory();
+        pcf.setConnectionFactory(sjms.getConnectionFactory());
+        sjms.setConnectionFactory(pcf);
+        sjms.setClientId(CONNECTION_ID);
+
+        return context;
     }
 
     @Override
@@ -77,11 +68,11 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms2:topic:foo?durableSubscriptionId=bar1")
-                    .to("mock:result");
+                from("sjms2:topic:foo?durableSubscriptionName=bar1")
+                        .to("mock:result");
 
-                from("sjms2:topic:foo?durableSubscriptionId=bar2")
-                    .to("mock:result2");
+                from("sjms2:topic:foo?durableSubscriptionName=bar2")
+                        .to("mock:result2");
             }
         };
     }

@@ -33,11 +33,20 @@ public class SpringResilienceRouteOkTest extends CamelSpringTestSupport {
 
     @Test
     public void testResilience() throws Exception {
+        test("direct:start");
+    }
+
+    @Test
+    public void testResilienceWithTimeOut() throws Exception {
+        test("direct:start.with.timeout.enabled");
+    }
+
+    private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody(endPointUri, "Hello World");
 
         assertMockEndpointsSatisfied();
     }

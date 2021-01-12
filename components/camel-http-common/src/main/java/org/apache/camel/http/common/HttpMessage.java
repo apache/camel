@@ -33,7 +33,8 @@ public class HttpMessage extends DefaultMessage {
     private final HttpCommonEndpoint endpoint;
     private boolean requestRead;
 
-    public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
+    public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request,
+                       HttpServletResponse response) {
         super(exchange);
         this.requestRead = false;
         this.endpoint = endpoint;
@@ -43,7 +44,7 @@ public class HttpMessage extends DefaultMessage {
         // Put the request and response into the message header
         this.setHeader(Exchange.HTTP_SERVLET_REQUEST, request);
         this.setHeader(Exchange.HTTP_SERVLET_RESPONSE, response);
-        
+
         // Check the setting of exchange
         Boolean flag = exchange.getProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
         if (flag != null && flag) {
@@ -55,7 +56,8 @@ public class HttpMessage extends DefaultMessage {
         endpoint.getHttpBinding().readRequest(request, this);
     }
 
-    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange, HttpCommonEndpoint endpoint,
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange,
+                        HttpCommonEndpoint endpoint,
                         boolean requestRead) {
         super(exchange);
         this.request = request;

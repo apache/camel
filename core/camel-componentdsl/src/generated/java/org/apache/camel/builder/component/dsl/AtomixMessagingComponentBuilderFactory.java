@@ -37,6 +37,8 @@ public interface AtomixMessagingComponentBuilderFactory {
      * Category: clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
+     * 
+     * @return the dsl builder
      */
     static AtomixMessagingComponentBuilder atomixMessaging() {
         return new AtomixMessagingComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.Atomix</code> type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
@@ -63,10 +68,13 @@ public interface AtomixMessagingComponentBuilderFactory {
          * The broadcast type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: common
+         * 
+         * @param broadcastType the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder broadcastType(
                 org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType broadcastType) {
@@ -76,9 +84,12 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The messaging channel name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channelName the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder channelName(
                 java.lang.String channelName) {
@@ -89,9 +100,12 @@ public interface AtomixMessagingComponentBuilderFactory {
          * The shared component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder configuration(
                 org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration configuration) {
@@ -101,9 +115,12 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The path to the AtomixClient configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
@@ -114,10 +131,13 @@ public interface AtomixMessagingComponentBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action&lt;/code&gt; type.
          * 
          * Default: DIRECT
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder defaultAction(
                 org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action defaultAction) {
@@ -127,9 +147,12 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The Atomix Group member name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param memberName the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder memberName(
                 java.lang.String memberName) {
@@ -140,10 +163,12 @@ public interface AtomixMessagingComponentBuilderFactory {
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
-         * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
@@ -153,9 +178,12 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The header that wil carry the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder resultHeader(
                 java.lang.String resultHeader) {
@@ -165,10 +193,13 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
+         * 
+         * @param transportClassName the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder transportClassName(
                 java.lang.String transportClassName) {
@@ -184,10 +215,13 @@ public interface AtomixMessagingComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -205,10 +239,13 @@ public interface AtomixMessagingComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -216,25 +253,35 @@ public interface AtomixMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default AtomixMessagingComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AtomixMessagingComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The cluster wide default resource configuration.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder defaultResourceConfig(
                 java.util.Properties defaultResourceConfig) {
@@ -244,9 +291,12 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder defaultResourceOptions(
                 java.util.Properties defaultResourceOptions) {
@@ -258,10 +308,13 @@ public interface AtomixMessagingComponentBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder ephemeral(boolean ephemeral) {
             doSetProperty("ephemeral", ephemeral);
@@ -270,10 +323,13 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * The read consistency level.
          * 
-         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder readConsistency(
                 io.atomix.resource.ReadConsistency readConsistency) {
@@ -283,10 +339,13 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.util.Properties></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder resourceConfigs(
                 java.util.Map<java.lang.String, java.util.Properties> resourceConfigs) {
@@ -296,10 +355,13 @@ public interface AtomixMessagingComponentBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.util.Properties></code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AtomixMessagingComponentBuilder resourceOptions(
                 java.util.Map<java.lang.String, java.util.Properties> resourceOptions) {
@@ -342,7 +404,7 @@ public interface AtomixMessagingComponentBuilderFactory {
             case "transportClassName": getOrCreateConfiguration((AtomixMessagingComponent) component).setTransportClassName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((AtomixMessagingComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((AtomixMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((AtomixMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((AtomixMessagingComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "defaultResourceConfig": getOrCreateConfiguration((AtomixMessagingComponent) component).setDefaultResourceConfig((java.util.Properties) value); return true;
             case "defaultResourceOptions": getOrCreateConfiguration((AtomixMessagingComponent) component).setDefaultResourceOptions((java.util.Properties) value); return true;
             case "ephemeral": getOrCreateConfiguration((AtomixMessagingComponent) component).setEphemeral((boolean) value); return true;

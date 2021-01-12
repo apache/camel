@@ -68,7 +68,8 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         cache.put(resourceUid, "123");
         cache.get(resourceUid);
         cache.remove(resourceUid);
-        cache.withExpiryPolicy(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MILLISECONDS, 100)).create()).put(resourceUid, "123");
+        cache.withExpiryPolicy(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MILLISECONDS, 100)).create())
+                .put(resourceUid, "123");
 
         Thread.sleep(150);
 
@@ -78,8 +79,9 @@ public class IgniteEventsTest extends AbstractIgniteTest {
 
         List<Integer> eventTypes = receivedEventTypes("mock:test1");
 
-        Assertions.assertThat(eventTypes).containsSubsequence(EventType.EVT_CACHE_STARTED, EventType.EVT_CACHE_ENTRY_CREATED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_READ,
-                                                 EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED);
+        Assertions.assertThat(eventTypes).containsSubsequence(EventType.EVT_CACHE_STARTED, EventType.EVT_CACHE_ENTRY_CREATED,
+                EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_READ,
+                EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED);
 
     }
 
@@ -112,12 +114,13 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     }
 
     private List<Integer> receivedEventTypes(String mockEndpoint) {
-        List<Integer> eventTypes = Lists.newArrayList(Lists.transform(getMockEndpoint(mockEndpoint).getExchanges(), new Function<Exchange, Integer>() {
-            @Override
-            public Integer apply(Exchange input) {
-                return input.getIn().getBody(Event.class).type();
-            }
-        }));
+        List<Integer> eventTypes = Lists
+                .newArrayList(Lists.transform(getMockEndpoint(mockEndpoint).getExchanges(), new Function<Exchange, Integer>() {
+                    @Override
+                    public Integer apply(Exchange input) {
+                        return input.getIn().getBody(Event.class).type();
+                    }
+                }));
         return eventTypes;
     }
 

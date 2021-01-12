@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "leveldb-legacy",
+    "title": "LevelDB-legacy",
+    "description": "Using LevelDB as persistent EIP store",
+    "deprecated": false,
+    "firstVersion": "2.10.0",
+    "label": "database",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-leveldb-legacy",
+    "version": "3.8.0-SNAPSHOT"
+  }
+}

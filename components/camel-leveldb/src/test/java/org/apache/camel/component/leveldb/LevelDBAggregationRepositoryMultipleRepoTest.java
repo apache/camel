@@ -20,15 +20,14 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LevelDBAggregationRepositoryMultipleRepoTest extends CamelTestSupport {
+public class LevelDBAggregationRepositoryMultipleRepoTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
 
@@ -52,12 +51,12 @@ public class LevelDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppo
 
     @Test
     public void testMultipeRepo() {
-        LevelDBAggregationRepository repo1 = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo1 = createRepo();
         repo1.setLevelDBFile(levelDBFile);
         repo1.setRepositoryName("repo1");
         repo1.setReturnOldExchange(true);
 
-        LevelDBAggregationRepository repo2 = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo2 = createRepo();
         repo2.setLevelDBFile(levelDBFile);
         repo2.setRepositoryName("repo2");
         repo2.setReturnOldExchange(true);
@@ -106,11 +105,11 @@ public class LevelDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppo
 
     @Test
     public void testMultipeRepoSameKeyDifferentContent() {
-        LevelDBAggregationRepository repo1 = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo1 = createRepo();
         repo1.setLevelDBFile(levelDBFile);
         repo1.setRepositoryName("repo1");
 
-        LevelDBAggregationRepository repo2 = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo2 = createRepo();
         repo2.setLevelDBFile(levelDBFile);
         repo2.setRepositoryName("repo2");
 

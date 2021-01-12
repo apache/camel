@@ -1,0 +1,40 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "atlasmap",
+    "title": "AtlasMap",
+    "description": "Transforms the message using an AtlasMap transformation.",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.atlasmap.AtlasMapComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-atlasmap",
+    "version": "3.8.0-SNAPSHOT",
+    "scheme": "atlasmap",
+    "extendsScheme": "",
+    "syntax": "atlasmap:resourceUri",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "atlasContextFactory": { "kind": "property", "displayName": "Atlas Context Factory", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "io.atlasmap.api.AtlasContextFactory", "deprecated": false, "autowired": false, "secret": false, "description": "To use the AtlasContextFactory otherwise a new engine is created." },
+    "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "resourceUri": { "kind": "path", "displayName": "Resource Uri", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod." },
+    "allowContextMapAll": { "kind": "parameter", "displayName": "Allow Context Map All", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether the context map should allow access to all details. By default only the message body and headers can be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose a potential security risk as this opens access to the full power of CamelContext API." },
+    "contentCache": { "kind": "parameter", "displayName": "Content Cache", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether to use resource content cache or not" },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "sourceMapName": { "kind": "parameter", "displayName": "Source Map Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The Exchange property name for a source message map which hold java.util.Map&lt;String, Message&gt; where the key is AtlasMap Document ID. AtlasMap consumes Message bodies as source documents, as well as message headers as source properties where the scope equals to Document ID." },
+    "targetMapMode": { "kind": "parameter", "displayName": "Target Map Mode", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.atlasmap.AtlasMapEndpoint.TargetMapMode", "enum": [ "MAP", "MESSAGE_HEADER", "EXCHANGE_PROPERTY" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "MAP", "description": "TargetMapMode enum value to specify how multiple target documents are delivered if exist. 'MAP': Stores them into a java.util.Map, and the java.util.Map is set to an exchange property if 'targetMapName' is specified, otherwise message body. 'MESSAGE_HEADER': Stores them into message headers. 'EXCHANGE_PROPERTY': Stores them into exchange properties. )" },
+    "targetMapName": { "kind": "parameter", "displayName": "Target Map Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The Exchange property name for a target document map which hold java.util.Map&lt;String, Object&gt; where the key is AtlasMap Document ID. AtlasMap populates multiple target documents into this map." },
+    "propertiesFile": { "kind": "parameter", "displayName": "Properties File", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The URI of the properties file which is used for AtlasContextFactory initialization." },
+    "synchronous": { "kind": "parameter", "displayName": "Synchronous", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported)." }
+  }
+}

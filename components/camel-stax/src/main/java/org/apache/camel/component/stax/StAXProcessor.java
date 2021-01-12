@@ -29,9 +29,8 @@ import org.apache.camel.support.ExchangeHelper;
 /**
  * It uses SAX content handler to handle events.
  * <p/>
- * The {@link Exchange} is expected to contain a message body, that is
- * convertable to both a {@link InputSource} and a {@link XMLStreamReader}
- * to support StAX streaming.
+ * The {@link Exchange} is expected to contain a message body, that is convertable to both a {@link InputSource} and a
+ * {@link XMLStreamReader} to support StAX streaming.
  */
 public class StAXProcessor implements Processor {
     private final Class<ContentHandler> contentHandlerClass;

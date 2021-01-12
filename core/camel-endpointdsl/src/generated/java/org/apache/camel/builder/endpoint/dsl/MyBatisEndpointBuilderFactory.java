@@ -56,10 +56,13 @@ public interface MyBatisEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,10 +78,14 @@ public interface MyBatisEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -93,10 +100,13 @@ public interface MyBatisEndpointBuilderFactory {
          * 1000 to avoid when starting up the server that there are thousands of
          * files. Set a value of 0 or negative to disable it.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -111,10 +121,13 @@ public interface MyBatisEndpointBuilderFactory {
          * 1000 to avoid when starting up the server that there are thousands of
          * files. Set a value of 0 or negative to disable it.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -124,9 +137,12 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Statement to run after data has been processed in the route.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param onConsume the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder onConsume(String onConsume) {
             doSetProperty("onConsume", onConsume);
@@ -135,10 +151,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Whether allow empty resultset to be routed to the next hop.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param routeEmptyResultSet the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
@@ -148,10 +167,14 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Whether allow empty resultset to be routed to the next hop.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param routeEmptyResultSet the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
@@ -162,10 +185,13 @@ public interface MyBatisEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -176,10 +202,14 @@ public interface MyBatisEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -191,10 +221,13 @@ public interface MyBatisEndpointBuilderFactory {
          * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
@@ -205,10 +238,14 @@ public interface MyBatisEndpointBuilderFactory {
          * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
@@ -217,10 +254,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Process resultset individually or as a list.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useIterator the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder useIterator(boolean useIterator) {
             doSetProperty("useIterator", useIterator);
@@ -229,10 +269,14 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Process resultset individually or as a list.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useIterator the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder useIterator(String useIterator) {
             doSetProperty("useIterator", useIterator);
@@ -242,9 +286,12 @@ public interface MyBatisEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -255,9 +302,12 @@ public interface MyBatisEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -268,9 +318,12 @@ public interface MyBatisEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -281,9 +334,12 @@ public interface MyBatisEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -298,9 +354,12 @@ public interface MyBatisEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -315,9 +374,12 @@ public interface MyBatisEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -327,10 +389,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -339,10 +404,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -352,10 +420,13 @@ public interface MyBatisEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -365,10 +436,14 @@ public interface MyBatisEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -377,10 +452,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -389,10 +467,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -403,10 +484,13 @@ public interface MyBatisEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -417,10 +501,13 @@ public interface MyBatisEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -430,10 +517,14 @@ public interface MyBatisEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -445,10 +536,13 @@ public interface MyBatisEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -461,9 +555,12 @@ public interface MyBatisEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -476,9 +573,12 @@ public interface MyBatisEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -487,12 +587,32 @@ public interface MyBatisEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default MyBatisEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -502,13 +622,17 @@ public interface MyBatisEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -520,13 +644,16 @@ public interface MyBatisEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -535,10 +662,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -548,10 +678,14 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -561,10 +695,14 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -574,10 +712,13 @@ public interface MyBatisEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -587,10 +728,13 @@ public interface MyBatisEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -601,10 +745,14 @@ public interface MyBatisEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -628,10 +776,13 @@ public interface MyBatisEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -645,9 +796,12 @@ public interface MyBatisEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -657,9 +811,13 @@ public interface MyBatisEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -670,9 +828,12 @@ public interface MyBatisEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -686,9 +847,12 @@ public interface MyBatisEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -702,9 +866,12 @@ public interface MyBatisEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -715,9 +882,12 @@ public interface MyBatisEndpointBuilderFactory {
          * To use a custom MyBatisProcessingStrategy.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mybatis.MyBatisProcessingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.mybatis.MyBatisProcessingStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param processingStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
@@ -728,9 +898,12 @@ public interface MyBatisEndpointBuilderFactory {
          * To use a custom MyBatisProcessingStrategy.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mybatis.MyBatisProcessingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.mybatis.MyBatisProcessingStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param processingStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
@@ -738,41 +911,16 @@ public interface MyBatisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -783,10 +931,14 @@ public interface MyBatisEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -809,11 +961,14 @@ public interface MyBatisEndpointBuilderFactory {
          * executor does nothing special. reuse - executor reuses prepared
          * statements. batch - executor reuses statements and batches updates.
          * 
-         * The option is a: <code>org.apache.ibatis.session.ExecutorType</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
          * 
          * Default: SIMPLE
          * Group: producer
+         * 
+         * @param executorType the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder executorType(
                 ExecutorType executorType) {
@@ -826,10 +981,13 @@ public interface MyBatisEndpointBuilderFactory {
          * statements. batch - executor reuses statements and batches updates.
          * 
          * The option will be converted to a
-         * <code>org.apache.ibatis.session.ExecutorType</code> type.
+         * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
          * 
          * Default: SIMPLE
          * Group: producer
+         * 
+         * @param executorType the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder executorType(String executorType) {
             doSetProperty("executorType", executorType);
@@ -842,9 +1000,12 @@ public interface MyBatisEndpointBuilderFactory {
          * used and query parameters will be taken from the header instead of
          * the body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param inputHeader the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder inputHeader(String inputHeader) {
             doSetProperty("inputHeader", inputHeader);
@@ -861,10 +1022,13 @@ public interface MyBatisEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -882,10 +1046,14 @@ public interface MyBatisEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -902,9 +1070,12 @@ public interface MyBatisEndpointBuilderFactory {
          * CamelMyBatisResult header since it would be the same as outputHeader
          * all the time.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder outputHeader(String outputHeader) {
             doSetProperty("outputHeader", outputHeader);
@@ -915,9 +1086,12 @@ public interface MyBatisEndpointBuilderFactory {
          * operation to invoke.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mybatis.StatementType</code> type.
+         * &lt;code&gt;org.apache.camel.component.mybatis.StatementType&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param statementType the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder statementType(
                 StatementType statementType) {
@@ -929,9 +1103,12 @@ public interface MyBatisEndpointBuilderFactory {
          * operation to invoke.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mybatis.StatementType</code> type.
+         * &lt;code&gt;org.apache.camel.component.mybatis.StatementType&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param statementType the value to set
+         * @return the dsl builder
          */
         default MyBatisEndpointProducerBuilder statementType(
                 String statementType) {
@@ -950,41 +1127,16 @@ public interface MyBatisEndpointBuilderFactory {
             return (MyBatisEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -995,10 +1147,14 @@ public interface MyBatisEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1030,41 +1186,16 @@ public interface MyBatisEndpointBuilderFactory {
             return (MyBatisEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1074,10 +1205,14 @@ public interface MyBatisEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1126,6 +1261,7 @@ public interface MyBatisEndpointBuilderFactory {
          * query, insert, update or delete operation you wish to evaluate.
          * 
          * @param path statement
+         * @return the dsl builder
          */
         default MyBatisEndpointBuilder mybatis(String path) {
             return MyBatisEndpointBuilderFactory.endpointBuilder("mybatis", path);
@@ -1148,6 +1284,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path statement
+         * @return the dsl builder
          */
         default MyBatisEndpointBuilder mybatis(String componentName, String path) {
             return MyBatisEndpointBuilderFactory.endpointBuilder(componentName, path);

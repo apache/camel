@@ -2,10 +2,10 @@
 = Resequence EIP
 :docTitle: Resequence
 :description: Resequences (re-order) messages based on an expression
-:since: 
+:since:
 :supportLevel: Stable
 
-The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] allows you to reorganise messages based on some comparator. +
+The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the xref:components:eips:enterprise-integration-patterns.adoc[EIP patterns] allows you to reorganise messages based on some comparator. +
 By default in Camel we use an Expression to create the comparator; so that you can compare by a message header or the body or a piece of a message etc.
 
 image::eip/Resequencer.gif[image]
@@ -98,7 +98,7 @@ And an example in XML
 In the `batch` mode, you can now allow duplicates. In Java DSL there is a `allowDuplicates()` method and in Spring XML there is an `allowDuplicates=true` attribute on the `<batch-config/>` you can use to enable it.
 
 == Reverse
-In the `batch` mode, you can now reverse the expression ordering. By default the order is based on 0..9,A..Z, which would let messages with low numbers be ordered first, and thus also also outgoing first. In some cases you want to reverse order, which is now possible. +
+In the `batch` mode, you can now reverse the expression ordering. By default the order is based on 0..9,A..Z, which would let messages with low numbers be ordered first, and thus also outgoing first. In some cases you want to reverse order, which is now possible. +
 In Java DSL there is a `reverse()` method and in Spring XML there is an `reverse=true` attribute on the `<batch-config/>` you can use to enable it.
 
 == Resequence JMS messages based on JMSPriority
@@ -109,7 +109,7 @@ It's now much easier to use the Resequencer to resequence messages from JMS queu
 from("jms:queue:foo")
     // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
     // and use reverse ordering so 9 is first output (most important), and 0 is last
-    // use batch mode and fire every 3rd second
+    // use batch mode and fire every 3th second
     .resequence(header("JMSPriority")).batch().timeout(3000).allowDuplicates().reverse()
     .to("mock:result");
 ----

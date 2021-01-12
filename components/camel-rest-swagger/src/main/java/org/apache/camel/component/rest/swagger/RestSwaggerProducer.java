@@ -61,5 +61,4 @@ public class RestSwaggerProducer extends DelegateAsyncProcessor implements Async
         return delegate.isSingleton();
     }
 
-
 }

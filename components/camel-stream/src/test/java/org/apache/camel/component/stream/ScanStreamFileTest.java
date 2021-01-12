@@ -69,7 +69,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
         } finally {
             fos.close();
         }
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -133,9 +133,9 @@ public class ScanStreamFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("stream:file?fileName=target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=200&retry=true&fileWatcher=true")
-                    .routeId("foo").noAutoStartup()
-                    .to("log:line")
-                    .to("mock:result");
+                        .routeId("foo").noAutoStartup()
+                        .to("log:line")
+                        .to("mock:result");
             }
         };
     }

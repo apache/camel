@@ -2,7 +2,8 @@
 = What platforms are supported?
 
 - Camel 2.x supports JDK 8
-- Camel 3.x supports JDK 8 and 11
+- Camel 3.0 - 3.4 supports JDK 8 and 11
+- Camel 3.5 or higher supports JDK 8, 11 and 14
 
 We regularly test Camel on Linux, Windows and OS X. If you have a
 platform that is not listed contact one of the companies that provide

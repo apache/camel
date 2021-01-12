@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +48,9 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
     @Test
     public void testSessionSupport() {
         Exchange result = template.request(getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore", null);
-        assertEquals(403, result.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+
+        HttpOperationFailedException exception = result.getException(HttpOperationFailedException.class);
+        assertEquals(403, exception.getStatusCode());
 
         result = template.request(getProducerUri() + "/login?sessionManagement=true&cookieStore=#cookieStore", exchange -> {
             exchange.getMessage().setHeader("username", USERNAME);
@@ -55,7 +58,8 @@ public class VertxHttpSessionTest extends VertxHttpTestSupport {
         });
         assertEquals("sessionId=" + SESSION_ID + ";", result.getMessage().getHeader("Set-Cookie"));
 
-        String content = template.requestBody(getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore", null, String.class);
+        String content = template.requestBody(getProducerUri() + "/secure?sessionManagement=true&cookieStore=#cookieStore",
+                null, String.class);
         assertEquals(SECRET_CONTENT, content);
     }
 

@@ -4,8 +4,10 @@ package org.apache.camel.component.pdf;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "font": target.getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
         case "fontsize":
         case "fontSize": target.getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
@@ -44,28 +44,34 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("font", java.lang.String.class);
-        answer.put("fontSize", float.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("marginBottom", int.class);
-        answer.put("marginLeft", int.class);
-        answer.put("marginRight", int.class);
-        answer.put("marginTop", int.class);
-        answer.put("pageSize", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("textProcessingFactory", org.apache.camel.component.pdf.TextProcessingFactory.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "font": return java.lang.String.class;
+        case "fontsize":
+        case "fontSize": return float.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "marginbottom":
+        case "marginBottom": return int.class;
+        case "marginleft":
+        case "marginLeft": return int.class;
+        case "marginright":
+        case "marginRight": return int.class;
+        case "margintop":
+        case "marginTop": return int.class;
+        case "pagesize":
+        case "pageSize": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "textprocessingfactory":
+        case "textProcessingFactory": return org.apache.camel.component.pdf.TextProcessingFactory.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "font": return target.getPdfConfiguration().getFont();
         case "fontsize":
         case "fontSize": return target.getPdfConfiguration().getFontSize();

@@ -77,20 +77,19 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("sjms:a?consumerCount=5&exchangePattern=InOut&namedReplyTo=myResponse")
-                    .to("mock:result");
+                        .to("sjms:a?replyToConcurrentConsumers=5&replyTo=myResponse")
+                        .to("mock:result");
 
-                from("sjms:a?consumerCount=5&exchangePattern=InOut&namedReplyTo=myResponse")
-                    .process(exchange -> {
-                        String body = exchange.getIn().getBody(String.class);
-                        // sleep a little to simulate heavy work and force concurrency processing
-                        Thread.sleep(1000);
-                        exchange.getMessage().setBody("Bye " + body);
-                        exchange.getMessage().setHeader("threadName", Thread.currentThread().getName());
-                    });
+                from("sjms:a?concurrentConsumers=5")
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            // sleep a little to simulate heavy work and force concurrency processing
+                            Thread.sleep(1000);
+                            exchange.getMessage().setBody("Bye " + body);
+                            exchange.getMessage().setHeader("threadName", Thread.currentThread().getName());
+                        });
             }
         };
     }
 
 }
-

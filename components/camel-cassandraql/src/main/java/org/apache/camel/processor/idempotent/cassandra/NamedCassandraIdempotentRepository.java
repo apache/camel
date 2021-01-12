@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor.idempotent.cassandra;
 
-
 import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
- * Concrete implementation of {@link CassandraIdempotentRepository} using 2
- * columns as primary key: name (partition key) and key (clustering key).
+ * Concrete implementation of {@link CassandraIdempotentRepository} using 2 columns as primary key: name (partition key)
+ * and key (clustering key).
  */
 public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepository {
     public NamedCassandraIdempotentRepository() {
@@ -40,7 +39,7 @@ public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepos
     }
 
     public final void setName(String name) {
-        setPrefixPKValues(new String[] {name});
+        setPrefixPKValues(new String[] { name });
     }
 
 }

@@ -34,7 +34,7 @@ public interface PerformanceCounter {
      * Executed when an {@link org.apache.camel.Exchange} is complete.
      *
      * @param exchange the exchange
-     * @param time the time it took in millis to complete
+     * @param time     the time it took in millis to complete
      */
     void completedExchange(Exchange exchange, long time);
 

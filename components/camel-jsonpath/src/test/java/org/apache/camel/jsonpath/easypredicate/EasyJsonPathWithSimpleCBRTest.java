@@ -30,17 +30,17 @@ public class EasyJsonPathWithSimpleCBRTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when().jsonpath("store.book.price < ${header.cheap}")
-                            .to("mock:cheap")
+                        .to("mock:cheap")
                         .when().jsonpath("store.book.price < ${header.average}")
-                            .to("mock:average")
+                        .to("mock:average")
                         .otherwise()
-                            .to("mock:expensive");
+                        .to("mock:expensive");
             }
         };
     }
-    
+
     @Test
     public void testCheap() throws Exception {
         getMockEndpoint("mock:cheap").expectedMessageCount(1);

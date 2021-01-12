@@ -41,14 +41,18 @@ import static org.apache.camel.Exchange.FILE_LENGTH;
 import static org.apache.camel.Exchange.FILE_NAME;
 
 /**
- * Tar file data format.
- * Based on ZipFileDataFormat from camel-zipfile component
+ * Tar file data format. Based on ZipFileDataFormat from camel-zipfile component
  */
 @Dataformat("tarfile")
 public class TarFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+    /**
+     * The default maximum decompressed size (in bytes), which corresponds to 1G.
+     */
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
     private boolean usingIterator;
     private boolean allowEmptyDirectory;
     private boolean preservePathElements;
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
 
     @Override
     public String getDataFormatName() {
@@ -101,14 +105,15 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
             return tarIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(stream);
-            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
+            TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory()
+                    .createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
                 TarArchiveEntry entry = tis.getNextTarEntry();
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, entry.getName());
-                    IOHelper.copy(tis, osb);
+                    IOHelper.copy(tis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
                 } else {
                     throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
                 }
@@ -173,6 +178,14 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setPreservePathElements(boolean preservePathElements) {
         this.preservePathElements = preservePathElements;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override

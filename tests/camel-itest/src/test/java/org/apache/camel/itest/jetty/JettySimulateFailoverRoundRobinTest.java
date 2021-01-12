@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -77,41 +78,41 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .process(new MyFailoverLoadBalancer(template, hbad, hbad2, hgood, hgood2));
+                        .process(new MyFailoverLoadBalancer(template, hbad, hbad2, hgood, hgood2));
 
                 from(bad)
-                    .to("mock:bad")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                            exchange.getIn().setBody("Something bad happened");
-                        }
-                    });
+                        .to("mock:bad")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                                exchange.getIn().setBody("Something bad happened");
+                            }
+                        });
 
                 from(bad2)
-                    .to("mock:bad2")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                            exchange.getIn().setBody("Not found");
-                        }
-                    });
+                        .to("mock:bad2")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                                exchange.getIn().setBody("Not found");
+                            }
+                        });
 
                 from(good)
-                    .to("mock:good")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setBody("Good");
-                        }
-                    });
+                        .to("mock:good")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setBody("Good");
+                            }
+                        });
 
                 from(good2)
-                    .to("mock:good2")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            exchange.getIn().setBody("Also good");
-                        }
-                    });
+                        .to("mock:good2")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setBody("Also good");
+                            }
+                        });
             }
         };
     }
@@ -158,7 +159,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
         private void prepareExchangeForFailover(Exchange exchange) {
             exchange.setException(null);
 
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
+            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
             exchange.setProperty(Exchange.FAILURE_HANDLED, null);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, null);
             exchange.getIn().removeHeader(Exchange.REDELIVERED);

@@ -37,6 +37,8 @@ public interface ValidatorComponentBuilderFactory {
      * Category: core,validation
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-validator
+     * 
+     * @return the dsl builder
      */
     static ValidatorComponentBuilder validator() {
         return new ValidatorComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ValidatorComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -70,17 +75,24 @@ public interface ValidatorComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ValidatorComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ValidatorComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -88,9 +100,12 @@ public interface ValidatorComponentBuilderFactory {
          * endpoint resource URI.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default ValidatorComponentBuilder resourceResolverFactory(
                 org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
@@ -115,7 +130,7 @@ public interface ValidatorComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((ValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((ValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ValidatorComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "resourceResolverFactory": ((ValidatorComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
             default: return false;
             }

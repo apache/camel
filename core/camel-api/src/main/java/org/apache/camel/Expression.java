@@ -17,22 +17,32 @@
 package org.apache.camel;
 
 /**
- * An <a href="http://camel.apache.org/expression.html">expression</a>
- * provides a plugin strategy for evaluating expressions on a message exchange.
+ * An <a href="http://camel.apache.org/expression.html">expression</a> provides a plugin strategy for evaluating
+ * expressions on a message exchange.
+ *
+ * An expression should be thread-safe and be able to evaluate concurrently by different threads with different
+ * exchanges.
+ *
+ * Any initialization logic should be done by the {@link #init(CamelContext)} method which allows to prepare the
+ * expressions such as wiring in resources, pre-parsing and what else.
+ *
+ * @see StaticExpression
  */
 public interface Expression {
 
     /**
      * Returns the value of the expression on the given exchange
      *
-     * @param exchange the message exchange on which to evaluate the expression
-     * @param type the expected type of the evaluation result
-     * @return the value of the expression
+     * @param  exchange the message exchange on which to evaluate the expression
+     * @param  type     the expected type of the evaluation result
+     * @return          the value of the expression
      */
     <T> T evaluate(Exchange exchange, Class<T> type);
 
     /**
      * Initialize the expression with the given camel context
+     *
+     * @param context the camel context
      */
     default void init(CamelContext context) {
     }

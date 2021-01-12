@@ -26,7 +26,7 @@ public class EventNotifierExchangeSentExampleTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         // START SNIPPET: e1
         // add event notifier where we can log the times it took to process

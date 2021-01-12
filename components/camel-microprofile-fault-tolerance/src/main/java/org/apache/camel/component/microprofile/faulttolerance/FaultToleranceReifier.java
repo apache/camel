@@ -17,7 +17,6 @@
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -32,8 +31,8 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -51,7 +50,8 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         if (definition.getOnFallback() != null) {
             fallback = createProcessor(definition.getOnFallback());
         }
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
+        boolean fallbackViaNetwork
+                = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-microprofile-fault-tolerance does not support onFallbackViaNetwork");
         }
@@ -134,24 +134,26 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         Map<String, Object> properties = new HashMap<>();
 
         final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
-                .getConfigurerResolver().resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getSimpleName(), camelContext);
+                .getConfigurerResolver()
+                .resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-            () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
-            () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID, FaultToleranceConfigurationDefinition.class)),
-            configurer);
+                () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(null),
+                () -> lookup(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID,
+                        FaultToleranceConfigurationDefinition.class)),
+                configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
-            final String ref = definition.getConfigurationRef();
+            final String ref = parseString(definition.getConfigurationRef());
 
             loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(ref),
-                () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
-                configurer);
+                    () -> camelContext.getExtension(Model.class).getFaultToleranceConfiguration(ref),
+                    () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
+                    configurer);
         }
 
         // Extract properties from local configuration
@@ -172,8 +174,8 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         optional.ifPresent(bean -> {
-            if (configurer instanceof PropertyConfigurerGetter) {
-                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            if (configurer instanceof ExtendedPropertyConfigurerGetter) {
+                ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
                 Map<String, Object> types = getter.getAllOptions(bean);
                 types.forEach((k, t) -> {
                     Object value = getter.getOptionValue(bean, k, true);

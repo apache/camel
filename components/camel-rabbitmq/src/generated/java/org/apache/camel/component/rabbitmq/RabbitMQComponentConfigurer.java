@@ -4,8 +4,10 @@ package org.apache.camel.component.rabbitmq;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,6 +21,10 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": target.setAdditionalHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": target.setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "addresses": target.setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "allownullheaders":
         case "allowNullHeaders": target.setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
@@ -31,8 +37,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "autoDetectConnectionFactory": target.setAutoDetectConnectionFactory(property(camelContext, boolean.class, value)); return true;
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": target.setAutomaticRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channelpoolmaxsize":
@@ -118,68 +124,118 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("addresses", java.lang.String.class);
-        answer.put("allowNullHeaders", boolean.class);
-        answer.put("args", java.util.Map.class);
-        answer.put("autoAck", boolean.class);
-        answer.put("autoDelete", boolean.class);
-        answer.put("autoDetectConnectionFactory", boolean.class);
-        answer.put("automaticRecoveryEnabled", java.lang.Boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channelPoolMaxSize", int.class);
-        answer.put("channelPoolMaxWait", long.class);
-        answer.put("clientProperties", java.util.Map.class);
-        answer.put("connectionFactory", com.rabbitmq.client.ConnectionFactory.class);
-        answer.put("connectionFactoryExceptionHandler", com.rabbitmq.client.ExceptionHandler.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("deadLetterExchange", java.lang.String.class);
-        answer.put("deadLetterExchangeType", java.lang.String.class);
-        answer.put("deadLetterQueue", java.lang.String.class);
-        answer.put("deadLetterRoutingKey", java.lang.String.class);
-        answer.put("declare", boolean.class);
-        answer.put("durable", boolean.class);
-        answer.put("exclusive", boolean.class);
-        answer.put("exclusiveConsumer", boolean.class);
-        answer.put("guaranteedDeliveries", boolean.class);
-        answer.put("hostname", java.lang.String.class);
-        answer.put("immediate", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mandatory", boolean.class);
-        answer.put("networkRecoveryInterval", java.lang.Integer.class);
-        answer.put("passive", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("portNumber", int.class);
-        answer.put("prefetchCount", int.class);
-        answer.put("prefetchEnabled", boolean.class);
-        answer.put("prefetchGlobal", boolean.class);
-        answer.put("prefetchSize", int.class);
-        answer.put("publisherAcknowledgements", boolean.class);
-        answer.put("publisherAcknowledgementsTimeout", long.class);
-        answer.put("requestTimeout", long.class);
-        answer.put("requestTimeoutCheckerInterval", long.class);
-        answer.put("requestedChannelMax", int.class);
-        answer.put("requestedFrameMax", int.class);
-        answer.put("requestedHeartbeat", int.class);
-        answer.put("skipExchangeDeclare", boolean.class);
-        answer.put("skipQueueBind", boolean.class);
-        answer.put("skipQueueDeclare", boolean.class);
-        answer.put("sslProtocol", java.lang.String.class);
-        answer.put("threadPoolSize", int.class);
-        answer.put("topologyRecoveryEnabled", java.lang.Boolean.class);
-        answer.put("transferException", boolean.class);
-        answer.put("trustManager", javax.net.ssl.TrustManager.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("vhost", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return java.util.Map.class;
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "addresses": return java.lang.String.class;
+        case "allownullheaders":
+        case "allowNullHeaders": return boolean.class;
+        case "args": return java.util.Map.class;
+        case "autoack":
+        case "autoAck": return boolean.class;
+        case "autodelete":
+        case "autoDelete": return boolean.class;
+        case "autodetectconnectionfactory":
+        case "autoDetectConnectionFactory": return boolean.class;
+        case "automaticrecoveryenabled":
+        case "automaticRecoveryEnabled": return java.lang.Boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channelpoolmaxsize":
+        case "channelPoolMaxSize": return int.class;
+        case "channelpoolmaxwait":
+        case "channelPoolMaxWait": return long.class;
+        case "clientproperties":
+        case "clientProperties": return java.util.Map.class;
+        case "connectionfactory":
+        case "connectionFactory": return com.rabbitmq.client.ConnectionFactory.class;
+        case "connectionfactoryexceptionhandler":
+        case "connectionFactoryExceptionHandler": return com.rabbitmq.client.ExceptionHandler.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "deadletterexchange":
+        case "deadLetterExchange": return java.lang.String.class;
+        case "deadletterexchangetype":
+        case "deadLetterExchangeType": return java.lang.String.class;
+        case "deadletterqueue":
+        case "deadLetterQueue": return java.lang.String.class;
+        case "deadletterroutingkey":
+        case "deadLetterRoutingKey": return java.lang.String.class;
+        case "declare": return boolean.class;
+        case "durable": return boolean.class;
+        case "exclusive": return boolean.class;
+        case "exclusiveconsumer":
+        case "exclusiveConsumer": return boolean.class;
+        case "guaranteeddeliveries":
+        case "guaranteedDeliveries": return boolean.class;
+        case "hostname": return java.lang.String.class;
+        case "immediate": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mandatory": return boolean.class;
+        case "networkrecoveryinterval":
+        case "networkRecoveryInterval": return java.lang.Integer.class;
+        case "passive": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "portnumber":
+        case "portNumber": return int.class;
+        case "prefetchcount":
+        case "prefetchCount": return int.class;
+        case "prefetchenabled":
+        case "prefetchEnabled": return boolean.class;
+        case "prefetchglobal":
+        case "prefetchGlobal": return boolean.class;
+        case "prefetchsize":
+        case "prefetchSize": return int.class;
+        case "publisheracknowledgements":
+        case "publisherAcknowledgements": return boolean.class;
+        case "publisheracknowledgementstimeout":
+        case "publisherAcknowledgementsTimeout": return long.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": return long.class;
+        case "requestedchannelmax":
+        case "requestedChannelMax": return int.class;
+        case "requestedframemax":
+        case "requestedFrameMax": return int.class;
+        case "requestedheartbeat":
+        case "requestedHeartbeat": return int.class;
+        case "skipexchangedeclare":
+        case "skipExchangeDeclare": return boolean.class;
+        case "skipqueuebind":
+        case "skipQueueBind": return boolean.class;
+        case "skipqueuedeclare":
+        case "skipQueueDeclare": return boolean.class;
+        case "sslprotocol":
+        case "sslProtocol": return java.lang.String.class;
+        case "threadpoolsize":
+        case "threadPoolSize": return int.class;
+        case "topologyrecoveryenabled":
+        case "topologyRecoveryEnabled": return java.lang.Boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "trustmanager":
+        case "trustManager": return javax.net.ssl.TrustManager.class;
+        case "username": return java.lang.String.class;
+        case "vhost": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return target.getAdditionalHeaders();
+        case "additionalproperties":
+        case "additionalProperties": return target.getAdditionalProperties();
         case "addresses": return target.getAddresses();
         case "allownullheaders":
         case "allowNullHeaders": return target.isAllowNullHeaders();
@@ -192,8 +248,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "autoDetectConnectionFactory": return target.isAutoDetectConnectionFactory();
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": return target.getAutomaticRecoveryEnabled();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channelpoolmaxsize":
@@ -274,6 +330,20 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "trustManager": return target.getTrustManager();
         case "username": return target.getUsername();
         case "vhost": return target.getVhost();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return java.lang.Object.class;
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
+        case "args": return java.lang.Object.class;
+        case "clientproperties":
+        case "clientProperties": return java.lang.Object.class;
         default: return null;
         }
     }

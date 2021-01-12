@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX;
 
 /**
  * Generic PubSub Producer
@@ -52,14 +51,14 @@ public class GooglePubsubProducer extends DefaultProducer {
     }
 
     /**
-     * The incoming message is expected to be either - a List of Exchanges
-     * (aggregated) - an Exchange
+     * The incoming message is expected to be either - a List of Exchanges (aggregated) - an Exchange
      */
     @Override
     public void process(Exchange exchange) throws Exception {
 
         if (logger.isDebugEnabled()) {
-            logger.debug("uploader thread/id: " + Thread.currentThread().getId() + " / " + exchange.getExchangeId() + " . api call completed.");
+            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().getId(),
+                    exchange.getExchangeId());
         }
 
         if (exchange.getIn().getBody() instanceof List) {
@@ -93,25 +92,21 @@ public class GooglePubsubProducer extends DefaultProducer {
         } else if (body instanceof byte[]) {
             byteString = ByteString.copyFrom((byte[]) body);
         } else {
-            byteString = ByteString.copyFrom(serialize(body));
+            byteString = ByteString.copyFrom(endpoint.getSerializer().serialize(body));
         }
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
-
         Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
         if (attributes != null) {
-            messageBuilder.putAllAttributes(attributes).build();
+            for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+                if (!attribute.getKey().startsWith(RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX)) {
+                    messageBuilder.putAttributes(attribute.getKey(), attribute.getValue());
+                }
+            }
         }
         PubsubMessage message = messageBuilder.build();
 
         ApiFuture<String> messageIdFuture = publisher.publish(message);
         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIdFuture.get());
-    }
-
-    public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
     }
 }

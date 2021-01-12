@@ -39,7 +39,8 @@ public class NodeIdTest extends AbstractMiloServerTest {
     @Test
     public void testFull1() {
         final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", DEFAULT_NAMESPACE_URI, "item-1");
+        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=RAW(" + s + ")", DEFAULT_NAMESPACE_URI,
+                "item-1");
     }
 
     @Test
@@ -57,26 +58,30 @@ public class NodeIdTest extends AbstractMiloServerTest {
     @Test
     public void testFull1NonRaw() {
         final String s = String.format("ns=%s;i=%s", 1, 2);
-        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node=" + urlFormParameterEscaper().escape(s), ushort(1), uint(2));
+        testUri("milo-client:tcp://foo:bar@localhost:@@port@@?samplingInterval=1000&node="
+                + urlFormParameterEscaper().escape(s), ushort(1), uint(2));
     }
 
     @Test
     public void testDocURL() {
-        testUri("milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)", "http://foo.bar", "foo/bar");
+        testUri("milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)", "http://foo.bar",
+                "foo/bar");
     }
 
     @Test
     public void testMixed() {
         // This must fail since "node" is incomplete
         assertThrows(ResolveEndpointFailedException.class,
-            () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI, null, null));
+                () -> testUri("milo-client:tcp://foo:bar@localhost:@@port@@?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI,
+                        null, null));
     }
 
     private void testUri(final String uri, final Serializable namespace, final Serializable partialNodeId) {
         assertNodeId(getMandatoryEndpoint(resolve(uri), MiloClientEndpoint.class), namespace, partialNodeId);
     }
 
-    private void assertNodeId(final MiloClientEndpoint endpoint, final Serializable namespace, final Serializable partialNodeId) {
+    private void assertNodeId(
+            final MiloClientEndpoint endpoint, final Serializable namespace, final Serializable partialNodeId) {
 
         final ExpandedNodeId en = endpoint.getNodeId();
 

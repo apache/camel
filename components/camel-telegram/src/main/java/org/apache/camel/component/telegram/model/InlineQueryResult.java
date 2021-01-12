@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents one result of an inline query.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresult">
- * https://core.telegram.org/bots/api#inlinequeryresult</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresult</a>
  */
 public abstract class InlineQueryResult {
 

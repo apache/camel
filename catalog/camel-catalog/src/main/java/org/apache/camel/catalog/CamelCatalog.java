@@ -44,12 +44,13 @@ public interface CamelCatalog {
     /**
      * To use a custom {@link JSonSchemaResolver} with this catalog.
      *
-     * @param resolver  the custom resolver
+     * @param resolver the custom resolver
      */
     void setJSonSchemaResolver(JSonSchemaResolver resolver);
 
     /**
-     * To plugin a custom {@link RuntimeProvider} that amends the catalog to only include information that is supported on the runtime.
+     * To plugin a custom {@link RuntimeProvider} that amends the catalog to only include information that is supported
+     * on the runtime.
      */
     void setRuntimeProvider(RuntimeProvider provider);
 
@@ -118,8 +119,8 @@ public interface CamelCatalog {
     /**
      * Adds a 3rd party data format to this catalog.
      *
-     * @param name      the data format name
-     * @param className the fully qualified class name for the data format class
+     * @param name       the data format name
+     * @param className  the fully qualified class name for the data format class
      * @param jsonSchema the data format JSON schema
      */
     void addDataFormat(String name, String className, String jsonSchema);
@@ -132,17 +133,17 @@ public interface CamelCatalog {
     /**
      * Attempt to load the Camel version to be used by the catalog.
      * <p/>
-     * Loading the camel-catalog JAR of the given version of choice may require internet access
-     * to download the JAR from Maven central. You can pre download the JAR and install in a local
-     * Maven repository to avoid internet access for offline environments.
+     * Loading the camel-catalog JAR of the given version of choice may require internet access to download the JAR from
+     * Maven central. You can pre download the JAR and install in a local Maven repository to avoid internet access for
+     * offline environments.
      * <p/>
      * When loading a new version the cache will be invalidated.
      * <p/>
-     * <b>Important:</b> When loading a new runtime provider version, then its strongly advised to
-     * load the same/corresponding version first using {@link #loadVersion(String)}.
+     * <b>Important:</b> When loading a new runtime provider version, then its strongly advised to load the
+     * same/corresponding version first using {@link #loadVersion(String)}.
      *
-     * @param version  the Camel version such as <tt>2.17.1</tt>
-     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     * @param  version the Camel version such as <tt>2.17.1</tt>
+     * @return         <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
      */
     boolean loadVersion(String version);
 
@@ -159,17 +160,17 @@ public interface CamelCatalog {
     /**
      * Attempt to load the runtime provider version to be used by the catalog.
      * <p/>
-     * Loading the runtime provider JAR of the given version of choice may require internet access
-     * to download the JAR from Maven central. You can pre download the JAR and install in a local
-     * Maven repository to avoid internet access for offline environments.
+     * Loading the runtime provider JAR of the given version of choice may require internet access to download the JAR
+     * from Maven central. You can pre download the JAR and install in a local Maven repository to avoid internet access
+     * for offline environments.
      * <p/>
-     * <b>Important:</b> When loading a new runtime provider version, then its strongly advised to
-     * load the same/corresponding version first using {@link #loadVersion(String)}.
+     * <b>Important:</b> When loading a new runtime provider version, then its strongly advised to load the
+     * same/corresponding version first using {@link #loadVersion(String)}.
      *
-     * @param groupId  the runtime provider Maven groupId
-     * @param artifactId  the runtime provider Maven artifactId
-     * @param version  the runtime provider Maven version
-     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     * @param  groupId    the runtime provider Maven groupId
+     * @param  artifactId the runtime provider Maven artifactId
+     * @param  version    the runtime provider Maven version
+     * @return            <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
      */
     boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version);
 
@@ -199,8 +200,8 @@ public interface CamelCatalog {
     List<String> findOtherNames();
 
     /**
-     * @param kind the kind to look for
-     * @return the list of part names of the given {@link Kind} available in this {@link CamelCatalog}
+     * @param  kind the kind to look for
+     * @return      the list of part names of the given {@link Kind} available in this {@link CamelCatalog}
      */
     default List<String> findNames(Kind kind) {
         switch (kind) {
@@ -247,104 +248,104 @@ public interface CamelCatalog {
     /**
      * Returns the component information as JSON format.
      *
-     * @param name the component name
-     * @return component details in JSon
+     * @param  name the component name
+     * @return      component details in JSon
      */
     String componentJSonSchema(String name);
 
     /**
      * Returns the data format information as JSON format.
      *
-     * @param name the data format name
-     * @return data format details in JSon
+     * @param  name the data format name
+     * @return      data format details in JSon
      */
     String dataFormatJSonSchema(String name);
 
     /**
      * Returns the language information as JSON format.
      *
-     * @param name the language name
-     * @return language details in JSon
+     * @param  name the language name
+     * @return      language details in JSon
      */
     String languageJSonSchema(String name);
 
     /**
      * Returns the other (miscellaneous) information as JSON format.
      *
-     * @param name the other (miscellaneous) name
-     * @return other (miscellaneous) details in JSon
+     * @param  name the other (miscellaneous) name
+     * @return      other (miscellaneous) details in JSon
      */
     String otherJSonSchema(String name);
 
     /**
      * Returns the model information as JSON format.
      *
-     * @param name the model name
-     * @return model details in JSon
+     * @param  name the model name
+     * @return      model details in JSon
      */
     String modelJSonSchema(String name);
 
     /**
      * Returns the component documentation as Ascii doc format.
      *
-     * @param name the component name
-     * @return component documentation in ascii doc format.
+     * @param  name the component name
+     * @return      component documentation in ascii doc format.
      */
     String componentAsciiDoc(String name);
 
     /**
      * Returns the component documentation as HTML format.
      *
-     * @param name the component name
-     * @return component documentation in html format.
+     * @param  name the component name
+     * @return      component documentation in html format.
      */
     String componentHtmlDoc(String name);
 
     /**
      * Returns the data format documentation as Ascii doc format.
      *
-     * @param name the data format name
-     * @return data format documentation in ascii doc format.
+     * @param  name the data format name
+     * @return      data format documentation in ascii doc format.
      */
     String dataFormatAsciiDoc(String name);
 
     /**
      * Returns the data format documentation as HTML format.
      *
-     * @param name the data format name
-     * @return data format documentation in HTML format.
+     * @param  name the data format name
+     * @return      data format documentation in HTML format.
      */
     String dataFormatHtmlDoc(String name);
 
     /**
      * Returns the language documentation as Ascii doc format.
      *
-     * @param name the language name
-     * @return language documentation in ascii doc format.
+     * @param  name the language name
+     * @return      language documentation in ascii doc format.
      */
     String languageAsciiDoc(String name);
 
     /**
      * Returns the language documentation as HTML format.
      *
-     * @param name the language name
-     * @return language documentation in HTML format.
+     * @param  name the language name
+     * @return      language documentation in HTML format.
      */
     String languageHtmlDoc(String name);
 
     /**
      * Returns the other (miscellaneous) documentation as Ascii doc format.
      *
-     * @param name the other (miscellaneous) name
-     * @return other (miscellaneous) documentation in ascii doc format.
+     * @param  name the other (miscellaneous) name
+     * @return      other (miscellaneous) documentation in ascii doc format.
      */
     String otherAsciiDoc(String name);
 
     /**
      * Returns the other (miscellaneous) documentation as HTML format.
      *
-     * @param name the other (miscellaneous) name
-     * @return other (miscellaneous) documentation in HTML format.
+     * @param  name the other (miscellaneous) name
+     * @return      other (miscellaneous) documentation in HTML format.
      */
     String otherHtmlDoc(String name);
 
@@ -407,8 +408,8 @@ public interface CamelCatalog {
     /**
      * Parses the endpoint uri and constructs a key/value properties of each option
      *
-     * @param uri  the endpoint uri
-     * @return properties as key value pairs of each endpoint option
+     * @param  uri the endpoint uri
+     * @return     properties as key value pairs of each endpoint option
      */
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
@@ -417,66 +418,68 @@ public interface CamelCatalog {
      * <p/>
      * For example using the HTTP components to provide query parameters in the endpoint uri.
      *
-     * @param uri  the endpoint uri
-     * @return properties as key value pairs of each lenient properties
+     * @param  uri the endpoint uri
+     * @return     properties as key value pairs of each lenient properties
      */
     Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException;
 
     /**
      * Validates the pattern whether its a valid time pattern.
      *
-     * @param pattern  the pattern such as 5000, 5s, 5sec, 4min, 4m30s, 1h, etc.
-     * @return <tt>true</tt> if valid, <tt>false</tt> if invalid
+     * @param  pattern the pattern such as 5000, 5s, 5sec, 4min, 4m30s, 1h, etc.
+     * @return         <tt>true</tt> if valid, <tt>false</tt> if invalid
      */
     boolean validateTimePattern(String pattern);
 
     /**
      * Parses and validates the endpoint uri and constructs a key/value properties of each option.
      *
-     * @param uri  the endpoint uri
-     * @return validation result
+     * @param  uri the endpoint uri
+     * @return     validation result
      */
     EndpointValidationResult validateEndpointProperties(String uri);
 
     /**
      * Parses and validates the endpoint uri and constructs a key/value properties of each option.
      * <p/>
-     * The option ignoreLenientProperties can be used to ignore components that uses lenient properties.
-     * When this is true, then the uri validation is stricter but would fail on properties that are not part of the component
-     * but in the uri because of using lenient properties.
-     * For example using the HTTP components to provide query parameters in the endpoint uri.
+     * The option ignoreLenientProperties can be used to ignore components that uses lenient properties. When this is
+     * true, then the uri validation is stricter but would fail on properties that are not part of the component but in
+     * the uri because of using lenient properties. For example using the HTTP components to provide query parameters in
+     * the endpoint uri.
      *
-     * @param uri  the endpoint uri
-     * @param ignoreLenientProperties  whether to ignore components that uses lenient properties.
-     * @return validation result
+     * @param  uri                     the endpoint uri
+     * @param  ignoreLenientProperties whether to ignore components that uses lenient properties.
+     * @return                         validation result
      */
     EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties);
 
     /**
      * Parses and validates the endpoint uri and constructs a key/value properties of each option.
      * <p/>
-     * The option ignoreLenientProperties can be used to ignore components that uses lenient properties.
-     * When this is true, then the uri validation is stricter but would fail on properties that are not part of the component
-     * but in the uri because of using lenient properties.
-     * For example using the HTTP components to provide query parameters in the endpoint uri.
+     * The option ignoreLenientProperties can be used to ignore components that uses lenient properties. When this is
+     * true, then the uri validation is stricter but would fail on properties that are not part of the component but in
+     * the uri because of using lenient properties. For example using the HTTP components to provide query parameters in
+     * the endpoint uri.
      *
-     * @param uri  the endpoint uri
-     * @param ignoreLenientProperties  whether to ignore components that uses lenient properties.
-     * @param consumerOnly whether the endpoint is only used as a consumer
-     * @param producerOnly whether the endpoint is only used as a producer
-     * @return validation result
+     * @param  uri                     the endpoint uri
+     * @param  ignoreLenientProperties whether to ignore components that uses lenient properties.
+     * @param  consumerOnly            whether the endpoint is only used as a consumer
+     * @param  producerOnly            whether the endpoint is only used as a producer
+     * @return                         validation result
      */
-    EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly);
+    EndpointValidationResult validateEndpointProperties(
+            String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly);
 
     /**
      * Parses and validates the language as a predicate
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
      *
-     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
-     * @param language the name of the language
-     * @param text  the predicate text
-     * @return validation result
+     * @param  classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for
+     *                     using default classloader
+     * @param  language    the name of the language
+     * @param  text        the predicate text
+     * @return             validation result
      */
     LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text);
 
@@ -485,36 +488,37 @@ public interface CamelCatalog {
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
      *
-     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
-     * @param language the name of the language
-     * @param text  the expression text
-     * @return validation result
+     * @param  classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for
+     *                     using default classloader
+     * @param  language    the name of the language
+     * @param  text        the expression text
+     * @return             validation result
      */
     LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text);
 
     /**
      * Parses and validates the configuration property
      *
-     * @param text  the configuration text
-     * @return validation result
+     * @param  text the configuration text
+     * @return      validation result
      */
     ConfigurationPropertiesValidationResult validateConfigurationProperty(String text);
 
     /**
      * Returns the component name from the given endpoint uri
      *
-     * @param uri  the endpoint uri
-     * @return the component name (aka scheme), or <tt>null</tt> if not possible to determine
+     * @param  uri the endpoint uri
+     * @return     the component name (aka scheme), or <tt>null</tt> if not possible to determine
      */
     String endpointComponentName(String uri);
 
     /**
      * Creates an endpoint uri in Java style from the information from the properties
      *
-     * @param scheme the endpoint schema
-     * @param properties the properties as key value pairs
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
+     * @param  scheme                      the endpoint schema
+     * @param  properties                  the properties as key value pairs
+     * @param  encode                      whether to URL encode the returned uri or not
+     * @return                             the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
     String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
@@ -522,10 +526,10 @@ public interface CamelCatalog {
     /**
      * Creates an endpoint uri in XML style from the information from the properties
      *
-     * @param scheme the endpoint schema
-     * @param properties the properties as key value pairs
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
+     * @param  scheme                      the endpoint schema
+     * @param  properties                  the properties as key value pairs
+     * @param  encode                      whether to URL encode the returned uri or not
+     * @return                             the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
     String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
@@ -561,32 +565,32 @@ public interface CamelCatalog {
     String summaryAsJson();
 
     /**
-     * @param name the component name to look up
-     * @return the requested component or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @param  name the component name to look up
+     * @return      the requested component or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     ComponentModel componentModel(String name);
 
     /**
-     * @param name the data format name to look up
-     * @return the requested data format or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @param  name the data format name to look up
+     * @return      the requested data format or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     DataFormatModel dataFormatModel(String name);
 
     /**
-     * @param name the language name to look up
-     * @return the requested language or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @param  name the language name to look up
+     * @return      the requested language or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     LanguageModel languageModel(String name);
 
     /**
-     * @param name the other name to look up
-     * @return the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @param  name the other name to look up
+     * @return      the requested other or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     OtherModel otherModel(String name);
 
     /**
-     * @param name the EIP model name to look up
-     * @return the requested EIP model or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @param  name the EIP model name to look up
+     * @return      the requested EIP model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     EipModel eipModel(String name);
 
@@ -596,9 +600,9 @@ public interface CamelCatalog {
     MainModel mainModel();
 
     /**
-     * @param kind the requested kind
-     * @param name the name to look up
-     * @return the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @param  kind the requested kind
+     * @param  name the name to look up
+     * @return      the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     default BaseModel<?> model(Kind kind, String name) {
         switch (kind) {

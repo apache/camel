@@ -76,8 +76,10 @@ public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").circuitBreaker().configuration("myConfig").faultToleranceConfiguration().delay(2000).timeoutEnabled(true).timeoutDuration(5000).end()
-                        .to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start").circuitBreaker().configuration("myConfig").faultToleranceConfiguration().delay(2000)
+                        .timeoutEnabled(true).timeoutDuration(5000).end()
+                        .to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end()
+                        .to("log:result").to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

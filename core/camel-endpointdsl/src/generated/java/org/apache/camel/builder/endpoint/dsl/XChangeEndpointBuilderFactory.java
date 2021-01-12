@@ -40,10 +40,13 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * The currency.
          * 
-         * The option is a: <code>org.knowm.xchange.currency.Currency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.knowm.xchange.currency.Currency&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param currency the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder currency(Object currency) {
             doSetProperty("currency", currency);
@@ -53,9 +56,12 @@ public interface XChangeEndpointBuilderFactory {
          * The currency.
          * 
          * The option will be converted to a
-         * <code>org.knowm.xchange.currency.Currency</code> type.
+         * &lt;code&gt;org.knowm.xchange.currency.Currency&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param currency the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder currency(String currency) {
             doSetProperty("currency", currency);
@@ -64,9 +70,12 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * The currency pair.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param currencyPair the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder currencyPair(String currencyPair) {
             doSetProperty("currencyPair", currencyPair);
@@ -83,10 +92,13 @@ public interface XChangeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,10 +116,14 @@ public interface XChangeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -118,10 +134,13 @@ public interface XChangeEndpointBuilderFactory {
          * The method to execute.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param method the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder method(XChangeMethod method) {
             doSetProperty("method", method);
@@ -131,10 +150,13 @@ public interface XChangeEndpointBuilderFactory {
          * The method to execute.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param method the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder method(String method) {
             doSetProperty("method", method);
@@ -144,10 +166,13 @@ public interface XChangeEndpointBuilderFactory {
          * The service to call.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeService&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param service the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder service(XChangeService service) {
             doSetProperty("service", service);
@@ -157,10 +182,13 @@ public interface XChangeEndpointBuilderFactory {
          * The service to call.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
+         * &lt;code&gt;org.apache.camel.component.xchange.XChangeConfiguration$XChangeService&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param service the value to set
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder service(String service) {
             doSetProperty("service", service);
@@ -178,41 +206,16 @@ public interface XChangeEndpointBuilderFactory {
             return (XChangeEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXChangeEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedXChangeEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXChangeEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -222,10 +225,14 @@ public interface XChangeEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -273,6 +280,7 @@ public interface XChangeEndpointBuilderFactory {
          * The exchange to connect to
          * 
          * @param path name
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder xchange(String path) {
             return XChangeEndpointBuilderFactory.endpointBuilder("xchange", path);
@@ -293,6 +301,7 @@ public interface XChangeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder xchange(String componentName, String path) {
             return XChangeEndpointBuilderFactory.endpointBuilder(componentName, path);

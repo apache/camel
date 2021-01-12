@@ -37,6 +37,8 @@ public interface AhcWssComponentBuilderFactory {
      * Category: websocket
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
+     * 
+     * @return the dsl builder
      */
     static AhcWssComponentBuilder ahcWss() {
         return new AhcWssComponentBuilderImpl();
@@ -56,10 +58,13 @@ public interface AhcWssComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -77,10 +82,13 @@ public interface AhcWssComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -94,10 +102,13 @@ public interface AhcWssComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -105,17 +116,23 @@ public interface AhcWssComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default AhcWssComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AhcWssComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -123,9 +140,13 @@ public interface AhcWssComponentBuilderFactory {
          * between AHC and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder binding(
                 org.apache.camel.component.ahc.AhcBinding binding) {
@@ -135,10 +156,13 @@ public interface AhcWssComponentBuilderFactory {
         /**
          * To use a custom AsyncHttpClient.
          * 
-         * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder client(
                 org.asynchttpclient.AsyncHttpClient client) {
@@ -150,9 +174,13 @@ public interface AhcWssComponentBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder clientConfig(
                 org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
@@ -164,9 +192,13 @@ public interface AhcWssComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -180,9 +212,12 @@ public interface AhcWssComponentBuilderFactory {
          * option at the endpoint or component level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -192,10 +227,13 @@ public interface AhcWssComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default AhcWssComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -222,7 +260,7 @@ public interface AhcWssComponentBuilderFactory {
             case "bridgeErrorHandler": ((WsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((WsComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "basicPropertyBinding": ((WsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((WsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "binding": ((WsComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
             case "client": ((WsComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
             case "clientConfig": ((WsComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;

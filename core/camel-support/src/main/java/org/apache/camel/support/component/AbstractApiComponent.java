@@ -24,9 +24,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 
@@ -74,8 +74,9 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                 methodName = pathElements[1];
                 break;
             default:
-                throw new CamelException("Invalid URI path [" + remaining
-                        + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
+                throw new CamelException(
+                        "Invalid URI path [" + remaining
+                                         + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
         }
 
         try {
@@ -91,14 +92,15 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             return endpoint;
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof IllegalArgumentException) {
-                throw new CamelException("Invalid URI path prefix [" + remaining
-                        + "], must be one of " + collection.getApiNames());
+                throw new CamelException(
+                        "Invalid URI path prefix [" + remaining
+                                         + "], must be one of " + collection.getApiNames());
             }
             throw e;
         }
     }
 
-    protected abstract E getApiName(String apiNameStr) throws IllegalArgumentException;
+    protected abstract E getApiName(String apiNameStr);
 
     protected abstract Endpoint createEndpoint(String uri, String methodName, E apiName, T endpointConfiguration);
 
@@ -106,10 +108,11 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         final Map<String, Object> componentProperties = new HashMap<>();
         // copy component configuration, if set
         if (configuration != null) {
-            PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+            PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                    .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
             // use reflection free configurer (if possible)
-            if (configurer instanceof PropertyConfigurerGetter) {
-                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            if (configurer instanceof ExtendedPropertyConfigurerGetter) {
+                ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
                 for (String key : getter.getAllOptions(configuration).keySet()) {
                     Object value = getter.getOptionValue(configuration, key, true);
                     if (value != null) {
@@ -117,15 +120,18 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                     }
                 }
             } else {
-                getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(configuration, componentProperties, null, false);
+                getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(configuration,
+                        componentProperties, null, false);
             }
         }
 
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
-        PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), getCamelContext());
+        PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), getCamelContext());
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)
+                .withIgnoreCase(true)
                 .bind(getCamelContext(), endpointConfiguration, componentProperties);
         return endpointConfiguration;
     }

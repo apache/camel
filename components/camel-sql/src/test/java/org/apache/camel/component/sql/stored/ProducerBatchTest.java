@@ -59,14 +59,12 @@ public class ProducerBatchTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-
         List<Map<String, Object>> batchParams = new ArrayList<>();
 
         Map<String, Object> batch1 = new HashMap<>();
         batchParams.add(batch1);
 
         batch1.put("num", "1");
-
 
         Map<String, Object> batch2 = new HashMap<>();
 

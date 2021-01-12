@@ -25,45 +25,36 @@ import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
- * gRPC request stream observer which is propagating every onNext(), onError()
- * or onCompleted() calls to the Camel route
+ * This is the default consumer strategy for client-streaming and bi-directional streaming gRPC calls. gRPC request
+ * stream observer which is propagating every onNext(), onError() or onCompleted() calls to the Camel route.
  */
 public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStreamObserver {
 
-    public GrpcRequestPropagationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer, StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    public GrpcRequestPropagationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
+                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
         super(endpoint, consumer, responseObserver, headers);
     }
 
     @Override
     public void onNext(Object request) {
         CountDownLatch latch = new CountDownLatch(1);
-        Object responseBody = null;
-        
+
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
-        
-        consumer.process(exchange, doneSync -> {
-            latch.countDown();
-        });
-        
+
+        consumer.process(exchange, doneSync -> latch.countDown());
+
         try {
             latch.await();
-            
-            if (exchange.hasOut()) {
-                responseBody = exchange.getOut().getBody();
-            } else {
-                responseBody = exchange.getIn().getBody();
-            }
-            
+
+            Object responseBody = exchange.getMessage().getBody();
             if (responseBody instanceof List) {
-                List<?> responseList = (List<?>)responseBody;
+                List<?> responseList = (List<?>) responseBody;
                 responseList.forEach(responseObserver::onNext);
             } else {
                 responseObserver.onNext(responseBody);
             }
-            responseObserver.onCompleted();
-
         } catch (InterruptedException e) {
             responseObserver.onError(e);
         }

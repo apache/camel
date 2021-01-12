@@ -4,8 +4,10 @@ package org.apache.camel.component.graphql;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": target.setJwtAuthorizationType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operationname":
@@ -41,20 +43,27 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operationName", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("queryFile", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("variables", org.apache.camel.util.json.JsonObject.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operationname":
+        case "operationName": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "queryfile":
+        case "queryFile": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "variables": return org.apache.camel.util.json.JsonObject.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -63,8 +72,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": return target.getJwtAuthorizationType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operationname":

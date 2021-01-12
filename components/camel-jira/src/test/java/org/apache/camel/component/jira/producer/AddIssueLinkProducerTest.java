@@ -112,8 +112,8 @@ public class AddIssueLinkProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("jira://addIssueLink?jiraUrl=" + JIRA_CREDENTIALS)
-                    .to(mockResult);
+                        .to("jira://addIssueLink?jiraUrl=" + JIRA_CREDENTIALS)
+                        .to(mockResult);
             }
         };
     }
@@ -128,12 +128,12 @@ public class AddIssueLinkProducerTest extends CamelTestSupport {
         headers.put(LINK_TYPE, linkType);
 
         when(issueRestClient.linkIssue(any(LinkIssuesInput.class)))
-            .then((Answer<Void>) inv -> {
-                Collection<IssueLink> links = new ArrayList<>();
-                links.add(newIssueLink(childIssue.getId(), 1, comment));
-                parentIssue = createIssueWithLinks(parentIssue.getId(), links);
-                return null;
-            });
+                .then((Answer<Void>) inv -> {
+                    Collection<IssueLink> links = new ArrayList<>();
+                    links.add(newIssueLink(childIssue.getId(), 1, comment));
+                    parentIssue = createIssueWithLinks(parentIssue.getId(), links);
+                    return null;
+                });
 
         template.sendBodyAndHeaders(comment, headers);
 
@@ -152,12 +152,12 @@ public class AddIssueLinkProducerTest extends CamelTestSupport {
         headers.put(LINK_TYPE, linkType);
 
         when(issueRestClient.linkIssue(any(LinkIssuesInput.class)))
-            .then((Answer<Void>) inv -> {
-                Collection<IssueLink> links = new ArrayList<>();
-                links.add(newIssueLink(childIssue.getId(), 1, null));
-                parentIssue = createIssueWithLinks(parentIssue.getId(), links);
-                return null;
-            });
+                .then((Answer<Void>) inv -> {
+                    Collection<IssueLink> links = new ArrayList<>();
+                    links.add(newIssueLink(childIssue.getId(), 1, null));
+                    parentIssue = createIssueWithLinks(parentIssue.getId(), links);
+                    return null;
+                });
 
         template.sendBodyAndHeaders(null, headers);
 

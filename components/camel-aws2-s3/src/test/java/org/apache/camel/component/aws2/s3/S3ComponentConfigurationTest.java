@@ -18,10 +18,10 @@ package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,29 +30,32 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
-        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component
-            .createEndpoint("aws2-s3://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&overrideEndpoint=true&uriEndpointOverride=http://localhost:4572");
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint) component
+                .createEndpoint(
+                        "aws2-s3://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&overrideEndpoint=true&uriEndpointOverride=http://localhost:4572");
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
         assertEquals(endpoint.getConfiguration().getUriEndpointOverride(), "http://localhost:4572");
     }
-    
+
     @Test
     public void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
-        S3Client client = S3Client.builder().build();
+        S3Client client = S3Client.builder().region(Region.EU_WEST_1).build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
-        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&autoDiscoverClient=false");
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint) component.createEndpoint(
+                "aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
-        assertNotSame(client, endpoint.getConfiguration().getAmazonS3Client());
+        assertSame(client, endpoint.getConfiguration().getAmazonS3Client());
     }
-    
+
     @Test
-    public void createEndpointWithCredentialsAndClientExistInRegistryWithAutodiscover() throws Exception {
-        S3Client client = S3Client.builder().build();
+    public void createEndpointWithCredentialsAndClientExistInRegistryWithAutowire() throws Exception {
+        S3Client client = S3Client.builder().region(Region.EU_WEST_1).build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
-        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint) component
+                .createEndpoint("aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(client, endpoint.getConfiguration().getAmazonS3Client());

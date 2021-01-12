@@ -31,7 +31,8 @@ public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/config/JmsEndpointWithCustomDestinationTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jms/config/JmsEndpointWithCustomDestinationTest-context.xml");
     }
 
     @Test

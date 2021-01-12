@@ -26,7 +26,7 @@ public class ReferenceCountTest {
 
     @Test
     public void testReferenceCount() {
-        AtomicInteger cnt = new AtomicInteger(0);
+        AtomicInteger cnt = new AtomicInteger();
 
         ReferenceCount ref = ReferenceCount.on(cnt::incrementAndGet, cnt::decrementAndGet);
 

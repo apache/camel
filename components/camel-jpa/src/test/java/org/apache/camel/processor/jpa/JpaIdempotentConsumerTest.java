@@ -40,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaIdempotentConsumerTest extends AbstractJpaTest {
-    protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String SELECT_ALL_STRING
+            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected Endpoint startEndpoint;
@@ -85,8 +86,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
                 // START SNIPPET: idempotent
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)
-                ).to("mock:result");
+                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).to("mock:result");
                 // END SNIPPET: idempotent
             }
         });
@@ -128,15 +128,14 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)
-                ).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damn I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damn I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();

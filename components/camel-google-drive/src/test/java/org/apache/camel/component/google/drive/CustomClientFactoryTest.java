@@ -35,13 +35,13 @@ public class CustomClientFactoryTest extends AbstractGoogleDriveTestSupport {
     public void testClientFactoryUpdated() throws Exception {
         Endpoint endpoint = context.getEndpoint("google-drive://drive-files/list?clientFactory=#myAuth");
         assertTrue(endpoint instanceof GoogleDriveEndpoint);
-        assertTrue(((GoogleDriveEndpoint)endpoint).getClientFactory() instanceof MyClientFactory);        
+        assertTrue(((GoogleDriveEndpoint) endpoint).getClientFactory() instanceof MyClientFactory);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {           
+            public void configure() {
                 from("google-drive://drive-files/list?clientFactory=#myAuth").to("mock:result");
             }
         };

@@ -31,8 +31,6 @@ public enum MessageFeedbackApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathMessageSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private MessageFeedbackApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

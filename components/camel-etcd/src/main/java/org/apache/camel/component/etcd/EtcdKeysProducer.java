@@ -48,7 +48,7 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         StringHelper.notEmpty(path, EtcdConstants.ETCD_PATH);
         StringHelper.notEmpty(action, EtcdConstants.ETCD_ACTION);
 
-        switch(action) {
+        switch (action) {
             case EtcdConstants.ETCD_KEYS_ACTION_SET:
                 processSet(getClient(), path, exchange);
                 break;

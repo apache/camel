@@ -49,7 +49,6 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
 
-
     @Test
     public void testIdempotent() throws Exception {
         // send a file
@@ -80,4 +79,3 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     }
 
 }
-

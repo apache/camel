@@ -57,11 +57,11 @@ public class StompConfiguration implements Cloneable {
     public String getBrokerURL() {
         return brokerURL;
     }
-    
+
     public String getHost() {
         return host;
     }
-    
+
     /**
      * The virtual host name
      */

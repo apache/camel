@@ -92,15 +92,15 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // sets the id of the previous node, that is the mock:foo
-                    .to("mock:foo").id("myfoo")
-                    .delay(10)
-                    .to("mock:result");
+                        // sets the id of the previous node, that is the mock:foo
+                        .to("mock:foo").id("myfoo")
+                        .delay(10)
+                        .to("mock:result");
 
                 from("direct:other")
-                    .to("mock:bar")
-                    .delay(10)
-                    .to("mock:other");
+                        .to("mock:bar")
+                        .delay(10)
+                        .to("mock:other");
             }
         };
     }

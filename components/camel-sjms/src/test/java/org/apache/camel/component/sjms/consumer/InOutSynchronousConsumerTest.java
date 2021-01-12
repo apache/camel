@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "sjms:queue:in?namedReplyTo=response.queue";
+    private String url = "sjms:queue:in?replyTo=response.queue&synchronous=true";
 
     @Test
     public void testSynchronous() throws Exception {
@@ -42,14 +43,14 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:before")
-                    .process(exchange -> beforeThreadName = Thread.currentThread().getName())
-                    .inOut(url)
-                    .process(exchange -> afterThreadName = Thread.currentThread().getName())
-                    .to("log:after")
-                    .to("mock:result");
+                        .to("log:before")
+                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .to(ExchangePattern.InOut, url)
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .to("log:after")
+                        .to("mock:result");
 
-                from("sjms:queue:in?exchangePattern=InOut").process(exchange -> exchange.getMessage().setBody("Bye World"));
+                from("sjms:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

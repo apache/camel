@@ -27,9 +27,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * To test that using polling consumer with file will not keep scheduled file
- * consumer keep running in the background. It should suspend/resume the
- * consumer on demand instead.
+ * To test that using polling consumer with file will not keep scheduled file consumer keep running in the background.
+ * It should suspend/resume the consumer on demand instead.
  */
 public class FilePollingConsumerTest extends ContextTestSupport {
 

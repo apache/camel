@@ -26,24 +26,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
+import org.apache.camel.test.infra.consul.services.ConsulService;
+import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 public class ConsulClusteredRoutePolicyFactoryTest {
-
-    @Container
-    public static GenericContainer container = ConsulTestSupport.consulContainer();
+    @RegisterExtension
+    public static ConsulService service = ConsulServiceFactory.createService();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryTest.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
@@ -77,21 +73,22 @@ public class ConsulClusteredRoutePolicyFactoryTest {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
 
-            ConsulClusterService service = new ConsulClusterService();
-            service.setId("node-" + id);
-            service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
+            ConsulClusterService consulClusterService = new ConsulClusterService();
+            consulClusterService.setId("node-" + id);
+            consulClusterService.setUrl(service.getConsulUrl());
 
-            LOGGER.info("Consul URL {}", service.getUrl());
+            LOGGER.info("Consul URL {}", consulClusterService.getUrl());
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.setName("context-" + id);
-            context.addService(service);
+            context.addService(consulClusterService);
             context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}").process(e -> contextLatch.countDown());
+                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

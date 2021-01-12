@@ -39,7 +39,8 @@ public class SpringRenameFileOnCommitIssueTest extends SpringTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/renameissue/.camel/hello.xml");
 
-        String body = "<?xml version=\"1.0\"?><persons xmlns=\"http://foo.com/bar\"><person name=\"James\"/><person name=\"Claus\"/></persons>";
+        String body
+                = "<?xml version=\"1.0\"?><persons xmlns=\"http://foo.com/bar\"><person name=\"James\"/><person name=\"Claus\"/></persons>";
 
         template.sendBodyAndHeader("file://target/renameissue", body, Exchange.FILE_NAME, "hello.xml");
 

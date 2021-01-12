@@ -45,36 +45,34 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
     /**
      * Creates {@link OutgoingStickerMessage} based on a given webp image.
      *
-     * @param image                 the image
-     * @param filenameWithExtension the name of the file to send. Example: file.webp
-     * @param chatId                Unique identifier for the target chat or username of the target channel
-     * @param disableNotification   Sends the message silently. Users will receive a notification with no sound.
-     * @param replyToMessageId      If the message is a reply, ID of the original message
-     * @return Sticker message.
+     * @param  image                 the image
+     * @param  filenameWithExtension the name of the file to send. Example: file.webp
+     * @param  chatId                Unique identifier for the target chat or username of the target channel
+     * @param  disableNotification   Sends the message silently. Users will receive a notification with no sound.
+     * @param  replyToMessageId      If the message is a reply, ID of the original message
+     * @return                       Sticker message.
      */
     public static OutgoingStickerMessage createWithImage(
-        byte[] image, String filenameWithExtension,
-        String chatId, Boolean disableNotification, Long replyToMessageId
-    ) {
+            byte[] image, String filenameWithExtension,
+            String chatId, Boolean disableNotification, Long replyToMessageId) {
         Objects.requireNonNull(image);
         Objects.requireNonNull(filenameWithExtension);
         return new OutgoingStickerMessage(
-            null, image, filenameWithExtension, chatId, disableNotification, replyToMessageId);
+                null, image, filenameWithExtension, chatId, disableNotification, replyToMessageId);
     }
 
     /**
-     * Creates {@link OutgoingStickerMessage} based on a HTTP URL as a String for Telegram to get a .webp file from
-     * the Internet.
+     * Creates {@link OutgoingStickerMessage} based on a HTTP URL as a String for Telegram to get a .webp file from the
+     * Internet.
      *
-     * @param url                 image URL
-     * @param chatId              Unique identifier for the target chat or username of the target channel
-     * @param disableNotification Sends the message silently. Users will receive a notification with no sound.
-     * @param replyToMessageId    If the message is a reply, ID of the original message
-     * @return Sticker message.
+     * @param  url                 image URL
+     * @param  chatId              Unique identifier for the target chat or username of the target channel
+     * @param  disableNotification Sends the message silently. Users will receive a notification with no sound.
+     * @param  replyToMessageId    If the message is a reply, ID of the original message
+     * @return                     Sticker message.
      */
     public static OutgoingStickerMessage createWithUrl(
-        String url, String chatId, Boolean disableNotification, Long replyToMessageId
-    ) {
+            String url, String chatId, Boolean disableNotification, Long replyToMessageId) {
         Objects.requireNonNull(url);
         return createWithFileId(url, chatId, disableNotification, replyToMessageId);
     }
@@ -82,14 +80,15 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
     /**
      * Creates {@link OutgoingStickerMessage} based on a file_id to send a file that exists on the Telegram servers.
      *
-     * @param fileId              file_id as {@link String} to send a file that exists on the Telegram servers
-     * @param chatId              Unique identifier for the target chat or username of the target channel
-     * @param disableNotification Sends the message silently. Users will receive a notification with no sound.
-     * @param replyToMessageId    If the message is a reply, ID of the original message
-     * @return Sticker message.
+     * @param  fileId              file_id as {@link String} to send a file that exists on the Telegram servers
+     * @param  chatId              Unique identifier for the target chat or username of the target channel
+     * @param  disableNotification Sends the message silently. Users will receive a notification with no sound.
+     * @param  replyToMessageId    If the message is a reply, ID of the original message
+     * @return                     Sticker message.
      */
-    public static OutgoingStickerMessage createWithFileId(String fileId, String chatId, Boolean disableNotification,
-                                                          Long replyToMessageId) {
+    public static OutgoingStickerMessage createWithFileId(
+            String fileId, String chatId, Boolean disableNotification,
+            Long replyToMessageId) {
         Objects.requireNonNull(fileId);
         return new OutgoingStickerMessage(fileId, null, null, chatId, disableNotification, replyToMessageId);
     }
@@ -109,12 +108,12 @@ public final class OutgoingStickerMessage extends OutgoingMessage {
     @Override
     public String toString() {
         return "OutgoingStickerMessage{"
-            + "sticker='" + sticker + '\''
-            + ", stickerImage=" + Arrays.toString(stickerImage)
-            + ", filenameWithExtension='" + filenameWithExtension + '\''
-            + ", chatId='" + chatId + '\''
-            + ", disableNotification=" + disableNotification
-            + ", replyToMessageId=" + replyToMessageId
-            + '}';
+               + "sticker='" + sticker + '\''
+               + ", stickerImage=" + Arrays.toString(stickerImage)
+               + ", filenameWithExtension='" + filenameWithExtension + '\''
+               + ", chatId='" + chatId + '\''
+               + ", disableNotification=" + disableNotification
+               + ", replyToMessageId=" + replyToMessageId
+               + '}';
     }
 }

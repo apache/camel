@@ -4,8 +4,10 @@ package org.apache.camel.component.spring.ws;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "allowResponseAttachmentOverride": target.getConfiguration().setAllowResponseAttachmentOverride(property(camelContext, boolean.class, value)); return true;
         case "allowresponseheaderoverride":
         case "allowResponseHeaderOverride": target.getConfiguration().setAllowResponseHeaderOverride(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointdispatcher":
@@ -68,32 +68,52 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowResponseAttachmentOverride", boolean.class);
-        answer.put("allowResponseHeaderOverride", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("endpointDispatcher", org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher.class);
-        answer.put("endpointMapping", org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("faultAction", java.net.URI.class);
-        answer.put("faultTo", java.net.URI.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageFactory", org.springframework.ws.WebServiceMessageFactory.class);
-        answer.put("messageFilter", org.apache.camel.component.spring.ws.filter.MessageFilter.class);
-        answer.put("messageIdStrategy", org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class);
-        answer.put("messageSender", org.springframework.ws.transport.WebServiceMessageSender.class);
-        answer.put("outputAction", java.net.URI.class);
-        answer.put("replyTo", java.net.URI.class);
-        answer.put("soapAction", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", int.class);
-        answer.put("webServiceTemplate", org.springframework.ws.client.core.WebServiceTemplate.class);
-        answer.put("wsAddressingAction", java.net.URI.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowresponseattachmentoverride":
+        case "allowResponseAttachmentOverride": return boolean.class;
+        case "allowresponseheaderoverride":
+        case "allowResponseHeaderOverride": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "endpointdispatcher":
+        case "endpointDispatcher": return org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher.class;
+        case "endpointmapping":
+        case "endpointMapping": return org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "faultaction":
+        case "faultAction": return java.net.URI.class;
+        case "faultto":
+        case "faultTo": return java.net.URI.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagefactory":
+        case "messageFactory": return org.springframework.ws.WebServiceMessageFactory.class;
+        case "messagefilter":
+        case "messageFilter": return org.apache.camel.component.spring.ws.filter.MessageFilter.class;
+        case "messageidstrategy":
+        case "messageIdStrategy": return org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class;
+        case "messagesender":
+        case "messageSender": return org.springframework.ws.transport.WebServiceMessageSender.class;
+        case "outputaction":
+        case "outputAction": return java.net.URI.class;
+        case "replyto":
+        case "replyTo": return java.net.URI.class;
+        case "soapaction":
+        case "soapAction": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        case "webservicetemplate":
+        case "webServiceTemplate": return org.springframework.ws.client.core.WebServiceTemplate.class;
+        case "wsaddressingaction":
+        case "wsAddressingAction": return java.net.URI.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -104,8 +124,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "allowResponseAttachmentOverride": return target.getConfiguration().isAllowResponseAttachmentOverride();
         case "allowresponseheaderoverride":
         case "allowResponseHeaderOverride": return target.getConfiguration().isAllowResponseHeaderOverride();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "endpointdispatcher":

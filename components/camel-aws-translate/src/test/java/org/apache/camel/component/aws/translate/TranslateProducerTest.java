@@ -78,9 +78,12 @@ public class TranslateProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText").to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText").to("mock:result");
-                from("direct:translateTextOptions").to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
-                    .to("mock:result");
+                from("direct:translateText")
+                        .to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText")
+                        .to("mock:result");
+                from("direct:translateTextOptions").to(
+                        "aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
+                        .to("mock:result");
             }
         };
     }

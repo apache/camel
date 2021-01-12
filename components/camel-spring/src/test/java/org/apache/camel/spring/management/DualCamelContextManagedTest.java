@@ -44,7 +44,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
 
     @Test
     public void testDualCamelContextManaged() throws Exception {
-        
+
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on1 = null;
@@ -69,7 +69,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
 
         for (ObjectName on : set) {
             String name = on.getCanonicalName();
-            
+
             if (name.contains("mock://mock1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
                 assertEquals("camel-A", id);

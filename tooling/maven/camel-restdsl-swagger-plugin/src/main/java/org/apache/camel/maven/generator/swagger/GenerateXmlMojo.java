@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 @Mojo(name = "generate-xml", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-    requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+      requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class GenerateXmlMojo extends AbstractGenerateMojo {
 
     @Parameter(defaultValue = "false")
@@ -57,8 +57,10 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         final Swagger swagger = swaggerParser.read(specificationUri);
 
         if (swagger == null) {
-            throw new MojoExecutionException("Unable to generate REST DSL Swagger sources from specification: "
-                + specificationUri + ", make sure that the specification is available at the given URI");
+            throw new MojoExecutionException(
+                    "Unable to generate REST DSL Swagger sources from specification: "
+                                             + specificationUri
+                                             + ", make sure that the specification is available at the given URI");
         }
 
         final RestDslXmlGenerator generator = RestDslGenerator.toXml(swagger);
@@ -94,7 +96,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
             }
         } catch (final Exception e) {
             throw new MojoExecutionException(
-                "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
+                    "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
         }
     }
 

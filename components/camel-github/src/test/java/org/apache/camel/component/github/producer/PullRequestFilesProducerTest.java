@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitFile;
@@ -46,16 +45,13 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
 
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullFilesProducerProcessor())
-                        .to("github://pullRequestFiles?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
+                        .to("github://pullRequestFiles?repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
 
         };
     }
-
 
     @Test
     public void testPullRequestFilesProducer() throws Exception {
@@ -77,7 +73,6 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
         assertEquals(resp.getMessage().getBody(), commitFiles);
     }
 
-
     public class MockPullFilesProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -86,6 +81,5 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestNumber);
         }
     }
-
 
 }

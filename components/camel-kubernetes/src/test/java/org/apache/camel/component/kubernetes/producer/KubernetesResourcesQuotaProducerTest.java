@@ -46,7 +46,9 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/api/v1/resourcequotas").andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/resourcequotas")
+                .andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<ResourceQuota> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
@@ -72,8 +74,10 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
-                from("direct:delete").to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
+                from("direct:list")
+                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
+                from("direct:delete")
+                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
             }
         };
     }

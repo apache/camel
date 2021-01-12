@@ -4,8 +4,10 @@ package org.apache.camel.component.quartz;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,8 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autostartscheduler":
         case "autoStartScheduler": target.setAutoStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "enablejmx":
@@ -48,22 +50,34 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoStartScheduler", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("interruptJobsOnShutdown", boolean.class);
-        answer.put("prefixInstanceName", boolean.class);
-        answer.put("prefixJobNameWithEndpointId", boolean.class);
-        answer.put("properties", java.util.Map.class);
-        answer.put("propertiesFile", java.lang.String.class);
-        answer.put("propertiesRef", java.lang.String.class);
-        answer.put("scheduler", org.quartz.Scheduler.class);
-        answer.put("schedulerFactory", org.quartz.SchedulerFactory.class);
-        answer.put("startDelayedSeconds", int.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autostartscheduler":
+        case "autoStartScheduler": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "interruptjobsonshutdown":
+        case "interruptJobsOnShutdown": return boolean.class;
+        case "prefixinstancename":
+        case "prefixInstanceName": return boolean.class;
+        case "prefixjobnamewithendpointid":
+        case "prefixJobNameWithEndpointId": return boolean.class;
+        case "properties": return java.util.Map.class;
+        case "propertiesfile":
+        case "propertiesFile": return java.lang.String.class;
+        case "propertiesref":
+        case "propertiesRef": return java.lang.String.class;
+        case "scheduler": return org.quartz.Scheduler.class;
+        case "schedulerfactory":
+        case "schedulerFactory": return org.quartz.SchedulerFactory.class;
+        case "startdelayedseconds":
+        case "startDelayedSeconds": return int.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -72,8 +86,8 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autostartscheduler":
         case "autoStartScheduler": return target.isAutoStartScheduler();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "enablejmx":

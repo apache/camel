@@ -35,37 +35,44 @@ import java.lang.annotation.Target;
 public @interface Beans {
 
     /**
-     * Returns the list of <a href="http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#alternatives">alternatives</a>
-     * to be selected in the application.
+     * Returns the list of <a href="http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#alternatives">alternatives</a> to
+     * be selected in the application.
      * <p/>
-     * Note that the declared alternatives are globally selected for the entire
-     * application. For example, if you have the following named bean in your
-     * application:
-     * <pre><code>
+     * Note that the declared alternatives are globally selected for the entire application. For example, if you have
+     * the following named bean in your application:
+     * 
+     * <pre>
+     * <code>
      * {@literal @}Named("foo")
      * public class FooBean {
      *
      * }
-     * </code></pre>
+     * </code>
+     * </pre>
      *
-     * It can be replaced in your test by declaring the following alternative
-     * bean:
-     * <pre><code>
+     * It can be replaced in your test by declaring the following alternative bean:
+     * 
+     * <pre>
+     * <code>
      * {@literal @}Alternative
      * {@literal @}Named("foo")
      * public class AlternativeBean {
      *
      * }
-     * </code></pre>
+     * </code>
+     * </pre>
      *
      * And adding the {@code @Beans} annotation to you test class to activate it:
-     * <pre><code>
+     * 
+     * <pre>
+     * <code>
      * {@literal @}RunWith(CamelCdiRunner.class)
      * {@literal @}Beans(alternatives = AlternativeBean.class)
      * public class TestWithAlternative {
      *
      * }
-     * </code></pre>
+     * </code>
+     * </pre>
      *
      * @see javax.enterprise.inject.Alternative
      */
@@ -74,18 +81,17 @@ public @interface Beans {
     /**
      * Returns the list of classes to be added as beans in the application.
      *
-     * That can be used to add classes to the deployment for test purpose
-     * in addition to the test class which is automatically added as bean.
+     * That can be used to add classes to the deployment for test purpose in addition to the test class which is
+     * automatically added as bean.
      *
      */
     Class<?>[] classes() default {};
 
     /**
-     * Returns the list of classes whose packages are to be added for beans
-     * discovery.
+     * Returns the list of classes whose packages are to be added for beans discovery.
      *
-     * That can be used to add packages to the deployment for test purpose
-     * in addition to the test class which is automatically added as bean.
+     * That can be used to add packages to the deployment for test purpose in addition to the test class which is
+     * automatically added as bean.
      */
     Class<?>[] packages() default {};
 }

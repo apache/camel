@@ -22,11 +22,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
@@ -38,13 +36,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
-import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
@@ -54,7 +52,6 @@ import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -69,13 +66,13 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -89,13 +86,16 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -105,6 +105,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -118,6 +119,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -128,6 +130,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -145,8 +148,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     /**
-     * Creates the {@link ModelCamelContext} using
-     * {@link org.apache.camel.support.DefaultRegistry} as registry.
+     * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -162,10 +164,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     /**
-     * Creates the {@link CamelContext} using the given {@link BeanRepository}
-     * as first-choice repository, and the
-     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the
-     * {@link DefaultRegistry} implementation.
+     * Creates the {@link CamelContext} using the given {@link BeanRepository} as first-choice repository, and the
+     * {@link org.apache.camel.support.SimpleRegistry} as fallback, via the {@link DefaultRegistry} implementation.
      *
      * @param repository the bean repository.
      */
@@ -185,6 +185,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
 
     public CamelContext getCamelContextReference() {
         return this;
+    }
+
+    @Override
+    public void disposeModel() {
+        delegate.adapt(ExtendedCamelContext.class).disposeModel();
     }
 
     @Override
@@ -343,6 +348,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void addBootstrap(BootstrapCloseable bootstrap) {
+        getExtendedCamelContext().addBootstrap(bootstrap);
+    }
+
+    @Override
     public void addService(Object object) throws Exception {
         delegate.addService(object);
     }
@@ -365,6 +375,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public boolean removeService(Object object) throws Exception {
         return delegate.removeService(object);
+    }
+
+    @Override
+    public List<Service> getServices() {
+        return getExtendedCamelContext().getServices();
     }
 
     @Override
@@ -1049,6 +1064,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         delegate.setCaseInsensitiveHeaders(caseInsensitiveHeaders);
     }
 
+    @Override
+    public Boolean isAutowiredEnabled() {
+        return delegate.isAutowiredEnabled();
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        delegate.setAutowiredEnabled(autowiredEnabled);
+    }
+
     //
     // ExtendedCamelContext
     //
@@ -1125,11 +1150,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return getExtendedCamelContext().getManagementMBeanAssembler();
-    }
-
-    @Override
-    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return getExtendedCamelContext().createMulticast(processors, executor, shutdownExecutorService);
     }
 
     @Override
@@ -1218,6 +1238,26 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public ConfigurerResolver getBootstrapConfigurerResolver() {
+        return getExtendedCamelContext().getBootstrapConfigurerResolver();
+    }
+
+    @Override
+    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
+        getExtendedCamelContext().setBootstrapConfigurerResolver(configurerResolver);
+    }
+
+    @Override
+    public FactoryFinder getBootstrapFactoryFinder() {
+        return getExtendedCamelContext().getBootstrapFactoryFinder();
+    }
+
+    @Override
+    public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
+        getExtendedCamelContext().setBootstrapFactoryFinder(factoryFinder);
+    }
+
+    @Override
     public FactoryFinder getFactoryFinder(String path) {
         return getExtendedCamelContext().getFactoryFinder(path);
     }
@@ -1243,6 +1283,36 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public InternalProcessorFactory getInternalProcessorFactory() {
+        return getExtendedCamelContext().getInternalProcessorFactory();
+    }
+
+    @Override
+    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
+        getExtendedCamelContext().setInternalProcessorFactory(internalProcessorFactory);
+    }
+
+    @Override
+    public InterceptEndpointFactory getInterceptEndpointFactory() {
+        return getExtendedCamelContext().getInterceptEndpointFactory();
+    }
+
+    @Override
+    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
+        getExtendedCamelContext().setInterceptEndpointFactory(interceptEndpointFactory);
+    }
+
+    @Override
+    public RouteFactory getRouteFactory() {
+        return getExtendedCamelContext().getRouteFactory();
+    }
+
+    @Override
+    public void setRouteFactory(RouteFactory routeFactory) {
+        getExtendedCamelContext().setRouteFactory(routeFactory);
+    }
+
+    @Override
     public ModelJAXBContextFactory getModelJAXBContextFactory() {
         return getExtendedCamelContext().getModelJAXBContextFactory();
     }
@@ -1258,6 +1328,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
+        getExtendedCamelContext().setDeferServiceFactory(deferServiceFactory);
+    }
+
+    @Override
     public UnitOfWorkFactory getUnitOfWorkFactory() {
         return getExtendedCamelContext().getUnitOfWorkFactory();
     }
@@ -1270,6 +1345,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
         return getExtendedCamelContext().getAnnotationBasedProcessorFactory();
+    }
+
+    @Override
+    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
+        getExtendedCamelContext().setAnnotationBasedProcessorFactory(annotationBasedProcessorFactory);
     }
 
     @Override
@@ -1413,8 +1493,23 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public UriFactoryResolver getUriFactoryResolver() {
+        return getExtendedCamelContext().getUriFactoryResolver();
+    }
+
+    @Override
+    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
+        getExtendedCamelContext().setUriFactoryResolver(uriFactoryResolver);
+    }
+
+    @Override
     public RouteController getInternalRouteController() {
         return getExtendedCamelContext().getInternalRouteController();
+    }
+
+    @Override
+    public EndpointUriFactory getEndpointUriFactory(String scheme) {
+        return getExtendedCamelContext().getEndpointUriFactory(scheme);
     }
 
     @Override
@@ -1430,6 +1525,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
         return getExtendedCamelContext().createErrorHandler(route, processor);
+    }
+
+    @Override
+    public void setLightweight(boolean lightweight) {
+        getExtendedCamelContext().setLightweight(lightweight);
+    }
+
+    @Override
+    public boolean isLightweight() {
+        return getExtendedCamelContext().isLightweight();
     }
 
     //
@@ -1539,7 +1644,13 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+        getModelCamelContext().addRouteTemplateDefinitionConverter(templateIdPattern, converter);
+    }
+
+    @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
@@ -1704,6 +1815,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public ModelReifierFactory getModelReifierFactory() {
+        return getModelCamelContext().getModelReifierFactory();
+    }
+
+    @Override
+    public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        getModelCamelContext().setModelReifierFactory(modelReifierFactory);
+    }
+
+    @Override
     public Expression createExpression(ExpressionDefinition definition) {
         return getModelCamelContext().createExpression(definition);
     }
@@ -1738,27 +1859,9 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         }
         delegate.init();
         for (Route route : delegate.getRoutes()) {
-            clearModelReferences(route);
+            route.clearRouteModel();
         }
         delegate = new LightweightRuntimeCamelContext(this, delegate);
-    }
-
-    private void clearModelReferences(Route r) {
-        if (r instanceof DefaultRoute) {
-            ((DefaultRoute) r).clearModelReferences();
-        }
-        clearModelReferences(r.navigate());
-    }
-
-    private void clearModelReferences(Navigate<Processor> nav) {
-        for (Processor processor : nav.next()) {
-            if (processor instanceof DefaultChannel) {
-                ((DefaultChannel) processor).clearModelReferences();
-            }
-            if (processor instanceof Navigate) {
-                clearModelReferences((Navigate<Processor>) processor);
-            }
-        }
     }
 
     public void startImmutable() {

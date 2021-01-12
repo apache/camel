@@ -72,7 +72,7 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
         super.doStart();
 
         messaging.localListen(endpoint.getTopic(), predicate);
-        
+
         LOG.info("Started Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
 
@@ -81,7 +81,7 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
         super.doStop();
 
         messaging.stopLocalListen(endpoint.getTopic(), predicate);
-        
+
         LOG.info("Stopped Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
 

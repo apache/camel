@@ -33,14 +33,16 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
 
     @Test
     public void testRequestTimeoutOK() throws Exception {
-        String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=500", "Hello Camel", String.class);
+        String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=500",
+                "Hello Camel", String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testRequestTimeout() throws Exception {
         try {
-            template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel", String.class);
+            template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel",
+                    String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
@@ -50,7 +52,8 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
 
     @Test
     public void testKeepingTimeoutHeader() throws Exception {
-        Endpoint endpoint = this.resolveMandatoryEndpoint("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100");
+        Endpoint endpoint
+                = this.resolveMandatoryEndpoint("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100");
         try {
             String out = template.requestBody(endpoint, "Hello", String.class);
             assertEquals("Bye World", out);
@@ -62,11 +65,11 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
         }
     }
 
-
     @Test
     public void testRequestTimeoutViaHeader() throws Exception {
         try {
-            template.requestBodyAndHeader("netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello Camel", NettyConstants.NETTY_REQUEST_TIMEOUT, 100, String.class);
+            template.requestBodyAndHeader("netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello Camel",
+                    NettyConstants.NETTY_REQUEST_TIMEOUT, 100, String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
@@ -77,7 +80,8 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     @Test
     public void testRequestTimeoutAndOk() throws Exception {
         try {
-            template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel", String.class);
+            template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel",
+                    String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
@@ -85,7 +89,8 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
         }
 
         // now we try again but this time the is no delay on server and thus faster
-        String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello World", String.class);
+        String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100",
+                "Hello World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -95,17 +100,17 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
 
-                            if (body.contains("Camel")) {
-                                Thread.sleep(200);
+                                if (body.contains("Camel")) {
+                                    Thread.sleep(200);
+                                }
                             }
-                        }
-                    })
-                    .transform().constant("Bye World");
+                        })
+                        .transform().constant("Bye World");
 
             }
         };

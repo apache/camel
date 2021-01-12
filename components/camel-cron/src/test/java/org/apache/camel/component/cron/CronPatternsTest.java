@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.cron;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,6 +59,10 @@ public class CronPatternsTest extends CamelTestSupport {
 
     @Test
     void testPlusInURI() throws Exception {
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi.setExtendedStatistics(true);
+        bi.setLoggingLevel(LoggingLevel.INFO);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -63,6 +71,12 @@ public class CronPatternsTest extends CamelTestSupport {
             }
         });
         context.start();
+
+        Thread.sleep(5);
+
+        context.stop();
+
+        Assertions.assertEquals(0, bi.getInvokedCounter());
     }
 
     @Test

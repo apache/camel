@@ -27,8 +27,9 @@ public final class ChainedCxfRsConfigurer implements CxfRsConfigurer {
     private ChainedCxfRsConfigurer() {
     }
 
-    public static ChainedCxfRsConfigurer create(CxfRsConfigurer parent,
-                                                CxfRsConfigurer child) {
+    public static ChainedCxfRsConfigurer create(
+            CxfRsConfigurer parent,
+            CxfRsConfigurer child) {
         ChainedCxfRsConfigurer result = new ChainedCxfRsConfigurer();
         result.parent = parent;
         result.child = child;

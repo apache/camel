@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
@@ -49,12 +49,8 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
     private static final Logger LOG = LoggerFactory.getLogger(CustomerGatewayIntegrationTest.class);
 
     /**
-     * Customers management workflow:
-     * - create a customer
-     * - lookup by id
-     * - update first name
-     * - delete by id
-     * - confirm deletion by searching again
+     * Customers management workflow: - create a customer - lookup by id - update first name - delete by id - confirm
+     * deletion by searching again
      *
      * @throws Exception
      */
@@ -65,15 +61,14 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
 
         // Create customer
         Result<Customer> createResult = requestBody(
-            "direct://CREATE_IN_BODY",
-            new CustomerRequest()
-                .firstName("user")
-                .lastName(customerLastName)
-                .company("Apache")
-                .email("user@braintree.camel")
-                .website("http://user.braintree.camel"),
-            Result.class
-        );
+                "direct://CREATE_IN_BODY",
+                new CustomerRequest()
+                        .firstName("user")
+                        .lastName(customerLastName)
+                        .company("Apache")
+                        .email("user@braintree.camel")
+                        .website("http://user.braintree.camel"),
+                Result.class);
 
         assertNotNull(createResult);
         assertTrue(createResult.isSuccess());
@@ -95,11 +90,10 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
         HashMap<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.id", customerId);
         Result<Customer> updateResult = requestBodyAndHeaders(
-            "direct://UPDATE_IN_BODY",
-            new CustomerRequest().firstName("user-mod"),
-            headers,
-            Result.class
-        );
+                "direct://UPDATE_IN_BODY",
+                new CustomerRequest().firstName("user-mod"),
+                headers,
+                Result.class);
 
         assertNotNull(updateResult);
         assertTrue(updateResult.isSuccess());
@@ -114,10 +108,9 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
 
         // Check if customer has been deleted customer
         ResourceCollection<Customer> customers = requestBody(
-            "direct://SEARCH_IN_BODY",
-            new CustomerSearchRequest().id().is(customerId),
-            ResourceCollection.class
-        );
+                "direct://SEARCH_IN_BODY",
+                new CustomerSearchRequest().id().is(customerId),
+                ResourceCollection.class);
 
         assertNotNull(customers);
         assertEquals(0, customers.getMaximumSize());
@@ -125,49 +118,44 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
 
     @Test
     public void testUpdateUnknownCustomer() throws Exception {
-        try {
-            String id = "unknown-" + UUID.randomUUID().toString();
+        String id = "unknown-" + UUID.randomUUID().toString();
 
-            HashMap<String, Object> headers = new HashMap<>();
-            headers.put("CamelBraintree.id", id);
+        HashMap<String, Object> headers = new HashMap<>();
+        headers.put("CamelBraintree.id", id);
 
-            requestBodyAndHeaders("direct://UPDATE_IN_BODY",
-                new CustomerRequest().firstName(id),
-                headers);
+        CustomerRequest customerRequest = new CustomerRequest().firstName(id);
 
-            fail("Should have thrown NotFoundException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NotFoundException.class, e.getCause().getCause());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> requestBodyAndHeaders("direct://UPDATE_IN_BODY", customerRequest, headers));
+
+        assertIsInstanceOf(NotFoundException.class, ex.getCause().getCause());
     }
 
     @Test
     public void testSearchUnknownCustomer() throws Exception {
-        try {
-            requestBody("direct://FIND_IN_BODY", "unknown-" + UUID.randomUUID().toString());
-            fail("Should have thrown NotFoundException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NotFoundException.class, e.getCause().getCause());
-        }
+        String uuid = "unknown-" + UUID.randomUUID().toString();
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> requestBody("direct://FIND_IN_BODY", uuid));
+
+        assertIsInstanceOf(NotFoundException.class, ex.getCause().getCause());
     }
 
     @Test
     public void testWrongCustomerCreateRequest() throws Exception {
         // Create customer
         Result<Customer> createResult = requestBody(
-            "direct://CREATE_IN_BODY",
-            new CustomerRequest()
-                .firstName("user")
-                .lastName(UUID.randomUUID().toString())
-                .company("Apache")
-                .email("wrongEmail")
-                .website("http://user.braintree.camel"),
-            Result.class
-        );
+                "direct://CREATE_IN_BODY",
+                new CustomerRequest()
+                        .firstName("user")
+                        .lastName(UUID.randomUUID().toString())
+                        .company("Apache")
+                        .email("wrongEmail")
+                        .website("http://user.braintree.camel"),
+                Result.class);
 
         assertNotNull(createResult);
         assertFalse(createResult.isSuccess());
-
 
         final ValidationErrors errors = createResult.getErrors();
         assertNotNull(errors);
@@ -194,15 +182,15 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
             @Override
             public void configure() {
                 from("direct://CREATE_IN_BODY")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 from("direct://DELETE_IN_BODY")
-                    .to("braintree://" + PATH_PREFIX + "/delete?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/delete?inBody=id");
                 from("direct://FIND_IN_BODY")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 from("direct://SEARCH_IN_BODY")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
                 from("direct://UPDATE_IN_BODY")
-                    .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
             }
         };
     }

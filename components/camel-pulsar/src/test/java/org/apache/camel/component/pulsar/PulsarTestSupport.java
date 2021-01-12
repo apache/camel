@@ -16,53 +16,20 @@
  */
 package org.apache.camel.component.pulsar;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.concurrent.TimeUnit;
+import org.apache.camel.test.infra.pulsar.services.PulsarService;
+import org.apache.camel.test.infra.pulsar.services.PulsarServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
-import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
-
-public class PulsarTestSupport extends ContainerAwareTestSupport {
-
-    public static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.6.0";
-    public static final String CONTAINER_NAME = "pulsar";
-    public static final int BROKER_PORT = 6650;
-    public static final int BROKER_HTTP_PORT = 8080;
-    public static final String WAIT_FOR_ENDPOINT = "/admin/v2/namespaces/public";
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return pulsarContainer();
-    }
-
-    public static GenericContainer pulsarContainer() {
-        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME).withExposedPorts(BROKER_PORT, BROKER_HTTP_PORT)
-            .withCommand("/pulsar/bin/pulsar", "standalone", "--no-functions-worker", "-nss")
-            .waitingFor(Wait.forHttp(WAIT_FOR_ENDPOINT).forStatusCode(200).forPort(BROKER_HTTP_PORT));
-    }
+public class PulsarTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    static PulsarService service = PulsarServiceFactory.createService();
 
     public String getPulsarBrokerUrl() {
-        return String.format("pulsar://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT));
+        return service.getPulsarBrokerUrl();
     }
 
     public String getPulsarAdminUrl() {
-        return String.format("http://%s:%s", getContainer(CONTAINER_NAME).getContainerIpAddress(), getContainer(CONTAINER_NAME).getMappedPort(BROKER_HTTP_PORT));
-    }
-
-    protected long containerShutdownTimeout() {
-        return TimeUnit.SECONDS.toSeconds(10);
-    }
-
-    protected void cleanupResources() throws Exception {
-        System.out.println("Cleaning up resources");
-        Instant t0 = Instant.now();
-        try {
-            super.cleanupResources();
-        } finally {
-            System.out.println("Resources clean up in " + Duration.between(t0, Instant.now()));
-        }
+        return service.getPulsarAdminUrl();
     }
 }

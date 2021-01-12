@@ -39,14 +39,16 @@ public class EhcacheManagerTest {
                 @Override
                 public void configure() {
                     from("direct:ehcache").to("ehcache:myCache1?configurationUri=classpath:ehcache/ehcache-file-config.xml")
-                        .to("ehcache:myCache2?configurationUri=classpath:ehcache/ehcache-file-config.xml");
+                            .to("ehcache:myCache2?configurationUri=classpath:ehcache/ehcache-file-config.xml");
                 }
             });
 
             context.start();
 
-            EhcacheEndpoint e1 = context.getEndpoint("ehcache:myCache1?configurationUri=classpath:ehcache/ehcache-file-config.xml", EhcacheEndpoint.class);
-            EhcacheEndpoint e2 = context.getEndpoint("ehcache:myCache2?configurationUri=classpath:ehcache/ehcache-file-config.xml", EhcacheEndpoint.class);
+            EhcacheEndpoint e1 = context.getEndpoint(
+                    "ehcache:myCache1?configurationUri=classpath:ehcache/ehcache-file-config.xml", EhcacheEndpoint.class);
+            EhcacheEndpoint e2 = context.getEndpoint(
+                    "ehcache:myCache2?configurationUri=classpath:ehcache/ehcache-file-config.xml", EhcacheEndpoint.class);
 
             assertEquals(e1.getManager(), e2.getManager());
             assertEquals(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
@@ -73,14 +75,17 @@ public class EhcacheManagerTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:ehcache").to("ehcache:myCache1?cacheManagerConfiguration=#myConf").to("ehcache:myCache2?cacheManagerConfiguration=#myConf");
+                    from("direct:ehcache").to("ehcache:myCache1?cacheManagerConfiguration=#myConf")
+                            .to("ehcache:myCache2?cacheManagerConfiguration=#myConf");
                 }
             });
 
             context.start();
 
-            EhcacheEndpoint e1 = context.getEndpoint("ehcache:myCache1?cacheManagerConfiguration=#myConf", EhcacheEndpoint.class);
-            EhcacheEndpoint e2 = context.getEndpoint("ehcache:myCache2?cacheManagerConfiguration=#myConf", EhcacheEndpoint.class);
+            EhcacheEndpoint e1
+                    = context.getEndpoint("ehcache:myCache1?cacheManagerConfiguration=#myConf", EhcacheEndpoint.class);
+            EhcacheEndpoint e2
+                    = context.getEndpoint("ehcache:myCache2?cacheManagerConfiguration=#myConf", EhcacheEndpoint.class);
 
             assertEquals(e1.getManager(), e2.getManager());
             assertEquals(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
@@ -108,7 +113,8 @@ public class EhcacheManagerTest {
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() {
-                        from("direct:ehcache").to("ehcache:myCache1?cacheManager=#myManager").to("ehcache:myCache2?cacheManager=#myManager");
+                        from("direct:ehcache").to("ehcache:myCache1?cacheManager=#myManager")
+                                .to("ehcache:myCache2?cacheManager=#myManager");
                     }
                 });
 

@@ -56,7 +56,6 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
         assertArrayEquals(getTaredText(exchange.getIn().getMessageId()), (byte[]) exchange.getIn().getBody());
     }
 
-
     @Test
     public void testTarWithFileName() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tar");
@@ -149,7 +148,6 @@ public class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Test
     public void testDslUntar() throws Exception {

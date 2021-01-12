@@ -31,12 +31,13 @@ import org.apache.camel.util.ObjectHelper;
 public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation,
-                                       LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+    public Expression createExpression(
+            CamelContext camelContext, Annotation annotation,
+            LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
         String xQuery = getExpressionFromAnnotation(annotation);
         XQueryBuilder builder = XQueryBuilder.xquery(xQuery);
         if (annotation instanceof XQuery) {
-            XQuery xQueryAnnotation = (XQuery)annotation;
+            XQuery xQueryAnnotation = (XQuery) annotation;
             builder.setStripsAllWhiteSpace(xQueryAnnotation.stripsAllWhiteSpace());
             if (ObjectHelper.isNotEmpty(xQueryAnnotation.headerName())) {
                 builder.setHeaderName(xQueryAnnotation.headerName());

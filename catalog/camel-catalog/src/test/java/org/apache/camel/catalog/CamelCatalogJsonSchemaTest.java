@@ -80,12 +80,14 @@ public class CamelCatalogJsonSchemaTest {
 
         for (String part : syntaxParts.subList(1, syntaxParts.size())) {
             if (!part.isEmpty()) {
-                assertTrue(pathProperties.contains(part), String.format("Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part));
+                assertTrue(pathProperties.contains(part),
+                        String.format("Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part));
             }
         }
 
         for (String requiredPart : requiredProperties) {
-            assertTrue(syntaxParts.contains(requiredPart), String.format("Component %s. Syntax %s. Required param %s is not defined in syntax", name, syntax, requiredPart));
+            assertTrue(syntaxParts.contains(requiredPart), String
+                    .format("Component %s. Syntax %s. Required param %s is not defined in syntax", name, syntax, requiredPart));
         }
     }
 

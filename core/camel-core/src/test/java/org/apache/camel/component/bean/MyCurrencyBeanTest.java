@@ -55,7 +55,8 @@ public class MyCurrencyBeanTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("bean:myCurrencyBean?method=display( ${body} )").to("mock:result");
 
-                from("direct:price").to("bean:myCurrencyBean?method=displayPrice( ${body}, ${header.price} )").to("mock:result");
+                from("direct:price").to("bean:myCurrencyBean?method=displayPrice( ${body}, ${header.price} )")
+                        .to("mock:result");
             }
         };
     }

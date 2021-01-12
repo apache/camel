@@ -34,9 +34,8 @@ public class ParentContextRegistryTest extends SpringTestSupport {
         ClassPathXmlApplicationContext parentContext = new ClassPathXmlApplicationContext(
                 "parentContextRegistryTestParent.xml", ParentContextRegistryTest.class);
         return new ClassPathXmlApplicationContext(
-                new String[]{"parentContextRegistryTestChild.xml"},
-                ParentContextRegistryTest.class, parentContext
-        );
+                new String[] { "parentContextRegistryTestChild.xml" },
+                ParentContextRegistryTest.class, parentContext);
     }
 
     @Test

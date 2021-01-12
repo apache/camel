@@ -17,8 +17,8 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpConsumer;
-import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -38,7 +38,7 @@ public class JettySuspendTest extends BaseJettyTest {
         assertEquals("Bye World", reply);
 
         // now suspend jetty
-        HttpConsumer consumer = (HttpConsumer)context.getRoute("route1").getConsumer();
+        HttpConsumer consumer = (HttpConsumer) context.getRoute("route1").getConsumer();
         assertNotNull(consumer);
 
         // suspend

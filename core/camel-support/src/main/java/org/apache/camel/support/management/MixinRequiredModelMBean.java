@@ -31,13 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link javax.management.modelmbean.RequiredModelMBean} which allows us to intercept invoking operations on the MBean.
+ * A {@link javax.management.modelmbean.RequiredModelMBean} which allows us to intercept invoking operations on the
+ * MBean.
  * <p/>
- * This allows us to intercept calls to custom mbeans where allows us to mix-in the standard set of mbean attributes
- * and operations that Camel provides out of the box.
+ * This allows us to intercept calls to custom mbeans where allows us to mix-in the standard set of mbean attributes and
+ * operations that Camel provides out of the box.
  * <p/>
- * For example if mask has been enabled on JMX, then we use this implementation
- * to hide sensitive information from the returned JMX attributes / operations.
+ * For example if mask has been enabled on JMX, then we use this implementation to hide sensitive information from the
+ * returned JMX attributes / operations.
  */
 public class MixinRequiredModelMBean extends RequiredModelMBean {
 
@@ -50,7 +51,8 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
         // must have default no-arg constructor
     }
 
-    public MixinRequiredModelMBean(ModelMBeanInfo mbi, boolean mask, ModelMBeanInfo defaultMbi, DynamicMBean defaultObject) throws MBeanException, RuntimeOperationsException {
+    public MixinRequiredModelMBean(ModelMBeanInfo mbi, boolean mask, ModelMBeanInfo defaultMbi,
+                                   DynamicMBean defaultObject) throws MBeanException, RuntimeOperationsException {
         super(mbi);
         this.mask = mask;
         this.defaultMbi = defaultMbi;
@@ -101,16 +103,16 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
     /**
      * Masks the returned value from invoking the operation
      *
-     * @param opName  the operation name invoked
-     * @param value   the current value
-     * @return the masked value
+     * @param  opName the operation name invoked
+     * @param  value  the current value
+     * @return        the masked value
      */
     protected String mask(String opName, String value) {
         // use sanitize uri which will mask sensitive information
         String answer = URISupport.sanitizeUri(value);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Masking JMX operation: {}.{} value: {} -> {}",
-                    new Object[]{getMBeanInfo().getClassName(), opName, value, answer});
+                    new Object[] { getMBeanInfo().getClassName(), opName, value, answer });
         }
         return answer;
     }

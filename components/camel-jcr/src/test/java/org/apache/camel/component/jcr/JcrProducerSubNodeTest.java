@@ -36,8 +36,8 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
         try {
             // create node
             Exchange exchange1 = ExchangeBuilder.anExchange(context)
-                .withHeader(JcrConstants.JCR_NODE_NAME, "node")
-                .build();
+                    .withHeader(JcrConstants.JCR_NODE_NAME, "node")
+                    .build();
             Exchange out1 = template.send("direct:a", exchange1);
             assertNotNull(out1);
             String uuidNode = out1.getMessage().getBody(String.class);
@@ -45,15 +45,15 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
             Node node = session.getNodeByIdentifier(uuidNode);
             assertNotNull(node);
             assertEquals("/home/test/node", node.getPath());
-            
+
             // create sub node
             Exchange exchange2 = ExchangeBuilder.anExchange(context)
-                .withHeader(JcrConstants.JCR_NODE_NAME, "node/subnode")
-                .build();
+                    .withHeader(JcrConstants.JCR_NODE_NAME, "node/subnode")
+                    .build();
             Exchange out2 = template.send("direct:a", exchange2);
             assertNotNull(out2);
             String uuidSubNode = out2.getMessage().getBody(String.class);
-            
+
             Node subNode = session.getNodeByIdentifier(uuidSubNode);
             assertNotNull(subNode);
             assertEquals("/home/test/node/subnode", subNode.getPath());
@@ -72,7 +72,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:a")
-                    .to("jcr://user:pass@repository/home/test");
+                        .to("jcr://user:pass@repository/home/test");
             }
         };
     }

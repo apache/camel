@@ -26,24 +26,21 @@ import java.lang.annotation.Target;
 import org.apache.camel.CamelContext;
 
 /**
- * Indicates the use of {@code adviceWith()} within the test class.  If a class is annotated with
- * this annotation and {@link UseAdviceWith#value()} returns true, any 
- * {@code CamelContext}s bootstrapped during the test through the use of Spring Test loaded 
- * application contexts will not be started automatically.  The test author is responsible for 
- * injecting the Camel contexts into the test and executing {@link CamelContext#start()} on them 
- * at the appropriate time after any advice has been applied to the routes in the Camel context(s). 
+ * Indicates the use of {@code adviceWith()} within the test class. If a class is annotated with this annotation and
+ * {@link UseAdviceWith#value()} returns true, any {@code CamelContext}s bootstrapped during the test through the use of
+ * Spring Test loaded application contexts will not be started automatically. The test author is responsible for
+ * injecting the Camel contexts into the test and executing {@link CamelContext#start()} on them at the appropriate time
+ * after any advice has been applied to the routes in the Camel context(s).
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface UseAdviceWith {
-    
+
     /**
-     * Whether the test annotated with this annotation should be treated as if 
-     * {@code adviceWith()} is in use in the test and the Camel contexts should not be started
-     * automatically.
-     * Defaults to {@code true}.
+     * Whether the test annotated with this annotation should be treated as if {@code adviceWith()} is in use in the
+     * test and the Camel contexts should not be started automatically. Defaults to {@code true}.
      */
     boolean value() default true;
 }

@@ -31,7 +31,7 @@ public enum DriveFilesApiMethod implements ApiMethod {
         "delete",
         arg("fileId", String.class)),
 
-    EMPTYTRASH(
+    EMPTY_TRASH(
         com.google.api.services.drive.Drive.Files.EmptyTrash.class,
         "emptyTrash"),
 
@@ -41,7 +41,7 @@ public enum DriveFilesApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("mimeType", String.class)),
 
-    GENERATEIDS(
+    GENERATE_IDS(
         com.google.api.services.drive.Drive.Files.GenerateIds.class,
         "generateIds"),
 
@@ -104,8 +104,6 @@ public enum DriveFilesApiMethod implements ApiMethod {
         "watch",
         arg("fileId", String.class),
         arg("contentChannel", com.google.api.services.drive.model.Channel.class));
-
-    
 
     private final ApiMethod apiMethod;
 

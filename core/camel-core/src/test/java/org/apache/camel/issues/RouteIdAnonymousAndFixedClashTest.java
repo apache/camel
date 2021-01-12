@@ -40,7 +40,7 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in1").id("route1") // Note the name
-                    .to("mock:test1");
+                        .to("mock:test1");
 
                 from("direct:in2").to("mock:test2");
             }

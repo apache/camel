@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SettlementBatchSummaryGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(SettlementBatchSummaryGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(SettlementBatchSummaryGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for generate
     @Disabled
@@ -67,10 +68,10 @@ public class SettlementBatchSummaryGatewayIntegrationTest extends AbstractBraint
             public void configure() {
                 // test route for generate
                 from("direct://GENERATE")
-                    .to("braintree://" + PATH_PREFIX + "/generate?inBody=settlementDate");
+                        .to("braintree://" + PATH_PREFIX + "/generate?inBody=settlementDate");
                 // test route for generate
                 from("direct://GENERATE_1")
-                    .to("braintree://" + PATH_PREFIX + "/generate");
+                        .to("braintree://" + PATH_PREFIX + "/generate");
             }
         };
     }

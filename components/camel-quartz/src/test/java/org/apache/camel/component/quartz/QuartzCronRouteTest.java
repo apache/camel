@@ -27,7 +27,7 @@ import org.quartz.Trigger;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * This test the  CronTrigger as a timer endpoint in a route.
+ * This test the CronTrigger as a timer endpoint in a route.
  */
 public class QuartzCronRouteTest extends BaseQuartzTest {
 
@@ -45,7 +45,8 @@ public class QuartzCronRouteTest extends BaseQuartzTest {
         assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
 
         assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("cron"), CoreMatchers.is(true));
-        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"), CoreMatchers.is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"),
+                CoreMatchers.is(true));
     }
 
     @Override

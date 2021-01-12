@@ -49,7 +49,7 @@ public class SplitParallelProcessingStackOverflowIssueTest extends ContextTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().tokenize("\n").streaming().parallelProcessing()
+                        .split().tokenize("\n").streaming().parallelProcessing()
                         .to("log:result?groupSize=100", "mock:result");
             }
         };

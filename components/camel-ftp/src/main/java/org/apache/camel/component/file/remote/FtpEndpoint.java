@@ -48,12 +48,13 @@ import org.slf4j.LoggerFactory;
  * Upload and download files to/from FTP servers.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
-        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", category = {Category.FILE})
+             syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
+             category = { Category.FILE })
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                + "renameUsingCopy")
+                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                              + "renameUsingCopy")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
@@ -108,7 +109,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @Override
     protected RemoteFileConsumer<FTPFile> buildConsumer(Processor processor) {
         try {
-            return new FtpConsumer(this, processor, createRemoteFileOperations(), processStrategy != null ? processStrategy : createGenericFileStrategy());
+            return new FtpConsumer(
+                    this, processor, createRemoteFileOperations(),
+                    processStrategy != null ? processStrategy : createGenericFileStrategy());
         } catch (Exception e) {
             throw new FailedToCreateConsumerException(this, e);
         }
@@ -210,7 +213,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created FTPClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
-                            + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}", client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                      + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
+                    client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
                     client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
         }
 
@@ -250,7 +254,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             throw new IllegalArgumentException("FtpConfiguration expected");
         }
         // need to set on both
-        this.configuration = (FtpConfiguration)configuration;
+        this.configuration = (FtpConfiguration) configuration;
         super.setConfiguration(configuration);
     }
 
@@ -270,8 +274,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * To use a custom instance of FTPClientConfig to configure the FTP client
-     * the endpoint should use.
+     * To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use.
      */
     public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
         this.ftpClientConfig = ftpClientConfig;
@@ -293,8 +296,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Used by FtpComponent to provide additional parameters for the
-     * FTPClientConfig
+     * Used by FtpComponent to provide additional parameters for the FTPClientConfig
      */
     void setFtpClientConfigParameters(Map<String, Object> ftpClientConfigParameters) {
         this.ftpClientConfigParameters = new HashMap<>(ftpClientConfigParameters);
@@ -327,8 +329,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Configure the logging level to use when logging the progress of upload
-     * and download operations.
+     * Configure the logging level to use when logging the progress of upload and download operations.
      */
     public void setTransferLoggingLevel(LoggingLevel transferLoggingLevel) {
         this.transferLoggingLevel = transferLoggingLevel;
@@ -350,9 +351,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Configures the interval in seconds to use when logging the progress of
-     * upload and download operations that are in-flight. This is used for
-     * logging progress when operations takes longer time.
+     * Configures the interval in seconds to use when logging the progress of upload and download operations that are
+     * in-flight. This is used for logging progress when operations takes longer time.
      */
     @ManagedAttribute(description = "Interval in seconds to use when logging the progress of upload and download operations that are in-flight")
     public void setTransferLoggingIntervalSeconds(int transferLoggingIntervalSeconds) {
@@ -365,8 +365,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Configures whether the perform verbose (fine grained) logging of the
-     * progress of upload and download operations.
+     * Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations.
      */
     @ManagedAttribute(description = "Whether the perform verbose (fine grained) logging of the progress of upload and download operations")
     public void setTransferLoggingVerbose(boolean transferLoggingVerbose) {
@@ -378,11 +377,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Configures whether resume download is enabled. This must be supported by
-     * the FTP server (almost all FTP servers support it). In addition the
-     * options <tt>localWorkDirectory</tt> must be configured so downloaded
-     * files are stored in a local directory, and the option <tt>binary</tt>
-     * must be enabled, which is required to support resuming of downloads.
+     * Configures whether resume download is enabled. This must be supported by the FTP server (almost all FTP servers
+     * support it). In addition the options <tt>localWorkDirectory</tt> must be configured so downloaded files are
+     * stored in a local directory, and the option <tt>binary</tt> must be enabled, which is required to support
+     * resuming of downloads.
      */
     public void setResumeDownload(boolean resumeDownload) {
         this.resumeDownload = resumeDownload;

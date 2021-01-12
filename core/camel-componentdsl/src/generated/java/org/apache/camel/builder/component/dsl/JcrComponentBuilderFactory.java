@@ -37,6 +37,8 @@ public interface JcrComponentBuilderFactory {
      * Category: database,cms
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
+     * 
+     * @return the dsl builder
      */
     static JcrComponentBuilder jcr() {
         return new JcrComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface JcrComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcrComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,27 +81,36 @@ public interface JcrComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcrComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default JcrComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JcrComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -118,7 +132,7 @@ public interface JcrComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((JcrComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JcrComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((JcrComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JcrComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

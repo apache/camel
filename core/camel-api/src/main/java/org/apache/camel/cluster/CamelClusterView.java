@@ -72,11 +72,10 @@ public interface CamelClusterView extends Service, CamelContextAware {
     void removeEventListener(CamelClusterEventListener listener);
 
     /**
-     * Access the underlying concrete CamelClusterView implementation to
-     * provide access to further features.
+     * Access the underlying concrete CamelClusterView implementation to provide access to further features.
      *
-     * @param clazz the proprietary class or interface of the underlying concrete CamelClusterView.
-     * @return an instance of the underlying concrete CamelClusterView as the required type.
+     * @param  clazz the proprietary class or interface of the underlying concrete CamelClusterView.
+     * @return       an instance of the underlying concrete CamelClusterView as the required type.
      */
     default <T extends CamelClusterView> T unwrap(Class<T> clazz) {
         if (CamelClusterView.class.isAssignableFrom(clazz)) {
@@ -84,7 +83,6 @@ public interface CamelClusterView extends Service, CamelContextAware {
         }
 
         throw new IllegalArgumentException(
-            "Unable to unwrap this CamelClusterView type (" + getClass() + ") to the required type (" + clazz + ")"
-        );
+                "Unable to unwrap this CamelClusterView type (" + getClass() + ") to the required type (" + clazz + ")");
     }
 }

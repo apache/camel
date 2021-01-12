@@ -100,13 +100,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        VertxWebsocketEndpoint endpoint = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
         Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
         assertEquals(2, connectedPeers.size());
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
-        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World", VertxWebsocketContants.CONNECTION_KEY, connectionKey);
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
+                VertxWebsocketContants.CONNECTION_KEY, connectionKey);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -140,7 +142,8 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        VertxWebsocketEndpoint endpoint = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint
+                = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
         Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
         assertEquals(5, connectedPeers.size());
 
@@ -150,7 +153,8 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             joiner.add(iterator.next());
         }
 
-        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World", VertxWebsocketContants.CONNECTION_KEY, joiner.toString());
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
+                VertxWebsocketContants.CONNECTION_KEY, joiner.toString());
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -197,7 +201,8 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World", VertxWebsocketContants.SEND_TO_ALL, true);
+        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
+                VertxWebsocketContants.SEND_TO_ALL, true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -240,22 +245,22 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toF("vertx-websocket:localhost:%d/test", port);
+                        .toF("vertx-websocket:localhost:%d/test", port);
 
                 fromF("vertx-websocket:localhost:%d/test", port)
-                    .setBody(simple("Hello ${body}"))
-                    .to("mock:result");
+                        .setBody(simple("Hello ${body}"))
+                        .to("mock:result");
 
                 from("vertx-websocket://greeting")
-                    .setBody(simple("Hello ${body}"))
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            int serverPort = getVertxServerRandomPort();
-                            exchange.getMessage().setHeader("port", serverPort);
-                        }
-                    })
-                    .toD("vertx-websocket:localhost:${header.port}/greeting");
+                        .setBody(simple("Hello ${body}"))
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                int serverPort = getVertxServerRandomPort();
+                                exchange.getMessage().setHeader("port", serverPort);
+                            }
+                        })
+                        .toD("vertx-websocket:localhost:${header.port}/greeting");
             }
         };
     }

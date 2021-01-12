@@ -26,6 +26,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
+import org.apache.camel.spi.ErrorHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,7 +79,8 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
-    private static void addExceptionPolicy(ErrorHandlerSupport handlerSupport, Route route, OnExceptionDefinition exceptionType) {
+    private static void addExceptionPolicy(
+            ErrorHandlerSupport handlerSupport, Route route, OnExceptionDefinition exceptionType) {
         new DefaultErrorHandlerReifier<>(route, null).addExceptionPolicy(handlerSupport, exceptionType);
     }
 
@@ -111,6 +113,11 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
 
         @Override
         public Processor getOutput() {
+            return null;
+        }
+
+        @Override
+        public ErrorHandler clone(Processor output) {
             return null;
         }
 

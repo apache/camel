@@ -19,9 +19,8 @@ package org.apache.camel.component.disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 
 /**
- * This enumeration re-enumerated the values of the {@link ProducerType} according to the Camel Case convention used
- * in Camel.
- * Multi is the default {@link ProducerType}.
+ * This enumeration re-enumerated the values of the {@link ProducerType} according to the Camel Case convention used in
+ * Camel. Multi is the default {@link ProducerType}.
  */
 public enum DisruptorProducerType {
     /**
@@ -32,6 +31,7 @@ public enum DisruptorProducerType {
      * Create a RingBuffer supporting multiple event publishers to the Disruptors RingBuffer
      */
     Multi(ProducerType.MULTI);
+
     private final ProducerType producerType;
 
     DisruptorProducerType(ProducerType producerType) {

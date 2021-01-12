@@ -45,7 +45,7 @@ public class TransactionalClientDataSourceRedeliveryTest extends TransactionalCl
 
         Exception e = out.getException();
         assertIsInstanceOf(RuntimeCamelException.class, e);
-        assertTrue(e.getCause()instanceof IllegalArgumentException);
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
         assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
 
         assertEquals(true, out.getIn().getHeader(Exchange.REDELIVERED));
@@ -67,19 +67,19 @@ public class TransactionalClientDataSourceRedeliveryTest extends TransactionalCl
 
                 // START SNIPPET: e1
                 from("direct:okay")
-                    // marks this route as transacted, and we dont pass in any parameters so we
-                    // will auto lookup and use the Policy defined in the spring XML file
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        // marks this route as transacted, and we dont pass in any parameters so we
+                        // will auto lookup and use the Policy defined in the spring XML file
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
                 from("direct:fail")
-                    // marks this route as transacted, and we dont pass in any parameters so we
-                    // will auto lookup and use the Policy defined in the spring XML file
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        // marks this route as transacted, and we dont pass in any parameters so we
+                        // will auto lookup and use the Policy defined in the spring XML file
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
             }
         };

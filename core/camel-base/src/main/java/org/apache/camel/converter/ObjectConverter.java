@@ -24,10 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ObjectHelper;
 
 /**
- * Some core java.lang based <a
- * href="http://camel.apache.org/type-converter.html">Type Converters</a>
+ * Some core java.lang based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class ObjectConverter {
 
     /**
@@ -37,11 +36,10 @@ public final class ObjectConverter {
     }
 
     /**
-     * Converts the given value to a boolean, handling strings or Boolean
-     * objects; otherwise returning false if the value could not be converted to
-     * a boolean
+     * Converts the given value to a boolean, handling strings or Boolean objects; otherwise returning false if the
+     * value could not be converted to a boolean
      */
-    @Converter
+    @Converter(order = 1)
     public static boolean toBool(Object value) {
         Boolean answer = toBoolean(value);
         if (answer == null) {
@@ -51,11 +49,10 @@ public final class ObjectConverter {
     }
 
     /**
-     * Converts the given value to a Boolean, handling strings or Boolean
-     * objects; otherwise returning null if the value cannot be converted to a
-     * boolean
+     * Converts the given value to a Boolean, handling strings or Boolean objects; otherwise returning null if the value
+     * cannot be converted to a boolean
      */
-    @Converter
+    @Converter(order = 2)
     public static Boolean toBoolean(Object value) {
         return org.apache.camel.util.ObjectHelper.toBoolean(value);
     }
@@ -63,7 +60,7 @@ public final class ObjectConverter {
     /**
      * Creates an iterator over the value
      */
-    @Converter
+    @Converter(order = 3)
     public static Iterator<?> iterator(Object value) {
         return ObjectHelper.createIterator(value);
     }
@@ -71,7 +68,7 @@ public final class ObjectConverter {
     /**
      * Creates an iterable over the value
      */
-    @Converter
+    @Converter(order = 4)
     public static Iterable<?> iterable(Object value) {
         return ObjectHelper.createIterable(value);
     }
@@ -79,7 +76,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(allowNull = true)
+    @Converter(order = 5, allowNull = true)
     public static Byte toByte(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -87,22 +84,22 @@ public final class ObjectConverter {
         return value.byteValue();
     }
 
-    @Converter
+    @Converter(order = 6)
     public static Byte toByte(String value) {
         return Byte.valueOf(value);
     }
 
-    @Converter
+    @Converter(order = 7)
     public static char[] toCharArray(String value) {
         return value.toCharArray();
     }
 
-    @Converter
+    @Converter(order = 8)
     public static Character toCharacter(String value) {
         return toChar(value);
     }
 
-    @Converter
+    @Converter(order = 9)
     public static char toChar(String value) {
         // must be string with the length of 1
         if (value.length() != 1) {
@@ -111,15 +108,15 @@ public final class ObjectConverter {
         return value.charAt(0);
     }
 
-    @Converter
+    @Converter(order = 10)
     public static String fromCharArray(char[] value) {
         return new String(value);
     }
-    
+
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
+    @Converter(order = 11)
     public static Class<?> toClass(String value, Exchange exchange) {
         // prefer to use class resolver API
         if (exchange != null) {
@@ -132,7 +129,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(allowNull = true)
+    @Converter(order = 12, allowNull = true)
     public static Short toShort(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -140,7 +137,7 @@ public final class ObjectConverter {
         return value.shortValue();
     }
 
-    @Converter
+    @Converter(order = 13)
     public static Short toShort(String value) {
         return Short.valueOf(value);
     }
@@ -148,7 +145,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(allowNull = true)
+    @Converter(order = 14, allowNull = true)
     public static Integer toInteger(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -156,7 +153,7 @@ public final class ObjectConverter {
         return value.intValue();
     }
 
-    @Converter
+    @Converter(order = 15)
     public static Integer toInteger(String value) {
         return Integer.valueOf(value);
     }
@@ -164,7 +161,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(allowNull = true)
+    @Converter(order = 16, allowNull = true)
     public static Long toLong(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -172,7 +169,7 @@ public final class ObjectConverter {
         return value.longValue();
     }
 
-    @Converter
+    @Converter(order = 17)
     public static Long toLong(String value) {
         return Long.valueOf(value);
     }
@@ -180,7 +177,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter(allowNull = true)
+    @Converter(order = 18, allowNull = true)
     public static BigInteger toBigInteger(Object value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
@@ -204,7 +201,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
+    @Converter(order = 19)
     public static Float toFloat(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return Float.NaN;
@@ -212,7 +209,7 @@ public final class ObjectConverter {
         return value.floatValue();
     }
 
-    @Converter
+    @Converter(order = 20)
     public static Float toFloat(String value) {
         return Float.valueOf(value);
     }
@@ -220,7 +217,7 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
+    @Converter(order = 21)
     public static Double toDouble(Number value) {
         if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return Double.NaN;
@@ -228,41 +225,58 @@ public final class ObjectConverter {
         return value.doubleValue();
     }
 
-    @Converter
+    @Converter(order = 22)
     public static Double toDouble(String value) {
         return Double.valueOf(value);
     }
 
     // add fast type converters from most common used
 
-    @Converter
+    @Converter(order = 23)
     public static String toString(Integer value) {
         return value.toString();
     }
 
-    @Converter
+    @Converter(order = 24)
     public static String toString(Long value) {
         return value.toString();
     }
 
-    @Converter
+    @Converter(order = 25)
     public static String toString(Boolean value) {
         return value.toString();
     }
 
-    @Converter
+    @Converter(order = 26)
     public static String toString(StringBuffer value) {
         return value.toString();
     }
 
-    @Converter
+    @Converter(order = 27)
     public static String toString(StringBuilder value) {
         return value.toString();
     }
 
-    @Converter
+    @Converter(order = 28)
     public static Boolean toBoolean(String value) {
         return org.apache.camel.util.ObjectHelper.toBoolean(value);
+    }
+
+    @Converter(order = 29)
+    public static Number toNumber(String text) {
+        // what kind of numeric is it
+        boolean dot = text.indexOf('.') != -1;
+        if (dot) {
+            return Double.parseDouble(text);
+        } else {
+            // its either a long or integer value (lets just avoid bytes)
+            long lon = Long.parseLong(text);
+            if (lon < Integer.MAX_VALUE) {
+                return Integer.valueOf(text);
+            } else {
+                return lon;
+            }
+        }
     }
 
 }

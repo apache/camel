@@ -25,8 +25,7 @@ import org.apache.commons.csv.CSVRecord;
 /**
  * Test {@link CsvRecordConverter} implementation.
  * <p>
- * This implementation is explicitely created in a subpackage to check the
- * visibility of {@link CsvRecordConverter}.
+ * This implementation is explicitely created in a subpackage to check the visibility of {@link CsvRecordConverter}.
  * </p>
  */
 public class MyCvsRecordConverter implements CsvRecordConverter<List<String>> {

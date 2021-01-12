@@ -18,7 +18,6 @@ package org.apache.camel.component.sjms.tx;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.CamelJmsTestHelper;
 import org.apache.camel.component.sjms.SjmsComponent;
@@ -54,12 +53,12 @@ public class TransactedProducerInOutErrorTest {
             public void configure() throws Exception {
 
                 from("direct:start")
-                    .to("sjms:queue:test-in?namedReplyTo=test-out&exchangePattern=InOut&transacted=true")
-                    .to("mock:result");
+                        .to("sjms:queue:test-in?replyTo=test-out&exchangePattern=InOut&transacted=true")
+                        .to("mock:result");
 
                 from("sjms:queue:test-in?exchangePattern=InOut")
-                    .log("Using ${threadName} to process ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

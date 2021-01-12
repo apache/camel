@@ -46,12 +46,15 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
             throw new IllegalStateException("The geolocation service requires a mandatory geolocationRequestHostIP");
         }
 
-        String url = String.format("http://api.ipstack.com/%s?access_key=%s&legacy=1&output=json", configuration.getGeolocationRequestHostIP(), configuration.getGeolocationAccessKey());
+        String url = String.format("http://api.ipstack.com/%s?access_key=%s&legacy=1&output=json",
+                configuration.getGeolocationRequestHostIP(), configuration.getGeolocationAccessKey());
         HttpGet getMethod = new HttpGet(url);
         try {
             HttpResponse response = httpClient.execute(getMethod);
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new IllegalStateException("Got the unexpected http-status '" + response.getStatusLine().getStatusCode() + "' for the geolocation");
+                throw new IllegalStateException(
+                        "Got the unexpected http-status '" + response.getStatusLine().getStatusCode()
+                                                + "' for the geolocation");
             }
             String geoLocation = EntityUtils.toString(response.getEntity(), "UTF-8");
             if (isEmpty(geoLocation)) {

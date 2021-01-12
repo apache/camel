@@ -334,8 +334,7 @@ public class MiloClientConfiguration implements Cloneable {
     }
 
     /**
-     * A set of allowed security policy URIs. Default is to accept all and use
-     * the highest.
+     * A set of allowed security policy URIs. Default is to accept all and use the highest.
      */
     public void setAllowedSecurityPolicies(final Set<String> allowedSecurityPolicies) {
         this.allowedSecurityPolicies = allowedSecurityPolicies;
@@ -383,8 +382,7 @@ public class MiloClientConfiguration implements Cloneable {
     }
 
     /**
-     * Override the server reported endpoint host with the host from the
-     * endpoint URI.
+     * Override the server reported endpoint host with the host from the endpoint URI.
      */
     public void setOverrideHost(boolean overrideHost) {
         this.overrideHost = overrideHost;

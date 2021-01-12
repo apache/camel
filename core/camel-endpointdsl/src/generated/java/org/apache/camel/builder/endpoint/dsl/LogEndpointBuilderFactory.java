@@ -42,10 +42,13 @@ public interface LogEndpointBuilderFactory {
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param groupActiveOnly the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
             doSetProperty("groupActiveOnly", groupActiveOnly);
@@ -55,11 +58,14 @@ public interface LogEndpointBuilderFactory {
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param groupActiveOnly the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupActiveOnly(String groupActiveOnly) {
             doSetProperty("groupActiveOnly", groupActiveOnly);
@@ -68,9 +74,12 @@ public interface LogEndpointBuilderFactory {
         /**
          * Set the initial delay for stats (in millis).
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param groupDelay the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupDelay(Long groupDelay) {
             doSetProperty("groupDelay", groupDelay);
@@ -79,9 +88,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Set the initial delay for stats (in millis).
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param groupDelay the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupDelay(String groupDelay) {
             doSetProperty("groupDelay", groupDelay);
@@ -91,9 +104,12 @@ public interface LogEndpointBuilderFactory {
          * If specified will group message stats by this time interval (in
          * millis).
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param groupInterval the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupInterval(Long groupInterval) {
             doSetProperty("groupInterval", groupInterval);
@@ -103,9 +119,13 @@ public interface LogEndpointBuilderFactory {
          * If specified will group message stats by this time interval (in
          * millis).
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param groupInterval the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupInterval(String groupInterval) {
             doSetProperty("groupInterval", groupInterval);
@@ -114,9 +134,12 @@ public interface LogEndpointBuilderFactory {
         /**
          * An integer that specifies a group size for throughput logging.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param groupSize the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupSize(Integer groupSize) {
             doSetProperty("groupSize", groupSize);
@@ -125,10 +148,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * An integer that specifies a group size for throughput logging.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param groupSize the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder groupSize(String groupSize) {
             doSetProperty("groupSize", groupSize);
@@ -145,10 +171,13 @@ public interface LogEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -165,10 +194,14 @@ public interface LogEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -177,10 +210,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Logging level to use. The default value is INFO.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: INFO
          * Group: producer
+         * 
+         * @param level the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder level(String level) {
             doSetProperty("level", level);
@@ -190,9 +226,12 @@ public interface LogEndpointBuilderFactory {
          * If true, mask sensitive information like password or passphrase in
          * the log.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param logMask the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder logMask(Boolean logMask) {
             doSetProperty("logMask", logMask);
@@ -202,10 +241,13 @@ public interface LogEndpointBuilderFactory {
          * If true, mask sensitive information like password or passphrase in
          * the log.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param logMask the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder logMask(String logMask) {
             doSetProperty("logMask", logMask);
@@ -214,9 +256,12 @@ public interface LogEndpointBuilderFactory {
         /**
          * An optional Marker name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param marker the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder marker(String marker) {
             doSetProperty("marker", marker);
@@ -225,10 +270,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Limits the number of characters logged per line.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: formatting
+         * 
+         * @param maxChars the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder maxChars(int maxChars) {
             doSetProperty("maxChars", maxChars);
@@ -237,10 +285,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Limits the number of characters logged per line.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: formatting
+         * 
+         * @param maxChars the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder maxChars(String maxChars) {
             doSetProperty("maxChars", maxChars);
@@ -249,10 +300,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled then each information is outputted on a newline.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param multiline the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder multiline(boolean multiline) {
             doSetProperty("multiline", multiline);
@@ -261,10 +315,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled then each information is outputted on a newline.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param multiline the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder multiline(String multiline) {
             doSetProperty("multiline", multiline);
@@ -274,10 +332,13 @@ public interface LogEndpointBuilderFactory {
          * Quick option for turning all options on. (multiline, maxChars has to
          * be manually set if to be used).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showAll the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showAll(boolean showAll) {
             doSetProperty("showAll", showAll);
@@ -287,10 +348,14 @@ public interface LogEndpointBuilderFactory {
          * Quick option for turning all options on. (multiline, maxChars has to
          * be manually set if to be used).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showAll the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showAll(String showAll) {
             doSetProperty("showAll", showAll);
@@ -299,10 +364,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param showBody the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showBody(boolean showBody) {
             doSetProperty("showBody", showBody);
@@ -311,10 +379,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param showBody the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showBody(String showBody) {
             doSetProperty("showBody", showBody);
@@ -323,10 +395,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the body Java type.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param showBodyType the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showBodyType(boolean showBodyType) {
             doSetProperty("showBodyType", showBodyType);
@@ -335,10 +410,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the body Java type.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param showBodyType the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showBodyType(String showBodyType) {
             doSetProperty("showBodyType", showBodyType);
@@ -350,10 +429,13 @@ public interface LogEndpointBuilderFactory {
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showCaughtException the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showCaughtException(
                 boolean showCaughtException) {
@@ -366,10 +448,14 @@ public interface LogEndpointBuilderFactory {
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showCaughtException the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showCaughtException(
                 String showCaughtException) {
@@ -380,10 +466,13 @@ public interface LogEndpointBuilderFactory {
          * If the exchange has an exception, show the exception message (no
          * stacktrace).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showException the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showException(boolean showException) {
             doSetProperty("showException", showException);
@@ -393,10 +482,14 @@ public interface LogEndpointBuilderFactory {
          * If the exchange has an exception, show the exception message (no
          * stacktrace).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showException the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showException(String showException) {
             doSetProperty("showException", showException);
@@ -405,10 +498,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the unique exchange ID.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showExchangeId the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
             doSetProperty("showExchangeId", showExchangeId);
@@ -417,10 +513,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the unique exchange ID.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showExchangeId the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showExchangeId(String showExchangeId) {
             doSetProperty("showExchangeId", showExchangeId);
@@ -429,10 +529,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Shows the Message Exchange Pattern (or MEP for short).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param showExchangePattern the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showExchangePattern(
                 boolean showExchangePattern) {
@@ -442,10 +545,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * Shows the Message Exchange Pattern (or MEP for short).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param showExchangePattern the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showExchangePattern(
                 String showExchangePattern) {
@@ -455,10 +562,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled Camel will output files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showFiles the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showFiles(boolean showFiles) {
             doSetProperty("showFiles", showFiles);
@@ -467,10 +577,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled Camel will output files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showFiles the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showFiles(String showFiles) {
             doSetProperty("showFiles", showFiles);
@@ -480,10 +594,13 @@ public interface LogEndpointBuilderFactory {
          * If enabled Camel will on Future objects wait for it to complete to
          * obtain the payload to be logged.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showFuture the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showFuture(boolean showFuture) {
             doSetProperty("showFuture", showFuture);
@@ -493,10 +610,14 @@ public interface LogEndpointBuilderFactory {
          * If enabled Camel will on Future objects wait for it to complete to
          * obtain the payload to be logged.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showFuture the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showFuture(String showFuture) {
             doSetProperty("showFuture", showFuture);
@@ -505,10 +626,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message headers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showHeaders the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showHeaders(boolean showHeaders) {
             doSetProperty("showHeaders", showHeaders);
@@ -517,10 +641,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the message headers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showHeaders the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showHeaders(String showHeaders) {
             doSetProperty("showHeaders", showHeaders);
@@ -529,10 +657,13 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the exchange properties.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showProperties the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showProperties(boolean showProperties) {
             doSetProperty("showProperties", showProperties);
@@ -541,10 +672,14 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the exchange properties.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showProperties the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showProperties(String showProperties) {
             doSetProperty("showProperties", showProperties);
@@ -554,10 +689,13 @@ public interface LogEndpointBuilderFactory {
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showStackTrace the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
             doSetProperty("showStackTrace", showStackTrace);
@@ -567,10 +705,14 @@ public interface LogEndpointBuilderFactory {
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showStackTrace the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showStackTrace(String showStackTrace) {
             doSetProperty("showStackTrace", showStackTrace);
@@ -583,10 +725,13 @@ public interface LogEndpointBuilderFactory {
          * already been read by this logger. To remedy this you will have to use
          * Stream Caching.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showStreams the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showStreams(boolean showStreams) {
             doSetProperty("showStreams", showStreams);
@@ -599,10 +744,14 @@ public interface LogEndpointBuilderFactory {
          * already been read by this logger. To remedy this you will have to use
          * Stream Caching.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: formatting
+         * 
+         * @param showStreams the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder showStreams(String showStreams) {
             doSetProperty("showStreams", showStreams);
@@ -614,10 +763,13 @@ public interface LogEndpointBuilderFactory {
          * false will preserve any line separators from the body, which then
          * will log the body as is.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param skipBodyLineSeparator the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 boolean skipBodyLineSeparator) {
@@ -630,10 +782,14 @@ public interface LogEndpointBuilderFactory {
          * false will preserve any line separators from the body, which then
          * will log the body as is.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: formatting
+         * 
+         * @param skipBodyLineSeparator the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 String skipBodyLineSeparator) {
@@ -644,10 +800,13 @@ public interface LogEndpointBuilderFactory {
          * Sets the outputs style to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
+         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: formatting
+         * 
+         * @param style the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder style(OutputStyle style) {
             doSetProperty("style", style);
@@ -657,10 +816,13 @@ public interface LogEndpointBuilderFactory {
          * Sets the outputs style to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
+         * &lt;code&gt;org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle&lt;/code&gt; type.
          * 
          * Default: Default
          * Group: formatting
+         * 
+         * @param style the value to set
+         * @return the dsl builder
          */
         default LogEndpointBuilder style(String style) {
             doSetProperty("style", style);
@@ -678,40 +840,15 @@ public interface LogEndpointBuilderFactory {
             return (LogEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLogEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLogEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom exchange formatter.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param exchangeFormatter the value to set
+         * @return the dsl builder
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(
                 ExchangeFormatter exchangeFormatter) {
@@ -722,9 +859,12 @@ public interface LogEndpointBuilderFactory {
          * To use a custom exchange formatter.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExchangeFormatter</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param exchangeFormatter the value to set
+         * @return the dsl builder
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(
                 String exchangeFormatter) {
@@ -735,10 +875,13 @@ public interface LogEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLogEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -748,10 +891,14 @@ public interface LogEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLogEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -784,6 +931,7 @@ public interface LogEndpointBuilderFactory {
          * Name of the logging category to use
          * 
          * @param path loggerName
+         * @return the dsl builder
          */
         default LogEndpointBuilder log(String path) {
             return LogEndpointBuilderFactory.endpointBuilder("log", path);
@@ -804,6 +952,7 @@ public interface LogEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path loggerName
+         * @return the dsl builder
          */
         default LogEndpointBuilder log(String componentName, String path) {
             return LogEndpointBuilderFactory.endpointBuilder(componentName, path);

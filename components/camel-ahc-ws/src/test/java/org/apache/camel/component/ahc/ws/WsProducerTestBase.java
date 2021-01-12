@@ -45,14 +45,14 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  */
 public abstract class WsProducerTestBase {
-    
+
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
-    
+
     protected CamelContext camelContext;
     protected ProducerTemplate template;
     protected Server server;
-   
+
     public void startTestServer() throws Exception {
         // start a simple websocket echo service
         server = new Server(PORT);
@@ -62,27 +62,27 @@ public abstract class WsProducerTestBase {
         ServletContextHandler ctx = new ServletContextHandler();
         ctx.setContextPath("/");
         ctx.addServlet(TestServletFactory.class.getName(), "/*");
- 
+
         server.setHandler(ctx);
 
         server.start();
         assertTrue(server.isStarted());
     }
-    
+
     public void stopTestServer() throws Exception {
         server.stop();
         server.destroy();
     }
-    
+
     @BeforeEach
     public void setUp() throws Exception {
         TestMessages.getInstance().getMessages().clear();
 
         startTestServer();
-        
+
         camelContext = new DefaultCamelContext();
         camelContext.start();
-        
+
         setUpComponent();
         template = camelContext.createProducerTemplate();
     }
@@ -91,7 +91,7 @@ public abstract class WsProducerTestBase {
     public void tearDown() throws Exception {
         template.stop();
         camelContext.stop();
-        
+
         stopTestServer();
     }
 
@@ -100,7 +100,7 @@ public abstract class WsProducerTestBase {
     protected abstract Connector getConnector() throws Exception;
 
     protected abstract String getTargetURL();
-    
+
     protected String getTextTestMessage() {
         return TEST_MESSAGE;
     }
@@ -108,7 +108,7 @@ public abstract class WsProducerTestBase {
     protected byte[] getByteTestMessage() throws UnsupportedEncodingException {
         return TEST_MESSAGE.getBytes("utf-8");
     }
-    
+
     @Test
     public void testWriteToWebsocket() throws Exception {
         String testMessage = getTextTestMessage();
@@ -130,15 +130,15 @@ public abstract class WsProducerTestBase {
     @Test
     public void testWriteStreamToWebsocket() throws Exception {
         byte[] testMessageBytes = createLongByteTestMessage();
-        testWriteToWebsocket(new ByteArrayInputStream(testMessageBytes)); 
+        testWriteToWebsocket(new ByteArrayInputStream(testMessageBytes));
         assertEquals(1, TestMessages.getInstance().getMessages().size());
         verifyMessage(testMessageBytes, TestMessages.getInstance().getMessages().get(0));
     }
-    
+
     private void testWriteToWebsocket(Object message) throws Exception {
         Exchange exchange = sendMessage(getTargetURL(), message);
         assertNull(exchange.getException());
-        
+
         long towait = 5000;
         while (towait > 0) {
             if (TestMessages.getInstance().getMessages().size() == 1) {
@@ -164,18 +164,18 @@ public abstract class WsProducerTestBase {
             assertEquals(original, result);
         } else if (original instanceof byte[] && result instanceof byte[]) {
             // use string-equals as our bytes are string'able
-            assertEquals(new String((byte[])original), new String((byte[])result));
+            assertEquals(new String((byte[]) original), new String((byte[]) result));
         } else if (original instanceof InputStream) {
             assertTrue(result instanceof byte[] || result instanceof InputStream);
             if (result instanceof byte[]) {
-                result = new ByteArrayInputStream((byte[])result);
+                result = new ByteArrayInputStream((byte[]) result);
             }
             try {
                 int oc = 0;
                 int or = 0;
                 while (oc != -1) {
-                    oc = ((InputStream)original).read();
-                    or = ((InputStream)result).read();
+                    oc = ((InputStream) original).read();
+                    or = ((InputStream) result).read();
                     assertEquals(oc, or);
                 }
                 assertEquals(-1, or);

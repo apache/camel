@@ -40,11 +40,9 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
 
 /**
- * Implementation of {@link IdempotentRepository} using Cassandra table to store
- * message ids. Advice: use LeveledCompaction for this table and tune read/write
- * consistency levels. Warning: Cassandra is not the best tool for queuing use
- * cases See
- * http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
+ * Implementation of {@link IdempotentRepository} using Cassandra table to store message ids. Advice: use
+ * LeveledCompaction for this table and tune read/write consistency levels. Warning: Cassandra is not the best tool for
+ * queuing use cases See http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
 public class CassandraIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     /**
@@ -66,7 +64,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     /**
      * Primary key columns
      */
-    private String[] pkColumns = {"KEY"};
+    private String[] pkColumns = { "KEY" };
     /**
      * Time to live in seconds used for inserts
      */
@@ -139,7 +137,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     @Override
     public boolean add(String key) {
         Object[] idValues = getPKValues(key);
-        LOGGER.debug("Inserting key {}", (Object)idValues);
+        LOGGER.debug("Inserting key {}", (Object) idValues);
         return isApplied(getSession().execute(insertStatement.bind(idValues)));
     }
 
@@ -156,7 +154,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     @Override
     public boolean contains(String key) {
         Object[] idValues = getPKValues(key);
-        LOGGER.debug("Checking key {}", (Object)idValues);
+        LOGGER.debug("Checking key {}", (Object) idValues);
         return isKey(getSession().execute(selectStatement.bind(idValues)));
     }
 
@@ -178,10 +176,9 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     @Override
     public boolean remove(String key) {
         Object[] idValues = getPKValues(key);
-        LOGGER.debug("Deleting key {}", (Object)idValues);
+        LOGGER.debug("Deleting key {}", (Object) idValues);
         return isApplied(getSession().execute(deleteStatement.bind(idValues)));
     }
-
 
     // -------------------------------------------------------------------------
     // Clear the repository

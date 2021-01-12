@@ -56,8 +56,6 @@ public enum CustomerGatewayApiMethod implements ApiMethod {
         arg("id", String.class),
         arg("request", com.braintreegateway.CustomerRequest.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CustomerGatewayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

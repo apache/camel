@@ -19,8 +19,12 @@ package org.apache.camel.test.patterns;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AsyncSendMockTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncSendMockTest.class);
+
     @Override
     public String isMockEndpoints() {
         return "seda*";
@@ -38,7 +42,7 @@ public class AsyncSendMockTest extends CamelTestSupport {
             template.asyncSend("seda:start", dfex);
             assertMockEndpointsSatisfied();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn("Failed to make async call to api: {}", e.getMessage(), e);
             assertTrue("Failed to make async call to api", false);
         }
     }

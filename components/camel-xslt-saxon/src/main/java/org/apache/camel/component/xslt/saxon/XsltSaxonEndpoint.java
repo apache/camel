@@ -56,7 +56,8 @@ import org.slf4j.LoggerFactory;
  * Transform XML payloads using an XSLT template using Saxon.
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, category = {Category.CORE, Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri",
+             producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
 public class XsltSaxonEndpoint extends XsltEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);
@@ -81,25 +82,22 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
+     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
         this.saxonExtensionFunctions = extensionFunctions;
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
+     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(String extensionFunctions) {
         this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-            getCamelContext(),
-            extensionFunctions,
-            Object.class
-        );
+                getCamelContext(),
+                extensionFunctions,
+                Object.class);
     }
 
     public Configuration getSaxonConfiguration() {
@@ -141,9 +139,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     }
 
     /**
-     * Whether to allow using StAX as the javax.xml.transform.Source.
-     * You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon).
-     * The Xalan library (default in JVM) does not support StAXSource.
+     * Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports
+     * StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource.
      */
     public void setAllowStAX(boolean allowStAX) {
         this.allowStAX = allowStAX;
@@ -190,7 +187,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 factory = new TransformerFactoryImpl();
             } else {
                 // provide the class loader of this component to work in OSGi environments
-                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(), TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(),
+                        TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
@@ -234,9 +232,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     /**
      * Loads the resource.
      *
-     * @param resourceUri  the resource to load
+     * @param  resourceUri          the resource to load
      * @throws TransformerException is thrown if error loading resource
-     * @throws IOException is thrown if error loading resource
+     * @throws IOException          is thrown if error loading resource
      */
     protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
@@ -264,7 +262,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 try {
                     URI uri = new URI(key);
                     if (value != null
-                        && (value.toString().equals("true") || (value.toString().equals("false")))) {
+                            && (value.toString().equals("true") || (value.toString().equals("false")))) {
                         xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
                     } else if (value != null) {
                         xmlReader.setProperty(uri.toString(), value);

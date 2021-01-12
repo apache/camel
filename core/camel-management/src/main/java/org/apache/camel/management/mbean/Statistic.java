@@ -21,21 +21,21 @@ package org.apache.camel.management.mbean;
  * <p/>
  * The following modes is available:
  * <ul>
- * <li>VALUE - A statistic with this update mode is a simple value that is a straight forward
- * representation of the updated value.</li>
- * <li>DELTA - A statistic with this update mode is a value that represents the delta
- * between the last two recorded values (or the initial value if two updates have
- * not been recorded). This value can be negative if the delta goes up or down.</li>
- * <li>COUNTER - A statistic with this update mode interprets updates as increments (positive values)
- * or decrements (negative values) to the current value.</li>
- * <li>MAXIMUM - A statistic with this update mode is a value that represents the maximum value
- * amongst the update values applied to this statistic.</li>
- * <li>MINIMUM - A statistic with this update mode is a value that represents the minimum value
- * amongst the update values applied to this statistic.</li>
+ * <li>VALUE - A statistic with this update mode is a simple value that is a straight forward representation of the
+ * updated value.</li>
+ * <li>DELTA - A statistic with this update mode is a value that represents the delta between the last two recorded
+ * values (or the initial value if two updates have not been recorded). This value can be negative if the delta goes up
+ * or down.</li>
+ * <li>COUNTER - A statistic with this update mode interprets updates as increments (positive values) or decrements
+ * (negative values) to the current value.</li>
+ * <li>MAXIMUM - A statistic with this update mode is a value that represents the maximum value amongst the update
+ * values applied to this statistic.</li>
+ * <li>MINIMUM - A statistic with this update mode is a value that represents the minimum value amongst the update
+ * values applied to this statistic.</li>
  * <ul>
- * The MAXIMUM and MINIMUM modes are not 100% thread-safe as there can be a lost-update problem.
- * This is on purpose because the performance overhead to ensure atomic updates costs to much
- * on CPU and memory footprint. The other modes are thread-safe.
+ * The MAXIMUM and MINIMUM modes are not 100% thread-safe as there can be a lost-update problem. This is on purpose
+ * because the performance overhead to ensure atomic updates costs to much on CPU and memory footprint. The other modes
+ * are thread-safe.
  */
 public abstract class Statistic {
 
@@ -52,8 +52,8 @@ public abstract class Statistic {
     public abstract long getValue();
 
     /**
-     * Whether the statistic has been updated one or more times.
-     * Notice this is only working for value, maximum and minimum modes.
+     * Whether the statistic has been updated one or more times. Notice this is only working for value, maximum and
+     * minimum modes.
      */
     public abstract boolean isUpdated();
 

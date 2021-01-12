@@ -46,11 +46,15 @@ bean registry to find the bean of the type
 [[UuidGenerator-Providedimplementations]]
 == Provided implementations
 
-Camel comes with two implementations of
+Camel comes with three implementations of
 `org.apache.camel.spi.UuidGenerator`:
 
-* `org.apache.camel.support.SimpleUuidGenerator` - This implementation use
-internally a `java.util.concurrent.atomic.AtomicLong` and increase the
+* `org.apache.camel.support.SimpleUuidGenerator` - This implementation uses
+internally a `java.util.concurrent.atomic.AtomicLong` and increases the
 ID for every call by one. Starting with 1 as the first id.
+* `org.apache.camel.support.VanillaUuidGenerator` - This implementation uses
+a random generated seed and a counter which increments by one. This generator
+is not unique per host or JVM.
 * `org.apache.camel.impl.engine.DefaultUuidGenerator` - This implementation
-use a fast unique UUID generation that is cluster safe (similar to uuid generator in ActiveMQ)
+uses a fast unique UUID generation that is cluster safe (similar to uuid
+generator in ActiveMQ). This is the default implementation in use by Camel.

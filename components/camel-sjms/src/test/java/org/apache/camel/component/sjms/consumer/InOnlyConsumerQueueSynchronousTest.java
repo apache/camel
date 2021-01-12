@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyConsumerQueueSynchronousTest extends JmsTestSupport {
 
-    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue?synchronous=true";
+    private static final String SJMS_QUEUE_NAME = "sjms:queue:in.only.consumer.queue";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
@@ -34,7 +34,7 @@ public class InOnlyConsumerQueueSynchronousTest extends JmsTestSupport {
         mock.expectedBodiesReceived(expectedBody);
 
         template.sendBody(SJMS_QUEUE_NAME, expectedBody);
-        
+
         mock.assertIsSatisfied();
     }
 
@@ -43,7 +43,7 @@ public class InOnlyConsumerQueueSynchronousTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(SJMS_QUEUE_NAME)
-                    .to(MOCK_RESULT);
+                        .to(MOCK_RESULT);
             }
         };
     }

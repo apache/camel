@@ -38,19 +38,19 @@ public class ResteasyConsumerMatchUriOnPrefix {
 
     @Resource
     URI baseUri;
-    
+
     @Deployment
     public static Archive<?> createTestArchive() {
 
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-        .addClasses(SimpleService.class)
-        .addPackage("org.apache.camel.component.resteasy")
-        .addPackage("org.apache.camel.component.resteasy.servlet")
-        .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
-        .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile())
-        .addAsWebInfResource(new File("src/test/resources/contexts/consumerMatch.xml"), "applicationContext.xml")
-        .addAsWebInfResource("web.xml");
-        
+                .addClasses(SimpleService.class)
+                .addPackage("org.apache.camel.component.resteasy")
+                .addPackage("org.apache.camel.component.resteasy.servlet")
+                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
+                        .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile())
+                .addAsWebInfResource(new File("src/test/resources/contexts/consumerMatch.xml"), "applicationContext.xml")
+                .addAsWebInfResource("web.xml");
+
         return war;
     }
 

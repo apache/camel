@@ -25,12 +25,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CatalogCamelContext;
@@ -71,6 +69,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -84,14 +83,17 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -114,6 +116,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -125,6 +128,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -149,13 +153,12 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final Registry registry;
     private final CoreTypeConverterRegistry typeConverter;
     private final ModelJAXBContextFactory modelJAXBContextFactory;
-    private final RuntimeCamelCatalog camelRuntimeCatalog;
     private final ComponentResolver componentResolver;
     private final ComponentNameResolver componentNameResolver;
     private final LanguageResolver languageResolver;
     private final DataFormatResolver dataFormatResolver;
     private final UuidGenerator uuidGenerator;
-    private final EndpointRegistry<EndpointKey> endpoints;
+    private final EndpointRegistry<? extends ValueHolder<String>> endpoints;
     private final Map<String, Component> components;
     private final Map<String, Language> languages;
     private final PropertiesComponent propertiesComponent;
@@ -168,6 +171,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ClassLoader applicationContextClassLoader;
     private final UnitOfWorkFactory unitOfWorkFactory;
     private final RouteController routeController;
+    private final ProcessorFactory processorFactory;
+    private final InternalProcessorFactory internalProcessorFactory;
     private final InflightRepository inflightRepository;
     private final Injector injector;
     private final ClassResolver classResolver;
@@ -190,18 +195,15 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         registry = context.getRegistry();
         typeConverter = new CoreTypeConverterRegistry(context.getTypeConverterRegistry());
         modelJAXBContextFactory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
-        camelRuntimeCatalog = context.adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
         routes = Collections.unmodifiableList(context.getRoutes());
         uuidGenerator = context.getUuidGenerator();
         componentResolver = context.adapt(ExtendedCamelContext.class).getComponentResolver();
         componentNameResolver = context.adapt(ExtendedCamelContext.class).getComponentNameResolver();
         languageResolver = context.adapt(ExtendedCamelContext.class).getLanguageResolver();
         dataFormatResolver = context.adapt(ExtendedCamelContext.class).getDataFormatResolver();
-        endpoints = (EndpointRegistry) context.getEndpointRegistry();
-        components = context.getComponentNames().stream()
-                .collect(Collectors.toMap(s -> s, s -> context.hasComponent(s)));
-        languages = context.getLanguageNames().stream()
-                .collect(Collectors.toMap(s -> s, s -> context.resolveLanguage(s)));
+        endpoints = context.getEndpointRegistry();
+        components = context.getComponentNames().stream().collect(Collectors.toMap(s -> s, context::hasComponent));
+        languages = context.getLanguageNames().stream().collect(Collectors.toMap(s -> s, context::resolveLanguage));
         propertiesComponent = context.getPropertiesComponent();
         beanIntrospection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
@@ -211,6 +213,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         shutdownStrategy = context.getShutdownStrategy();
         applicationContextClassLoader = context.getApplicationContextClassLoader();
         unitOfWorkFactory = context.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
+        processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
+        internalProcessorFactory = context.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
         routeController = context.getRouteController();
         inflightRepository = context.getInflightRepository();
         globalOptions = context.getGlobalOptions();
@@ -228,13 +232,34 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         version = context.getVersion();
     }
 
-    public CamelContext getCamelContextReference() {
-        return reference;
+    /**
+     * Normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order.
+     *
+     * @param  uri                            the uri
+     * @return                                normalized uri
+     * @throws ResolveEndpointFailedException if uri cannot be normalized
+     */
+    protected static String normalizeEndpointUri(String uri) {
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        return uri;
     }
 
     //
     // Lifecycle
     //
+
+    public CamelContext getCamelContextReference() {
+        return reference;
+    }
+
+    @Override
+    public void disposeModel() {
+        // noop
+    }
 
     @Override
     public boolean isStarted() {
@@ -316,14 +341,14 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     public void shutdown() {
     }
 
+    //
+    // RuntimeConfig
+    //
+
     @Override
     public void close() throws IOException {
         stop();
     }
-
-    //
-    // RuntimeConfig
-    //
 
     @Override
     public void setStreamCaching(Boolean cache) {
@@ -342,6 +367,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public String getTracingPattern() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTracingPattern(String tracePattern) {
         throw new UnsupportedOperationException();
     }
 
@@ -376,6 +406,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setDelayer(Long delay) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Boolean isAutoStartup() {
         throw new UnsupportedOperationException();
     }
@@ -386,7 +421,21 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ShutdownRunningTask getShutdownRunningTask() {
+        throw new UnsupportedOperationException();
+    }
+
+    //
+    // Model
+    //
+
+    @Override
+    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         throw new UnsupportedOperationException();
     }
 
@@ -410,14 +459,24 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Boolean isAutowiredEnabled() {
+        throw new UnsupportedOperationException();
+    }
 
-    //
-    // Model
-    //
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public Registry getRegistry() {
         return registry;
+    }
+
+    @Override
+    public void setRegistry(Registry registry) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -426,8 +485,18 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ModelJAXBContextFactory getModelJAXBContextFactory() {
         return modelJAXBContextFactory;
+    }
+
+    @Override
+    public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -436,8 +505,18 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setComponentResolver(ComponentResolver componentResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ComponentNameResolver getComponentNameResolver() {
         return componentNameResolver;
+    }
+
+    @Override
+    public void setComponentNameResolver(ComponentNameResolver componentResolver) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -446,13 +525,28 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setLanguageResolver(LanguageResolver languageResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public DataFormatResolver getDataFormatResolver() {
         return dataFormatResolver;
     }
 
     @Override
+    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public UuidGenerator getUuidGenerator() {
         return uuidGenerator;
+    }
+
+    @Override
+    public void setUuidGenerator(UuidGenerator uuidGenerator) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -481,6 +575,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -570,6 +669,15 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void addBootstrap(BootstrapCloseable bootstrap) {
+    }
+
+    @Override
+    public List<Service> getServices() {
+        return null;
+    }
+
+    @Override
     public boolean hasService(Object object) {
         return false;
     }
@@ -632,23 +740,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         return doGetEndpoint(uri, false, false);
     }
 
-    /**
-     * Normalize uri so we can do endpoint hits with minor mistakes and
-     * parameters is not in the same order.
-     *
-     * @param uri the uri
-     * @return normalized uri
-     * @throws ResolveEndpointFailedException if uri cannot be normalized
-     */
-    protected static String normalizeEndpointUri(String uri) {
-        try {
-            uri = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-        return uri;
-    }
-
     @Override
     public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
         return doGetEndpoint(uri, parameters, false);
@@ -661,12 +752,13 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             throw new NoSuchEndpointException(name);
         }
         if (endpoint instanceof InterceptSendToEndpoint) {
-            endpoint = ((InterceptSendToEndpoint)endpoint).getOriginalEndpoint();
+            endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
+            throw new IllegalArgumentException(
+                    "The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
         }
     }
 
@@ -693,6 +785,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public RouteController getRouteController() {
         return routeController;
+    }
+
+    @Override
+    public void setRouteController(RouteController routeController) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -731,7 +828,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setRestConfiguration(RestConfiguration restConfiguration) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public RestRegistry getRestRegistry() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRestRegistry(RestRegistry restRegistry) {
         throw new UnsupportedOperationException();
     }
 
@@ -751,6 +858,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setInjector(Injector injector) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<LifecycleStrategy> getLifecycleStrategies() {
         throw new UnsupportedOperationException();
     }
@@ -763,7 +875,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             // check if the language is singleton, if so return the shared
             // instance
             if (answer instanceof IsSingleton) {
-                boolean singleton = ((IsSingleton)answer).isSingleton();
+                boolean singleton = ((IsSingleton) answer).isSingleton();
                 if (singleton) {
                     return answer;
                 }
@@ -773,11 +885,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             // inject CamelContext if aware
             if (answer != null) {
                 if (answer instanceof CamelContextAware) {
-                    ((CamelContextAware)answer).setCamelContext(reference);
+                    ((CamelContextAware) answer).setCamelContext(reference);
                 }
                 if (answer instanceof Service) {
                     try {
-                        startService((Service)answer);
+                        startService((Service) answer);
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
@@ -812,6 +924,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public PropertiesComponent getPropertiesComponent() {
         return propertiesComponent;
+    }
+
+    @Override
+    public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -885,13 +1002,13 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setGlobalOptions(Map<String, String> globalOptions) {
-        throw new UnsupportedOperationException();
+    public Map<String, String> getGlobalOptions() {
+        return globalOptions;
     }
 
     @Override
-    public Map<String, String> getGlobalOptions() {
-        return globalOptions;
+    public void setGlobalOptions(Map<String, String> globalOptions) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -913,8 +1030,18 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setClassResolver(ClassResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ManagementStrategy getManagementStrategy() {
         return null;
+    }
+
+    @Override
+    public void setManagementStrategy(ManagementStrategy strategy) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -928,8 +1055,22 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setInflightRepository(InflightRepository repository) {
+        throw new UnsupportedOperationException();
+    }
+
+    //
+    // ExtendedCamelContext
+    //
+
+    @Override
     public ClassLoader getApplicationContextClassLoader() {
         return applicationContextClassLoader;
+    }
+
+    @Override
+    public void setApplicationContextClassLoader(ClassLoader classLoader) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -938,12 +1079,27 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ExecutorServiceManager getExecutorServiceManager() {
         return executorServiceManager;
     }
 
     @Override
+    public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public MessageHistoryFactory getMessageHistoryFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -953,7 +1109,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setDebugger(Debugger debugger) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Tracer getTracer() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTracer(Tracer tracer) {
         throw new UnsupportedOperationException();
     }
 
@@ -1023,7 +1189,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public RuntimeEndpointRegistry getRuntimeEndpointRegistry() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
         throw new UnsupportedOperationException();
     }
 
@@ -1032,9 +1208,10 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         throw new UnsupportedOperationException();
     }
 
-    //
-    // ExtendedCamelContext
-    //
+    @Override
+    public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public Endpoint getPrototypeEndpoint(String uri) {
@@ -1143,6 +1320,10 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         }
     }
 
+    //
+    // CatalogCamelContext
+    //
+
     @Override
     public List<RouteStartupOrder> getRouteStartupOrder() {
         throw new UnsupportedOperationException();
@@ -1159,12 +1340,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
+    public ErrorHandlerFactory getErrorHandlerFactory() {
         throw new UnsupportedOperationException();
     }
 
+    //
+    // Unsupported mutable methods
+    //
+
     @Override
-    public ErrorHandlerFactory getErrorHandlerFactory() {
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -1174,12 +1359,42 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setPackageScanClassResolver(PackageScanClassResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public PackageScanResourceResolver getPackageScanResourceResolver() {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    public void setPackageScanResourceResolver(PackageScanResourceResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FactoryFinder getDefaultFactoryFinder() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ConfigurerResolver getBootstrapConfigurerResolver() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public FactoryFinder getBootstrapFactoryFinder() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
         throw new UnsupportedOperationException();
     }
 
@@ -1194,7 +1409,47 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ProcessorFactory getProcessorFactory() {
+        return processorFactory;
+    }
+
+    @Override
+    public void setProcessorFactory(ProcessorFactory processorFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InternalProcessorFactory getInternalProcessorFactory() {
+        return internalProcessorFactory;
+    }
+
+    @Override
+    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InterceptEndpointFactory getInterceptEndpointFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RouteFactory getRouteFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRouteFactory(RouteFactory routeFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -1204,12 +1459,27 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public UnitOfWorkFactory getUnitOfWorkFactory() {
         return unitOfWorkFactory;
     }
 
     @Override
+    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
         throw new UnsupportedOperationException();
     }
 
@@ -1244,8 +1514,18 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public BeanIntrospection getBeanIntrospection() {
         return beanIntrospection;
+    }
+
+    @Override
+    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1254,8 +1534,18 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setHeadersMapFactory(HeadersMapFactory factory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ReactiveExecutor getReactiveExecutor() {
         return reactiveExecutor;
+    }
+
+    @Override
+    public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1264,7 +1554,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ModelToXMLDumper getModelToXMLDumper() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
         throw new UnsupportedOperationException();
     }
 
@@ -1274,7 +1574,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ConfigurerResolver getConfigurerResolver() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
         throw new UnsupportedOperationException();
     }
 
@@ -1293,10 +1603,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         // TODO: need to revisit this in order to support dynamic endpoints uri
         throw new UnsupportedOperationException();
     }
-
-    //
-    // CatalogCamelContext
-    //
 
     @Override
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
@@ -1357,7 +1663,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until
         // we find it
-        String[] subPackages = new String[] {"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
+        String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
             String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
             InputStream inputStream = getClassResolver().loadResourceAsStream(path);
@@ -1385,20 +1691,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         return null;
     }
 
-    //
-    // Unsupported mutable methods
-    //
-
-    @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRegistry(Registry registry) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public void setupRoutes(boolean done) {
         throw new UnsupportedOperationException();
@@ -1407,66 +1699,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     @Override
     public boolean isSetupRoutes() {
         return false;
-    }
-
-    @Override
-    public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setComponentResolver(ComponentResolver componentResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setComponentNameResolver(ComponentNameResolver componentResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setLanguageResolver(LanguageResolver languageResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPackageScanClassResolver(PackageScanClassResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPackageScanResourceResolver(PackageScanResourceResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setProcessorFactory(ProcessorFactory processorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -1485,37 +1717,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setHeadersMapFactory(HeadersMapFactory factory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
+    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
         throw new UnsupportedOperationException();
     }
 
@@ -1525,32 +1727,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void registerEndpointCallback(EndpointStrategy strategy) {
+    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setNodeIdFactory(NodeIdFactory factory) {
+    public void registerEndpointCallback(EndpointStrategy strategy) {
         throw new UnsupportedOperationException();
     }
 
@@ -1575,22 +1762,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setTracer(Tracer tracer) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setUuidGenerator(UuidGenerator uuidGenerator) {
+    public void setNodeIdFactory(NodeIdFactory factory) {
         throw new UnsupportedOperationException();
     }
 
@@ -1601,11 +1773,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public Component removeComponent(String componentName) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRouteController(RouteController routeController) {
         throw new UnsupportedOperationException();
     }
 
@@ -1625,27 +1792,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setRestConfiguration(RestConfiguration restConfiguration) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRestRegistry(RestRegistry restRegistry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setDebugger(Debugger debugger) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setTracing(Boolean tracing) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setTracingPattern(String tracePattern) {
         throw new UnsupportedOperationException();
     }
 
@@ -1675,67 +1822,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setDelayer(Long delay) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setAutoStartup(Boolean autoStartup) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setClassResolver(ClassResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setManagementStrategy(ManagementStrategy strategy) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setInflightRepository(InflightRepository repository) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setApplicationContextClassLoader(ClassLoader classLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setInjector(Injector injector) {
         throw new UnsupportedOperationException();
     }
 
@@ -1745,13 +1832,19 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception {
+    public void setLightweight(boolean lightweight) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isLightweight() {
+        return true;
     }
 
     @Override
@@ -1813,7 +1906,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             }
 
             @Override
-            public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+            public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+                    throws Exception {
                 throw new UnsupportedOperationException();
             }
 
@@ -1833,12 +1927,12 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             }
 
             @Override
-            public void setCamelContext(CamelContext camelContext) {
+            public CamelContext getCamelContext() {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public CamelContext getCamelContext() {
+            public void setCamelContext(CamelContext camelContext) {
                 throw new UnsupportedOperationException();
             }
 
@@ -1854,15 +1948,30 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         };
     }
 
+    @Override
+    public UriFactoryResolver getUriFactoryResolver() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public EndpointUriFactory getEndpointUriFactory(String scheme) {
+        throw new UnsupportedOperationException();
+    }
+
     private void startService(Service service) throws Exception {
         // and register startup aware so they can be notified when
         // camel context has been started
         if (service instanceof StartupListener) {
-            StartupListener listener = (StartupListener)service;
+            StartupListener listener = (StartupListener) service;
             addStartupListener(listener);
         }
         if (service instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware)service;
+            CamelContextAware aware = (CamelContextAware) service;
             aware.setCamelContext(reference);
         }
         service.start();

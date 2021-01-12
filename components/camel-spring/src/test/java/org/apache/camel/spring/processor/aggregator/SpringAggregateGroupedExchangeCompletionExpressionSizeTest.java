@@ -21,10 +21,12 @@ import org.apache.camel.processor.aggregator.AggregateGroupedExchangeCompletionE
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringAggregateGroupedExchangeCompletionExpressionSizeTest extends AggregateGroupedExchangeCompletionExpressionSizeTest {
+public class SpringAggregateGroupedExchangeCompletionExpressionSizeTest
+        extends AggregateGroupedExchangeCompletionExpressionSizeTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateGroupedExchangeCompletionExpressionSizeTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateGroupedExchangeCompletionExpressionSizeTest.xml");
     }
 }

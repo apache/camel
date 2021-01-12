@@ -19,18 +19,23 @@ package org.apache.camel.component.rabbitmq.integration.spring;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
+import org.apache.camel.test.infra.rabbitmq.services.RabbitMQServiceFactory;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Containers;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractRabbitMQSpringIntTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static RabbitMQService service = RabbitMQServiceFactory.createService();
 
-    // Container starts once per test class
-    protected static GenericContainer container;
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractRabbitMQSpringIntTest.class);
 
     protected List<GenericContainer<?>> containers = new CopyOnWriteArrayList();
 
@@ -38,24 +43,7 @@ public abstract class AbstractRabbitMQSpringIntTest extends CamelSpringTestSuppo
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        container = org.apache.camel.component.rabbitmq.integration.DockerTestUtils.rabbitMQContainer();
-        this.containers.add(container);
-        try {
-            Containers.start(this.containers, null, 10);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(getConfigLocation());
         return classPathXmlApplicationContext;
-    }
-
-    @Override
-    protected void cleanupResources() throws Exception {
-        super.cleanupResources();
-
-        if (container != null) {
-            container.stop();
-        }
     }
 }

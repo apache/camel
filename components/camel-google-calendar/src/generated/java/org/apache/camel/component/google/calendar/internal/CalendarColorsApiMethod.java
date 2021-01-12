@@ -24,8 +24,6 @@ public enum CalendarColorsApiMethod implements ApiMethod {
         com.google.api.services.calendar.Calendar.Colors.Get.class,
         "get");
 
-    
-
     private final ApiMethod apiMethod;
 
     private CalendarColorsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

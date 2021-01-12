@@ -49,7 +49,7 @@ public class DisruptorAsyncRouteTest extends CamelTestSupport {
                 from("direct:start")
                         // send it to the disruptor ring buffer that is async
                         .to("disruptor:next")
-                                // return a constant response
+                        // return a constant response
                         .transform(constant("OK"));
 
                 from("disruptor:next").to("mock:result");

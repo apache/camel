@@ -4,8 +4,10 @@ package org.apache.camel.component.crypto;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -28,8 +30,8 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": getOrCreateConfiguration(target).setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "alias": getOrCreateConfiguration(target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
         case "bufferSize": getOrCreateConfiguration(target).setBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "certificate": getOrCreateConfiguration(target).setCertificate(property(camelContext, java.security.cert.Certificate.class, value)); return true;
@@ -66,30 +68,45 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("algorithm", java.lang.String.class);
-        answer.put("alias", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bufferSize", java.lang.Integer.class);
-        answer.put("certificate", java.security.cert.Certificate.class);
-        answer.put("certificateName", java.lang.String.class);
-        answer.put("clearHeaders", boolean.class);
-        answer.put("configuration", org.apache.camel.component.crypto.DigitalSignatureConfiguration.class);
-        answer.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
-        answer.put("keystore", java.security.KeyStore.class);
-        answer.put("keystoreName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("privateKey", java.security.PrivateKey.class);
-        answer.put("privateKeyName", java.lang.String.class);
-        answer.put("provider", java.lang.String.class);
-        answer.put("publicKey", java.security.PublicKey.class);
-        answer.put("publicKeyName", java.lang.String.class);
-        answer.put("secureRandom", java.security.SecureRandom.class);
-        answer.put("secureRandomName", java.lang.String.class);
-        answer.put("signatureHeaderName", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "algorithm": return java.lang.String.class;
+        case "alias": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return java.lang.Integer.class;
+        case "certificate": return java.security.cert.Certificate.class;
+        case "certificatename":
+        case "certificateName": return java.lang.String.class;
+        case "clearheaders":
+        case "clearHeaders": return boolean.class;
+        case "configuration": return org.apache.camel.component.crypto.DigitalSignatureConfiguration.class;
+        case "keystoreparameters":
+        case "keyStoreParameters": return org.apache.camel.support.jsse.KeyStoreParameters.class;
+        case "keystore": return java.security.KeyStore.class;
+        case "keystorename":
+        case "keystoreName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "privatekey":
+        case "privateKey": return java.security.PrivateKey.class;
+        case "privatekeyname":
+        case "privateKeyName": return java.lang.String.class;
+        case "provider": return java.lang.String.class;
+        case "publickey":
+        case "publicKey": return java.security.PublicKey.class;
+        case "publickeyname":
+        case "publicKeyName": return java.lang.String.class;
+        case "securerandom":
+        case "secureRandom": return java.security.SecureRandom.class;
+        case "securerandomname":
+        case "secureRandomName": return java.lang.String.class;
+        case "signatureheadername":
+        case "signatureHeaderName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -98,8 +115,8 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": return getOrCreateConfiguration(target).getAlgorithm();
         case "alias": return getOrCreateConfiguration(target).getAlias();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "buffersize":
         case "bufferSize": return getOrCreateConfiguration(target).getBufferSize();
         case "certificate": return getOrCreateConfiguration(target).getCertificate();

@@ -16,12 +16,15 @@
  */
 package org.apache.camel.cdi;
 
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.Producer;
 
 import org.apache.camel.CamelContext;
 
-final class CamelContextInjectionTarget<T extends CamelContext> extends DelegateInjectionTarget<T> implements InjectionTarget<T> {
+@Vetoed
+final class CamelContextInjectionTarget<T extends CamelContext> extends DelegateInjectionTarget<T>
+        implements InjectionTarget<T> {
 
     CamelContextInjectionTarget(InjectionTarget<T> target, Producer<T> producer) {
         super(target, producer);

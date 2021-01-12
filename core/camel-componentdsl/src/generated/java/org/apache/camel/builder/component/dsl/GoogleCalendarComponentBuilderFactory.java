@@ -37,6 +37,8 @@ public interface GoogleCalendarComponentBuilderFactory {
      * Category: api,cloud
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-calendar
+     * 
+     * @return the dsl builder
      */
     static GoogleCalendarComponentBuilder googleCalendar() {
         return new GoogleCalendarComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface GoogleCalendarComponentBuilderFactory {
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -64,9 +69,12 @@ public interface GoogleCalendarComponentBuilderFactory {
         /**
          * Client ID of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder clientId(
                 java.lang.String clientId) {
@@ -77,38 +85,16 @@ public interface GoogleCalendarComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.calendar.GoogleCalendarConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.calendar.GoogleCalendarConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder configuration(
                 org.apache.camel.component.google.calendar.GoogleCalendarConfiguration configuration) {
             doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * The emailAddress of the Google Service Account.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarComponentBuilder emailAddress(
-                java.lang.String emailAddress) {
-            doSetProperty("emailAddress", emailAddress);
-            return this;
-        }
-        /**
-         * The name of the p12 file which has the private key to use with the
-         * Google Service Account.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarComponentBuilder p12FileName(
-                java.lang.String p12FileName) {
-            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -117,25 +103,16 @@ public interface GoogleCalendarComponentBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder scopes(java.lang.String scopes) {
             doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * The email address of the user the application is trying to
-         * impersonate in the service account flow.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarComponentBuilder user(java.lang.String user) {
-            doSetProperty("user", user);
             return this;
         }
         /**
@@ -147,10 +124,13 @@ public interface GoogleCalendarComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -168,10 +148,13 @@ public interface GoogleCalendarComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -179,17 +162,24 @@ public interface GoogleCalendarComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GoogleCalendarComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleCalendarComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -197,9 +187,12 @@ public interface GoogleCalendarComponentBuilderFactory {
          * client. Will by default use BatchGoogleCalendarClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.calendar.GoogleCalendarClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder clientFactory(
                 org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
@@ -210,9 +203,12 @@ public interface GoogleCalendarComponentBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -222,9 +218,12 @@ public interface GoogleCalendarComponentBuilderFactory {
         /**
          * Client secret of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -232,17 +231,66 @@ public interface GoogleCalendarComponentBuilderFactory {
             return this;
         }
         /**
+         * The emailAddress of the Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarComponentBuilder emailAddress(
+                java.lang.String emailAddress) {
+            doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * The name of the p12 file which has the private key to use with the
+         * Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarComponentBuilder p12FileName(
+                java.lang.String p12FileName) {
+            doSetProperty("p12FileName", p12FileName);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * The email address of the user the application is trying to
+         * impersonate in the service account flow.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -272,17 +320,17 @@ public interface GoogleCalendarComponentBuilderFactory {
             case "applicationName": getOrCreateConfiguration((GoogleCalendarComponent) component).setApplicationName((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleCalendarComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleCalendarComponent) component).setConfiguration((org.apache.camel.component.google.calendar.GoogleCalendarConfiguration) value); return true;
-            case "emailAddress": getOrCreateConfiguration((GoogleCalendarComponent) component).setEmailAddress((java.lang.String) value); return true;
-            case "p12FileName": getOrCreateConfiguration((GoogleCalendarComponent) component).setP12FileName((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleCalendarComponent) component).setScopes((java.lang.String) value); return true;
-            case "user": getOrCreateConfiguration((GoogleCalendarComponent) component).setUser((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleCalendarComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((GoogleCalendarComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleCalendarComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleCalendarComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleCalendarComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "emailAddress": getOrCreateConfiguration((GoogleCalendarComponent) component).setEmailAddress((java.lang.String) value); return true;
+            case "p12FileName": getOrCreateConfiguration((GoogleCalendarComponent) component).setP12FileName((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleCalendarComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "user": getOrCreateConfiguration((GoogleCalendarComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -37,6 +37,8 @@ public interface FlinkComponentBuilderFactory {
      * Category: transformation,bigdata,streams
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
+     * 
+     * @return the dsl builder
      */
     static FlinkComponentBuilder flink() {
         return new FlinkComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface FlinkComponentBuilderFactory {
          * Function performing action against a DataSet.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.flink.DataSetCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSetCallback the value to set
+         * @return the dsl builder
          */
         default FlinkComponentBuilder dataSetCallback(
                 org.apache.camel.component.flink.DataSetCallback dataSetCallback) {
@@ -63,10 +68,12 @@ public interface FlinkComponentBuilderFactory {
          * DataStream to compute against.
          * 
          * The option is a:
-         * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
-         * type.
+         * &lt;code&gt;org.apache.flink.streaming.api.datastream.DataStream&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataStream the value to set
+         * @return the dsl builder
          */
         default FlinkComponentBuilder dataStream(
                 org.apache.flink.streaming.api.datastream.DataStream dataStream) {
@@ -77,10 +84,12 @@ public interface FlinkComponentBuilderFactory {
          * Function performing action against a DataStream.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.flink.DataStreamCallback</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.flink.DataStreamCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataStreamCallback the value to set
+         * @return the dsl builder
          */
         default FlinkComponentBuilder dataStreamCallback(
                 org.apache.camel.component.flink.DataStreamCallback dataStreamCallback) {
@@ -98,10 +107,13 @@ public interface FlinkComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FlinkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -109,17 +121,23 @@ public interface FlinkComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default FlinkComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default FlinkComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -143,7 +161,7 @@ public interface FlinkComponentBuilderFactory {
             case "dataStream": ((FlinkComponent) component).setDataStream((org.apache.flink.streaming.api.datastream.DataStream) value); return true;
             case "dataStreamCallback": ((FlinkComponent) component).setDataStreamCallback((org.apache.camel.component.flink.DataStreamCallback) value); return true;
             case "lazyStartProducer": ((FlinkComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((FlinkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((FlinkComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

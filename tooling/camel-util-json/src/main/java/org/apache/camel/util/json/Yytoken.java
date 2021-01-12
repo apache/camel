@@ -29,8 +29,7 @@ class Yytoken {
         /** Tokens of this type will always have a value of "," */
         COMMA,
         /**
-         * Tokens of this type will always have a value that is a boolean, null,
-         * number, or string.
+         * Tokens of this type will always have a value that is a boolean, null, number, or string.
          */
         DATUM,
         /** Tokens of this type will always have a value of "" */
@@ -49,10 +48,10 @@ class Yytoken {
     private final Object value;
 
     /**
-     * @param type represents the kind of token the instantiated token will be.
-     * @param value represents the value the token is associated with, will be
-     *            ignored unless type is equal to Types.DATUM.
-     * @see Types
+     * @param type  represents the kind of token the instantiated token will be.
+     * @param value represents the value the token is associated with, will be ignored unless type is equal to
+     *              Types.DATUM.
+     * @see         Types
      */
     Yytoken(final Types type, final Object value) {
         /*
@@ -90,7 +89,7 @@ class Yytoken {
 
     /**
      * @return which of the Types the token is.
-     * @see Types
+     * @see    Types
      */
     Types getType() {
         return this.type;
@@ -98,7 +97,7 @@ class Yytoken {
 
     /**
      * @return what the token is.
-     * @see Types
+     * @see    Types
      */
     Object getValue() {
         return this.value;

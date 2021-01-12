@@ -4,8 +4,10 @@ package org.apache.camel.component.log;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LogEndpoint target = (LogEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "exchangeformatter":
         case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
         case "groupactiveonly":
@@ -75,45 +75,65 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
-        answer.put("groupActiveOnly", java.lang.Boolean.class);
-        answer.put("groupDelay", java.lang.Long.class);
-        answer.put("groupInterval", java.lang.Long.class);
-        answer.put("groupSize", java.lang.Integer.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("level", java.lang.String.class);
-        answer.put("logMask", java.lang.Boolean.class);
-        answer.put("marker", java.lang.String.class);
-        answer.put("maxChars", int.class);
-        answer.put("multiline", boolean.class);
-        answer.put("showAll", boolean.class);
-        answer.put("showBody", boolean.class);
-        answer.put("showBodyType", boolean.class);
-        answer.put("showCaughtException", boolean.class);
-        answer.put("showException", boolean.class);
-        answer.put("showExchangeId", boolean.class);
-        answer.put("showExchangePattern", boolean.class);
-        answer.put("showFiles", boolean.class);
-        answer.put("showFuture", boolean.class);
-        answer.put("showHeaders", boolean.class);
-        answer.put("showProperties", boolean.class);
-        answer.put("showStackTrace", boolean.class);
-        answer.put("showStreams", boolean.class);
-        answer.put("skipBodyLineSeparator", boolean.class);
-        answer.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exchangeformatter":
+        case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
+        case "groupactiveonly":
+        case "groupActiveOnly": return java.lang.Boolean.class;
+        case "groupdelay":
+        case "groupDelay": return java.lang.Long.class;
+        case "groupinterval":
+        case "groupInterval": return java.lang.Long.class;
+        case "groupsize":
+        case "groupSize": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "level": return java.lang.String.class;
+        case "logmask":
+        case "logMask": return java.lang.Boolean.class;
+        case "marker": return java.lang.String.class;
+        case "maxchars":
+        case "maxChars": return int.class;
+        case "multiline": return boolean.class;
+        case "showall":
+        case "showAll": return boolean.class;
+        case "showbody":
+        case "showBody": return boolean.class;
+        case "showbodytype":
+        case "showBodyType": return boolean.class;
+        case "showcaughtexception":
+        case "showCaughtException": return boolean.class;
+        case "showexception":
+        case "showException": return boolean.class;
+        case "showexchangeid":
+        case "showExchangeId": return boolean.class;
+        case "showexchangepattern":
+        case "showExchangePattern": return boolean.class;
+        case "showfiles":
+        case "showFiles": return boolean.class;
+        case "showfuture":
+        case "showFuture": return boolean.class;
+        case "showheaders":
+        case "showHeaders": return boolean.class;
+        case "showproperties":
+        case "showProperties": return boolean.class;
+        case "showstacktrace":
+        case "showStackTrace": return boolean.class;
+        case "showstreams":
+        case "showStreams": return boolean.class;
+        case "skipbodylineseparator":
+        case "skipBodyLineSeparator": return boolean.class;
+        case "style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LogEndpoint target = (LogEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "exchangeformatter":
         case "exchangeFormatter": return target.getExchangeFormatter();
         case "groupactiveonly":

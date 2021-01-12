@@ -4,9 +4,10 @@
 :page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
 :docTitle: JSON Gson
 :artifactId: camel-gson
-:description: Marshal POJOs to JSON and back.
+:description: Marshal POJOs to JSON and back using Gson
 :since: 2.10
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-gson.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -33,7 +34,7 @@ The JSON Gson dataformat supports 3 options, which are listed below.
 | Name | Default | Java Type | Description
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
-| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON etc.
+| contentTypeHeader | true | Boolean | Whether the data format should set the Content-Type header with the type from the data format. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
 |===
 // dataformat options: END
 

@@ -84,8 +84,6 @@ public enum IncomingPhoneNumberApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private IncomingPhoneNumberApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

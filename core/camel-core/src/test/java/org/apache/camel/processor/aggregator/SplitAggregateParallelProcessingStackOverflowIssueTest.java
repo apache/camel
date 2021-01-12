@@ -51,14 +51,14 @@ public class SplitAggregateParallelProcessingStackOverflowIssueTest extends Cont
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().tokenize("\n").streaming().parallelProcessing()
+                        .split().tokenize("\n").streaming().parallelProcessing()
                         .aggregate(constant("foo"), new GroupedBodyAggregationStrategy())
                         .completeAllOnStop()
                         .eagerCheckCompletion()
                         .completionSize(10)
                         .completionTimeout(SECONDS.toMillis(5))
                         .completionPredicate(exchangeProperty(SPLIT_COMPLETE))
-                            .to("log:result?groupSize=100", "mock:result");
+                        .to("log:result?groupSize=100", "mock:result");
             }
         };
     }

@@ -37,6 +37,8 @@ public interface WordpressComponentBuilderFactory {
      * Category: cloud,api,cms
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
+     * 
+     * @return the dsl builder
      */
     static WordpressComponentBuilder wordpress() {
         return new WordpressComponentBuilderImpl();
@@ -51,22 +53,44 @@ public interface WordpressComponentBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder apiVersion(java.lang.String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
-         * The criteria to use with complex searches.
+         * Wordpress configuration.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.wordpress.WordpressConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default WordpressComponentBuilder configuration(
+                org.apache.camel.component.wordpress.WordpressConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The criteria to use with complex searches.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param criteria the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder criteria(
                 java.util.Map<java.lang.String, java.lang.Object> criteria) {
@@ -76,10 +100,13 @@ public interface WordpressComponentBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder force(boolean force) {
             doSetProperty("force", force);
@@ -89,9 +116,12 @@ public interface WordpressComponentBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder id(java.lang.Integer id) {
             doSetProperty("id", id);
@@ -100,9 +130,12 @@ public interface WordpressComponentBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -112,9 +145,12 @@ public interface WordpressComponentBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder searchCriteria(
                 org.apache.camel.component.wordpress.api.model.SearchCriteria searchCriteria) {
@@ -125,9 +161,12 @@ public interface WordpressComponentBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder url(java.lang.String url) {
             doSetProperty("url", url);
@@ -136,9 +175,12 @@ public interface WordpressComponentBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder user(java.lang.String user) {
             doSetProperty("user", user);
@@ -153,10 +195,13 @@ public interface WordpressComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -174,10 +219,13 @@ public interface WordpressComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WordpressComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -185,30 +233,24 @@ public interface WordpressComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
-         */
-        default WordpressComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Wordpress component configuration.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.wordpress.WordpressComponentConfiguration</code> type.
-         * 
-         * Group: advanced
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default WordpressComponentBuilder configuration(
-                org.apache.camel.component.wordpress.WordpressComponentConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default WordpressComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -222,10 +264,10 @@ public interface WordpressComponentBuilderFactory {
         protected WordpressComponent buildConcreteComponent() {
             return new WordpressComponent();
         }
-        private org.apache.camel.component.wordpress.WordpressComponentConfiguration getOrCreateConfiguration(
+        private org.apache.camel.component.wordpress.WordpressConfiguration getOrCreateConfiguration(
                 org.apache.camel.component.wordpress.WordpressComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.wordpress.WordpressComponentConfiguration());
+                component.setConfiguration(new org.apache.camel.component.wordpress.WordpressConfiguration());
             }
             return component.getConfiguration();
         }
@@ -236,6 +278,7 @@ public interface WordpressComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "apiVersion": getOrCreateConfiguration((WordpressComponent) component).setApiVersion((java.lang.String) value); return true;
+            case "configuration": ((WordpressComponent) component).setConfiguration((org.apache.camel.component.wordpress.WordpressConfiguration) value); return true;
             case "criteria": getOrCreateConfiguration((WordpressComponent) component).setCriteria((java.util.Map) value); return true;
             case "force": getOrCreateConfiguration((WordpressComponent) component).setForce((boolean) value); return true;
             case "id": getOrCreateConfiguration((WordpressComponent) component).setId((java.lang.Integer) value); return true;
@@ -245,8 +288,7 @@ public interface WordpressComponentBuilderFactory {
             case "user": getOrCreateConfiguration((WordpressComponent) component).setUser((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((WordpressComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WordpressComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((WordpressComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((WordpressComponent) component).setConfiguration((org.apache.camel.component.wordpress.WordpressComponentConfiguration) value); return true;
+            case "autowiredEnabled": ((WordpressComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

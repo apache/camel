@@ -28,7 +28,7 @@ public class AbstractTestTestSupport extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
-        throws CamelExecutionException {
+            throws CamelExecutionException {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 

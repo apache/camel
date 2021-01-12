@@ -36,7 +36,7 @@ public class BindySimpleCsvRegexAutospanLineTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         final RegexSpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(RegexSpanLastRecord.class);
-        
+
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
         assertEquals("kommentar", order.getComment());
@@ -52,7 +52,7 @@ public class BindySimpleCsvRegexAutospanLineTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         final RegexSpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(RegexSpanLastRecord.class);
-        
+
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
         assertEquals("kommentar test noe hei", order.getComment());

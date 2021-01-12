@@ -79,7 +79,9 @@ public class EmbeddedActiveMQBroker implements BeforeEachCallback, AfterEachCall
     }
 
     public String getVmURL(boolean failoverURL) {
-        return failoverURL ? String.format("failover:(%s?create=false)", this.brokerService.getVmConnectorURI().toString()) : this.brokerService.getVmConnectorURI().toString() + "?create=false";
+        return failoverURL
+                ? String.format("failover:(%s?create=false)", this.brokerService.getVmConnectorURI().toString())
+                : this.brokerService.getVmConnectorURI().toString() + "?create=false";
     }
 
 }

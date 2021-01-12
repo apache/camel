@@ -62,7 +62,6 @@ public class SaxonUriResolverTest extends CamelTestSupport {
 
     protected Source fromClasspath(String path) throws IOException {
         return new StreamSource(
-            ResourceHelper.resolveMandatoryResourceAsInputStream(context(), path)
-        );
+                ResourceHelper.resolveMandatoryResourceAsInputStream(context(), path));
     }
 }

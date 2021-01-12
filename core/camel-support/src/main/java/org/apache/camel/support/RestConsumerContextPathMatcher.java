@@ -25,8 +25,8 @@ import java.util.Locale;
 /**
  * A context path matcher when using rest-dsl that allows components to reuse the same matching logic.
  * <p/>
- * The component should use the {@link #matchBestPath(String, String, java.util.List)} with the request details
- * and the matcher returns the best matched, or <tt>null</tt> if none could be determined.
+ * The component should use the {@link #matchBestPath(String, String, java.util.List)} with the request details and the
+ * matcher returns the best matched, or <tt>null</tt> if none could be determined.
  * <p/>
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
@@ -34,7 +34,7 @@ public final class RestConsumerContextPathMatcher {
 
     private RestConsumerContextPathMatcher() {
     }
-    
+
     /**
      * Consumer path details which must be implemented and provided by the components.
      */
@@ -65,10 +65,10 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Does the incoming request match the given consumer path (ignore case)
      *
-     * @param requestPath      the incoming request context path
-     * @param consumerPath     a consumer path
-     * @param matchOnUriPrefix whether to use the matchOnPrefix option
-     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @param  requestPath      the incoming request context path
+     * @param  consumerPath     a consumer path
+     * @param  matchOnUriPrefix whether to use the matchOnPrefix option
+     * @return                  <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     public static boolean matchPath(String requestPath, String consumerPath, boolean matchOnUriPrefix) {
         // deal with null parameters
@@ -97,21 +97,21 @@ public final class RestConsumerContextPathMatcher {
         if (matchOnUriPrefix && requestPath.toLowerCase(Locale.ENGLISH).startsWith(consumerPath.toLowerCase(Locale.ENGLISH))) {
             return true;
         }
-        
+
         if (requestPath.equalsIgnoreCase(consumerPath)) {
             return true;
         }
-        
+
         return false;
     }
 
     /**
      * Finds the best matching of the list of consumer paths that should service the incoming request.
      *
-     * @param requestMethod the incoming request HTTP method
-     * @param requestPath   the incoming request context path
-     * @param consumerPaths the list of consumer context path details
-     * @return the best matched consumer, or <tt>null</tt> if none could be determined.
+     * @param  requestMethod the incoming request HTTP method
+     * @param  requestPath   the incoming request context path
+     * @param  consumerPaths the list of consumer context path details
+     * @return               the best matched consumer, or <tt>null</tt> if none could be determined.
      */
     public static ConsumerPath matchBestPath(String requestMethod, String requestPath, List<ConsumerPath> consumerPaths) {
         ConsumerPath answer = null;
@@ -156,9 +156,9 @@ public final class RestConsumerContextPathMatcher {
         if (noWildcards) {
             // grab first which is the longest that matched the request path
             answer = candidates.stream()
-                .filter(c -> matchPath(requestPath, c.getConsumerPath(), c.isMatchOnUriPrefix()))
-                // sort by longest by inverting the sort by multiply with -1
-                .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
+                    .filter(c -> matchPath(requestPath, c.getConsumerPath(), c.isMatchOnUriPrefix()))
+                    // sort by longest by inverting the sort by multiply with -1
+                    .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
         }
 
         // then match by wildcard path
@@ -206,9 +206,9 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Matches the given request HTTP method with the configured HTTP method of the consumer.
      *
-     * @param method   the request HTTP method
-     * @param restrict the consumer configured HTTP restrict method
-     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @param  method   the request HTTP method
+     * @param  restrict the consumer configured HTTP restrict method
+     * @return          <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestMethod(String method, String restrict) {
         if (restrict == null) {
@@ -230,9 +230,9 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Matches the given request path with the configured consumer path
      *
-     * @param requestPath  the request path
-     * @param consumerPath the consumer path which may use { } tokens
-     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     * @param  requestPath  the request path
+     * @param  consumerPath the consumer path which may use { } tokens
+     * @return              <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
         // deal with null parameters
@@ -288,8 +288,8 @@ public final class RestConsumerContextPathMatcher {
     /**
      * Counts the number of wildcards in the path
      *
-     * @param consumerPath the consumer path which may use { } tokens
-     * @return number of wildcards, or <tt>0</tt> if no wildcards
+     * @param  consumerPath the consumer path which may use { } tokens
+     * @return              number of wildcards, or <tt>0</tt> if no wildcards
      */
     private static int countWildcards(String consumerPath) {
         int wildcards = 0;

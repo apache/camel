@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
  */
 public class CassandraAggregationSerializedHeadersTest extends BaseCassandraTest {
 
-
     private CassandraAggregationRepository aggregationRepository;
 
     @Override
@@ -66,8 +65,9 @@ public class CassandraAggregationSerializedHeadersTest extends BaseCassandraTest
                         return oldExchange;
                     }
                 };
-                from("direct:input").aggregate(header("aggregationId"), aggregationStrategy).completionSize(3).completionTimeout(3000L).aggregationRepository(aggregationRepository)
-                    .to("mock:output");
+                from("direct:input").aggregate(header("aggregationId"), aggregationStrategy).completionSize(3)
+                        .completionTimeout(3000L).aggregationRepository(aggregationRepository)
+                        .to("mock:output");
             }
         };
     }

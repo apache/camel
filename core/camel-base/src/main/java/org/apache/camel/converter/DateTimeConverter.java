@@ -24,7 +24,7 @@ import org.apache.camel.Converter;
 /**
  * Date and time related converters.
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class DateTimeConverter {
 
     /**
@@ -33,17 +33,17 @@ public final class DateTimeConverter {
     private DateTimeConverter() {
     }
 
-    @Converter
+    @Converter(order = 1)
     public static TimeZone toTimeZone(String s) {
         return TimeZone.getTimeZone(s);
     }
-    
-    @Converter
+
+    @Converter(order = 2)
     public static Date toDate(Long l) {
         return new Date(l);
     }
-    
-    @Converter
+
+    @Converter(order = 3)
     public static Long toLong(Date date) {
         return date.getTime();
     }

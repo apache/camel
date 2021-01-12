@@ -22,9 +22,11 @@ import javax.jms.Session;
 import org.apache.camel.Exchange;
 
 /**
- * A strategy that allows custom components to plugin and perform custom logic when Camel creates {@link javax.jms.Message} instance.
+ * A strategy that allows custom components to plugin and perform custom logic when Camel creates
+ * {@link javax.jms.Message} instance.
  * <p/>
- * For example to populate the message with custom information that are component specific and not part of the JMS specification.
+ * For example to populate the message with custom information that are component specific and not part of the JMS
+ * specification.
  */
 public interface MessageCreatedStrategy {
 
@@ -32,8 +34,8 @@ public interface MessageCreatedStrategy {
      * Callback when the JMS message has <i>just</i> been created, which allows custom modifications afterwards.
      *
      * @param exchange the current exchange
-     * @param session the JMS session used to create the message
-     * @param cause optional exception occurred that should be sent as reply instead of a regular body
+     * @param session  the JMS session used to create the message
+     * @param cause    optional exception occurred that should be sent as reply instead of a regular body
      */
     void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause);
 }

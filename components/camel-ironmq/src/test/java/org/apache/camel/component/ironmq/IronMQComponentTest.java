@@ -89,8 +89,8 @@ public class IronMQComponentTest extends CamelTestSupport {
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(IronMQConstants.MESSAGE_ID));
 
-        assertEquals("This is my message text.", exchange.getOut().getBody());
-        assertNotNull(exchange.getOut().getHeader(IronMQConstants.MESSAGE_ID));
+        assertEquals("This is my message text.", exchange.getMessage().getBody());
+        assertNotNull(exchange.getMessage().getHeader(IronMQConstants.MESSAGE_ID));
     }
 
     @Override
@@ -101,7 +101,7 @@ public class IronMQComponentTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq", "testqueue", parameters);
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq", "testqueue", parameters);
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

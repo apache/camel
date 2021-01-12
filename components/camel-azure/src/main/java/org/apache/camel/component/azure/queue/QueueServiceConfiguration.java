@@ -106,14 +106,14 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     public void setQueuePrefix(String queuePrefix) {
         this.queuePrefix = queuePrefix;
     }
-    
+
     // *************************************************
     //
     // *************************************************
 
     public QueueServiceConfiguration copy() {
         try {
-            return (QueueServiceConfiguration)super.clone();
+            return (QueueServiceConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

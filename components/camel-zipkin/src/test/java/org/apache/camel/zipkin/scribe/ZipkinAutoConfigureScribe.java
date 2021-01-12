@@ -26,17 +26,25 @@ import org.junit.jupiter.api.Test;
 /**
  * Integration test requires running Zipkin/Scribe running
  *
- * <p>The easiest way to run is locally:
- * <pre>{@code
+ * <p>
+ * The easiest way to run is locally:
+ * 
+ * <pre>
+ * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s
  * SCRIBE_ENABLED=true java -jar zipkin.jar
- * }</pre>
+ * }
+ * </pre>
  *
- * <p>This test has to be run with environment variables set. For example:
- * <pre>{@code
+ * <p>
+ * This test has to be run with environment variables set. For example:
+ * 
+ * <pre>
+ * {@code
  * ZIPKIN_COLLECTOR_THRIFT_SERVICE_HOST=localhost
  * ZIPKIN_COLLECTOR_THRIFT_SERVICE_PORT=9410
- * }</pre>
+ * }
+ * </pre>
  */
 public class ZipkinAutoConfigureScribe extends CamelTestSupport {
 

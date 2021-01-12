@@ -75,14 +75,14 @@ public class JmsDiscoveryTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // lets setup the heartbeats
                 from("timer:heartbeats?delay=100")
-                    .to("bean:service1?method=status")
-                    .to("activemq:topic:registry.heartbeats");
+                        .to("bean:service1?method=status")
+                        .to("activemq:topic:registry.heartbeats");
 
                 // defer shutting this route down as the first route depends upon it to
                 // be running so it can complete its current exchanges
                 from("activemq:topic:registry.heartbeats")
-                    .shutdownRoute(ShutdownRoute.Defer)
-                    .to("bean:registry?method=onEvent", "mock:result");
+                        .shutdownRoute(ShutdownRoute.Defer)
+                        .to("bean:registry?method=onEvent", "mock:result");
             }
         };
     }

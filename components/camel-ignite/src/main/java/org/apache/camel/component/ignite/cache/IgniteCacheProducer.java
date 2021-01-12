@@ -117,7 +117,9 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
         Object cacheKey = in.getHeader(IgniteConstants.IGNITE_CACHE_KEY);
 
         if (cacheKey == null) {
-            throw new RuntimeCamelException("Cache PUT operation requires the cache key in the CamelIgniteCacheKey header, " + "or a payload of type Map.");
+            throw new RuntimeCamelException(
+                    "Cache PUT operation requires the cache key in the CamelIgniteCacheKey header, "
+                                            + "or a payload of type Map.");
         }
 
         cache.put(cacheKey, in.getBody());
@@ -204,7 +206,8 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
     }
 
     private IgniteCacheOperation cacheOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(), IgniteCacheOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(),
+                IgniteCacheOperation.class);
     }
 
 }

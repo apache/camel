@@ -73,8 +73,7 @@ public class ChatScriptBot {
             resp = in.readLine();
             echoSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("Unable to send message to ChatScript Server. Reason:" + e.getMessage());
+            throw new Exception("Unable to send message to ChatScript Server. Reason:" + e.getMessage(), e);
         }
 
         return resp;
@@ -84,7 +83,7 @@ public class ChatScriptBot {
     public String init(ChatScriptMessage input) throws Exception {
         ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, null);
         String response = doMessage(g);
-        LOG.info("Conversation started between the bot " + this.botName + " and " + input.getUserName());
+        LOG.info("Conversation started between the bot {} and {}", this.botName, input.getUserName());
         initialized = true;
         return response;
     }

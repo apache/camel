@@ -6,6 +6,7 @@
 :since: 2.20
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws-lambda.adoc[opts=optional]
 //Manually maintained attributes
 :group: AWS
 
@@ -52,13 +53,13 @@ The AWS Lambda component supports 12 options, which are listed below.
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (producer) | The AWS Lambda default configuration |  | LambdaConfiguration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. The value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | LambdaOperations
+| *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. There are 18 enums and the value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | LambdaOperations
 | *region* (producer) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
 | *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
-| *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -86,7 +87,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,14 +95,13 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. The value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | LambdaOperations
+| *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. There are 18 enums and the value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | LambdaOperations
 | *region* (producer) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
 | *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
-| *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -236,7 +236,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `$\{camel-version\}` must be replaced by the actual version of Camel.
+where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::camel-spring-boot::page$aws-lambda-starter.adoc[]

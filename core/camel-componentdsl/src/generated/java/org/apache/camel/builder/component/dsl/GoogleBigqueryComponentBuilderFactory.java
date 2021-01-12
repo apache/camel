@@ -37,6 +37,8 @@ public interface GoogleBigqueryComponentBuilderFactory {
      * Category: cloud,bigdata
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
+     * 
+     * @return the dsl builder
      */
     static GoogleBigqueryComponentBuilder googleBigquery() {
         return new GoogleBigqueryComponentBuilderImpl();
@@ -49,13 +51,16 @@ public interface GoogleBigqueryComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleBigQueryComponent> {
         /**
-         * ConnectionFactory to obtain connection to Bigquery Service. If non
+         * ConnectionFactory to obtain connection to Bigquery Service. If not
          * provided the default one will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default GoogleBigqueryComponentBuilder connectionFactory(
                 org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory connectionFactory) {
@@ -65,9 +70,12 @@ public interface GoogleBigqueryComponentBuilderFactory {
         /**
          * BigQuery Dataset Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param datasetId the value to set
+         * @return the dsl builder
          */
         default GoogleBigqueryComponentBuilder datasetId(
                 java.lang.String datasetId) {
@@ -85,10 +93,13 @@ public interface GoogleBigqueryComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleBigqueryComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,9 +109,12 @@ public interface GoogleBigqueryComponentBuilderFactory {
         /**
          * Google Cloud Project Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param projectId the value to set
+         * @return the dsl builder
          */
         default GoogleBigqueryComponentBuilder projectId(
                 java.lang.String projectId) {
@@ -108,17 +122,24 @@ public interface GoogleBigqueryComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default GoogleBigqueryComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleBigqueryComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -142,7 +163,7 @@ public interface GoogleBigqueryComponentBuilderFactory {
             case "datasetId": ((GoogleBigQueryComponent) component).setDatasetId((java.lang.String) value); return true;
             case "lazyStartProducer": ((GoogleBigQueryComponent) component).setLazyStartProducer((boolean) value); return true;
             case "projectId": ((GoogleBigQueryComponent) component).setProjectId((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((GoogleBigQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleBigQueryComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

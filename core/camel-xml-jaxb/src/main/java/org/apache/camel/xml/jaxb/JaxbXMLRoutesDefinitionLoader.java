@@ -55,8 +55,8 @@ import org.apache.camel.spi.annotations.JdkService;
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
- * JAXB based {@link XMLRoutesDefinitionLoader}. This is the default loader used historically by Camel.
- * The camel-xml-io parser is a light-weight alternative.
+ * JAXB based {@link XMLRoutesDefinitionLoader}. This is the default loader used historically by Camel. The camel-xml-io
+ * parser is a light-weight alternative.
  */
 @JdkService(XMLRoutesDefinitionLoader.FACTORY)
 public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
@@ -81,12 +81,12 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         // can either be routes or a single route
         RoutesDefinition answer;
         if (result instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition)result;
+            RouteDefinition route = (RouteDefinition) result;
             answer = new RoutesDefinition();
             applyNamespaces(route, namespaces);
             answer.getRoutes().add(route);
         } else if (result instanceof RoutesDefinition) {
-            answer = (RoutesDefinition)result;
+            answer = (RoutesDefinition) result;
             for (RouteDefinition route : answer.getRoutes()) {
                 applyNamespaces(route, namespaces);
             }
@@ -118,12 +118,12 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         // can either be routes or a single route
         RouteTemplatesDefinition answer;
         if (result instanceof RouteTemplateDefinition) {
-            RouteTemplateDefinition route = (RouteTemplateDefinition)result;
+            RouteTemplateDefinition route = (RouteTemplateDefinition) result;
             answer = new RouteTemplatesDefinition();
             applyNamespaces(route.getRoute(), namespaces);
             answer.getRouteTemplates().add(route);
         } else if (result instanceof RouteTemplatesDefinition) {
-            answer = (RouteTemplatesDefinition)result;
+            answer = (RouteTemplatesDefinition) result;
             for (RouteTemplateDefinition route : answer.getRouteTemplates()) {
                 applyNamespaces(route.getRoute(), namespaces);
             }
@@ -148,11 +148,11 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         // can either be routes or a single route
         RestsDefinition answer;
         if (result instanceof RestDefinition) {
-            RestDefinition rest = (RestDefinition)result;
+            RestDefinition rest = (RestDefinition) result;
             answer = new RestsDefinition();
             answer.getRests().add(rest);
         } else if (result instanceof RestsDefinition) {
-            answer = (RestsDefinition)result;
+            answer = (RestsDefinition) result;
         } else {
             // ignore not supported type
             return null;
@@ -179,8 +179,8 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
     /**
      * Creates a new {@link XmlConverter}
      *
-     * @param context CamelContext if provided
-     * @return a new XmlConverter instance
+     * @param  context CamelContext if provided
+     * @return         a new XmlConverter instance
      */
     private static XmlConverter newXmlConverter(CamelContext context) {
         XmlConverter xmlConverter;
@@ -196,7 +196,7 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
     /**
      * Extract all XML namespaces from the root element in a DOM Document
      *
-     * @param document the DOM document
+     * @param document   the DOM document
      * @param namespaces the map of namespaces to add new found XML namespaces
      */
     private static void extractNamespaces(Document document, Map<String, String> namespaces) throws JAXBException {
@@ -225,9 +225,9 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         NamespaceAware na = null;
         Expression exp = ed.getExpressionValue();
         if (exp instanceof NamespaceAware) {
-            na = (NamespaceAware)exp;
+            na = (NamespaceAware) exp;
         } else if (ed instanceof NamespaceAware) {
-            na = (NamespaceAware)ed;
+            na = (NamespaceAware) ed;
         }
 
         return na;
@@ -243,7 +243,8 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
         }
     }
 
-    private static <T extends NamedNode> T modelToXml(CamelContext context, InputStream is, String xml, Class<T> type) throws Exception {
+    private static <T extends NamedNode> T modelToXml(CamelContext context, InputStream is, String xml, Class<T> type)
+            throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
         XmlConverter xmlConverter = newXmlConverter(context);
@@ -278,15 +279,15 @@ public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader 
                 applyNamespaces(template.getRoute(), namespaces);
             }
         } else if (result instanceof RouteTemplateDefinition) {
-            RouteTemplateDefinition template = (RouteTemplateDefinition)result;
+            RouteTemplateDefinition template = (RouteTemplateDefinition) result;
             applyNamespaces(template.getRoute(), namespaces);
         } else if (result instanceof RoutesDefinition) {
-            List<RouteDefinition> routes = ((RoutesDefinition)result).getRoutes();
+            List<RouteDefinition> routes = ((RoutesDefinition) result).getRoutes();
             for (RouteDefinition route : routes) {
                 applyNamespaces(route, namespaces);
             }
         } else if (result instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition)result;
+            RouteDefinition route = (RouteDefinition) result;
             applyNamespaces(route, namespaces);
         }
 

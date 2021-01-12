@@ -25,7 +25,8 @@ public class SpringCharlesSplitAndTryCatchRollbackIssueTest extends CharlesSplit
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringCharlesSplitAndTryCatchRollbackIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/SpringCharlesSplitAndTryCatchRollbackIssueTest.xml");
     }
 
 }

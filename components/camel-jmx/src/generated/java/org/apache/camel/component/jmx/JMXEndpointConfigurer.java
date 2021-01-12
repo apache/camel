@@ -4,8 +4,10 @@ package org.apache.camel.component.jmx;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JMXEndpoint target = (JMXEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "differencemode":
@@ -79,48 +79,69 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("differenceMode", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("executorService", java.util.concurrent.ExecutorService.class);
-        answer.put("format", java.lang.String.class);
-        answer.put("granularityPeriod", long.class);
-        answer.put("handback", java.lang.Object.class);
-        answer.put("initThreshold", int.class);
-        answer.put("modulus", int.class);
-        answer.put("monitorType", java.lang.String.class);
-        answer.put("notificationFilter", javax.management.NotificationFilter.class);
-        answer.put("notifyDiffer", boolean.class);
-        answer.put("notifyHigh", boolean.class);
-        answer.put("notifyLow", boolean.class);
-        answer.put("notifyMatch", boolean.class);
-        answer.put("objectDomain", java.lang.String.class);
-        answer.put("objectName", java.lang.String.class);
-        answer.put("objectProperties", java.util.Map.class);
-        answer.put("observedAttribute", java.lang.String.class);
-        answer.put("offset", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("reconnectDelay", int.class);
-        answer.put("reconnectOnConnectionFailure", boolean.class);
-        answer.put("stringToCompare", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("testConnectionOnStartup", boolean.class);
-        answer.put("thresholdHigh", java.lang.Double.class);
-        answer.put("thresholdLow", java.lang.Double.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "differencemode":
+        case "differenceMode": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "executorservice":
+        case "executorService": return java.util.concurrent.ExecutorService.class;
+        case "format": return java.lang.String.class;
+        case "granularityperiod":
+        case "granularityPeriod": return long.class;
+        case "handback": return java.lang.Object.class;
+        case "initthreshold":
+        case "initThreshold": return int.class;
+        case "modulus": return int.class;
+        case "monitortype":
+        case "monitorType": return java.lang.String.class;
+        case "notificationfilter":
+        case "notificationFilter": return javax.management.NotificationFilter.class;
+        case "notifydiffer":
+        case "notifyDiffer": return boolean.class;
+        case "notifyhigh":
+        case "notifyHigh": return boolean.class;
+        case "notifylow":
+        case "notifyLow": return boolean.class;
+        case "notifymatch":
+        case "notifyMatch": return boolean.class;
+        case "objectdomain":
+        case "objectDomain": return java.lang.String.class;
+        case "objectname":
+        case "objectName": return java.lang.String.class;
+        case "objectproperties":
+        case "objectProperties": return java.util.Map.class;
+        case "observedattribute":
+        case "observedAttribute": return java.lang.String.class;
+        case "offset": return int.class;
+        case "password": return java.lang.String.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return int.class;
+        case "reconnectonconnectionfailure":
+        case "reconnectOnConnectionFailure": return boolean.class;
+        case "stringtocompare":
+        case "stringToCompare": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
+        case "thresholdhigh":
+        case "thresholdHigh": return java.lang.Double.class;
+        case "thresholdlow":
+        case "thresholdLow": return java.lang.Double.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JMXEndpoint target = (JMXEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "differencemode":
@@ -174,6 +195,15 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "thresholdlow":
         case "thresholdLow": return target.getThresholdLow();
         case "user": return target.getUser();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "objectproperties":
+        case "objectProperties": return java.lang.String.class;
         default: return null;
         }
     }

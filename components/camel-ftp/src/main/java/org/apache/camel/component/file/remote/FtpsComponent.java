@@ -30,8 +30,7 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP Secure (FTP over SSL/TLS) Component.
  * <p/>
- * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to
- * see wire-level SSL details.
+ * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to see wire-level SSL details.
  */
 @Component("ftps")
 public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
@@ -47,7 +46,8 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     @Override
-    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         String baseUri = getBaseUri(uri);
 
         // lets make sure we create a new configuration as each endpoint can
@@ -71,10 +71,9 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     /**
-     * Extract additional ftp client key store options from the parameters map
-     * (parameters starting with 'ftpClient.keyStore.'). To remember these
-     * parameters, we set them in the endpoint and we can use them when creating
-     * a client.
+     * Extract additional ftp client key store options from the parameters map (parameters starting with
+     * 'ftpClient.keyStore.'). To remember these parameters, we set them in the endpoint and we can use them when
+     * creating a client.
      */
     protected void extractAndSetFtpClientKeyStoreParameters(Map<String, Object> parameters, FtpsEndpoint endpoint) {
         if (PropertiesHelper.hasProperties(parameters, "ftpClient.keyStore.")) {
@@ -84,10 +83,9 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     /**
-     * Extract additional ftp client trust store options from the parameters map
-     * (parameters starting with 'ftpClient.trustStore.'). To remember these
-     * parameters, we set them in the endpoint and we can use them when creating
-     * a client.
+     * Extract additional ftp client trust store options from the parameters map (parameters starting with
+     * 'ftpClient.trustStore.'). To remember these parameters, we set them in the endpoint and we can use them when
+     * creating a client.
      */
     protected void extractAndSetFtpClientTrustStoreParameters(Map<String, Object> parameters, FtpsEndpoint endpoint) {
         if (PropertiesHelper.hasProperties(parameters, "ftpClient.trustStore.")) {

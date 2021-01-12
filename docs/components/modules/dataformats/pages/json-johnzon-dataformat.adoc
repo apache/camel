@@ -4,9 +4,10 @@
 :page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
 :docTitle: JSON Johnzon
 :artifactId: camel-johnzon
-:description: Marshal POJOs to JSON and back.
+:description: Marshal POJOs to JSON and back using Johnzon
 :since: 2.18
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-johnzon.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -32,7 +33,7 @@ The JSON Johnzon dataformat supports 3 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
+| objectMapper |  | String | Lookup and use the existing Mapper with the given id.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | unmarshalTypeName |  | String | Class name of the java type to use when unmarshalling
 |===

@@ -88,7 +88,6 @@ public class DynamicTableIdTest extends BigQueryTestSupport {
         object2.put("col2", uuidCol22);
         exchange2.getIn().setBody(object2);
 
-
         sendResult.expectedMessageCount(2);
         producer.send(exchange1);
         producer.send(exchange2);

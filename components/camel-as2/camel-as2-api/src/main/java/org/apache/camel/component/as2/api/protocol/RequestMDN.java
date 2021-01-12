@@ -29,7 +29,8 @@ import org.apache.http.util.CharArrayBuffer;
 
 public class RequestMDN implements HttpRequestInterceptor {
 
-    private static final String SIGNED_RECEIPT_PREFIX = "signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional";
+    private static final String SIGNED_RECEIPT_PREFIX
+            = "signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional";
 
     @Override
     public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {

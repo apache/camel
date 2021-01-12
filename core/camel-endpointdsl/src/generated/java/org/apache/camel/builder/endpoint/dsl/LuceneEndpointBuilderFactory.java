@@ -45,10 +45,13 @@ public interface LuceneEndpointBuilderFactory {
          * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
          * analyzers out of the box.
          * 
-         * The option is a: <code>org.apache.lucene.analysis.Analyzer</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.lucene.analysis.Analyzer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param analyzer the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder analyzer(Object analyzer) {
             doSetProperty("analyzer", analyzer);
@@ -62,9 +65,12 @@ public interface LuceneEndpointBuilderFactory {
          * analyzers out of the box.
          * 
          * The option will be converted to a
-         * <code>org.apache.lucene.analysis.Analyzer</code> type.
+         * &lt;code&gt;org.apache.lucene.analysis.Analyzer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param analyzer the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder analyzer(String analyzer) {
             doSetProperty("analyzer", analyzer);
@@ -74,9 +80,12 @@ public interface LuceneEndpointBuilderFactory {
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param indexDir the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder indexDir(File indexDir) {
             doSetProperty("indexDir", indexDir);
@@ -86,9 +95,13 @@ public interface LuceneEndpointBuilderFactory {
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param indexDir the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder indexDir(String indexDir) {
             doSetProperty("indexDir", indexDir);
@@ -105,10 +118,13 @@ public interface LuceneEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -126,10 +142,14 @@ public interface LuceneEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -138,9 +158,12 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * An integer value that limits the result set of the search operation.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxHits the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder maxHits(int maxHits) {
             doSetProperty("maxHits", maxHits);
@@ -149,9 +172,12 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * An integer value that limits the result set of the search operation.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxHits the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder maxHits(String maxHits) {
             doSetProperty("maxHits", maxHits);
@@ -161,9 +187,12 @@ public interface LuceneEndpointBuilderFactory {
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param srcDir the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder srcDir(File srcDir) {
             doSetProperty("srcDir", srcDir);
@@ -173,9 +202,13 @@ public interface LuceneEndpointBuilderFactory {
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
          * 
-         * The option will be converted to a <code>java.io.File</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param srcDir the value to set
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder srcDir(String srcDir) {
             doSetProperty("srcDir", srcDir);
@@ -193,41 +226,16 @@ public interface LuceneEndpointBuilderFactory {
             return (LuceneEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLuceneEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedLuceneEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLuceneEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -237,10 +245,14 @@ public interface LuceneEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -264,9 +276,10 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to do such as insert or query.
-         * The value can be one of: insert, query
+         * There are 2 enums and the value can be one of: insert, query
          * 
          * @param path host:operation
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder lucene(String path) {
             return LuceneEndpointBuilderFactory.endpointBuilder("lucene", path);
@@ -286,11 +299,12 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to do such as insert or query.
-         * The value can be one of: insert, query
+         * There are 2 enums and the value can be one of: insert, query
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:operation
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder lucene(String componentName, String path) {
             return LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);

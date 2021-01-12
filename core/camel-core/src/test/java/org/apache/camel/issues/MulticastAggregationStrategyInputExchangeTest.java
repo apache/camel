@@ -48,7 +48,8 @@ public class MulticastAggregationStrategyInputExchangeTest extends ContextTestSu
                 from("direct:start").multicast(new MyAggregateBean()).to("direct:a").to("direct:b").end();
 
                 from("direct:a").setHeader("foo", constant("123")).transform(constant("A")).to("mock:a");
-                from("direct:b").setHeader("bar", constant("456")).transform(constant("B")).throwException(new IllegalArgumentException("Forced")).to("mock:b");
+                from("direct:b").setHeader("bar", constant("456")).transform(constant("B"))
+                        .throwException(new IllegalArgumentException("Forced")).to("mock:b");
             }
         };
     }

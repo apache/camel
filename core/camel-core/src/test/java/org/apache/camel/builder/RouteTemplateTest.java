@@ -24,7 +24,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTemplateTest extends ContextTestSupport {
@@ -164,7 +163,7 @@ public class RouteTemplateTest extends ContextTestSupport {
         String routeId = context.addRouteFromTemplate(null, "myTemplate", parameters);
 
         assertNotNull(routeId);
-        assertTrue(!routeId.equals("route1"), "Should not be named route1");
+        assertNotEquals("route1", routeId, "Should not be named route1");
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
         assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
@@ -199,8 +198,8 @@ public class RouteTemplateTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
-                    .from("direct:{{foo}}")
-                    .to("mock:{{bar}}");
+                        .from("direct:{{foo}}")
+                        .to("mock:{{bar}}");
             }
         };
     }

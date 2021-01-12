@@ -32,8 +32,6 @@ public enum FhirValidateApiMethod implements ApiMethod {
         arg("resourceAsString", String.class),
         arg("extraParameters", java.util.Map.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private FhirValidateApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

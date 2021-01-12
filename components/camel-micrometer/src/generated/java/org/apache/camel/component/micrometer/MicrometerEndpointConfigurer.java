@@ -4,8 +4,10 @@ package org.apache.camel.component.micrometer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "decrement": target.setDecrement(property(camelContext, java.lang.String.class, value)); return true;
         case "increment": target.setIncrement(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -33,16 +33,17 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("decrement", java.lang.String.class);
-        answer.put("increment", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("value", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "decrement": return java.lang.String.class;
+        case "increment": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "value": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -50,8 +51,6 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "decrement": return target.getDecrement();
         case "increment": return target.getIncrement();
         case "lazystartproducer":

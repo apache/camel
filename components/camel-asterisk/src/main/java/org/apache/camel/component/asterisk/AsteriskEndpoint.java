@@ -30,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Interact with Asterisk PBX Server.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", category = {Category.VOIP})
+@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
+             category = { Category.VOIP })
 public class AsteriskEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of component")
     @Metadata(required = true)
@@ -56,7 +57,8 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         // Validate mandatory option
         ObjectHelper.notNull(hostname, "hostname");
         ObjectHelper.notNull(username, "username");

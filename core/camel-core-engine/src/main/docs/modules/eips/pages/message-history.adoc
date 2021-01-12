@@ -11,10 +11,11 @@ image::eip/MessageHistory.gif[image]
 
 Attaching a Message History to the message will provide a list of all applications that the message passed through since its origination.
 
-The message history is disabled by default (to optimize for lower footprint out of the box). You should only enable message history
+IMPORTANT: The message history is disabled by default (to optimize for lower footprint out of the box). You should only enable message history
 if needed, such as during development, where Camel can report route stack-traces when a message failed with an exception.
-But for production usage, then message history should only be enabled if you have monitoring systems that rely on gather these
-fine grained details.
+But for production usage, then message history should only be enabled if you have monitoring systems that rely on gathering these
+fine grained details. When message history is enabled then there is a slight performance overhead as the history data is stored
+in a `java.util.concurrent.CopyOnWriteArrayList` due to the need of being thread safe.
 
 == Enabling or disabling Message History
 
@@ -142,7 +143,7 @@ errorHandler(defaultErrorHandler().logExhaustedMessageBody(true));
 == MessageHistory API
 
 When message history is enabled during routing Camel captures how the Exchange is routed, as a `org.apache.camel.MessageHistory` entity
-that is stored on the Exchange. On the `org.apache.camel.MessageHistory` there is information abut the
+that is stored on the Exchange. On the `org.apache.camel.MessageHistory` there is information about the
 route id, processor id, timestamp, and elapsed time it took to process the Exchange by the processor.
 
 You can access the message history from Java code:

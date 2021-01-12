@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-kinesis")
 public class KinesisComponent extends DefaultComponent {
 
-    @Metadata 
+    @Metadata
     private KinesisConfiguration configuration = new KinesisConfiguration();
 
     public KinesisComponent() {
@@ -38,25 +38,27 @@ public class KinesisComponent extends DefaultComponent {
 
     public KinesisComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new KinesisComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KinesisConfiguration();
+        KinesisConfiguration configuration
+                = this.configuration != null ? this.configuration.copy() : new KinesisConfiguration();
         configuration.setStreamName(remaining);
         KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonKinesisClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
-        }        
+        }
         return endpoint;
     }
-    
+
     public KinesisConfiguration getConfiguration() {
         return configuration;
     }
@@ -67,7 +69,7 @@ public class KinesisComponent extends DefaultComponent {
     public void setConfiguration(KinesisConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(KinesisConfiguration configuration) {
         Set<AmazonKinesis> clients = getCamelContext().getRegistry().findByType(AmazonKinesis.class);
         if (clients.size() == 1) {

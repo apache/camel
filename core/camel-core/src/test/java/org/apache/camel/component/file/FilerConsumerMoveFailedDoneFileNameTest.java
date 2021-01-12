@@ -48,7 +48,7 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         File file = new File("target/data/done/done");
@@ -64,7 +64,8 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed").to("mock:input").throwException(new IllegalArgumentException("Forced"));
+                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed").to("mock:input")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

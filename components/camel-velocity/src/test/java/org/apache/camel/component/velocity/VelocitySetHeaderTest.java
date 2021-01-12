@@ -55,5 +55,4 @@ public class VelocitySetHeaderTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/velocity/camel-context.xml");
     }
 
-
 }

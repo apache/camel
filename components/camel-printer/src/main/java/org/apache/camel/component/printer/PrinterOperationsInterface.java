@@ -24,7 +24,7 @@ public interface PrinterOperationsInterface {
     /**
      * Prints the document.
      *
-     * @param doc document to print
+     * @param  doc            document to print
      * @throws PrintException is thrown if printing failed
      */
     void print(Doc doc, String jobName) throws PrintException;

@@ -34,7 +34,8 @@ public class SpringComponentScanWithDeprecatedPackagesTest extends ContextTestSu
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScanWithPackages.xml");
+        applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScanWithPackages.xml");
         context = applicationContext.getBean("camelContext", ModelCamelContext.class);
         template = context.createProducerTemplate();
     }

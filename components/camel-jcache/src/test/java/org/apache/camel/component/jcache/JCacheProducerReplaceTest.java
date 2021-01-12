@@ -37,8 +37,8 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
-        final String key  = randomString();
-        final String val  = randomString();
+        final String key = randomString();
+        final String val = randomString();
         final String val1 = randomString();
 
         cache.put(key, val);
@@ -70,8 +70,8 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
-        final String key  = randomString();
-        final String val  = randomString();
+        final String key = randomString();
+        final String val = randomString();
         final String val1 = randomString();
 
         cache.put(key, val);
@@ -104,8 +104,8 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         final Map<String, Object> headers = new HashMap<>();
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
-        final String key  = randomString();
-        final String val  = randomString();
+        final String key = randomString();
+        final String val = randomString();
         final String val1 = randomString();
 
         cache.put(key, val);
@@ -170,10 +170,10 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:replace")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:replace");
                 from("direct:replace-fail")
-                    .to("jcache://test-cache")
+                        .to("jcache://test-cache")
                         .to("mock:replace-fail");
             }
         };

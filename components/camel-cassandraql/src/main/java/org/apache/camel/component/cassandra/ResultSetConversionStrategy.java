@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cassandra;
 
-
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 
 /**

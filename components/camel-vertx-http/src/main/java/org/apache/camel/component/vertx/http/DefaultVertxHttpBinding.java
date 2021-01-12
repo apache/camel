@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -86,7 +87,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
 
         // Configure basic authentication
-        if (ObjectHelper.isNotEmpty(configuration.getBasicAuthUsername()) && ObjectHelper.isNotEmpty(configuration.getBasicAuthPassword())) {
+        if (ObjectHelper.isNotEmpty(configuration.getBasicAuthUsername())
+                && ObjectHelper.isNotEmpty(configuration.getBasicAuthPassword())) {
             request.basicAuthentication(configuration.getBasicAuthUsername(), configuration.getBasicAuthPassword());
         }
 
@@ -106,6 +108,12 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
     @Override
     public void populateRequestHeaders(Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy) {
+        // Ensure the Content-Type header is always added if the corresponding exchange header is present
+        String contentType = ExchangeHelper.getContentType(exchange);
+        if (ObjectHelper.isNotEmpty(contentType)) {
+            request.putHeader(Exchange.CONTENT_TYPE, contentType);
+        }
+
         // Transfer exchange headers to the HTTP request while applying the filter strategy
         Message message = exchange.getMessage();
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
@@ -117,22 +125,19 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response) throws Exception {
+    public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response)
+            throws Exception {
         HttpResponse<Buffer> result = response.result();
         if (response.succeeded()) {
             Message message = exchange.getMessage();
             VertxHttpConfiguration configuration = endpoint.getConfiguration();
+            boolean statusCodeOk = HttpHelper.isStatusCodeOk(result.statusCode(), configuration.getOkStatusCodeRange());
 
-            populateResponseHeaders(exchange, result, configuration.getHeaderFilterStrategy());
-
-            if (!configuration.isThrowExceptionOnFailure()) {
-                message.setBody(processResponseBody(endpoint, exchange, result.body()));
+            if ((!configuration.isThrowExceptionOnFailure()) || (configuration.isThrowExceptionOnFailure() && statusCodeOk)) {
+                populateResponseHeaders(exchange, result, configuration.getHeaderFilterStrategy());
+                message.setBody(processResponseBody(endpoint, exchange, result));
             } else {
-                if (HttpHelper.isStatusCodeOk(result.statusCode(), configuration.getOkStatusCodeRange())) {
-                    message.setBody(processResponseBody(endpoint, exchange, result.body()));
-                } else {
-                    exchange.setException(handleResponseFailure(endpoint, exchange, result));
-                }
+                exchange.setException(handleResponseFailure(endpoint, exchange, result));
             }
         } else {
             exchange.setException(response.cause());
@@ -162,14 +167,19 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly) throws Exception {
+    public Object processResponseBody(
+            VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result, boolean exceptionOnly)
+            throws Exception {
+        Buffer responseBody = result.body();
         if (responseBody != null) {
-            if (VertxHttpHelper.isContentTypeMatching(exchange, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
+            String contentType = result.getHeader(Exchange.CONTENT_TYPE);
+            if (VertxHttpHelper.isContentTypeMatching(CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, contentType)) {
                 boolean transferException = endpoint.getConfiguration().isTransferException();
                 boolean allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
 
                 if (allowJavaSerializedObject || (exceptionOnly && transferException)) {
-                    InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
+                    InputStream inputStream
+                            = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
                     if (inputStream != null) {
                         try {
                             return VertxHttpHelper.deserializeJavaObjectFromStream(inputStream);
@@ -185,16 +195,18 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         return null;
     }
 
-    public Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody) throws Exception {
-        return processResponseBody(endpoint, exchange, responseBody, false);
+    public Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
+            throws Exception {
+        return processResponseBody(endpoint, exchange, result, false);
     }
 
     @Override
-    public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) throws Exception {
+    public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
+            throws Exception {
         VertxHttpConfiguration configuration = endpoint.getConfiguration();
         Throwable exception;
 
-        Object responseBody = processResponseBody(endpoint, exchange, result.body(), true);
+        Object responseBody = processResponseBody(endpoint, exchange, result, true);
         if (responseBody instanceof Throwable) {
             // Use the exception that was deserialized from the response
             exception = (Throwable) responseBody;
@@ -213,7 +225,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             if (httpURI == null) {
                 httpURI = configuration.getHttpUri();
             }
-            exception = new HttpOperationFailedException(httpURI.toString(), result.statusCode(), result.statusMessage(), location, headers, result.bodyAsString());
+            exception = new HttpOperationFailedException(
+                    httpURI.toString(), result.statusCode(), result.statusMessage(), location, headers, result.bodyAsString());
         }
         return exception;
     }

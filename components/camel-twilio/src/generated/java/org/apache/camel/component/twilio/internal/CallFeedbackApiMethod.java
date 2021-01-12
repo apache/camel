@@ -57,8 +57,6 @@ public enum CallFeedbackApiMethod implements ApiMethod {
         arg("pathCallSid", String.class),
         arg("qualityScore", Integer.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private CallFeedbackApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

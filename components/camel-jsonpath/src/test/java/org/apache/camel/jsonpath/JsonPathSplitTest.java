@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +36,21 @@ public class JsonPathSplitTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().jsonpath("$.store.book[*]")
-                    .to("mock:authors")
-                    .convertBodyTo(String.class);
+                        .split().jsonpath("$.store.book[*]")
+                        .to("mock:authors")
+                        .convertBodyTo(String.class);
+
+                from("direct:start-1")
+                        .split(jsonpath("text.div", String.class), "false")
+                        .to("mock:result-1");
+
+                from("direct:start-2")
+                        .split(jsonpath("text.div", String.class))
+                        .to("mock:result-2");
+
+                from("direct:start-3")
+                        .split(jsonpath("text.div", String.class), "#")
+                        .to("mock:result-3");
             }
         };
     }
@@ -64,6 +77,39 @@ public class JsonPathSplitTest extends CamelTestSupport {
         assertTrue(out.contains("\"price\": 8.95"));
         assertTrue(out.contains("\"title\": \"Sword of Honour\""));
         assertTrue(out.contains("\"price\": 12.99,"));
+    }
+
+    @Test
+    public void testJsonPathSplitDelimiterDisable() throws Exception {
+        // CAMEL-15769
+        String json = "{ \"text\": { \"div\": \"some , text\" } }";
+        MockEndpoint m = getMockEndpoint("mock:result-1");
+        m.expectedPropertyReceived("CamelSplitSize", 1);
+        m.expectedBodiesReceived("some , text");
+        template.sendBody("direct:start-1", json);
+        m.assertIsSatisfied();
+    }
+
+    @Test
+    public void testJsonPathSplitDelimiterDefault() throws Exception {
+        // CAMEL-15769
+        String json = "{ \"text\": { \"div\": \"some , text\" } }";
+        MockEndpoint m = getMockEndpoint("mock:result-2");
+        m.expectedPropertyReceived("CamelSplitSize", 2);
+        m.expectedBodiesReceived("some ", " text");
+        template.sendBody("direct:start-2", json);
+        m.assertIsSatisfied();
+    }
+
+    @Test
+    public void testJsonPathSplitDelimiter() throws Exception {
+        // CAMEL-15769
+        String json = "{ \"text\": { \"div\": \"some ,# text\" } }";
+        MockEndpoint m = getMockEndpoint("mock:result-3");
+        m.expectedPropertyReceived("CamelSplitSize", 2);
+        m.expectedBodiesReceived("some ,", " text");
+        template.sendBody("direct:start-3", json);
+        m.assertIsSatisfied();
     }
 
 }

@@ -18,6 +18,7 @@ package org.apache.camel.cdi;
 
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -27,30 +28,30 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
+@Vetoed
 final class XmlFactoryBeanInjectionTarget<T> extends SyntheticInjectionTarget<T> {
 
     XmlFactoryBeanInjectionTarget(BeanManager manager, AbstractCamelFactoryBean<T> factory, Bean<?> context) {
         super(
-            () -> {
-                try {
-                    if (isEmpty(factory.getCamelContextId()) && context != null) {
-                        factory.setCamelContext(getReference(manager, CamelContext.class, context));
-                    }
-                    factory.afterPropertiesSet();
-                    return factory.getObject();
-                } catch (Exception cause) {
-                    throw new CreationException(cause);
-                }
-            },
-            i -> {
-            },
-            i -> {
-                try {
-                    factory.destroy();
-                } catch (Exception cause) {
-                    throw new InjectionException(cause);
-                }
-            }
-        );
+              () -> {
+                  try {
+                      if (isEmpty(factory.getCamelContextId()) && context != null) {
+                          factory.setCamelContext(getReference(manager, CamelContext.class, context));
+                      }
+                      factory.afterPropertiesSet();
+                      return factory.getObject();
+                  } catch (Exception cause) {
+                      throw new CreationException(cause);
+                  }
+              },
+              i -> {
+              },
+              i -> {
+                  try {
+                      factory.destroy();
+                  } catch (Exception cause) {
+                      throw new InjectionException(cause);
+                  }
+              });
     }
 }

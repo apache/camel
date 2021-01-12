@@ -32,6 +32,7 @@ public final class GlanceConstants extends OpenstackConstants {
     public static final String RESERVE = "reserve";
     public static final String UPLOAD = "upload";
 
-    private GlanceConstants() { }
+    private GlanceConstants() {
+    }
 
 }

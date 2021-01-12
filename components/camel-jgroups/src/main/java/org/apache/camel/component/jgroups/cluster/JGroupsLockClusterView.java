@@ -45,7 +45,8 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
     private ScheduledExecutorService executor;
     private volatile boolean isMaster;
 
-    protected JGroupsLockClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig, String jgroupsClusterName) {
+    protected JGroupsLockClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig,
+                                     String jgroupsClusterName) {
         super(cluster, namespace);
         lockName = namespace;
         this.jgroupsConfig = jgroupsConfig;
@@ -68,7 +69,11 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
 
     @Override
     public List<CamelClusterMember> getMembers() {
-        return new ArrayList<CamelClusterMember>() {{ add(localMember); }};
+        return new ArrayList<CamelClusterMember>() {
+            {
+                add(localMember);
+            }
+        };
     }
 
     @Override
@@ -86,15 +91,19 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
 
         // Camel context should be set at this stage.
         final CamelContext context = ObjectHelper.notNull(getCamelContext(), "CamelContext");
-        executor = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "JGroupsLockClusterView-" + getClusterService().getId() + "-" + lockName);
+        executor = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                "JGroupsLockClusterView-" + getClusterService().getId() + "-" + lockName);
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                LOG.info("Attempting to become master acquiring the lock for group: " + lockName + " in JGroups cluster" + jgroupsClusterName + " with configuration: " + jgroupsConfig);
+                LOG.info(
+                        "Attempting to become master acquiring the lock for group: {} in JGroups cluster {} with configuration: {}",
+                        lockName, jgroupsClusterName, jgroupsConfig);
                 lock.lock();
                 isMaster = true;
                 fireLeadershipChangedEvent(Optional.ofNullable(localMember));
-                LOG.info("Became master by acquiring the lock for group: " + lockName + " in JGroups cluster" + jgroupsClusterName + " with configuration: " + jgroupsConfig);
+                LOG.info("Became master by acquiring the lock for group: {} in JGroups cluster {} with configuration: {}",
+                        lockName, jgroupsClusterName, jgroupsConfig);
             }
         });
     }

@@ -24,51 +24,55 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport {
-    
+
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
-        
+        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) component
+                .createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
-        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());    
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name");
-        
+        KinesisFirehoseEndpoint endpoint
+                = (KinesisFirehoseEndpoint) component.createEndpoint("aws-kinesis-firehose://some_stream_name");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) component
+                .createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) component.createEndpoint(
+                "aws-kinesis-firehose://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
@@ -76,12 +80,13 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&autoDiscoverClient=false");
-        
+        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) component.createEndpoint(
+                "aws-kinesis-firehose://some_stream_name?accessKey=xxxxx&secretKey=yyyyy&autoDiscoverClient=false");
+
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

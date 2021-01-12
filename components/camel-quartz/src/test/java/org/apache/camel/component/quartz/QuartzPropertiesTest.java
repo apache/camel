@@ -72,7 +72,8 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
         quartz = context.getComponent("quartz", QuartzComponent.class);
 
         Properties prop = new Properties();
-        InputStream is = context.getClassResolver().loadResourceAsStream("org/apache/camel/component/quartz/myquartz.properties");
+        InputStream is
+                = context.getClassResolver().loadResourceAsStream("org/apache/camel/component/quartz/myquartz.properties");
         prop.load(is);
         quartz.setProperties(prop);
 

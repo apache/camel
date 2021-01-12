@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
-
 public class JdbcProducerOutputTypeStreamListTest extends AbstractJdbcTestSupport {
     private static final String QUERY = "select * from customer";
 

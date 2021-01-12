@@ -37,6 +37,8 @@ public interface JoltComponentBuilderFactory {
      * Category: transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
+     * 
+     * @return the dsl builder
      */
     static JoltComponentBuilder jolt() {
         return new JoltComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface JoltComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -74,36 +79,49 @@ public interface JoltComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default JoltComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JoltComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Explicitly sets the Transform to use. If not set a Transform
          * specified by the transformDsl will be created.
          * 
-         * The option is a: <code>com.bazaarvoice.jolt.Transform</code> type.
+         * The option is a:
+         * &lt;code&gt;com.bazaarvoice.jolt.Transform&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transform the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder transform(
                 com.bazaarvoice.jolt.Transform transform) {
@@ -129,7 +147,7 @@ public interface JoltComponentBuilderFactory {
             switch (name) {
             case "allowTemplateFromHeader": ((JoltComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((JoltComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((JoltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JoltComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "transform": ((JoltComponent) component).setTransform((com.bazaarvoice.jolt.Transform) value); return true;
             default: return false;
             }

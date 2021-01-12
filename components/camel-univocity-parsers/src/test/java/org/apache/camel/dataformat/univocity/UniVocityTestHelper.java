@@ -33,8 +33,8 @@ final class UniVocityTestHelper {
     /**
      * Creates a Map with the given key values
      *
-     * @param keyValues the key values
-     * @return Map with the given key values
+     * @param  keyValues the key values
+     * @return           Map with the given key values
      */
     public static Map<String, String> asMap(String... keyValues) {
         if (keyValues == null || keyValues.length % 2 == 1) {
@@ -51,8 +51,8 @@ final class UniVocityTestHelper {
     /**
      * Joins the given lines with the platform new line.
      *
-     * @param lines lines to join
-     * @return joined lines with the platform new line
+     * @param  lines lines to join
+     * @return       joined lines with the platform new line
      */
     public static String join(String... lines) {
         if (lines == null || lines.length == 0) {

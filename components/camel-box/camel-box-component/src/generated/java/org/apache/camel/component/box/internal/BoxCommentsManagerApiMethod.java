@@ -20,40 +20,38 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxCommentsManagerApiMethod implements ApiMethod {
 
-    ADDFILECOMMENT(
+    ADD_FILE_COMMENT(
         com.box.sdk.BoxFile.class,
         "addFileComment",
         arg("fileId", String.class),
         arg("message", String.class)),
 
-    CHANGECOMMENTMESSAGE(
+    CHANGE_COMMENT_MESSAGE(
         com.box.sdk.BoxComment.class,
         "changeCommentMessage",
         arg("commentId", String.class),
         arg("message", String.class)),
 
-    DELETECOMMENT(
+    DELETE_COMMENT(
         void.class,
         "deleteComment",
         arg("commentId", String.class)),
 
-    GETCOMMENTINFO(
+    GET_COMMENT_INFO(
         com.box.sdk.BoxComment.Info.class,
         "getCommentInfo",
         arg("commentId", String.class)),
 
-    GETFILECOMMENTS(
+    GET_FILE_COMMENTS(
         java.util.List.class,
         "getFileComments",
         arg("fileId", String.class)),
 
-    REPLYTOCOMMENT(
+    REPLY_TO_COMMENT(
         com.box.sdk.BoxComment.class,
         "replyToComment",
         arg("commentId", String.class),
         arg("message", String.class));
-
-    
 
     private final ApiMethod apiMethod;
 

@@ -16,30 +16,14 @@
  */
 package org.apache.camel.component.couchdb;
 
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.apache.camel.test.infra.couchdb.services.CouchDbService;
+import org.apache.camel.test.infra.couchdb.services.CouchDbServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class CouchDbTestSupport extends ContainerAwareTestSupport {
-
-    public static final String CONTAINER_IMAGE = "couchdb:2.3.1"; // tested against 2.1.2, 2.2.0 & 2.3.1
-    public static final String CONTAINER_NAME = "couchdb";
-    public static final int BROKER_PORT = 5984;
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return new GenericContainer<>(CONTAINER_IMAGE).
-            withNetworkAliases(CONTAINER_NAME).
-            withExposedPorts(BROKER_PORT).
-            waitingFor(Wait.forListeningPort());
-    }
-
-    public String getCouchDbHost() {
-        return getContainer(CONTAINER_NAME).getContainerIpAddress();
-    }
-
-    public int getCouchDbPort() {
-        return getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT).intValue();
-    }
+public class CouchDbTestSupport extends CamelTestSupport {
+    @SuppressWarnings("unused")
+    @RegisterExtension
+    static CouchDbService service = CouchDbServiceFactory.createService();
 
 }

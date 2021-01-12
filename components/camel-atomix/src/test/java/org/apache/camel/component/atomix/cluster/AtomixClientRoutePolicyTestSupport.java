@@ -93,10 +93,10 @@ public abstract class AtomixClientRoutePolicyTestSupport {
                 @Override
                 public void configure() throws Exception {
                     from("timer:atomix?delay=1000&period=1000")
-                        .routeId("route-" + id)
-                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                            .routeId("route-" + id)
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

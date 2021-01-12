@@ -46,7 +46,8 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e);
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
             assertEquals("getOther[xx", mnfe.getMethodName());
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
+            ExpressionIllegalSyntaxException cause
+                    = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
             assertEquals("Illegal syntax: getOther[xx", cause.getMessage());
             assertEquals("getOther[xx", cause.getExpression());
         }

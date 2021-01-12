@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.bigquery;
 
-import com.google.api.services.bigquery.Bigquery;
+import com.google.cloud.bigquery.BigQuery;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -28,34 +28,32 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Google BigQuery data warehouse for analytics.
  *
- * BigQuery Endpoint Definition
- * Represents a table within a BigQuery dataset
- * Contains configuration details for a single table and the utility methods (such as check, create) to ease operations
- * URI Parameters:
- * * Logger ID - To ensure that logging is unified under Route Logger, the logger ID can be passed on
- *               via an endpoint URI parameter
- * * Partitioned - to indicate that the table needs to be partitioned - every UTC day to be written into a
- *                 timestamped separate table
- *                 side effect: Australian operational day is always split between two UTC days, and, therefore, tables
+ * BigQuery Endpoint Definition Represents a table within a BigQuery dataset Contains configuration details for a single
+ * table and the utility methods (such as check, create) to ease operations URI Parameters: * Logger ID - To ensure that
+ * logging is unified under Route Logger, the logger ID can be passed on via an endpoint URI parameter * Partitioned -
+ * to indicate that the table needs to be partitioned - every UTC day to be written into a timestamped separate table
+ * side effect: Australian operational day is always split between two UTC days, and, therefore, tables
  *
- * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be handled
- * by Camel.
+ * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be
+ * handled by Camel.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery", syntax = "google-bigquery:projectId:datasetId:tableId",
-    category = {Category.CLOUD, Category.BIGDATA}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery",
+             syntax = "google-bigquery:projectId:datasetId:tableId",
+             category = { Category.CLOUD, Category.BIGDATA }, producerOnly = true)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @UriParam
     protected final GoogleBigQueryConfiguration configuration;
 
-    protected GoogleBigQueryEndpoint(String endpointUri, GoogleBigQueryComponent component, GoogleBigQueryConfiguration configuration) {
+    protected GoogleBigQueryEndpoint(String endpointUri, GoogleBigQueryComponent component,
+                                     GoogleBigQueryConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        Bigquery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
+        BigQuery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
         GoogleBigQueryProducer producer = new GoogleBigQueryProducer(bigquery, this, configuration);
         return producer;
     }
@@ -71,8 +69,7 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @Override
     public GoogleBigQueryComponent getComponent() {
-        return (GoogleBigQueryComponent)super.getComponent();
+        return (GoogleBigQueryComponent) super.getComponent();
     }
-
 
 }

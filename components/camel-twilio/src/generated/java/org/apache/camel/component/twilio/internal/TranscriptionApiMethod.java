@@ -51,8 +51,6 @@ public enum TranscriptionApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private TranscriptionApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

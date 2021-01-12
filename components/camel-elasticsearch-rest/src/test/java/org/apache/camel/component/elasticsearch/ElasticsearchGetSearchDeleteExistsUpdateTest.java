@@ -116,8 +116,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertNotNull(getResponse.getSource(), "response source should not be null");
         // need to create a query string
         String query = "{\n"
-                + "    \"query\" : { \"match\" : { \"key\" : \"value\" }}\n"
-                + "}\n";
+                       + "    \"query\" : { \"match\" : { \"key\" : \"value\" }}\n"
+                       + "}\n";
         SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
         assertNotNull(response, "response should not be null");
         assertEquals(0, response.getTotalHits().value, "response hits should be == 0");
@@ -220,7 +220,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertFalse(exists, "Index should not exists");
     }
 
-
     @Test
     public void testDeleteWithHeaders() throws Exception {
         //first, Index a value
@@ -239,7 +238,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
 
         //now, perform Delete
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Delete);
-        DocWriteResponse.Result deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers, DocWriteResponse.Result.class);
+        DocWriteResponse.Result deleteResponse
+                = template.requestBodyAndHeaders("direct:start", indexId, headers, DocWriteResponse.Result.class);
         assertEquals(DocWriteResponse.Result.DELETED, deleteResponse, "response should not be null");
 
         //now, verify GET fails to find the indexed value
@@ -278,7 +278,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         // when
         String documentId = template.requestBody("direct:index",
                 new IndexRequest(prefix + "foo", prefix + "bar", prefix + "testId")
-                        .source(prefix + "content", prefix + "hello"), String.class);
+                        .source(prefix + "content", prefix + "hello"),
+                String.class);
         GetResponse response = template.requestBody("direct:get",
                 request.id(documentId), GetResponse.class);
 
@@ -298,8 +299,10 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         // when
         String documentId = template.requestBody("direct:index",
                 new IndexRequest("" + prefix + "foo", "" + prefix + "bar", "" + prefix + "testId")
-                .source(prefix + "content", prefix + "hello"), String.class);
-        DeleteResponse.Result response = template.requestBody("direct:delete", request.id(documentId), DeleteResponse.Result.class);
+                        .source(prefix + "content", prefix + "hello"),
+                String.class);
+        DeleteResponse.Result response
+                = template.requestBody("direct:delete", request.id(documentId), DeleteResponse.Result.class);
 
         // then
         assertThat(response, notNullValue());
@@ -328,25 +331,25 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("elasticsearch-rest://elasticsearch?operation=Index");
+                        .to("elasticsearch-rest://elasticsearch?operation=Index");
                 from("direct:index")
-                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
                 from("direct:get")
-                    .to("elasticsearch-rest://elasticsearch?operation=GetById&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=GetById&indexName=twitter");
                 from("direct:multiget")
-                    .to("elasticsearch-rest://elasticsearch?operation=MultiGet&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=MultiGet&indexName=twitter");
                 from("direct:delete")
-                    .to("elasticsearch-rest://elasticsearch?operation=Delete&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Delete&indexName=twitter");
                 from("direct:search")
-                    .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter");
                 from("direct:search-1")
-                    .to("elasticsearch-rest://elasticsearch?operation=Search");
+                        .to("elasticsearch-rest://elasticsearch?operation=Search");
                 from("direct:multiSearch")
-                    .to("elasticsearch-rest://elasticsearch?operation=MultiSearch");
+                        .to("elasticsearch-rest://elasticsearch?operation=MultiSearch");
                 from("direct:update")
-                    .to("elasticsearch-rest://elasticsearch?operation=Update&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Update&indexName=twitter");
                 from("direct:exists")
-                    .to("elasticsearch-rest://elasticsearch?operation=Exists");
+                        .to("elasticsearch-rest://elasticsearch?operation=Exists");
             }
         };
     }

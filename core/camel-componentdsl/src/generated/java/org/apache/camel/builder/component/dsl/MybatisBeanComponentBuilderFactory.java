@@ -39,6 +39,8 @@ public interface MybatisBeanComponentBuilderFactory {
      * Category: database,sql
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-mybatis
+     * 
+     * @return the dsl builder
      */
     static MybatisBeanComponentBuilder mybatisBean() {
         return new MybatisBeanComponentBuilderImpl();
@@ -54,10 +56,13 @@ public interface MybatisBeanComponentBuilderFactory {
          * Location of MyBatis xml configuration file. The default value is:
          * SqlMapConfig.xml loaded from the classpath.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SqlMapConfig.xml
          * Group: producer
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default MybatisBeanComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
@@ -75,10 +80,13 @@ public interface MybatisBeanComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MybatisBeanComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -86,26 +94,37 @@ public interface MybatisBeanComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MybatisBeanComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MybatisBeanComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use the SqlSessionFactory.
          * 
          * The option is a:
-         * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
+         * &lt;code&gt;org.apache.ibatis.session.SqlSessionFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param sqlSessionFactory the value to set
+         * @return the dsl builder
          */
         default MybatisBeanComponentBuilder sqlSessionFactory(
                 org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {
@@ -131,7 +150,7 @@ public interface MybatisBeanComponentBuilderFactory {
             switch (name) {
             case "configurationUri": ((MyBatisBeanComponent) component).setConfigurationUri((java.lang.String) value); return true;
             case "lazyStartProducer": ((MyBatisBeanComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MyBatisBeanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MyBatisBeanComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sqlSessionFactory": ((MyBatisBeanComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
             default: return false;
             }

@@ -40,7 +40,6 @@ public class CamelNamespace extends ManagedNamespace {
     private UaObjectNode itemsObject;
     private UaFolderNode folder;
 
-
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
     public CamelNamespace(final String namespaceUri, final OpcUaServer server) {
@@ -72,9 +71,7 @@ public class CamelNamespace extends ManagedNamespace {
                 .setTypeDefinition(Identifiers.FolderType)
                 .build();
         this.folder.addComponent(this.itemsObject);
-        this.itemsObject.addComponent(this.folder);
         this.getNodeManager().addNode(this.itemsObject);
-
 
         // register reference to structure
 
@@ -82,15 +79,13 @@ public class CamelNamespace extends ManagedNamespace {
                 folder.getNodeId(),
                 Identifiers.Organizes,
                 Identifiers.ObjectsFolder.expanded(),
-                false
-        ));
+                false));
 
         itemsObject.addReference(new Reference(
                 nodeId,
                 Identifiers.HasComponent,
                 Identifiers.ObjectNode.expanded(),
-                Reference.Direction.INVERSE
-        ));
+                Reference.Direction.INVERSE));
     }
 
     @Override

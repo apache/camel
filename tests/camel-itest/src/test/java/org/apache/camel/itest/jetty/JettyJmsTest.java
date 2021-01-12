@@ -23,9 +23,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -35,8 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @CamelSpringTest
 @ContextConfiguration
 public class JettyJmsTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    private static final String URL = "http://localhost:" + port + "/JettyJmsTest";
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
@@ -46,7 +51,7 @@ public class JettyJmsTest {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject("mock:resultEndpoint")
+    @EndpointInject("mock:JettyJmsTestResultEndpoint")
     protected MockEndpoint resultEndpoint;
 
     @Test
@@ -63,7 +68,7 @@ public class JettyJmsTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals(list.size(), 1, "Should get one message");
+        assertEquals(1, list.size(), "Should get one message");
 
         for (Exchange exchange : list) {
             Object result = exchange.getIn().getBody();

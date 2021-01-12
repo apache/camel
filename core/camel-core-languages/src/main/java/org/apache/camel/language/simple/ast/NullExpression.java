@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -26,22 +27,29 @@ import org.apache.camel.language.simple.types.SimpleToken;
  */
 public class NullExpression extends BaseSimpleNode {
 
+    private static final Expression NULL_EXPRESSION = new Expression() {
+        @Override
+        public <T> T evaluate(Exchange exchange, Class<T> type) {
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return "null";
+        }
+    };
+
     public NullExpression(SimpleToken token) {
         super(token);
     }
 
     @Override
-    public Expression createExpression(String expression) throws SimpleParserException {
-        return new Expression() {
-            @Override
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                return null;
-            }
+    public Expression createExpression(CamelContext camelContext, String expression) throws SimpleParserException {
+        return NULL_EXPRESSION;
+    }
 
-            @Override
-            public String toString() {
-                return "null";
-            }
-        };
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        return "null";
     }
 }

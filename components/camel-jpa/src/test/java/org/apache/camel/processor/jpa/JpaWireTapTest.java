@@ -20,7 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,19 +45,19 @@ public class JpaWireTapTest extends AbstractJpaTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
 
                 from("direct:start")
-                    .to("jpa://" + SendEmail.class.getName())
-                    .wireTap("direct:tap")
-                    .to("mock:result");
+                        .to("jpa://" + SendEmail.class.getName())
+                        .wireTap("direct:tap")
+                        .to("mock:result");
 
                 from("direct:tap")
-                    .delay(constant("1000"))
-                    .setBody(constant(new SendEmail("me@you.org")))
-                    .to("jpa://" + SendEmail.class.getName())
-                    .to("mock:result");
+                        .delay(constant("1000"))
+                        .setBody(constant(new SendEmail("me@you.org")))
+                        .to("jpa://" + SendEmail.class.getName())
+                        .to("mock:result");
             }
         };
     }

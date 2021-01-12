@@ -40,10 +40,13 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Connection timeout in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -52,10 +55,13 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Connection timeout in millis.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder connectionTimeout(String connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -72,10 +78,13 @@ public interface NagiosEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -93,10 +102,14 @@ public interface NagiosEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -107,10 +120,13 @@ public interface NagiosEndpointBuilderFactory {
          * Setting it to false will allow Camel to continue routing the message
          * and the passive check message will be send asynchronously.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param sendSync the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder sendSync(boolean sendSync) {
             doSetProperty("sendSync", sendSync);
@@ -121,10 +137,14 @@ public interface NagiosEndpointBuilderFactory {
          * Setting it to false will allow Camel to continue routing the message
          * and the passive check message will be send asynchronously.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param sendSync the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder sendSync(String sendSync) {
             doSetProperty("sendSync", sendSync);
@@ -133,10 +153,13 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Sending timeout in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -145,10 +168,13 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Sending timeout in millis.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -158,9 +184,12 @@ public interface NagiosEndpointBuilderFactory {
          * To specify an encryption method.
          * 
          * The option is a:
-         * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
+         * &lt;code&gt;com.googlecode.jsendnsca.encryption.Encryption&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param encryption the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder encryption(Encryption encryption) {
             doSetProperty("encryption", encryption);
@@ -170,9 +199,12 @@ public interface NagiosEndpointBuilderFactory {
          * To specify an encryption method.
          * 
          * The option will be converted to a
-         * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
+         * &lt;code&gt;com.googlecode.jsendnsca.encryption.Encryption&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param encryption the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder encryption(String encryption) {
             doSetProperty("encryption", encryption);
@@ -181,9 +213,12 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Password to be authenticated when sending checks to Nagios.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -201,41 +236,16 @@ public interface NagiosEndpointBuilderFactory {
             return (NagiosEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNagiosEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNagiosEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNagiosEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -245,10 +255,14 @@ public interface NagiosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -288,6 +302,7 @@ public interface NagiosEndpointBuilderFactory {
          * The port number of the host.
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder nagios(String path) {
             return NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
@@ -311,6 +326,7 @@ public interface NagiosEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder nagios(String componentName, String path) {
             return NagiosEndpointBuilderFactory.endpointBuilder(componentName, path);

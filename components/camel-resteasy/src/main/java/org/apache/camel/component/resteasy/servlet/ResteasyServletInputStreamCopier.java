@@ -31,7 +31,7 @@ import org.apache.commons.io.IOUtils;
  * Class for copying input stream from HttpRequest
  */
 public class ResteasyServletInputStreamCopier extends ServletInputStream {
-    
+
     private InputStreamCache input;
     private CachedByteArrayOutputStream copy;
 
@@ -51,6 +51,7 @@ public class ResteasyServletInputStreamCopier extends ServletInputStream {
         return i;
 
     }
+
     public byte[] getCopy() {
         return copy.toByteArray();
     }
@@ -70,6 +71,6 @@ public class ResteasyServletInputStreamCopier extends ServletInputStream {
     }
 
     @Override
-    public void setReadListener(ReadListener readListener) { 
+    public void setReadListener(ReadListener readListener) {
     }
 }

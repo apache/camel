@@ -137,8 +137,10 @@ public class MailRecipientsTest extends CamelTestSupport {
                 String recipients = "&to=camel@riders.org,easy@riders.org&cc=me@you.org&bcc=someone@somewhere.org";
 
                 from("direct:a").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
-                from("direct:b").removeHeaders("*").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
-                from("direct:c").removeHeaders("cc").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
+                from("direct:b").removeHeaders("*")
+                        .to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
+                from("direct:c").removeHeaders("cc")
+                        .to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
                 // END SNIPPET: e1
             }
         };

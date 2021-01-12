@@ -37,6 +37,8 @@ public interface MinaComponentBuilderFactory {
      * Category: networking,tcp,udp
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-mina
+     * 
+     * @return the dsl builder
      */
     static MinaComponentBuilder mina() {
         return new MinaComponentBuilderImpl();
@@ -50,10 +52,13 @@ public interface MinaComponentBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -63,10 +68,13 @@ public interface MinaComponentBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder minaLogger(boolean minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -75,10 +83,13 @@ public interface MinaComponentBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -89,10 +100,13 @@ public interface MinaComponentBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -102,10 +116,13 @@ public interface MinaComponentBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder writeTimeout(long writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -120,10 +137,13 @@ public interface MinaComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -134,10 +154,13 @@ public interface MinaComponentBuilderFactory {
          * If the clientMode is true, mina consumer will connect the address as
          * a TCP client.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param clientMode the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder clientMode(boolean clientMode) {
             doSetProperty("clientMode", clientMode);
@@ -147,10 +170,13 @@ public interface MinaComponentBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
@@ -161,10 +187,14 @@ public interface MinaComponentBuilderFactory {
          * If sync is enabled this option dictates MinaConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder noReplyLogLevel(
                 org.apache.camel.LoggingLevel noReplyLogLevel) {
@@ -182,10 +212,13 @@ public interface MinaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -195,10 +228,13 @@ public interface MinaComponentBuilderFactory {
          * Whether to create the InetAddress once and reuse. Setting this to
          * false allows to pickup DNS changes in the network.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param cachedAddress the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder cachedAddress(boolean cachedAddress) {
             doSetProperty("cachedAddress", cachedAddress);
@@ -208,10 +244,13 @@ public interface MinaComponentBuilderFactory {
          * Sessions can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param lazySessionCreation the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
@@ -219,26 +258,35 @@ public interface MinaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default MinaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MinaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use the shared mina configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mina.MinaConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder configuration(
                 org.apache.camel.component.mina.MinaConfiguration configuration) {
@@ -248,10 +296,13 @@ public interface MinaComponentBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder maximumPoolSize(int maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
@@ -261,10 +312,13 @@ public interface MinaComponentBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
@@ -279,10 +333,13 @@ public interface MinaComponentBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
@@ -296,10 +353,13 @@ public interface MinaComponentBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder allowDefaultCodec(boolean allowDefaultCodec) {
             doSetProperty("allowDefaultCodec", allowDefaultCodec);
@@ -309,9 +369,12 @@ public interface MinaComponentBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder codec(
                 org.apache.mina.filter.codec.ProtocolCodecFactory codec) {
@@ -322,10 +385,13 @@ public interface MinaComponentBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
@@ -336,10 +402,13 @@ public interface MinaComponentBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
@@ -351,9 +420,12 @@ public interface MinaComponentBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder encoding(java.lang.String encoding) {
             doSetProperty("encoding", encoding);
@@ -363,9 +435,12 @@ public interface MinaComponentBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * <code>java.util.List<org.apache.mina.core.filterchain.IoFilter></code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder filters(
                 java.util.List<org.apache.mina.core.filterchain.IoFilter> filters) {
@@ -377,10 +452,13 @@ public interface MinaComponentBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder textline(boolean textline) {
             doSetProperty("textline", textline);
@@ -392,10 +470,12 @@ public interface MinaComponentBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder textlineDelimiter(
                 org.apache.camel.component.mina.MinaTextLineDelimiter textlineDelimiter) {
@@ -405,10 +485,13 @@ public interface MinaComponentBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder autoStartTls(boolean autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -418,9 +501,12 @@ public interface MinaComponentBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -430,10 +516,13 @@ public interface MinaComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -476,7 +565,7 @@ public interface MinaComponentBuilderFactory {
             case "lazyStartProducer": ((MinaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "cachedAddress": getOrCreateConfiguration((MinaComponent) component).setCachedAddress((boolean) value); return true;
             case "lazySessionCreation": getOrCreateConfiguration((MinaComponent) component).setLazySessionCreation((boolean) value); return true;
-            case "basicPropertyBinding": ((MinaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MinaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((MinaComponent) component).setConfiguration((org.apache.camel.component.mina.MinaConfiguration) value); return true;
             case "maximumPoolSize": getOrCreateConfiguration((MinaComponent) component).setMaximumPoolSize((int) value); return true;
             case "orderedThreadPoolExecutor": getOrCreateConfiguration((MinaComponent) component).setOrderedThreadPoolExecutor((boolean) value); return true;

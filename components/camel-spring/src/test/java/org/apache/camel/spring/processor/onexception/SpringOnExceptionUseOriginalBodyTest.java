@@ -25,7 +25,8 @@ public class SpringOnExceptionUseOriginalBodyTest extends OnExceptionUseOriginal
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/SpringOnExceptionUseOriginalBodyTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/onexception/SpringOnExceptionUseOriginalBodyTest.xml");
     }
 
 }

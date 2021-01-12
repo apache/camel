@@ -31,7 +31,7 @@ public class MyListenerService implements MyListener {
     public MyListenerService() {
         LOG.debug("Instantiated service: " + this);
     }
-    
+
     @Override
     @Consume("direct:end")
     public String greet(Map<String, Object> headers, String name) {

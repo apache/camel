@@ -37,10 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link BoxEventsManager}
- * APIs. TODO Move the file to src/test/java, populate parameter values, and
- * remove @Ignore annotations. The class source won't be generated again if the
- * generator MOJO finds it under src/test/java.
+ * Test class for {@link BoxEventsManager} APIs. TODO Move the file to src/test/java, populate parameter values, and
+ * remove @Ignore annotations. The class source won't be generated again if the generator MOJO finds it under
+ * src/test/java.
  */
 public class BoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
 

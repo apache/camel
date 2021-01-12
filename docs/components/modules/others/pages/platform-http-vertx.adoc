@@ -1,4 +1,4 @@
-[[platform-http-vertx-component]]
+[[platform-http-vertx-other]]
 = Platform Http Vertx Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-platform-http-vertx/src/main/docs/platform-http-vertx.adoc
@@ -7,6 +7,7 @@
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/platform-http-vertx.adoc[opts=optional]
 
 *Since Camel {since}*
 

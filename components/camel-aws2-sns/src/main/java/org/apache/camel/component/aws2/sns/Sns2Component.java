@@ -17,24 +17,22 @@
 package org.apache.camel.component.aws2.sns;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sns.SnsClient;
 
 @Component("aws2-sns")
 public class Sns2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Component.class);
-    
+
     @Metadata
     private Sns2Configuration configuration = new Sns2Configuration();
 
@@ -50,31 +48,74 @@ public class Sns2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
-        Sns2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
+
+        if (containsTransientParameters(parameters)) {
+            Map<String, Object> transientParameters = getTransientParameters(parameters);
+
+            setProperties(getCamelContext(), this, transientParameters);
+        }
+
+        configuration = this.configuration != null ? this.configuration : new Sns2Configuration();
+        Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, configuration);
+
+        Map<String, Object> nonTransientParameters = getNonTransientParameters(parameters);
+
+        setProperties(endpoint, nonTransientParameters);
+
         if (remaining.startsWith("arn:")) {
-            String[] parts = remaining.split(":");
-            if (parts.length != 6 || !parts[2].equals("sns")) {
-                throw new IllegalArgumentException("Topic arn must be in format arn:aws:sns:region:account:name.");
-            }
-            configuration.setTopicArn(remaining);
-            configuration.setRegion(Region.of(parts[3]).toString());
+            parseRemaining(remaining);
         } else {
             configuration.setTopicName(remaining);
+            LOG.debug("Created the endpoint with topic {}", configuration.getTopicName());
         }
-        Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, configuration);
-        setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
-        if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+
+        if (configuration.getAmazonSNSClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
+    }
+
+    /*
+     This method, along with getTransientParameters, getNonTransientParameters and validateParameters handle transient
+     parameters. Transient parameters, in this sense, means temporary parameters passed to the URI, that should
+     no be directly set on the endpoint because they apply to a different lifecycle in the component/endpoint creation.
+     For example, the "configuration" parameter is used to set a different Component/Endpoint configuration class other
+     than the one provided by Camel. Because the configuration object is required to configure these objects, it must
+     be used earlier in the life cycle ... and not later as part of the transport setup. Therefore, transient.
+     */
+    private boolean containsTransientParameters(Map<String, Object> parameters) {
+        return parameters.containsKey("configuration");
+    }
+
+    private Map<String, Object> getNonTransientParameters(Map<String, Object> parameters) {
+        return parameters.entrySet().stream().filter(k -> !k.getKey().equals("configuration"))
+                .collect(Collectors.toMap(k -> k.getKey(), k -> k.getValue()));
+    }
+
+    private Map<String, Object> getTransientParameters(Map<String, Object> parameters) {
+        return parameters.entrySet().stream().filter(k -> k.getKey().equals("configuration"))
+                .collect(Collectors.toMap(k -> k.getKey(), k -> k.getValue()));
+    }
+
+    @Override
+    protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
+        super.validateParameters(uri, getNonTransientParameters(parameters), optionPrefix);
+    }
+
+    private void parseRemaining(String remaining) {
+        String[] parts = remaining.split(":");
+        if (parts.length != 6 || !parts[2].equals("sns")) {
+            throw new IllegalArgumentException("Topic arn must be in format arn:aws:sns:region:account:name.");
+        }
+        configuration.setTopicArn(remaining);
+        configuration.setRegion(Region.of(parts[3]).toString());
+
+        LOG.debug("Created the endpoint with topic arn {}", configuration.getTopicArn());
     }
 
     public Sns2Configuration getConfiguration() {
@@ -88,18 +129,4 @@ public class Sns2Component extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkAndSetRegistryClient(Sns2Configuration configuration, Sns2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonSNSClient())) {
-            LOG.debug("Looking for an SnsClient instance in the registry");
-            Set<SnsClient> clients = getCamelContext().getRegistry().findByType(SnsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one SnsClient instance in the registry");
-                configuration.setAmazonSNSClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No SnsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("SnsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
-    }
 }

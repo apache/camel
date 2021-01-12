@@ -57,8 +57,9 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name").split(body().tokenize(",")).to("seda:queue").end()
-                    .log("End of file ${file:name}").to("mock:result");
+                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name")
+                        .split(body().tokenize(",")).to("seda:queue").end()
+                        .log("End of file ${file:name}").to("mock:result");
 
                 from("seda:queue").log("Token: ${body}").to("mock:foo");
             }

@@ -4,8 +4,10 @@ package org.apache.camel.component.xchange;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "currency": target.getConfiguration().setCurrency(property(camelContext, org.knowm.xchange.currency.Currency.class, value)); return true;
         case "currencypair":
         case "currencyPair": target.getConfiguration().setCurrencyPair(property(camelContext, java.lang.String.class, value)); return true;
@@ -34,24 +34,24 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("currency", org.knowm.xchange.currency.Currency.class);
-        answer.put("currencyPair", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("method", org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class);
-        answer.put("service", org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "currency": return org.knowm.xchange.currency.Currency.class;
+        case "currencypair":
+        case "currencyPair": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "method": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class;
+        case "service": return org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "currency": return target.getConfiguration().getCurrency();
         case "currencypair":
         case "currencyPair": return target.getConfiguration().getCurrencyPair();

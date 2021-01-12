@@ -68,7 +68,7 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
         List<Exchange> exchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(2, events.size());
@@ -76,19 +76,21 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                + "    </message>", event1.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                     + "    </message>",
+                event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event2.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event2.getMessageAsXml());
 
         // there should be no messages on bar
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
+                new Object[] { "bar" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(0, events.size());
     }

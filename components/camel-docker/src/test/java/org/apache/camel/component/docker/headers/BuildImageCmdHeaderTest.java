@@ -18,10 +18,11 @@ package org.apache.camel.component.docker.headers;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.BuildImageCmd;
-import com.github.dockerjava.core.command.BuildImageResultCallback;
+import com.github.dockerjava.api.command.BuildImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Build Image Request headers are parsed properly
@@ -44,7 +44,7 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
 
     @Mock
     private BuildImageResultCallback callback;
-    
+
     @Mock
     private File file;
 
@@ -58,7 +58,6 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
     void buildImageFromInputStreamHeaderTest() {
         Mockito.when(dockerClient.buildImageCmd(any(InputStream.class))).thenReturn(mockObject);
         Mockito.when(mockObject.exec(any())).thenReturn(callback);
-        Mockito.when(callback.awaitImageId()).thenReturn(anyString());
 
         template.sendBodyAndHeaders("direct:in", inputStream, getHeaders());
 
@@ -66,7 +65,7 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         Mockito.verify(mockObject, Mockito.times(1)).withQuiet(quiet);
         Mockito.verify(mockObject, Mockito.times(1)).withNoCache(noCache);
         Mockito.verify(mockObject, Mockito.times(1)).withRemove(remove);
-        Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
+        Mockito.verify(mockObject, Mockito.times(1)).withTags(Collections.singleton(tag));
 
     }
 
@@ -74,7 +73,6 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
     void buildImageFromFileHeaderTest() {
         Mockito.when(dockerClient.buildImageCmd(any(File.class))).thenReturn(mockObject);
         Mockito.when(mockObject.exec(any())).thenReturn(callback);
-        Mockito.when(callback.awaitImageId()).thenReturn(anyString());
 
         template.sendBodyAndHeaders("direct:in", file, getHeaders());
 
@@ -82,7 +80,7 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         Mockito.verify(mockObject, Mockito.times(1)).withQuiet(quiet);
         Mockito.verify(mockObject, Mockito.times(1)).withNoCache(noCache);
         Mockito.verify(mockObject, Mockito.times(1)).withRemove(remove);
-        Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
+        Mockito.verify(mockObject, Mockito.times(1)).withTags(Collections.singleton(tag));
 
     }
 

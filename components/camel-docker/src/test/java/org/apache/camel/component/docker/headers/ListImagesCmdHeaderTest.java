@@ -32,7 +32,6 @@ import static org.mockito.ArgumentMatchers.eq;
  */
 public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd> {
 
-
     @Mock
     private ListImagesCmd mockObject;
 
@@ -45,7 +44,6 @@ public class ListImagesCmdHeaderTest extends BaseDockerHeaderTest<ListImagesCmd>
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_FILTER, filter);
         headers.put(DockerConstants.DOCKER_SHOW_ALL, showAll);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 

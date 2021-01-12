@@ -65,6 +65,16 @@ public interface KubernetesConstants {
     String KUBERNETES_JOB_NAME = "CamelKubernetesJobName";
     String KUBERNETES_JOB_SPEC = "CamelKubernetesJobSpec";
     String KUBERNETES_JOB_LABELS = "CamelKubernetesJobLabels";
+    String KUBERNETES_CRD_INSTANCE_NAME = "CamelKubernetesCRDInstanceName";
+    String KUBERNETES_CRD_EVENT_TIMESTAMP = "CamelKubernetesCRDEventTimestamp";
+    String KUBERNETES_CRD_EVENT_ACTION = "CamelKubernetesCRDEventAction";
+    String KUBERNETES_CRD_NAME = "CamelKubernetesCRDName";
+    String KUBERNETES_CRD_GROUP = "CamelKubernetesCRDGroup";
+    String KUBERNETES_CRD_SCOPE = "CamelKubernetesCRDScope";
+    String KUBERNETES_CRD_VERSION = "CamelKubernetesCRDVersion";
+    String KUBERNETES_CRD_PLURAL = "CamelKubernetesCRDPlural";
+    String KUBERNETES_CRD_LABELS = "CamelKubernetesCRDLabels";
+    String KUBERNETES_CRD_INSTANCE = "CamelKubernetesCRDInstance";
 
     // Consumer
     String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";

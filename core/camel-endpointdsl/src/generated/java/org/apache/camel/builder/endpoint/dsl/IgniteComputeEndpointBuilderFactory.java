@@ -44,10 +44,12 @@ public interface IgniteComputeEndpointBuilderFactory {
          * instance.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder clusterGroupExpression(
                 Object clusterGroupExpression) {
@@ -59,10 +61,12 @@ public interface IgniteComputeEndpointBuilderFactory {
          * instance.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder clusterGroupExpression(
                 String clusterGroupExpression) {
@@ -73,9 +77,12 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The name of the compute job, which will be set via
          * IgniteCompute#withName(String).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param computeName the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder computeName(String computeName) {
             doSetProperty("computeName", computeName);
@@ -87,10 +94,13 @@ public interface IgniteComputeEndpointBuilderFactory {
          * expects different payload types depending on the operation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.compute.IgniteComputeExecutionType&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param executionType the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder executionType(
                 IgniteComputeExecutionType executionType) {
@@ -103,10 +113,13 @@ public interface IgniteComputeEndpointBuilderFactory {
          * expects different payload types depending on the operation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.compute.IgniteComputeExecutionType&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param executionType the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder executionType(String executionType) {
             doSetProperty("executionType", executionType);
@@ -123,10 +136,13 @@ public interface IgniteComputeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -144,10 +160,14 @@ public interface IgniteComputeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -158,10 +178,13 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -172,10 +195,14 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -186,9 +213,12 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The task name, only applicable if using the
          * IgniteComputeExecutionType#EXECUTE execution type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param taskName the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder taskName(String taskName) {
             doSetProperty("taskName", taskName);
@@ -198,9 +228,12 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The timeout interval for triggered jobs, in milliseconds, which will
          * be set via IgniteCompute#withTimeout(long).
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeoutMillis the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder timeoutMillis(Long timeoutMillis) {
             doSetProperty("timeoutMillis", timeoutMillis);
@@ -210,9 +243,13 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The timeout interval for triggered jobs, in milliseconds, which will
          * be set via IgniteCompute#withTimeout(long).
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeoutMillis the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder timeoutMillis(String timeoutMillis) {
             doSetProperty("timeoutMillis", timeoutMillis);
@@ -222,10 +259,13 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -236,10 +276,14 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -258,41 +302,16 @@ public interface IgniteComputeEndpointBuilderFactory {
             return (IgniteComputeEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIgniteComputeEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIgniteComputeEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteComputeEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -303,10 +322,14 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteComputeEndpointBuilder synchronous(
                 String synchronous) {
@@ -344,6 +367,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The endpoint ID (not used).
          * 
          * @param path endpointId
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder igniteCompute(String path) {
             return IgniteComputeEndpointBuilderFactory.endpointBuilder("ignite-compute", path);
@@ -364,6 +388,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointId
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder igniteCompute(
                 String componentName,

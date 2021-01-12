@@ -45,10 +45,9 @@ import org.w3._2003._05.soap_envelope.ObjectFactory;
 import org.w3._2003._05.soap_envelope.Reasontext;
 
 /**
- * Marshaling from Objects to <b>SOAP 1.2</b> and back by using JAXB. The classes to be
- * processed need to have JAXB annotations. For marshaling a ElementNameStrategy
- * is used to determine how the top level elements in SOAP are named as this can
- * not be extracted from JAXB.
+ * Marshaling from Objects to <b>SOAP 1.2</b> and back by using JAXB. The classes to be processed need to have JAXB
+ * annotations. For marshaling a ElementNameStrategy is used to determine how the top level elements in SOAP are named
+ * as this can not be extracted from JAXB.
  */
 public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
 
@@ -85,7 +84,8 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
             bodyContent.add(createFaultFromException(exception));
         } else {
             if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
-                List<Object> inboundSoapHeaders = (List<Object>) exchange.getIn().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+                List<Object> inboundSoapHeaders
+                        = (List<Object>) exchange.getIn().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
                 if (null != inboundSoapHeaders) {
                     headerContent.addAll(inboundSoapHeaders);
                 }
@@ -100,7 +100,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
             header.getAny().add(elem);
         }
         Envelope envelope = new Envelope();
-        if (headerContent.size() > 0) {
+        if (!headerContent.isEmpty()) {
             envelope.setHeader(header);
         }
         envelope.setBody(body);
@@ -109,19 +109,20 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     }
 
     /**
-     * Creates a SOAP fault from the exception and populates the message as well
-     * as the detail. The detail object is read from the method getFaultInfo of
-     * the throwable if present
+     * Creates a SOAP fault from the exception and populates the message as well as the detail. The detail object is
+     * read from the method getFaultInfo of the throwable if present
      * 
-     * @param exception the cause exception
-     * @return SOAP fault from given Throwable
+     * @param  exception the cause exception
+     * @return           SOAP fault from given Throwable
      */
     @SuppressWarnings("unchecked")
     private JAXBElement<Fault> createFaultFromException(final Throwable exception) {
         WebFault webFault = exception.getClass().getAnnotation(WebFault.class);
         if (webFault == null || webFault.targetNamespace() == null) {
-            throw new RuntimeException("The exception " + exception.getClass().getName()
-                    + " needs to have an WebFault annotation with name and targetNamespace", exception);
+            throw new RuntimeException(
+                    "The exception " + exception.getClass().getName()
+                                       + " needs to have an WebFault annotation with name and targetNamespace",
+                    exception);
         }
         QName name = new QName(webFault.targetNamespace(), webFault.name());
         Object faultObject;
@@ -175,7 +176,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         }
 
         List<Object> anyElement = envelope.getBody().getAny();
-        if (anyElement.size() == 0) {
+        if (anyElement.isEmpty()) {
             // No parameter so return null
             return null;
 
@@ -192,14 +193,12 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     }
 
     /**
-     * Creates an exception and eventually an embedded bean that contains the
-     * fault detail. The exception class is determined by using the
-     * elementNameStrategy. The qName of the fault detail should match the
-     * WebFault annotation of the Exception class. If no fault detail is set
-     * a {@link javax.xml.ws.soap.SOAPFaultException} is created.
+     * Creates an exception and eventually an embedded bean that contains the fault detail. The exception class is
+     * determined by using the elementNameStrategy. The qName of the fault detail should match the WebFault annotation
+     * of the Exception class. If no fault detail is set a {@link javax.xml.ws.soap.SOAPFaultException} is created.
      * 
-     * @param fault Soap fault
-     * @return created Exception
+     * @param  fault Soap fault
+     * @return       created Exception
      */
     private Exception createExceptionFromFault(Fault fault) {
         StringBuilder sb = new StringBuilder();
@@ -209,7 +208,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         String message = sb.toString();
 
         Detail faultDetail = fault.getDetail();
-        if (faultDetail == null || faultDetail.getAny().size() == 0) {
+        if (faultDetail == null || faultDetail.getAny().isEmpty()) {
             try {
                 return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
             } catch (SOAPException e) {
@@ -228,7 +227,8 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         }
 
         JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
-        Class<? extends Exception> exceptionClass = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
+        Class<? extends Exception> exceptionClass
+                = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 
@@ -252,4 +252,3 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     }
 
 }
-

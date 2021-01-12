@@ -63,7 +63,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
                 list.add(part);
             }
 
-            return (T)list.iterator();
+            return (T) list.iterator();
         }
     }
 }

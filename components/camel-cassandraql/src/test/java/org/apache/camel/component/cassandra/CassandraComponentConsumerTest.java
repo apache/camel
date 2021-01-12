@@ -83,8 +83,10 @@ public class CassandraComponentConsumerTest extends BaseCassandraTest {
         return new RouteBuilder() {
             public void configure() {
                 from(String.format("cql://%s/%s?cql=%s", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultAll");
-                from(String.format("cql://%s/%s?cql=%s&prepareStatements=false", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultUnprepared");
-                from(String.format("cql://%s/%s?cql=%s&resultSetConversionStrategy=ONE", getUrl(), KEYSPACE_NAME, CQL)).to("mock:resultOne");
+                from(String.format("cql://%s/%s?cql=%s&prepareStatements=false", getUrl(), KEYSPACE_NAME, CQL))
+                        .to("mock:resultUnprepared");
+                from(String.format("cql://%s/%s?cql=%s&resultSetConversionStrategy=ONE", getUrl(), KEYSPACE_NAME, CQL))
+                        .to("mock:resultOne");
             }
         };
     }

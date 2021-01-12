@@ -4,8 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.LraConfigurationProperties;
 
@@ -32,13 +34,18 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("CoordinatorContextPath", java.lang.String.class);
-        answer.put("CoordinatorUrl", java.lang.String.class);
-        answer.put("LocalParticipantContextPath", java.lang.String.class);
-        answer.put("LocalParticipantUrl", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "coordinatorcontextpath":
+        case "CoordinatorContextPath": return java.lang.String.class;
+        case "coordinatorurl":
+        case "CoordinatorUrl": return java.lang.String.class;
+        case "localparticipantcontextpath":
+        case "LocalParticipantContextPath": return java.lang.String.class;
+        case "localparticipanturl":
+        case "LocalParticipantUrl": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

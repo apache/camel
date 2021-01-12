@@ -38,10 +38,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests if the default camel context is able to resolve components and data
- * formats using both their real names and/or fallback names. Fallback names
- * have been introduced to avoid name clash in some registries (eg. Spring
- * application context) between components and other camel features.
+ * Tests if the default camel context is able to resolve components and data formats using both their real names and/or
+ * fallback names. Fallback names have been introduced to avoid name clash in some registries (eg. Spring application
+ * context) between components and other camel features.
  */
 public class DefaultCamelContextResolverTest {
 
@@ -87,7 +86,7 @@ public class DefaultCamelContextResolverTest {
         assertNotNull(component, "Component not found in registry");
         boolean b = component instanceof SampleComponent;
         assertTrue(b, "Wrong instance type of the Component");
-        assertTrue(((SampleComponent)component).isFallback(), "Here we should have the fallback Component");
+        assertTrue(((SampleComponent) component).isFallback(), "Here we should have the fallback Component");
     }
 
     @Test
@@ -96,7 +95,7 @@ public class DefaultCamelContextResolverTest {
         assertNotNull(component, "Component not found in registry");
         boolean b = component instanceof SampleComponent;
         assertTrue(b, "Wrong instance type of the Component");
-        assertFalse(((SampleComponent)component).isFallback(), "Here we should NOT have the fallback Component");
+        assertFalse(((SampleComponent) component).isFallback(), "Here we should NOT have the fallback Component");
     }
 
     @Test
@@ -105,7 +104,7 @@ public class DefaultCamelContextResolverTest {
         assertNotNull(dataFormat, "DataFormat not found in registry");
         boolean b = dataFormat instanceof SampleDataFormat;
         assertTrue(b, "Wrong instance type of the DataFormat");
-        assertTrue(((SampleDataFormat)dataFormat).isFallback(), "Here we should have the fallback DataFormat");
+        assertTrue(((SampleDataFormat) dataFormat).isFallback(), "Here we should have the fallback DataFormat");
     }
 
     @Test
@@ -114,7 +113,7 @@ public class DefaultCamelContextResolverTest {
         assertNotNull(dataFormat, "DataFormat not found in registry");
         boolean b = dataFormat instanceof SampleDataFormat;
         assertTrue(b, "Wrong instance type of the DataFormat");
-        assertFalse(((SampleDataFormat)dataFormat).isFallback(), "Here we should NOT have the fallback DataFormat");
+        assertFalse(((SampleDataFormat) dataFormat).isFallback(), "Here we should NOT have the fallback DataFormat");
     }
 
     @Test
@@ -123,7 +122,7 @@ public class DefaultCamelContextResolverTest {
         assertNotNull(language, "Language not found in registry");
         boolean b = language instanceof SampleLanguage;
         assertTrue(b, "Wrong instance type of the Language");
-        assertTrue(((SampleLanguage)language).isFallback(), "Here we should have the fallback Language");
+        assertTrue(((SampleLanguage) language).isFallback(), "Here we should have the fallback Language");
     }
 
     @Test
@@ -132,7 +131,7 @@ public class DefaultCamelContextResolverTest {
         assertNotNull(language, "Language not found in registry");
         boolean b = language instanceof SampleLanguage;
         assertTrue(b, "Wrong instance type of the Language");
-        assertFalse(((SampleLanguage)language).isFallback(), "Here we should NOT have the fallback Language");
+        assertFalse(((SampleLanguage) language).isFallback(), "Here we should NOT have the fallback Language");
     }
 
     @Test
@@ -149,8 +148,7 @@ public class DefaultCamelContextResolverTest {
 
     @Test
     public void testNullLookupLanguage() throws Exception {
-        assertThrows(NoSuchLanguageException.class, () -> 
-            context.resolveLanguage("xxxxxxxxx"));
+        assertThrows(NoSuchLanguageException.class, () -> context.resolveLanguage("xxxxxxxxx"));
     }
 
     public static class SampleComponent extends DefaultComponent {

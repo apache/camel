@@ -32,7 +32,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HazelcastConfigurationTest {
@@ -59,12 +61,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + instanceName);
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstanceName=" + instanceName);
+            HazelcastDefaultEndpoint endpoint1
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + instanceName);
+            HazelcastDefaultEndpoint endpoint2
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstanceName=" + instanceName);
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
-            assertTrue(endpoint1.getHazelcastInstance() == endpoint2.getHazelcastInstance());
+            assertSame(endpoint1.getHazelcastInstance(), endpoint2.getHazelcastInstance());
 
             HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             assertNull(component.getHazelcastInstance());
@@ -97,7 +101,7 @@ public class HazelcastConfigurationTest {
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
-            assertTrue(endpoint1.getHazelcastInstance() != endpoint2.getHazelcastInstance());
+            assertNotSame(endpoint1.getHazelcastInstance(), endpoint2.getHazelcastInstance());
 
             HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             assertNull(component.getHazelcastInstance());
@@ -124,12 +128,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-named.xml");
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-named.xml");
+            HazelcastDefaultEndpoint endpoint1
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-named.xml");
+            HazelcastDefaultEndpoint endpoint2
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-named.xml");
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
-            assertTrue(endpoint1.getHazelcastInstance() == endpoint2.getHazelcastInstance());
+            assertSame(endpoint1.getHazelcastInstance(), endpoint2.getHazelcastInstance());
 
             HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             assertNull(component.getHazelcastInstance());
@@ -155,12 +161,14 @@ public class HazelcastConfigurationTest {
             context = new DefaultCamelContext();
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-custom.xml");
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-custom.xml");
+            HazelcastDefaultEndpoint endpoint1
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastConfigUri=classpath:hazelcast-custom.xml");
+            HazelcastDefaultEndpoint endpoint2
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfigUri=classpath:hazelcast-custom.xml");
 
             assertNotNull(endpoint1.getHazelcastInstance());
             assertNotNull(endpoint2.getHazelcastInstance());
-            assertTrue(endpoint1.getHazelcastInstance() != endpoint2.getHazelcastInstance());
+            assertNotSame(endpoint1.getHazelcastInstance(), endpoint2.getHazelcastInstance());
 
             HazelcastMapComponent component = context.getComponent("hazelcast-map", HazelcastMapComponent.class);
             assertNull(component.getHazelcastInstance());
@@ -267,9 +275,12 @@ public class HazelcastConfigurationTest {
             context.addComponent("hazelcast-map", component);
             context.start();
 
-            HazelcastDefaultEndpoint endpoint1 = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + namedConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint2 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfig=#" + customConfig.getInstanceName());
-            HazelcastDefaultEndpoint endpoint3 = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstance=#" + sharedConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint1
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-1?hazelcastInstanceName=" + namedConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint2
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastConfig=#" + customConfig.getInstanceName());
+            HazelcastDefaultEndpoint endpoint3
+                    = getHzEndpoint(context, "hazelcast-map:my-cache-2?hazelcastInstance=#" + sharedConfig.getInstanceName());
             HazelcastDefaultEndpoint endpoint4 = getHzEndpoint(context, "hazelcast-map:my-cache-4");
 
             assertNotNull(endpoint1.getHazelcastInstance());
@@ -279,13 +290,13 @@ public class HazelcastConfigurationTest {
 
             assertEquals(4, Hazelcast.getAllHazelcastInstances().size());
 
-            assertTrue(hzNamed == endpoint1.getHazelcastInstance());
-            assertTrue(Hazelcast.getHazelcastInstanceByName(customConfig.getInstanceName()) == endpoint2.getHazelcastInstance());
-            assertTrue(hzShared == endpoint3.getHazelcastInstance());
-            assertTrue(hzComponent == endpoint4.getHazelcastInstance());
+            assertSame(hzNamed, endpoint1.getHazelcastInstance());
+            assertSame(Hazelcast.getHazelcastInstanceByName(customConfig.getInstanceName()), endpoint2.getHazelcastInstance());
+            assertSame(hzShared, endpoint3.getHazelcastInstance());
+            assertSame(hzComponent, endpoint4.getHazelcastInstance());
 
             assertNotNull(component.getHazelcastInstance());
-            assertTrue(hzComponent == component.getHazelcastInstance());
+            assertSame(hzComponent, component.getHazelcastInstance());
 
             context.stop();
 
@@ -299,6 +310,6 @@ public class HazelcastConfigurationTest {
     }
 
     private HazelcastDefaultEndpoint getHzEndpoint(CamelContext context, String uri) {
-        return (HazelcastDefaultEndpoint)context.getEndpoint(uri);
+        return (HazelcastDefaultEndpoint) context.getEndpoint(uri);
     }
 }

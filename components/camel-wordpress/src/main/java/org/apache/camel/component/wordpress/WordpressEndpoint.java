@@ -45,7 +45,8 @@ import org.apache.camel.util.PropertiesHelper;
 /**
  * Manage posts and users using Wordpress API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", category = {Category.CLOUD, Category.API, Category.CMS})
+@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation",
+             category = { Category.CLOUD, Category.API, Category.CMS })
 public class WordpressEndpoint extends DefaultEndpoint {
 
     public static final String ENDPOINT_SERVICE_POST = "post, user";
@@ -54,18 +55,19 @@ public class WordpressEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String operation;
 
-    @UriPath(description = "The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete", enums = "delete")
+    @UriPath(description = "The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete",
+             enums = "delete")
     private String operationDetail;
 
     @UriParam
-    private WordpressComponentConfiguration configuration;
+    private WordpressConfiguration configuration;
 
-    public WordpressEndpoint(String uri, WordpressComponent component, WordpressComponentConfiguration configuration) {
+    public WordpressEndpoint(String uri, WordpressComponent component, WordpressConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public WordpressComponentConfiguration getConfiguration() {
+    public WordpressConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -118,7 +120,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         // set configuration properties first
         try {
             if (configuration == null) {
-                configuration = new WordpressComponentConfiguration();
+                configuration = new WordpressConfiguration();
             }
             PropertyBindingSupport.bindProperties(getCamelContext(), configuration, options);
 
@@ -144,10 +146,12 @@ public class WordpressEndpoint extends DefaultEndpoint {
     }
 
     private void initServiceProvider() {
-        final WordpressAPIConfiguration apiConfiguration = new WordpressAPIConfiguration(configuration.getUrl(), configuration.getApiVersion());
+        final WordpressAPIConfiguration apiConfiguration
+                = new WordpressAPIConfiguration(configuration.getUrl(), configuration.getApiVersion());
         // basic auth
         if (ObjectHelper.isNotEmpty(configuration.getUser())) {
-            apiConfiguration.setAuthentication(new WordpressBasicAuthentication(configuration.getUser(), configuration.getPassword()));
+            apiConfiguration
+                    .setAuthentication(new WordpressBasicAuthentication(configuration.getUser(), configuration.getPassword()));
         }
 
         WordpressServiceProvider.getInstance().init(apiConfiguration);

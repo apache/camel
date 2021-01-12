@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-opentracing</artifactId>
@@ -48,7 +48,7 @@
         <!-- added to bypass LogProcessor -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-base</artifactId>
+            <artifactId>camel-core-processor</artifactId>
             <scope>provided</scope>
         </dependency>
 

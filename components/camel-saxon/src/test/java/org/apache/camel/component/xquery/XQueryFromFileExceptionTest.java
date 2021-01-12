@@ -46,7 +46,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         String body = "<person user='James'><firstName>James</firstName>"
-                          + "<lastName>Strachan</lastName><city>London</city></person>";
+                      + "<lastName>Strachan</lastName><city>London</city></person>";
         template.sendBodyAndHeader("file:target/xquery", body, Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
@@ -67,7 +67,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
 
         // the last tag is not ended properly
         String body = "<person user='James'><firstName>James</firstName>"
-                          + "<lastName>Strachan</lastName><city>London</city></person";
+                      + "<lastName>Strachan</lastName><city>London</city></person";
         template.sendBodyAndHeader("file:target/xquery", body, Exchange.FILE_NAME, "hello2.xml");
 
         assertMockEndpointsSatisfied();
@@ -87,11 +87,11 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/xquery?moveFailed=error&move=ok")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .to("mock:error")
-                    .end()
-                    .to("xquery:org/apache/camel/component/xquery/myTransform.xquery")
-                    .to("mock:result");
+                        .end()
+                        .to("xquery:org/apache/camel/component/xquery/myTransform.xquery")
+                        .to("mock:result");
             }
         };
     }

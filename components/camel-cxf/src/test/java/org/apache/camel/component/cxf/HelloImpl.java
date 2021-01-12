@@ -28,7 +28,7 @@ public class HelloImpl implements Hello {
     public void detail(Holder<byte[]> photo, Holder<Image> image) {
         // echo through Holder
     }
-      
+
     public void echoData(Holder<byte[]> data) {
         // echo through Holder
     }

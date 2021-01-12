@@ -30,9 +30,9 @@ public final class CamelVersionHelper {
     /**
      * Checks whether other >= base
      *
-     * @param base  the base version
-     * @param other the other version
-     * @return <tt>true</tt> if GE, <tt>false</tt> otherwise
+     * @param  base  the base version
+     * @param  other the other version
+     * @return       <tt>true</tt> if GE, <tt>false</tt> otherwise
      */
     public static boolean isGE(String base, String other) {
         if (base == null || base.isEmpty()) {
@@ -61,8 +61,8 @@ public final class CamelVersionHelper {
     /**
      * Returns the previous minor version number
      *
-     * @param base  the version
-     * @return the previous minor version, eg 3.3.0 as input, returns 3.2.0 as output
+     * @param  base the version
+     * @return      the previous minor version, eg 3.3.0 as input, returns 3.2.0 as output
      */
     public static String prevMinor(String base) {
         if (base == null || base.isEmpty()) {

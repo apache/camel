@@ -26,8 +26,8 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 /**
- * A publisher that extracts the item from the payload as soon as it is delivered to the subscriber.
- * It calls the dispatch callback if defined.
+ * A publisher that extracts the item from the payload as soon as it is delivered to the subscriber. It calls the
+ * dispatch callback if defined.
  */
 public class UnwrappingPublisher implements Publisher<Exchange> {
     private final Publisher<Exchange> delegate;

@@ -33,7 +33,7 @@
 
     <defaultServiceCallConfiguration id="default" component="http">
       <!-- service discovery -->
-      <consulServiceDiscovery url="http://{{container:host:consul}}:{{container:port:8500@consul}}"/>
+      <consulServiceDiscovery url="http://{{consul.host}}:{{consul.port}}"/>
 
       <!-- service filter -->
       <blacklistServiceFilter>

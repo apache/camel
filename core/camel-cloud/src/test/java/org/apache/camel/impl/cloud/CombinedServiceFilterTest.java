@@ -32,33 +32,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CombinedServiceFilterTest extends ContextTestSupport {
     @Test
     public void testMultiServiceFilterConfiguration() throws Exception {
-        CombinedServiceCallServiceFilterConfiguration conf =
-            new CombinedServiceCallServiceFilterConfiguration()
+        CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
                 .passThrough();
 
-        CombinedServiceFilter filter = (CombinedServiceFilter)conf.newInstance(context);
+        CombinedServiceFilter filter = (CombinedServiceFilter) conf.newInstance(context);
         assertEquals(2, filter.getDelegates().size());
         assertTrue(filter.getDelegates().get(0) instanceof HealthyServiceFilter);
         assertTrue(filter.getDelegates().get(1) instanceof PassThroughServiceFilter);
     }
 
-
     @Test
     public void testMultiServiceFilter() throws Exception {
-        CombinedServiceCallServiceFilterConfiguration conf =
-            new CombinedServiceCallServiceFilterConfiguration()
+        CombinedServiceCallServiceFilterConfiguration conf = new CombinedServiceCallServiceFilterConfiguration()
                 .healthy()
-                .custom(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList())
-        );
+                .custom(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
 
         List<ServiceDefinition> services = conf.newInstance(context).apply(Arrays.asList(
-            new DefaultServiceDefinition("no-name", "127.0.0.1", 1000),
-            new DefaultServiceDefinition("no-name", "127.0.0.1", 1001, new DefaultServiceHealth(false)),
-            new DefaultServiceDefinition("no-name", "127.0.0.1", 1002, new DefaultServiceHealth(true)),
-            new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(true)),
-            new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(false))
-        ));
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 1000),
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 1001, new DefaultServiceHealth(false)),
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 1002, new DefaultServiceHealth(true)),
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(true)),
+                new DefaultServiceDefinition("no-name", "127.0.0.1", 2001, new DefaultServiceHealth(false))));
 
         assertEquals(2, services.size());
         assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));

@@ -54,7 +54,8 @@ public class ContextScopedOnExceptionRouteScopedErrorHandlerRefIssueTest extends
 
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled").end();
 
-                from("direct:start").errorHandler(new ErrorHandlerBuilderRef("myDLC")).to("mock:a").throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").errorHandler(new ErrorHandlerBuilderRef("myDLC")).to("mock:a")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

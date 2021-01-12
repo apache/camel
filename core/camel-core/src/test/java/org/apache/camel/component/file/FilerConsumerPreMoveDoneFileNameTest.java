@@ -58,7 +58,7 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "ready");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         File file = new File("target/data/done/ready");
@@ -70,7 +70,8 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/done?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10")
+                        .to("mock:result");
             }
         };
     }

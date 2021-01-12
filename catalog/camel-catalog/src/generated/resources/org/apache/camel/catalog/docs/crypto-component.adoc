@@ -6,6 +6,7 @@
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/crypto.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -108,7 +109,7 @@ The Crypto (JCE) component supports 21 options, which are listed below.
 | *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
 | *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
 | *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean
@@ -135,12 +136,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. The value can be one of: sign, verify |  | CryptoOperation
+| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. There are 2 enums and the value can be one of: sign, verify |  | CryptoOperation
 | *name* | *Required* The logical name of this operation. |  | String
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -158,7 +159,6 @@ with the following path and query parameters:
 | *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
 | *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
 | *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean

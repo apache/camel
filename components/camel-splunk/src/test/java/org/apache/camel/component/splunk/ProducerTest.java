@@ -90,7 +90,7 @@ public class ProducerTest extends SplunkMockTestSupport {
         template.sendBody("direct:stream", splunkEvent);
         assertMockEndpointsSatisfied();
         Producer streamProducer = streamEndpoint.createProducer();
-        assertIsInstanceOf(StreamDataWriter.class, ((SplunkProducer)streamProducer).getDataWriter());
+        assertIsInstanceOf(StreamDataWriter.class, ((SplunkProducer) streamProducer).getDataWriter());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class ProducerTest extends SplunkMockTestSupport {
         template.sendBody("direct:submit", splunkEvent);
         assertMockEndpointsSatisfied();
         Producer submitProducer = submitEndpoint.createProducer();
-        assertIsInstanceOf(SubmitDataWriter.class, ((SplunkProducer)submitProducer).getDataWriter());
+        assertIsInstanceOf(SubmitDataWriter.class, ((SplunkProducer) submitProducer).getDataWriter());
     }
 
     @Test
@@ -118,24 +118,30 @@ public class ProducerTest extends SplunkMockTestSupport {
         template.sendBody("direct:tcp", splunkEvent);
         assertMockEndpointsSatisfied();
         Producer tcpProducer = tcpEndpoint.createProducer();
-        assertIsInstanceOf(TcpDataWriter.class, ((SplunkProducer)tcpProducer).getDataWriter());
+        assertIsInstanceOf(TcpDataWriter.class, ((SplunkProducer) tcpProducer).getDataWriter());
     }
 
     @Test
     public void testBodyWithoutRawOption() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:tcp", "foobar"));
+                () -> template.sendBody("direct:tcp", "foobar"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:stream").to("splunk://stream?username=foo&password=bar&index=myindex&sourceType=StreamSourceType&source=StreamSource").to("mock:stream-result");
+                from("direct:stream").to(
+                        "splunk://stream?username=foo&password=bar&index=myindex&sourceType=StreamSourceType&source=StreamSource")
+                        .to("mock:stream-result");
 
-                from("direct:submit").to("splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test").to("mock:submitresult");
+                from("direct:submit")
+                        .to("splunk://submit?username=foo&password=bar&index=myindex&sourceType=testSource&source=test")
+                        .to("mock:submitresult");
 
-                from("direct:tcp").to("splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test").to("mock:tcpresult");
+                from("direct:tcp").to(
+                        "splunk://tcp?username=foo&password=bar&tcpReceiverPort=2222&index=myindex&sourceType=testSource&source=test")
+                        .to("mock:tcpresult");
             }
         };
     }

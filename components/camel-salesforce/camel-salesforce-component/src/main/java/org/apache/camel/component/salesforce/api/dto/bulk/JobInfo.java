@@ -27,8 +27,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * Java class for JobInfo complex type.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -66,10 +65,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JobInfo", propOrder = {"id", "operation", "object", "createdById", "createdDate", "systemModstamp", "state", "externalIdFieldName", "concurrencyMode",
-                                        "contentType", "numberBatchesQueued", "numberBatchesInProgress", "numberBatchesCompleted", "numberBatchesFailed", "numberBatchesTotal",
-                                        "numberRecordsProcessed", "numberRetries", "apiVersion", "assignmentRuleId", "numberRecordsFailed", "totalProcessingTime",
-                                        "apiActiveProcessingTime", "apexProcessingTime"})
+@XmlType(name = "JobInfo",
+         propOrder = {
+                 "id", "operation", "object", "createdById", "createdDate", "systemModstamp", "state", "externalIdFieldName",
+                 "concurrencyMode",
+                 "contentType", "numberBatchesQueued", "numberBatchesInProgress", "numberBatchesCompleted",
+                 "numberBatchesFailed", "numberBatchesTotal",
+                 "numberRecordsProcessed", "numberRetries", "apiVersion", "assignmentRuleId", "numberRecordsFailed",
+                 "totalProcessingTime",
+                 "apiActiveProcessingTime", "apexProcessingTime" })
 public class JobInfo {
 
     protected String id;
@@ -173,8 +177,7 @@ public class JobInfo {
     /**
      * Gets the value of the createdDate property.
      *
-     * @return possible object is
-     *         {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @return possible object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getCreatedDate() {
         return createdDate;
@@ -183,8 +186,7 @@ public class JobInfo {
     /**
      * Sets the value of the createdDate property.
      *
-     * @param value allowed object is
-     *            {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @param value allowed object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public void setCreatedDate(XMLGregorianCalendar value) {
         this.createdDate = value;
@@ -193,8 +195,7 @@ public class JobInfo {
     /**
      * Gets the value of the systemModstamp property.
      *
-     * @return possible object is
-     *         {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @return possible object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getSystemModstamp() {
         return systemModstamp;
@@ -203,8 +204,7 @@ public class JobInfo {
     /**
      * Sets the value of the systemModstamp property.
      *
-     * @param value allowed object is
-     *            {@link javax.xml.datatype.XMLGregorianCalendar }
+     * @param value allowed object is {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public void setSystemModstamp(XMLGregorianCalendar value) {
         this.systemModstamp = value;

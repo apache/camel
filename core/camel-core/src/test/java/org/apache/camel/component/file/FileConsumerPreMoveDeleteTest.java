@@ -47,7 +47,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File pre = new File("target/data/premove/work/hello.txt");
         assertFalse(pre.exists(), "Pre move file should have been deleted");
@@ -61,7 +61,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset and drop the same file again
         mock.reset();
@@ -71,7 +71,7 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/premove", "Hello Again World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File pre = new File("target/data/premove/work/hello.txt");
         assertFalse(pre.exists(), "Pre move file should have been deleted");
@@ -82,7 +82,8 @@ public class FileConsumerPreMoveDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work&delete=true&idempotent=false&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor()).to("mock:result");
+                from("file://target/data/premove?preMove=work&delete=true&idempotent=false&initialDelay=0&delay=10")
+                        .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
         };
     }

@@ -29,13 +29,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 
 /**
- * Helper that provides state information across the levels of Spring Test that do not expose the
- * necessary context/state for integration of Camel testing features into Spring test.  Also
- * provides utility methods.
+ * Helper that provides state information across the levels of Spring Test that do not expose the necessary
+ * context/state for integration of Camel testing features into Spring test. Also provides utility methods.
  * <p/>
- * Note that this class makes use of {@link ThreadLocal}s to maintain some state.  It is imperative
- * that the state setters and getters are accessed within the scope of a single thread in order
- * for this class to work right.
+ * Note that this class makes use of {@link ThreadLocal}s to maintain some state. It is imperative that the state
+ * setters and getters are accessed within the scope of a single thread in order for this class to work right.
  */
 public final class CamelSpringTestHelper {
 
@@ -66,7 +64,7 @@ public final class CamelSpringTestHelper {
     public static Class<?> getTestClass() {
         return testClazz.get();
     }
-    
+
     public static void setTestClass(Class<?> testClass) {
         testClazz.set(testClass);
     }
@@ -82,35 +80,36 @@ public final class CamelSpringTestHelper {
     /**
      * Returns all methods defined in {@code clazz} and its superclasses/interfaces.
      */
-    public static Collection<Method> getAllMethods(Class<?> clazz)  {
+    public static Collection<Method> getAllMethods(Class<?> clazz) {
         Set<Method> methods = new LinkedHashSet<>();
         Class<?> currentClass = clazz;
-        
+
         while (currentClass != null) {
             methods.addAll(Arrays.asList(clazz.getMethods()));
-            currentClass = currentClass.getSuperclass(); 
+            currentClass = currentClass.getSuperclass();
         }
-                
+
         return methods;
     }
-    
+
     /**
-     * Executes {@code strategy} against all {@link SpringCamelContext}s found in the Spring context.
-     * This method reduces the amount of repeated find and loop code throughout this class.
+     * Executes {@code strategy} against all {@link SpringCamelContext}s found in the Spring context. This method
+     * reduces the amount of repeated find and loop code throughout this class.
      *
-     * @param context the Spring context to search
-     * @param strategy the strategy to execute against the found {@link SpringCamelContext}s
+     * @param  context   the Spring context to search
+     * @param  strategy  the strategy to execute against the found {@link SpringCamelContext}s
      *
      * @throws Exception if there is an error executing any of the strategies
      */
-    public static void doToSpringCamelContexts(ApplicationContext context, DoToSpringCamelContextsStrategy strategy) throws Exception {
+    public static void doToSpringCamelContexts(ApplicationContext context, DoToSpringCamelContextsStrategy strategy)
+            throws Exception {
         Map<String, SpringCamelContext> contexts = context.getBeansOfType(SpringCamelContext.class);
-        
+
         for (Entry<String, SpringCamelContext> entry : contexts.entrySet()) {
             strategy.execute(entry.getKey(), entry.getValue());
         }
     }
-    
+
     public interface DoToSpringCamelContextsStrategy {
         void execute(String contextName, SpringCamelContext camelContext) throws Exception;
     }

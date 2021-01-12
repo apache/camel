@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
-        + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
+                                                      + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
 
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
@@ -74,14 +74,14 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI)
-                    .recipientList(simple("direct:${header.operationName}"));
+                        .recipientList(simple("direct:${header.operationName}"));
 
                 from("direct:getCustomer").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
-                        exchange.getOut().setBody(new Customer(123, "Raul"));
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                        exchange.getMessage().setBody(new Customer(123, "Raul"));
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                     }
                 });
 
@@ -92,7 +92,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
                         assertNotNull(c);
                         assertEquals(123, c.getId());
                         assertEquals(12, exchange.getIn().getHeader("age"));
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                     }
                 });
             }

@@ -55,7 +55,8 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000)
+                        .to("mock:aggregated");
             }
         };
     }

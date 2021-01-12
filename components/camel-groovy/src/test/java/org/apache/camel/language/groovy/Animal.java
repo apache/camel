@@ -54,4 +54,3 @@ public class Animal {
         return name;
     }
 }
-

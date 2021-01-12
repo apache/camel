@@ -24,11 +24,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * A named group of options. A group of options requires that a set of
- * component parameters is given as a whole.
+ * A named group of options. A group of options requires that a set of component parameters is given as a whole.
  *
- * <a id="#syntax">The option syntax can be
- * {@code "propertyName"} to denote required property and
+ * <a id="#syntax">The option syntax can be {@code "propertyName"} to denote required property and
  * {@code "!propertyName"} to denote required absence of a property.
  */
 public final class OptionsGroup implements Serializable {
@@ -46,10 +44,9 @@ public final class OptionsGroup implements Serializable {
     }
 
     /**
-     * Creates new named {@link OptionsGroup} with a set of option
-     * definitions.
+     * Creates new named {@link OptionsGroup} with a set of option definitions.
      *
-     * @param name the name of the group
+     * @param name    the name of the group
      * @param options names of properties in the syntax mentioned in {@link OptionsGroup}
      */
     public OptionsGroup(String name, Collection<String> options) {
@@ -58,9 +55,8 @@ public final class OptionsGroup implements Serializable {
     }
 
     /**
-     * Adds a option definition to this group. The option syntax can be
-     * {@code "propertyName"} to denote required property and
-     * {@code "!propertyName"} to denote required absence of a property.
+     * Adds a option definition to this group. The option syntax can be {@code "propertyName"} to denote required
+     * property and {@code "!propertyName"} to denote required absence of a property.
      *
      * @param option definition.
      */
@@ -83,9 +79,8 @@ public final class OptionsGroup implements Serializable {
     }
 
     /**
-     * Adds a option definition to this group. The option syntax can be
-     * {@code "propertyName"} to denote required property and
-     * {@code "!propertyName"} to denote required absence of a property.
+     * Adds a option definition to this group. The option syntax can be {@code "propertyName"} to denote required
+     * property and {@code "!propertyName"} to denote required absence of a property.
      *
      * @param option definition.
      */
@@ -95,10 +90,8 @@ public final class OptionsGroup implements Serializable {
     }
 
     /**
-     * Adds a number of option definitions to this group. The option
-     * syntax can be {@code "propertyName"} to denote required
-     * property and {@code "!propertyName"} to denote required absence
-     * of a property.
+     * Adds a number of option definitions to this group. The option syntax can be {@code "propertyName"} to denote
+     * required property and {@code "!propertyName"} to denote required absence of a property.
      *
      * @param options options definition
      */
@@ -120,11 +113,10 @@ public final class OptionsGroup implements Serializable {
     }
 
     /**
-     * Creates new group with the specified name of the given
-     * {@link Enum} name.
+     * Creates new group with the specified name of the given {@link Enum} name.
      *
      * @param enumItem the name of the group
-     * @see Enum#name()
+     * @see            Enum#name()
      */
     public static OptionsGroup withName(Enum<?> enumItem) {
         return new OptionsGroup(enumItem.name());
@@ -133,8 +125,8 @@ public final class OptionsGroup implements Serializable {
     /**
      * Creates new group with the specified name and option definitions.
      *
-     * @param name the name of the group
-     * @param options options definition 
+     * @param name    the name of the group
+     * @param options options definition
      */
     public static OptionsGroup withNameAndOptions(String name, String... options) {
         return new OptionsGroup(name, Arrays.asList(options));

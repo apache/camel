@@ -36,7 +36,7 @@ public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
     protected String body1 = expectedBody1;
     protected String body2 = expectedBody2;
 
-    private boolean sentMessages;    
+    private boolean sentMessages;
 
     @Test
     public void testIrcPrivateMessages() throws Exception {
@@ -48,23 +48,21 @@ public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
         for (Exchange exchange : list) {
             LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
-    }   
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fromUri()).
-                        choice().
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock").
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
 
                 from("seda:consumerJoined")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            sendMessages();
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                sendMessages();
+                            }
+                        });
 
                 from("direct:mock").filter(e -> !e.getIn().getBody(String.class).contains("VERSION")).to(resultEndpoint);
             }

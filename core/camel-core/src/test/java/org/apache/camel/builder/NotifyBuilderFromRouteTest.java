@@ -40,7 +40,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello world!");
 
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello world!");
 
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello world!");
 
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
     }
 
     @Override

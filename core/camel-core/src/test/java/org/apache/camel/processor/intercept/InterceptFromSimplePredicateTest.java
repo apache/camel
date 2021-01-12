@@ -52,7 +52,8 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                interceptFrom().when(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor()).to("mock:intercepted");
+                interceptFrom().when(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor())
+                        .to("mock:intercepted");
 
                 // and here is our route
                 from("direct:start").to("seda:bar").to("mock:result");

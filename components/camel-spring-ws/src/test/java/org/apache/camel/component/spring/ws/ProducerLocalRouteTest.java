@@ -28,7 +28,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ProducerLocalRouteTest {
 
     private final String stockQuoteWebserviceUri = "http://localhost/";
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
 
     @Produce
     private ProducerTemplate template;
@@ -62,7 +62,8 @@ public class ProducerLocalRouteTest {
     public void consumeStockQuoteWebserviceAndPreserveHeaders() throws Exception {
         resultEndpoint.expectedHeaderReceived("helloHeader", "hello world!");
 
-        Object result = template.requestBodyAndHeader("direct:stockQuoteWebserviceMock", xmlRequestForGoogleStockQuote, "helloHeader", "hello world!");
+        Object result = template.requestBodyAndHeader("direct:stockQuoteWebserviceMock", xmlRequestForGoogleStockQuote,
+                "helloHeader", "hello world!");
 
         assertNotNull(result);
         resultEndpoint.assertIsSatisfied();
@@ -86,7 +87,8 @@ public class ProducerLocalRouteTest {
 
     @Test
     public void consumeStockQuoteWebserviceWithNonDefaultMessageFactory() throws Exception {
-        Object result = template.requestBody("direct:stockQuoteWebserviceWithNonDefaultMessageFactory", xmlRequestForGoogleStockQuote);
+        Object result = template.requestBody("direct:stockQuoteWebserviceWithNonDefaultMessageFactory",
+                xmlRequestForGoogleStockQuote);
 
         assertNotNull(result);
         assertTrue(result instanceof Source);
@@ -104,8 +106,9 @@ public class ProducerLocalRouteTest {
 
     @Test
     public void consumeStockQuoteWebserviceAndProvideEndpointUriByHeader() throws Exception {
-        Object result = template.requestBodyAndHeader("direct:stockQuoteWebserviceWithoutDefaultUri", xmlRequestForGoogleStockQuote,
-                SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, stockQuoteWebserviceUri);
+        Object result
+                = template.requestBodyAndHeader("direct:stockQuoteWebserviceWithoutDefaultUri", xmlRequestForGoogleStockQuote,
+                        SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, stockQuoteWebserviceUri);
 
         assertNotNull(result);
         assertTrue(result instanceof String);

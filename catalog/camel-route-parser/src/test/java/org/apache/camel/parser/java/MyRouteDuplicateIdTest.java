@@ -38,14 +38,14 @@ public class MyRouteDuplicateIdTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
 
                 // duplicate route id on purpose
                 from("direct:baz").routeId("foo")
-                    .to("mock:baz");
+                        .to("mock:baz");
             }
         };
     }

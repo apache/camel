@@ -41,7 +41,8 @@ public class InfinispanTestSupport extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(), new ConfigurationBuilder().build());
+        basicCacheContainer = new DefaultCacheManager(
+                new GlobalConfigurationBuilder().defaultCacheName("default").build(), new ConfigurationBuilder().build());
         basicCacheContainer.start();
         super.setUp();
     }

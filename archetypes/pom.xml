@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -35,15 +35,26 @@
 
     <modules>
         <module>camel-archetype-api-component</module>
-        <module>camel-archetype-blueprint</module>
         <module>camel-archetype-cdi</module>
         <module>camel-archetype-component</module>
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>
         <module>camel-archetype-main</module>
         <module>camel-archetype-spring</module>
-        <module>camel-archetype-spring-boot</module>
+        <module>camel-archetype-endpointdsl</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>archetypes-skip-tests</id>
+            <activation>
+                <property><name>skipTests</name></property>
+            </activation>
+            <properties>
+                <archetype.test.skip>true</archetype.test.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -106,5 +117,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>

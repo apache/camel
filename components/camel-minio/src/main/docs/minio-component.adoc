@@ -1,0 +1,509 @@
+[[minio-component]]
+= Minio Component
+:docTitle: Minio
+:artifactId: camel-minio
+:description: Store and retrieve objects from Minio Storage Service using Minio SDK.
+:since: 3.5
+:supportLevel: Stable
+:component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/minio.adoc[opts=optional]
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Minio component supports storing and retrieving objects from/to
+https://min.io/[Minio] service.
+
+Prerequisites
+
+You must have valid credentials for authorized access to the buckets/folders. More information is available at
+https://min.io/[Minio].
+
+== URI Format
+
+[source,java]
+------------------------------
+minio://bucketName[?options]
+------------------------------
+
+The bucket will be created if it doesn't already exist. +
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+For example in order to read file `hello.txt` from the bucket `helloBucket`, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("minio://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
+
+== URI Options
+
+// component options: START
+The Minio component supports 47 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
+| *configuration* (common) | The component configuration |  | MinioConfiguration
+| *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
+| *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
+| *minioClient* (common) | *Autowired* Reference to a Minio Client object in the registry. |  | MinioClient
+| *objectLock* (common) | Set when creating new bucket. | false | boolean
+| *policy* (common) | The policy for this queue to set in the method. |  | String
+| *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
+| *region* (common) | The region in which Minio client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *secure* (common) | Flag to indicate to use secure connection to minio service or not. | false | boolean
+| *serverSideEncryption* (common) | Server-side encryption. |  | ServerSideEncryption
+| *serverSideEncryptionCustomer{zwsp}Key* (common) | Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
+| *autoCloseBody* (consumer) | If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bypassGovernanceMode* (consumer) | Set this flag if you want to bypassGovernanceMode when deleting a particular object. | false | boolean
+| *deleteAfterRead* (consumer) | Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or only the MinioConstants#OBJECT_NAME header. | true | boolean
+| *delimiter* (consumer) | The delimiter which is used in the ListObjectsRequest to only consume objects we are interested in. |  | String
+| *destinationBucketName* (consumer) | Source bucket name. |  | String
+| *destinationObjectName* (consumer) | Source object name. |  | String
+| *includeBody* (consumer) | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the Minio object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
+| *includeFolders* (consumer) | The flag which is used in the ListObjectsRequest to set include folders. | false | boolean
+| *includeUserMetadata* (consumer) | The flag which is used in the ListObjectsRequest to get objects with user meta data. | false | boolean
+| *includeVersions* (consumer) | The flag which is used in the ListObjectsRequest to get objects with versioning. | false | boolean
+| *length* (consumer) | Number of bytes of object data from offset. |  | long
+| *matchETag* (consumer) | Set match ETag parameter for get object(s). |  | String
+| *maxConnections* (consumer) | Set the maxConnections parameter in the minio client configuration | 60 | int
+| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative number to set it as unlimited. | 10 | int
+| *modifiedSince* (consumer) | Set modified since parameter for get object(s). |  | ZonedDateTime
+| *moveAfterRead* (consumer) | Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
+| *notMatchETag* (consumer) | Set not match ETag parameter for get object(s). |  | String
+| *objectName* (consumer) | To get the object from the bucket with the given object name. |  | String
+| *offset* (consumer) | Start byte position of object data. |  | long
+| *prefix* (consumer) | Object name starts with prefix. |  | String
+| *recursive* (consumer) | List recursively than directory structure emulation. | false | boolean
+| *startAfter* (consumer) | list objects in bucket after this object name. |  | String
+| *unModifiedSince* (consumer) | Set un modified since parameter for get object(s). |  | ZonedDateTime
+| *useVersion1* (consumer) | when true, version 1 of REST API is used. | false | boolean
+| *versionId* (consumer) | Set specific version_ID of a object when deleting the object. |  | String
+| *deleteAfterWrite* (producer) | Delete file object after the Minio file has been uploaded. | false | boolean
+| *keyName* (producer) | Setting the key name for an element in the bucket through endpoint parameter. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
+| *storageClass* (producer) | The storage class to set in the request. |  | String
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *accessKey* (security) | Amazon AWS Secret Access Key or Minio Access Key. If not set camel will connect to service for anonymous access. |  | String
+| *secretKey* (security) | Amazon AWS Access Key Id or Minio Secret Key. If not set camel will connect to service for anonymous access. |  | String
+|===
+// component options: END
+
+// endpoint options: START
+The Minio endpoint is configured using URI syntax:
+
+----
+minio:bucketName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bucketName* | *Required* Bucket name |  | String
+|===
+
+
+=== Query Parameters (64 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
+| *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
+| *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
+| *minioClient* (common) | *Autowired* Reference to a Minio Client object in the registry. |  | MinioClient
+| *objectLock* (common) | Set when creating new bucket. | false | boolean
+| *policy* (common) | The policy for this queue to set in the method. |  | String
+| *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
+| *region* (common) | The region in which Minio client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1). You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *secure* (common) | Flag to indicate to use secure connection to minio service or not. | false | boolean
+| *serverSideEncryption* (common) | Server-side encryption. |  | ServerSideEncryption
+| *serverSideEncryptionCustomer{zwsp}Key* (common) | Server-side encryption for source object while copy/move objects. |  | ServerSideEncryptionCustomerKey
+| *autoCloseBody* (consumer) | If this option is true and includeBody is true, then the MinioObject.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *bypassGovernanceMode* (consumer) | Set this flag if you want to bypassGovernanceMode when deleting a particular object. | false | boolean
+| *deleteAfterRead* (consumer) | Delete objects from Minio after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the MinioConstants#BUCKET_NAME and MinioConstants#OBJECT_NAME headers, or only the MinioConstants#OBJECT_NAME header. | true | boolean
+| *delimiter* (consumer) | The delimiter which is used in the ListObjectsRequest to only consume objects we are interested in. |  | String
+| *destinationBucketName* (consumer) | Source bucket name. |  | String
+| *destinationObjectName* (consumer) | Source object name. |  | String
+| *includeBody* (consumer) | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the Minio object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the MinioObject stream. Setting autocloseBody to true, will close the MinioObject stream automatically. | true | boolean
+| *includeFolders* (consumer) | The flag which is used in the ListObjectsRequest to set include folders. | false | boolean
+| *includeUserMetadata* (consumer) | The flag which is used in the ListObjectsRequest to get objects with user meta data. | false | boolean
+| *includeVersions* (consumer) | The flag which is used in the ListObjectsRequest to get objects with versioning. | false | boolean
+| *length* (consumer) | Number of bytes of object data from offset. |  | long
+| *matchETag* (consumer) | Set match ETag parameter for get object(s). |  | String
+| *maxConnections* (consumer) | Set the maxConnections parameter in the minio client configuration | 60 | int
+| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a negative number to set it as unlimited. | 10 | int
+| *modifiedSince* (consumer) | Set modified since parameter for get object(s). |  | ZonedDateTime
+| *moveAfterRead* (consumer) | Move objects from bucket to a different bucket after they have been retrieved. To accomplish the operation the destinationBucket option must be set. The copy bucket operation is only performed if the Exchange is committed. If a rollback occurs, the object is not moved. | false | boolean
+| *notMatchETag* (consumer) | Set not match ETag parameter for get object(s). |  | String
+| *objectName* (consumer) | To get the object from the bucket with the given object name. |  | String
+| *offset* (consumer) | Start byte position of object data. |  | long
+| *prefix* (consumer) | Object name starts with prefix. |  | String
+| *recursive* (consumer) | List recursively than directory structure emulation. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *startAfter* (consumer) | list objects in bucket after this object name. |  | String
+| *unModifiedSince* (consumer) | Set un modified since parameter for get object(s). |  | ZonedDateTime
+| *useVersion1* (consumer) | when true, version 1 of REST API is used. | false | boolean
+| *versionId* (consumer) | Set specific version_ID of a object when deleting the object. |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *deleteAfterWrite* (producer) | Delete file object after the Minio file has been uploaded. | false | boolean
+| *keyName* (producer) | Setting the key name for an element in the bucket through endpoint parameter. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
+| *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
+| *storageClass* (producer) | The storage class to set in the request. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *accessKey* (security) | Amazon AWS Secret Access Key or Minio Access Key. If not set camel will connect to service for anonymous access. |  | String
+| *secretKey* (security) | Amazon AWS Access Key Id or Minio Secret Key. If not set camel will connect to service for anonymous access. |  | String
+|===
+// endpoint options: END
+
+Required Minio component options
+
+You have to provide the minioClient in the
+Registry or your accessKey and secretKey to access
+the https://min.io/[Minio].
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
+
+== Usage
+
+=== Message headers evaluated by the Minio producer
+
+[width="100%",cols="10%,10%,80%",options="header"]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelMinioBucketName` |`String` |The bucket Name which this object will be stored or which will be used for the current operation
+
+|`CamelMinioDestinationBucketName` |`String` |The bucket Destination Name which will be used for the current operation
+
+|`CamelMinioContentLength` |`Long` |The content length of this object.
+
+|`CamelMinioContentType` |`String` |The content type of this object.
+
+|`CamelMinioContentControl` |`String` |The content control of this object.
+
+|`CamelMinioContentDisposition` |`String` |The content disposition of this object.
+
+|`CamelMinioContentEncoding` |`String` |The content encoding of this object.
+
+|`CamelMinioContentMD5` |`String` |The md5 checksum of this object.
+
+|`CamelMinioDestinationObjectName` |`String` |The Destination key which will be used for the current operation
+
+|`CamelMinioObjectName` |`String` |The key under which this object will be stored or which will be used for the current operation
+
+|`CamelMinioLastModified` |`java.util.Date` |The last modified timestamp of this object.
+
+|`CamelMinioOperation` |`String` |The operation to perform. Permitted values are copyObject, deleteObject, deleteObjects, listBuckets, deleteBucket, downloadLink, listObjects
+
+|`CamelMinioStorageClass` |`String` |The storage class of this object.
+
+|`CamelMinioCannedAcl` |`String` |The canned acl that will be applied to the object. see
+`com.amazonaws.services.s3.model.CannedAccessControlList` for allowed
+values.
+
+//|`CamelMinioHeaders` |`Map<String,String>` |Support to get or set custom objectMetadata headers.
+
+|`CamelMinioServerSideEncryption` |String |Sets the server-side encryption algorithm when encrypting
+the object using Minio-managed keys. For example use AES256.
+
+|`CamelMinioVersionId` |`String` |The version Id of the object to be stored or returned from the current operation
+|=======================================================================
+
+=== Message headers set by the Minio producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelMinioETag` |`String` |The ETag value for the newly uploaded object.
+
+|`CamelMinioVersionId` |`String` |The *optional* version ID of the newly uploaded object.
+
+//|`CamelMinioDownloadLinkExpiration` | `String` | The expiration (millis) of URL download link. The link will be stored into *CamelMinioDownloadLink* response header.
+
+|=======================================================================
+
+=== Message headers set by the Minio consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelMinioObjectName` |`String` |The key under which this object is stored.
+
+|`CamelMinioBucketName` |`String` |The name of the bucket in which this object is contained.
+
+|`CamelMinioETag` |`String` |The hex encoded 128-bit MD5 digest of the associated object according to
+RFC 1864. This data is used as an integrity check to verify that the
+data received by the caller is the same data that was sent by Minio
+
+|`CamelMinioLastModified` |`Date` |The value of the Last-Modified header, indicating the date and time at
+which Minio last recorded a modification to the associated object.
+
+|`CamelMinioVersionId` |`String` |The version ID of the associated Minio object if available. Version
+IDs are only assigned to objects when an object is uploaded to an Minio bucket that has object versioning enabled.
+
+|`CamelMinioContentType` |`String` |The Content-Type HTTP header, which indicates the type of content stored
+in the associated object. The value of this header is a standard MIME
+type.
+
+|`CamelMinioContentMD5` |`String` |The base64 encoded 128-bit MD5 digest of the associated object (content
+- not including headers) according to RFC 1864. This data is used as a
+message integrity check to verify that the data received by Minio is
+the same data that the caller sent.
+
+|`CamelMinioContentLength` |`Long` |The Content-Length HTTP header indicating the size of the associated
+object in bytes.
+
+|`CamelMinioContentEncoding` |`String` |The *optional* Content-Encoding HTTP header specifying what content
+encodings have been applied to the object and what decoding mechanisms
+must be applied in order to obtain the media-type referenced by the
+Content-Type field.
+
+|`CamelMinioContentDisposition` |`String` |The *optional* Content-Disposition HTTP header, which specifies
+presentational information such as the recommended filename for the
+object to be saved as.
+
+|`CamelMinioContentControl` |`String` |The *optional* Cache-Control HTTP header which allows the user to
+specify caching behavior along the HTTP request/reply chain.
+
+|`CamelMinioServerSideEncryption` |String |The server-side encryption algorithm when encrypting the
+object using Minio-managed keys.
+|=======================================================================
+
+=== Minio Producer operations
+
+Camel-Minio component provides the following operation on the producer side:
+
+- copyObject
+- deleteObject
+- deleteObjects
+- listBuckets
+- deleteBucket
+- listObjects
+- getObject (this will return a MinioObject instance)
+- getObjectRange (this will return a MinioObject instance)
+
+=== Advanced Minio configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `MinioClient` instance configuration, you can
+create your own instance and refer to it in your Camel minio component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("minio://MyBucket?minioClient=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Minio Producer Operation examples
+
+- CopyObject: this operation copy an object from one bucket to a different one
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "camelDestinationBucket");
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+          exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "camelDestinationKey");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=copyObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket mycamelbucket.
+
+- DeleteObject: this operation deletes an object from a bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the object camelKey from the bucket mycamelbucket.
+
+- ListBuckets: this operation list the buckets for this account in this region
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=listBuckets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the buckets for this account
+
+- DeleteBucket: this operation delete the bucket specified as URI parameter or header
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=deleteBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the bucket mycamelbucket
+
+- ListObjects: this operation list object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=listObjects")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the objects in the mycamelbucket bucket
+
+- GetObject: this operation get a single object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket.
+
+- GetObjectRange: this operation get a single object range in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+          exchange.getIn().setHeader(MinioConstants.OFFSET, "0");
+          exchange.getIn().setHeader(MinioConstants.LENGTH, "9");
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObjectRange")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing bytes from 0 to 9.
+
+== Bucket Autocreation
+
+With the option `autoCreateBucket` users are able to avoid the autocreation of a Minio Bucket in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent bucket in Minio won't be successful, and an error will be returned.
+
+== Automatic detection of Minio client in registry
+
+The component is capable of detecting the presence of a Minio bean into the registry.
+If it's the only instance of that type it will be used as client, and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
+== Moving stuff between a bucket and another bucket
+
+Some users like to consume stuff from a bucket and move the content in a different one without using the copyObject feature of this component.
+If this is case for you, don't forget to remove the bucketName header from the incoming exchange of the consumer, otherwise the file will always be overwritten on the same
+original bucket.
+
+== MoveAfterRead consumer option
+
+In addition to deleteAfterRead it has been added another option, moveAfterRead. With this option enabled the consumed object will be moved to a target destinationBucket instead of being only deleted.
+This will require specifying the destinationBucket option. As example:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("minio://mycamelbucket?minioClient=#minioClient&moveAfterRead=true&destinationBucketName=myothercamelbucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+
+== Using a POJO as body
+
+Sometimes build a Minio Request can be complex, because of multiple options. We introduce the possibility to use a POJO as body.
+In Minio there are multiple operations you can submit, as an example for List brokers request, you can do something like:
+
+------------------------------------------------------------------------------------------------------
+from("direct:minio")
+     .setBody(ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .recursive(getConfiguration().isRecursive())))
+     .to("minio://test?minioClient=#minioClient&operation=listObjects&pojoRequest=true")
+------------------------------------------------------------------------------------------------------
+
+In this way you'll pass the request directly without the need of passing headers and options specifically related to this operation.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-minio</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$minio-starter.adoc[]

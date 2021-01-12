@@ -37,15 +37,18 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest {
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
-        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
+        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
 
         // now launch the first clustered app which will acquire the quartz database lock and become the master
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppOne.xml");
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppOne.xml");
         app.start();
 
         // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppTwo.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppTwo.xml");
         app2.start();
 
         CamelContext camel = app.getBean("camelContext", CamelContext.class);

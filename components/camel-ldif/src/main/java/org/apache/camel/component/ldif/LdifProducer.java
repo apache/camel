@@ -57,8 +57,7 @@ public class LdifProducer extends DefaultProducer {
     /**
      * Process the body. There are two options:
      * <ol>
-     * <li>A String body that is the LDIF content. This needs to start with
-     * "version: 1".</li>
+     * <li>A String body that is the LDIF content. This needs to start with "version: 1".</li>
      * <li>A String body that is a URL to ready the LDIF content from</li>
      * </ol>
      */
@@ -94,15 +93,13 @@ public class LdifProducer extends DefaultProducer {
     }
 
     /**
-     * Get the LdapConnection. Since the object is a factory, we'll just call
-     * that. A future enhancement is to use the ApacheDS LdapConnectionPool
-     * object to keep a pool of working connections that avoids the connection
-     * pause.
+     * Get the LdapConnection. Since the object is a factory, we'll just call that. A future enhancement is to use the
+     * ApacheDS LdapConnectionPool object to keep a pool of working connections that avoids the connection pause.
      *
      * @return The created LDAP connection.
      */
     protected LdapConnection getLdapConnection() throws CamelException {
-        return (LdapConnection)getEndpoint().getCamelContext().getRegistry().lookupByName(ldapConnectionName);
+        return (LdapConnection) getEndpoint().getCamelContext().getRegistry().lookupByName(ldapConnectionName);
     }
 
     /**
@@ -157,7 +154,8 @@ public class LdifProducer extends DefaultProducer {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("attempting DN move of {}", ldifEntry);
                 }
-                conn.moveAndRename(ldifEntry.getDn(), new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()), ldifEntry.isDeleteOldRdn());
+                conn.moveAndRename(ldifEntry.getDn(), new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()),
+                        ldifEntry.isDeleteOldRdn());
             } else if (ldifEntry.isChangeModRdn()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("attempting RDN move of {}", ldifEntry);

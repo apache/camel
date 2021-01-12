@@ -46,11 +46,13 @@ public class QueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                              String originalCorrelationId, String correlationId, long requestTimeout) {
-        return new QueueReplyHandler(replyManager, exchange, callback,
+    protected ReplyHandler createReplyHandler(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+            String originalCorrelationId, String correlationId, long requestTimeout) {
+        return new QueueReplyHandler(
+                replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
-    }  
+    }
 
     @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
@@ -79,8 +81,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
             // log a warn and then ignore the message
-            log.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
-                    new Object[]{correlationID, replyTo, correlation.size(), message});
+            log.warn(
+                    "Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
+                    correlationID, replyTo, correlation.size(), message);
         }
     }
 
@@ -102,8 +105,10 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public Destination resolveDestinationName(Session session, String destinationName,
-                                                  boolean pubSubDomain) throws JMSException {
+        public Destination resolveDestinationName(
+                Session session, String destinationName,
+                boolean pubSubDomain)
+                throws JMSException {
             synchronized (QueueReplyManager.this) {
                 // resolve the reply to destination
                 if (destination == null) {
@@ -135,7 +140,8 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 // must use cache level consumer for fixed message selector
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
-                log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}", endpoint.getReplyTo(), fixedMessageSelector, answer);
+                log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}",
+                        endpoint.getReplyTo(), fixedMessageSelector, answer);
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 dynamicMessageSelector = new MessageSelectorCreator(correlation);
@@ -143,11 +149,13 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 // must use cache level session for dynamic message selector,
                 // as otherwise the dynamic message selector will not be updated on-the-fly
                 answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
-                log.debug("Using shared queue: {} with dynamic message selector as reply listener: {}", endpoint.getReplyTo(), answer);
+                log.debug("Using shared queue: {} with dynamic message selector as reply listener: {}", endpoint.getReplyTo(),
+                        answer);
             }
             // shared is not as fast as temporary or exclusive, so log this so the end user may be aware of this
             log.warn("{} is using a shared reply queue, which is not as fast as alternatives."
-                    + " See more detail at the section 'Request-reply over JMS' in the JMS component documentation", endpoint);
+                     + " See more detail at the section 'Request-reply over JMS' in the JMS component documentation",
+                    endpoint);
         } else if (ReplyToType.Exclusive == type) {
             answer = new ExclusiveQueueMessageListenerContainer(endpoint);
             // must use cache level consumer for exclusive as there is no message selector
@@ -156,7 +164,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         } else {
             throw new IllegalArgumentException("ReplyToType " + type + " is not supported for reply queues");
         }
-        
+
         String replyToCacheLevelName = endpoint.getConfiguration().getReplyToCacheLevelName();
         if (replyToCacheLevelName != null) {
             answer.setCacheLevelName(replyToCacheLevelName);
@@ -200,7 +208,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getErrorHandler() != null) {
             answer.setErrorHandler(endpoint.getErrorHandler());
         } else {
-            answer.setErrorHandler(new DefaultSpringErrorHandler(endpoint.getCamelContext(), QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+            answer.setErrorHandler(new DefaultSpringErrorHandler(
+                    endpoint.getCamelContext(), QueueReplyManager.class, endpoint.getErrorHandlerLoggingLevel(),
+                    endpoint.isErrorHandlerLogStackTrace()));
         }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
@@ -221,12 +231,14 @@ public class QueueReplyManager extends ReplyManagerSupport {
         if (answer.getConcurrentConsumers() > 1) {
             if (ReplyToType.Shared == type) {
                 // warn if using concurrent consumer with shared reply queue as that may not work properly
-                log.warn("Using {}-{} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
-                        new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name, endpoint.getReplyTo()});
+                log.warn(
+                        "Using {}-{} concurrent consumer on {} with shared queue {} may not work properly with all message brokers.",
+                        answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name,
+                        endpoint.getReplyTo());
             } else {
                 // log that we are using concurrent consumers
                 log.info("Using {}-{} concurrent consumers on {}",
-                        new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name});
+                        answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name);
             }
         }
 

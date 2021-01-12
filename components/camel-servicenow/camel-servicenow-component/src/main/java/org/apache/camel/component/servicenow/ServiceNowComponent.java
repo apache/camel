@@ -95,7 +95,8 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
     }
 
     public ComponentVerifierExtension getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
+                .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
     // ****************************************
@@ -110,22 +111,22 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
         Map<String, Object> models = PropertiesHelper.extractProperties(parameters, "model.");
         for (Map.Entry<String, Object> entry : models.entrySet()) {
             configuration.addModel(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveParameter(context, (String) entry.getValue(), Class.class));
         }
 
         Map<String, Object> requestModels = PropertiesHelper.extractProperties(parameters, "requestModel.");
         for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
             configuration.addRequestModel(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveParameter(context, (String) entry.getValue(), Class.class));
         }
 
         Map<String, Object> responseModels = PropertiesHelper.extractProperties(parameters, "responseModel.");
         for (Map.Entry<String, Object> entry : responseModels.entrySet()) {
             configuration.addResponseModel(
-                entry.getKey(),
-                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveParameter(context, (String) entry.getValue(), Class.class));
         }
 
         if (ObjectHelper.isEmpty(remaining)) {

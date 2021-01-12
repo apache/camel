@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -96,7 +95,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.MBEAN_DOMAIN, mBeanObjectDomainName);
         }
         if (System.getProperty(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID) != null) {
-            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+            onlyRegisterProcessorWithCustomId
+                    = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
             values.put(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID, onlyRegisterProcessorWithCustomId);
         }
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
@@ -128,7 +128,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             values.put(JmxSystemPropertyKeys.ENDPOINT_RUNTIME_STATISTICS_ENABLED, endpointRuntimeStatisticsEnabled);
         }
         if (System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL) != null) {
-            statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
+            statisticsLevel = camelContext.getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class,
+                    System.getProperty(JmxSystemPropertyKeys.STATISTICS_LEVEL));
             values.put(JmxSystemPropertyKeys.STATISTICS_LEVEL, statisticsLevel);
         }
         if (System.getProperty(JmxSystemPropertyKeys.MANAGEMENT_NAME_PATTERN) != null) {
@@ -390,16 +391,16 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             }
         }
         if (caught > 0) {
-            LOG.warn("A number of " + caught
-                     + " exceptions caught while unregistering MBeans during stop operation."
-                     + " See INFO log for details.");
+            LOG.warn("A number of {} exceptions caught while unregistering MBeans during stop operation. See INFO log"
+                     + "for details.",
+                    caught);
         }
 
         ServiceHelper.stopService(assembler);
     }
 
     private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceRegistration)
-        throws JMException {
+            throws JMException {
 
         // have we already registered the bean, there can be shared instances in the camel routes
         boolean exists = isRegistered(name);

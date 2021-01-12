@@ -29,7 +29,8 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private final EhcacheManager manager;
     private final Cache cache;
 
-    public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration, Processor processor) throws Exception {
+    public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration,
+                           Processor processor) throws Exception {
         super(endpoint, processor);
 
         this.configuration = configuration;
@@ -51,11 +52,10 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
         super.doStart();
 
         this.cache.getRuntimeConfiguration().registerCacheEventListener(
-            this,
-            configuration.getEventOrdering(),
-            configuration.getEventFiring(),
-            configuration.getEventTypesSet()
-        );
+                this,
+                configuration.getEventOrdering(),
+                configuration.getEventFiring(),
+                configuration.getEventTypesSet());
     }
 
     @Override

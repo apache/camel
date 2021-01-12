@@ -23,8 +23,6 @@ import java.io.ObjectOutputStream;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
@@ -36,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StringSourceTest {
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), false);
     protected String expectedBody = "<hello>world!</hello>";
 
     @BeforeEach
@@ -60,7 +58,7 @@ public class StringSourceTest {
         Object object = in.readObject();
         boolean b = object instanceof StringSource;
         assertTrue(b, "is a StringSource");
-        StringSource actual = (StringSource)object;
+        StringSource actual = (StringSource) object;
 
         assertEquals(expected.getPublicId(), actual.getPublicId(), "source.text");
         assertEquals(expected.getSystemId(), actual.getSystemId(), "source.text");

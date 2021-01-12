@@ -32,9 +32,8 @@ class RxJavaStreamsServiceTestSupport extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         context.addComponent(
-            ReactiveStreamsConstants.SCHEME,
-            ReactiveStreamsComponent.withServiceType(RxJavaStreamsConstants.SERVICE_NAME)
-        );
+                ReactiveStreamsConstants.SCHEME,
+                ReactiveStreamsComponent.withServiceType(RxJavaStreamsConstants.SERVICE_NAME));
 
         return context;
     }
@@ -52,8 +51,7 @@ class RxJavaStreamsServiceTestSupport extends CamelTestSupport {
 
     protected ReactiveStreamsComponent getReactiveStreamsComponent() {
         return ObjectHelper.notNull(
-            context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class),
-            ReactiveStreamsConstants.SCHEME
-        );
+                context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class),
+                ReactiveStreamsConstants.SCHEME);
     }
 }

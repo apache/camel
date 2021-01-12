@@ -24,17 +24,23 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 
 /**
- * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the list of named direct endpoints.
+ * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the
+ * list of named direct endpoints.
  */
 @Component("direct")
 public class DirectComponent extends DefaultComponent {
 
-    // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
-    // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
-    // on DefaultCamelContext
+    // active consumers
     private final Map<String, DirectConsumer> consumers = new HashMap<>();
+    // counter that is used for producers to keep track if any consumer was added/removed since they last checked
+    // this is used for optimization to avoid each producer to get consumer for each message processed
+    // (locking via synchronized, and then lookup in the map as the cost)
+    // consumers and producers are only added/removed during startup/shutdown or if routes is manually controlled
+    private volatile int stateCounter;
+
     @Metadata(label = "producer", defaultValue = "true")
     private boolean block = true;
     @Metadata(label = "producer", defaultValue = "30000")
@@ -45,7 +51,7 @@ public class DirectComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        DirectEndpoint endpoint = new DirectEndpoint(uri, this, consumers);
+        DirectEndpoint endpoint = new DirectEndpoint(uri, this);
         endpoint.setBlock(block);
         endpoint.setTimeout(timeout);
         setProperties(endpoint, parameters);
@@ -53,10 +59,10 @@ public class DirectComponent extends DefaultComponent {
     }
 
     @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(consumers);
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
-        super.doStop();
+        super.doShutdown();
     }
 
     public boolean isBlock() {
@@ -64,8 +70,8 @@ public class DirectComponent extends DefaultComponent {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
-     * then we can tell the producer to block and wait for the consumer to become active.
+     * If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block
+     * and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {
         this.block = block;
@@ -81,4 +87,52 @@ public class DirectComponent extends DefaultComponent {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    int getStateCounter() {
+        return stateCounter;
+    }
+
+    public void addConsumer(String key, DirectConsumer consumer) {
+        synchronized (consumers) {
+            if (consumers.putIfAbsent(key, consumer) != null) {
+                throw new IllegalArgumentException(
+                        "Cannot add a 2nd consumer to the same endpoint: " + key
+                                                   + ". DirectEndpoint only allows one consumer.");
+            }
+            // state changed so inc counter
+            stateCounter++;
+            consumers.notifyAll();
+        }
+    }
+
+    public void removeConsumer(String key, DirectConsumer consumer) {
+        synchronized (consumers) {
+            consumers.remove(key, consumer);
+            // state changed so inc counter
+            stateCounter++;
+            consumers.notifyAll();
+        }
+    }
+
+    protected DirectConsumer getConsumer(String key, boolean block, long timeout) throws InterruptedException {
+        synchronized (consumers) {
+            DirectConsumer answer = consumers.get(key);
+            if (answer == null && block) {
+                StopWatch watch = new StopWatch();
+                for (;;) {
+                    answer = consumers.get(key);
+                    if (answer != null) {
+                        break;
+                    }
+                    long rem = timeout - watch.taken();
+                    if (rem <= 0) {
+                        break;
+                    }
+                    consumers.wait(rem);
+                }
+            }
+            return answer;
+        }
+    }
+
 }

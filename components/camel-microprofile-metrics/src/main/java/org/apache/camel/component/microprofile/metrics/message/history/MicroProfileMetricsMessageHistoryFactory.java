@@ -37,13 +37,15 @@ import org.eclipse.microprofile.metrics.MetricRegistry;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME;
 
-public class MicroProfileMetricsMessageHistoryFactory extends ServiceSupport implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
+public class MicroProfileMetricsMessageHistoryFactory extends ServiceSupport
+        implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
     private MetricRegistry metricRegistry;
     private boolean copyMessage;
     private String nodePattern;
-    private MicroProfileMetricsMessageHistoryNamingStrategy namingStrategy = MicroProfileMetricsMessageHistoryNamingStrategy.DEFAULT;
+    private MicroProfileMetricsMessageHistoryNamingStrategy namingStrategy
+            = MicroProfileMetricsMessageHistoryNamingStrategy.DEFAULT;
 
     @Override
     public CamelContext getCamelContext() {
@@ -111,7 +113,8 @@ public class MicroProfileMetricsMessageHistoryFactory extends ServiceSupport imp
 
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
-            return new MicroProfileMetricsMessageHistory(getMetricRegistry(), route, namedNode, getNamingStrategy(), timestamp, msg);
+            return new MicroProfileMetricsMessageHistory(
+                    getMetricRegistry(), route, namedNode, getNamingStrategy(), timestamp, msg);
         } else {
             return null;
         }
@@ -124,7 +127,8 @@ public class MicroProfileMetricsMessageHistoryFactory extends ServiceSupport imp
         }
 
         try {
-            MicroProfileMetricsMessageHistoryService service = camelContext.hasService(MicroProfileMetricsMessageHistoryService.class);
+            MicroProfileMetricsMessageHistoryService service
+                    = camelContext.hasService(MicroProfileMetricsMessageHistoryService.class);
             if (service == null) {
                 service = new MicroProfileMetricsMessageHistoryService();
                 service.setMetricRegistry(getMetricRegistry());

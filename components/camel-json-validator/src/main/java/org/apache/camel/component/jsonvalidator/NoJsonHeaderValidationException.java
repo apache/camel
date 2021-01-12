@@ -33,4 +33,3 @@ public class NoJsonHeaderValidationException extends ValidationException {
         super("No JSON header \"" + header + "\" could be found on the input message", exchange, cause);
     }
 }
-

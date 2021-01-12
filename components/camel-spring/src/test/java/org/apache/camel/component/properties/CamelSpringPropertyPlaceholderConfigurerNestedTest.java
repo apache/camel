@@ -28,7 +28,8 @@ public class CamelSpringPropertyPlaceholderConfigurerNestedTest extends SpringTe
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerNestedTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerNestedTest.xml");
     }
 
     @Test

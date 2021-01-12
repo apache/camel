@@ -27,8 +27,8 @@ public class MySimpleToDRoute extends RouteBuilder {
         String uri = "log:c";
 
         from("direct:start")
-            .toD("log:a", true)
-            .to(ExchangePattern.InOnly, "log:b")
-            .to(uri);
+                .toD("log:a", true)
+                .to(ExchangePattern.InOnly, "log:b")
+                .to(uri);
     }
 }

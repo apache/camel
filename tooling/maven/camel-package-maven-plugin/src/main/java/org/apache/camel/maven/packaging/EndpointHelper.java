@@ -30,15 +30,13 @@ public final class EndpointHelper {
     /**
      * Returns the group name from the given label.
      * <p/>
-     * The group name is a single name deducted from the label. The label can
-     * contain multiple names separated by comma. The group is the best guess as
-     * a group of those labels, so similar labels can be combined into the same
-     * group.
+     * The group name is a single name deducted from the label. The label can contain multiple names separated by comma.
+     * The group is the best guess as a group of those labels, so similar labels can be combined into the same group.
      *
-     * @param label the label
-     * @param consumerOnly whether the component is consumer only
-     * @param producerOnly whether the component is producer only
-     * @return the group name
+     * @param  label        the label
+     * @param  consumerOnly whether the component is consumer only
+     * @param  producerOnly whether the component is producer only
+     * @return              the group name
      */
     public static String labelAsGroupName(String label, boolean consumerOnly, boolean producerOnly) {
         // if there is no label then use common as fallback
@@ -72,8 +70,7 @@ public final class EndpointHelper {
     }
 
     /**
-     * A comparator to sort the endpoint/component options according to group
-     * and label.
+     * A comparator to sort the endpoint/component options according to group and label.
      */
     public static Comparator<BaseOptionModel> createGroupAndLabelComparator() {
         return new EndpointOptionGroupAndLabelComparator();
@@ -89,8 +86,8 @@ public final class EndpointHelper {
     }
 
     /**
-     * A comparator to sort endpoints options: first paths according to the path
-     * comparator, then parameters according to their group and label.
+     * A comparator to sort endpoints options: first paths according to the path comparator, then parameters according
+     * to their group and label.
      *
      * @param syntax the endpoint uri syntax
      */

@@ -67,14 +67,14 @@ public class PolicyPerProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // only wrap policy foo around the to(mock:foo) - notice the
-                    // end()
-                    .policy("foo").to("mock:foo").end()
-                    // only wrap policy bar around the to(mock:bar) - notice the
-                    // end()
-                    .policy("bar").to("mock:bar").end()
-                    // and this has no policy
-                    .to("mock:result");
+                        // only wrap policy foo around the to(mock:foo) - notice the
+                        // end()
+                        .policy("foo").to("mock:foo").end()
+                        // only wrap policy bar around the to(mock:bar) - notice the
+                        // end()
+                        .policy("bar").to("mock:bar").end()
+                        // and this has no policy
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

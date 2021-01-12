@@ -42,7 +42,8 @@ public class SWFConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "producer,workflow", defaultValue = "START", enums = "SIGNAL,CANCEL,TERMINATE,GET_STATE,START,DESCRIBE,GET_HISTORY")
+    @UriParam(label = "producer,workflow", defaultValue = "START",
+              enums = "SIGNAL,CANCEL,TERMINATE,GET_STATE,START,DESCRIBE,GET_HISTORY")
     private String operation = "START";
     @UriParam(label = "common")
     private String region;
@@ -117,8 +118,8 @@ public class SWFConfiguration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region
+     * (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -206,8 +207,7 @@ public class SWFConfiguration implements Cloneable {
     }
 
     /**
-     * To configure the AmazonSimpleWorkflowClient using the key/values from the
-     * Map.
+     * To configure the AmazonSimpleWorkflowClient using the key/values from the Map.
      */
     public void setSWClientParameters(Map<String, Object> sWClientParameters) {
         this.sWClientParameters = sWClientParameters;
@@ -330,8 +330,8 @@ public class SWFConfiguration implements Cloneable {
     }
 
     /**
-     * An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter
-     * to use for serializing/deserializing the data.
+     * An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the
+     * data.
      */
     public void setDataConverter(DataConverter dataConverter) {
         this.dataConverter = dataConverter;
@@ -391,14 +391,14 @@ public class SWFConfiguration implements Cloneable {
     public void setTaskStartToCloseTimeout(String taskStartToCloseTimeout) {
         this.taskStartToCloseTimeout = taskStartToCloseTimeout;
     }
-    
+
     // *************************************************
     //
     // *************************************************
 
     public SWFConfiguration copy() {
         try {
-            return (SWFConfiguration)super.clone();
+            return (SWFConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

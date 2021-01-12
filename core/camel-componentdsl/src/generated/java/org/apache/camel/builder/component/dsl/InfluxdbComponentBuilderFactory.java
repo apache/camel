@@ -37,6 +37,8 @@ public interface InfluxdbComponentBuilderFactory {
      * Category: database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-influxdb
+     * 
+     * @return the dsl builder
      */
     static InfluxdbComponentBuilder influxdb() {
         return new InfluxdbComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface InfluxdbComponentBuilderFactory {
         /**
          * The shared Influx DB to use for all endpoints.
          * 
-         * The option is a: <code>org.influxdb.InfluxDB</code> type.
+         * The option is a: &lt;code&gt;org.influxdb.InfluxDB&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param influxDB the value to set
+         * @return the dsl builder
          */
         default InfluxdbComponentBuilder influxDB(org.influxdb.InfluxDB influxDB) {
             doSetProperty("influxDB", influxDB);
@@ -70,10 +75,13 @@ public interface InfluxdbComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default InfluxdbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -81,17 +89,24 @@ public interface InfluxdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default InfluxdbComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default InfluxdbComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -113,7 +128,7 @@ public interface InfluxdbComponentBuilderFactory {
             switch (name) {
             case "influxDB": ((InfluxDbComponent) component).setInfluxDB((org.influxdb.InfluxDB) value); return true;
             case "lazyStartProducer": ((InfluxDbComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((InfluxDbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((InfluxDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

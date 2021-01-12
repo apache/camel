@@ -173,7 +173,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     @Test
     public void roundtripWithBinaryAttachments() throws IOException {
         String attContentType = "application/binary";
-        byte[] attText = {0, 1, 2, 3, 4, 5, 6, 7};
+        byte[] attText = { 0, 1, 2, 3, 4, 5, 6, 7 };
         String attFileName = "Attachment File Name";
         in.setBody("Body text");
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
@@ -196,7 +196,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     @Test
     public void roundtripWithBinaryAttachmentsAndBinaryContent() throws IOException {
         String attContentType = "application/binary";
-        byte[] attText = {0, 1, 2, 3, 4, 5, 6, 7};
+        byte[] attText = { 0, 1, 2, 3, 4, 5, 6, 7 };
         String attFileName = "Attachment File Name";
         in.setBody("Body text");
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
@@ -362,7 +362,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertTrue(bodyStr.startsWith("25"));
         assertEquals(1, intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().size());
         assertTrue(intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().iterator().next().contains(matcher));
-        Attachment att = intermediate.getMessage(AttachmentMessage.class).getAttachmentObject(intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().iterator().next());
+        Attachment att = intermediate.getMessage(AttachmentMessage.class)
+                .getAttachmentObject(intermediate.getMessage(AttachmentMessage.class).getAttachmentNames().iterator().next());
         DataHandler dh = att.getDataHandler();
         assertNotNull(dh);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -376,7 +377,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         addAttachment(attContentType, attText, attFileName, null);
     }
 
-    private void addAttachment(String attContentType, String attText, String attFileName, Map<String, String> headers) throws IOException {
+    private void addAttachment(String attContentType, String attText, String attFileName, Map<String, String> headers)
+            throws IOException {
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
         DefaultAttachment attachment = new DefaultAttachment(ds);
         if (headers != null) {
@@ -388,14 +390,17 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder()  {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:roundtrip").marshal().mimeMultipart().to("log:mime?showHeaders=true").unmarshal().mimeMultipart();
-                from("direct:roundtripmultipart").marshal().mimeMultipart(true, false, false).to("log:mime?showHeaders=true").unmarshal().mimeMultipart();
-                from("direct:roundtripinlineheaders").marshal().mimeMultipart(false, true, false).to("log:mime?showHeaders=true").unmarshal().mimeMultipart(false, true, false);
-                from("direct:roundtripbinarycontent").marshal().mimeMultipart(false, false, true).to("log:mime?showHeaders=true").to("dataformat:mime-multipart:unmarshal");
+                from("direct:roundtripmultipart").marshal().mimeMultipart(true, false, false).to("log:mime?showHeaders=true")
+                        .unmarshal().mimeMultipart();
+                from("direct:roundtripinlineheaders").marshal().mimeMultipart(false, true, false)
+                        .to("log:mime?showHeaders=true").unmarshal().mimeMultipart(false, true, false);
+                from("direct:roundtripbinarycontent").marshal().mimeMultipart(false, false, true)
+                        .to("log:mime?showHeaders=true").to("dataformat:mime-multipart:unmarshal");
                 from("direct:marshalonlyrelated").marshal().mimeMultipart("related");
                 from("direct:marshalonlymixed").marshal().mimeMultipart();
                 from("direct:marshalonlyinlineheaders").marshal().mimeMultipart("mixed", false, true, "(included|x-.*)", false);

@@ -53,7 +53,8 @@ public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresC
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumPostgresEndpoint(uri, this,  configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(
+            String uri, PostgresConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumPostgresEndpoint(uri, this, configuration);
     }
 }

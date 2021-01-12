@@ -38,7 +38,6 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 3;
     private static final String TEST_DIR = "target/out_ZipAggregationStrategyEmptyFileTest";
 
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -85,13 +84,13 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/foo")
-                    .aggregate(new ZipAggregationStrategy())
+                        .aggregate(new ZipAggregationStrategy())
                         .constant(true)
                         .completionSize(4)
                         .eagerCheckCompletion()
-                    .to("file:" + TEST_DIR)
-                    .to("mock:aggregateToZipEntry")
-                    .log("Done processing zip file: ${header.CamelFileName}");
+                        .to("file:" + TEST_DIR)
+                        .to("mock:aggregateToZipEntry")
+                        .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 

@@ -128,7 +128,8 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
                         hits = 0L;
                     }
 
-                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    CompositeData data
+                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
                     answer.put(data);
                 }
             }

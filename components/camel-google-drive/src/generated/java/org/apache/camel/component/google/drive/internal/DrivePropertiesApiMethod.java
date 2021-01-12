@@ -57,8 +57,6 @@ public enum DrivePropertiesApiMethod implements ApiMethod {
         arg("propertyKey", String.class),
         arg("content", com.google.api.services.drive.model.Property.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DrivePropertiesApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

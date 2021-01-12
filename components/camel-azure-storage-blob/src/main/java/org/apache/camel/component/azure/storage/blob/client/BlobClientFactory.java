@@ -53,7 +53,8 @@ public final class BlobClientFactory {
     }
 
     private static String getAccountName(final BlobConfiguration configuration) {
-        return !ObjectHelper.isEmpty(configuration.getCredentials()) ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
+        return !ObjectHelper.isEmpty(configuration.getCredentials())
+                ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
     }
 
 }

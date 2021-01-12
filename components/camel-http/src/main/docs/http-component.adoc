@@ -6,6 +6,7 @@
 :since: 2.3
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/http.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -53,7 +54,7 @@ route, use the xref:jetty-component.adoc[Jetty Component] instead.
 
 
 // component options: START
-The HTTP component supports 19 options, which are listed below.
+The HTTP component supports 26 options, which are listed below.
 
 
 
@@ -63,7 +64,7 @@ The HTTP component supports 19 options, which are listed below.
 | *cookieStore* (producer) | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). |  | CookieStore
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientConnectionManager* (advanced) | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. |  | HttpClientConnectionManager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
 | *connectionTimeToLive* (advanced) | The time for connection to live, the time unit is millisecond, the default value is always keep alive. |  | long
@@ -73,6 +74,13 @@ The HTTP component supports 19 options, which are listed below.
 | *httpContext* (advanced) | To use a custom org.apache.http.protocol.HttpContext when executing requests. |  | HttpContext
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *proxyAuthDomain* (proxy) | Proxy authentication domain to use |  | String
+| *proxyAuthHost* (proxy) | Proxy authentication host |  | String
+| *proxyAuthMethod* (proxy) | Proxy authentication method to use. There are 3 enums and the value can be one of: Basic, Digest, NTLM |  | String
+| *proxyAuthNtHost* (proxy) | Proxy authentication domain (workstation name) to use with NTML |  | String
+| *proxyAuthPassword* (proxy) | Proxy authentication password |  | String
+| *proxyAuthPort* (proxy) | Proxy authentication port |  | Integer
+| *proxyAuthUsername* (proxy) | Proxy authentication username |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *x509HostnameVerifier* (security) | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier. |  | HostnameVerifier
@@ -125,7 +133,7 @@ with the following path and query parameters:
 | *connectionClose* (producer) | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false. | false | boolean
 | *copyHeaders* (producer) | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers). | true | boolean
 | *customHostHeader* (producer) | To use custom host header for producer. When not set in query will be ignored. When set will override host header derived from url. |  | String
-| *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. The value can be one of: GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH |  | HttpMethods
+| *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. There are 8 enums and the value can be one of: GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH |  | HttpMethods
 | *ignoreResponseBody* (producer) | If this option is true, The http producer won't read response body and cache the input stream | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *preserveHostHeader* (producer) | If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service | false | boolean
@@ -136,7 +144,6 @@ with the following path and query parameters:
 | *deleteWithBody* (producer) | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *getWithBody* (producer) | Whether the HTTP GET should include the message body or not. By default HTTP GET do not include any HTTP body. However in some rare cases users may need to be able to include the message body. | false | boolean
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
@@ -145,17 +152,18 @@ with the following path and query parameters:
 | *httpClientOptions* (advanced) | To configure the HttpClient using the key/values from the Map. |  | Map
 | *httpContext* (advanced) | To use a custom HttpContext instance |  | HttpContext
 | *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrlEncoded Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
+| *mapHttpMessageFormUrlEncoded{zwsp}Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *useSystemProperties* (advanced) | To use System Properties as fallback for configuration | false | boolean
 | *proxyAuthDomain* (proxy) | Proxy authentication domain to use with NTML |  | String
 | *proxyAuthHost* (proxy) | Proxy authentication host |  | String
-| *proxyAuthMethod* (proxy) | Proxy authentication method to use. The value can be one of: Basic, Digest, NTLM |  | String
+| *proxyAuthMethod* (proxy) | Proxy authentication method to use. There are 3 enums and the value can be one of: Basic, Digest, NTLM |  | String
+| *proxyAuthNtHost* (proxy) | Proxy authentication domain (workstation name) to use with NTML |  | String
 | *proxyAuthPassword* (proxy) | Proxy authentication password |  | String
 | *proxyAuthPort* (proxy) | Proxy authentication port |  | int
-| *proxyAuthScheme* (proxy) | Proxy authentication scheme to use. The value can be one of: http, https |  | String
+| *proxyAuthScheme* (proxy) | Proxy authentication scheme to use. There are 2 enums and the value can be one of: http, https |  | String
 | *proxyAuthUsername* (proxy) | Proxy authentication username |  | String
 | *proxyHost* (proxy) | Proxy hostname to use |  | String
 | *proxyPort* (proxy) | Proxy port to use |  | int
@@ -163,7 +171,7 @@ with the following path and query parameters:
 | *authenticationPreemptive* (security) | If this option is true, camel-http sends preemptive basic authentication to the server. | false | boolean
 | *authHost* (security) | Authentication host to use with NTML |  | String
 | *authMethod* (security) | Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM. |  | String
-| *authMethodPriority* (security) | Which authentication method to prioritize to use, either as Basic, Digest or NTLM. The value can be one of: Basic, Digest, NTLM |  | String
+| *authMethodPriority* (security) | Which authentication method to prioritize to use, either as Basic, Digest or NTLM. There are 3 enums and the value can be one of: Basic, Digest, NTLM |  | String
 | *authPassword* (security) | Authentication password |  | String
 | *authUsername* (security) | Authentication username |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters

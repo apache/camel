@@ -57,8 +57,10 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
 
             Registration.RegCheck c = ImmutableRegCheck.builder().ttl("1m").status(healty ? "passing" : "critical").build();
 
-            Registration r = ImmutableRegistration.builder().id("service-" + i).name("my-service").address("127.0.0.1").addTags("a-tag").addTags("key1=value1")
-                .addTags("key2=value2").addTags("healthy=" + healty).putMeta("meta-key", "meta-val").port(port).check(c).build();
+            Registration r = ImmutableRegistration.builder().id("service-" + i).name("my-service").address("127.0.0.1")
+                    .addTags("a-tag").addTags("key1=value1")
+                    .addTags("key2=value2").addTags("healthy=" + healty).putMeta("meta-key", "meta-val").port(port).check(c)
+                    .build();
 
             client.register(r);
             registrations.add(r);
@@ -79,7 +81,7 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
     @Test
     public void testServiceDiscovery() throws Exception {
         ConsulConfiguration configuration = new ConsulConfiguration();
-        configuration.setUrl(consulUrl());
+        configuration.setUrl(service.getConsulUrl());
 
         ServiceDiscovery discovery = new ConsulServiceDiscovery(configuration);
 

@@ -44,10 +44,11 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
             }
         });
 
-        Exchange response = template.request("direct-vm:start.filter?headerFilterStrategy=#headerFilterStrategy&block=false", exchange -> {
-            exchange.getIn().setBody("Hello World");
-            exchange.getIn().setHeader("Header1", "Value1");
-        });
+        Exchange response = template.request("direct-vm:start.filter?headerFilterStrategy=#headerFilterStrategy&block=false",
+                exchange -> {
+                    exchange.getIn().setBody("Hello World");
+                    exchange.getIn().setHeader("Header1", "Value1");
+                });
 
         assertNull(response.getException());
         assertNull(response.getMessage().getHeader("Header2"));

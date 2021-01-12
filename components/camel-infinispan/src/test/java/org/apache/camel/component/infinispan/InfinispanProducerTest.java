@@ -44,10 +44,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
     private static final long LIFESPAN_TIME = 100;
     private static final long LIFESPAN_FOR_MAX_IDLE = -1;
     private static final long MAX_IDLE_TIME = 200;
-    
+
     @BindToRegistry("mappingFunction")
-    BiFunction<String, String, String> comp = (k, v) -> v + "replay"; 
-    
+    BiFunction<String, String, String> comp = (k, v) -> v + "replay";
 
     @Test
     public void keyAndValueArePublishedWithDefaultOperation() throws Exception {
@@ -76,7 +75,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Integer cacheSize = exchange.getIn().getBody(Integer.class);
-        assertEquals(cacheSize, new Integer(2));
+        assertEquals(cacheSize, Integer.valueOf(2));
     }
 
     @Test
@@ -121,7 +120,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -145,9 +144,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -194,7 +193,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -218,9 +217,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -261,7 +260,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -288,9 +287,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -369,7 +368,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -392,9 +391,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -482,7 +481,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
             }
@@ -503,7 +502,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         waitForNullValue(KEY_ONE);
     }
-    
+
     @Test
     public void getOrDefault() throws Exception {
         template.send("direct:start", new Processor() {
@@ -528,7 +527,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals(VALUE_ONE, resultGet);
-        
+
         exchange = template.send("direct:getOrDefault", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -556,7 +555,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         String result = exchange.getIn().getBody(String.class);
         assertEquals("existing value", result);
     }
-    
+
     @Test
     public void computeOperation() throws Exception {
         currentCache().put(KEY_ONE, "existing value");
@@ -571,8 +570,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         String result = exchange.getIn().getBody(String.class);
         assertEquals("existing valuereplay", result);
-    }   
-    
+    }
+
     @Test
     public void computeAsyncOperation() throws Exception {
         currentCache().put(KEY_ONE, "existing value");
@@ -587,8 +586,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         CompletableFuture result = exchange.getIn().getBody(CompletableFuture.class);
         assertEquals("existing valuereplay", result.get().toString());
-    }  
-    
+    }
+
     @Test
     public void retrievesAValueByKey() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -630,7 +629,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -651,9 +650,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -694,7 +693,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -716,9 +715,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -730,7 +729,6 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Thread.sleep(300);
         waitForNullValue(KEY_ONE);
     }
-
 
     @Test
     public void replaceAValueByKeyAsync() throws Exception {
@@ -757,7 +755,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -768,7 +766,6 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitForNullValue(KEY_ONE);
     }
 
-
     @Test
     public void replaceAValueByKeyWithLifespanAndMaxIdleTimeAsync() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -778,9 +775,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -819,7 +816,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -840,9 +837,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -1037,10 +1034,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         assertTrue(fut.isDone());
         assertTrue(currentCache().isEmpty());
     }
-    
+
     @Test
     public void statsOperation() throws Exception {
-        ((Cache) currentCache()).getAdvancedCache().getStats().setStatisticsEnabled(true); 
+        ((Cache) currentCache()).getAdvancedCache().getStats().setStatisticsEnabled(true);
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -1052,7 +1049,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         Object value = currentCache().get(KEY_ONE);
         assertEquals(VALUE_ONE, value.toString());
-        
+
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -1064,7 +1061,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         value = currentCache().get(KEY_TWO);
         assertEquals(VALUE_TWO, value.toString());
-        
+
         Exchange exchange;
         exchange = template.send("direct:stats", new Processor() {
             @Override
@@ -1075,55 +1072,85 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         assertEquals(2L, resultStats.getTotalNumberOfEntries());
     }
 
+    @Test
+    public void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptions() throws Exception {
+        template.send("direct:explicitput", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
+            }
+        });
+
+        Object value = currentCache().get("a");
+        assertEquals("3", value.toString());
+    }
+
+    @Test
+    public void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptionsHeaderHavePriorities() throws Exception {
+        template.send("direct:explicitput", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
+            }
+        });
+
+        Object value = currentCache().get(KEY_ONE);
+        assertEquals(VALUE_ONE, value.toString());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("infinispan:default?cacheContainer=#cacheContainer");
+                        .to("infinispan:default?cacheContainer=#cacheContainer");
                 from("direct:put")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUT");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUT");
                 from("direct:put-deprecated-option")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&command=PUT");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&command=PUT");
                 from("direct:put-deprecated-command")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&command=CamelInfinispanOperationPut");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&command=CamelInfinispanOperationPut");
                 from("direct:putifabsent")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTIFABSENT");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTIFABSENT");
                 from("direct:get")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=GET");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=GET");
                 from("direct:getOrDefault")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=GETORDEFAULT");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=GETORDEFAULT");
                 from("direct:remove")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REMOVE");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=REMOVE");
                 from("direct:clear")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CLEAR");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=CLEAR");
                 from("direct:replace")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REPLACE");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=REPLACE");
                 from("direct:containskey")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CONTAINSKEY");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=CONTAINSKEY");
                 from("direct:containsvalue")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CONTAINSVALUE");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=CONTAINSVALUE");
                 from("direct:size")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=SIZE");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=SIZE");
                 from("direct:putasync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTASYNC");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTASYNC");
                 from("direct:putallasync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTALLASYNC");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTALLASYNC");
                 from("direct:putifabsentasync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTIFABSENTASYNC");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTIFABSENTASYNC");
                 from("direct:replaceasync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REPLACEASYNC");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=REPLACEASYNC");
                 from("direct:removeasync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REMOVEASYNC");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=REMOVEASYNC");
                 from("direct:clearasync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CLEARASYNC");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=CLEARASYNC");
                 from("direct:stats")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=STATS");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=STATS");
                 from("direct:compute")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
                 from("direct:computeAsync")
-                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTEASYNC&remappingFunction=#mappingFunction");
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTEASYNC&remappingFunction=#mappingFunction");
+                from("direct:explicitput")
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUT&key=a&value=3");
             }
         };
     }

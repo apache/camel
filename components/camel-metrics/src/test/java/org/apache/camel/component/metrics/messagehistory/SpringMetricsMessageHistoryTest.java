@@ -34,7 +34,8 @@ public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/metrics/messagehistory/SpringMetricsMessageHistoryTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/metrics/messagehistory/SpringMetricsMessageHistoryTest.xml");
     }
 
     @Test

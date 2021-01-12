@@ -20,14 +20,14 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxGroupsManagerApiMethod implements ApiMethod {
 
-    ADDGROUPMEMBERSHIP(
+    ADD_GROUP_MEMBERSHIP(
         com.box.sdk.BoxGroupMembership.class,
         "addGroupMembership",
         arg("groupId", String.class),
         arg("userId", String.class),
         arg("role", com.box.sdk.BoxGroupMembership.Role.class)),
 
-    CREATEGROUP(
+    CREATE_GROUP(
         com.box.sdk.BoxGroup.class,
         "createGroup",
         arg("name", String.class),
@@ -37,48 +37,46 @@ public enum BoxGroupsManagerApiMethod implements ApiMethod {
         arg("invitabilityLevel", String.class),
         arg("memberViewabilityLevel", String.class)),
 
-    DELETEGROUP(
+    DELETE_GROUP(
         void.class,
         "deleteGroup",
         arg("groupId", String.class)),
 
-    DELETEGROUPMEMBERSHIP(
+    DELETE_GROUP_MEMBERSHIP(
         void.class,
         "deleteGroupMembership",
         arg("groupMembershipId", String.class)),
 
-    GETALLGROUPS(
+    GET_ALL_GROUPS(
         java.util.Collection.class,
         "getAllGroups"),
 
-    GETGROUPINFO(
+    GET_GROUP_INFO(
         com.box.sdk.BoxGroup.Info.class,
         "getGroupInfo",
         arg("groupId", String.class)),
 
-    GETGROUPMEMBERSHIPINFO(
+    GET_GROUP_MEMBERSHIP_INFO(
         com.box.sdk.BoxGroupMembership.Info.class,
         "getGroupMembershipInfo",
         arg("groupMembershipId", String.class)),
 
-    GETGROUPMEMBERSHIPS(
+    GET_GROUP_MEMBERSHIPS(
         java.util.Collection.class,
         "getGroupMemberships",
         arg("groupId", String.class)),
 
-    UPDATEGROUPINFO(
+    UPDATE_GROUP_INFO(
         com.box.sdk.BoxGroup.class,
         "updateGroupInfo",
         arg("groupId", String.class),
         arg("groupInfo", com.box.sdk.BoxGroup.Info.class)),
 
-    UPDATEGROUPMEMBERSHIPINFO(
+    UPDATE_GROUP_MEMBERSHIP_INFO(
         com.box.sdk.BoxGroupMembership.class,
         "updateGroupMembershipInfo",
         arg("groupMembershipId", String.class),
         arg("info", com.box.sdk.BoxGroupMembership.Info.class));
-
-    
 
     private final ApiMethod apiMethod;
 

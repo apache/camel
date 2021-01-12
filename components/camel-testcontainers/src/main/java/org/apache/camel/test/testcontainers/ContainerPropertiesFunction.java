@@ -67,8 +67,7 @@ public class ContainerPropertiesFunction implements PropertiesFunction {
             }
 
             return Integer.toString(
-                Containers.lookup(containers, name).getMappedPort(Integer.parseInt(port))
-            );
+                    Containers.lookup(containers, name).getMappedPort(Integer.parseInt(port)));
         }
 
         throw new IllegalArgumentException("Unsupported type: " + type);

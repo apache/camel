@@ -30,7 +30,7 @@ import org.apache.camel.util.FileUtil;
  */
 public final class CamelJmsTestHelper {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
+    private static AtomicInteger counter = new AtomicInteger();
 
     private CamelJmsTestHelper() {
     }

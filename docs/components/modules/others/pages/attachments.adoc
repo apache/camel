@@ -1,4 +1,4 @@
-[[attachments-component]]
+[[attachments-other]]
 = Attachments Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-attachments/src/main/docs/attachments.adoc
@@ -7,6 +7,7 @@
 :description: Support for attachments on Camel messages
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/attachments.adoc[opts=optional]
 
 *Since Camel {since}*
 

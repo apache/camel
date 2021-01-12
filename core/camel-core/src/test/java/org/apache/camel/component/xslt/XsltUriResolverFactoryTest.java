@@ -87,30 +87,30 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
         XsltEndpoint xsltEndpoint = resolveMandatoryEndpoint(endpointUri, XsltEndpoint.class);
         assertNotNull(xsltEndpoint);
 
-        CustomXsltUriResolver resolver = (CustomXsltUriResolver)xsltEndpoint.getUriResolver();
+        CustomXsltUriResolver resolver = (CustomXsltUriResolver) xsltEndpoint.getUriResolver();
         checkResourceUri(resolver.resolvedResourceUris, "xslt/staff/staff.xsl");
         checkResourceUri(resolver.resolvedResourceUris, "../common/staff_template.xsl");
     }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start") //
-                    .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
-                    .recipientList(new SimpleExpression("xslt:${header.xslt_file}?uriResolverFactory=#uriResolverFactory")) //
-                    .to("mock:result");
+                        .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
+                        .recipientList(new SimpleExpression("xslt:${header.xslt_file}?uriResolverFactory=#uriResolverFactory")) //
+                        .to("mock:result");
             }
         }, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:startComponent") //
-                    .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
-                    .recipientList(new SimpleExpression("xslt:${header.xslt_file}")) //
-                    .to("mock:result");
+                        .setHeader("xslt_file", new ConstantExpression("xslt/staff/staff.xsl")) //
+                        .recipientList(new SimpleExpression("xslt:${header.xslt_file}")) //
+                        .to("mock:result");
             }
-        }};
+        } };
     }
 
     @Override

@@ -202,7 +202,7 @@ public class EnvelopedDataTest {
     @Test
     public void executeCamelliaCBCKeySize256() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "Camellia/CBC/PKCS5Padding", 256));
+                () -> encryptDecrypt("system.jks", "rsa", "Camellia/CBC/PKCS5Padding", 256));
     }
 
     /** Works if strong encryption policy jars are installed. */
@@ -210,19 +210,19 @@ public class EnvelopedDataTest {
     @Test
     public void executeCamelliaCBCKeySize192() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "Camellia/CBC/PKCS5Padding", 192));
+                () -> encryptDecrypt("system.jks", "rsa", "Camellia/CBC/PKCS5Padding", 192));
     }
 
     @Test
     public void executeNoInWhiteListCamellia256CBC() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "Camellia256/CBC/PKCS5Padding", 256));
+                () -> encryptDecrypt("system.jks", "rsa", "Camellia256/CBC/PKCS5Padding", 256));
     }
 
     @Test
     public void executeNotInWhiteListCamellia192CBC() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "Camellia192/CBC/PKCS5Padding", 192));
+                () -> encryptDecrypt("system.jks", "rsa", "Camellia192/CBC/PKCS5Padding", 192));
     }
 
     /** Works if strong encryption policy jars are installed. */
@@ -230,7 +230,7 @@ public class EnvelopedDataTest {
     @Test
     public void executeAESCBCKeySize256() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES/CBC/PKCS5Padding", 256));
+                () -> encryptDecrypt("system.jks", "rsa", "AES/CBC/PKCS5Padding", 256));
     }
 
     /** Works if strong encryption policy jars are installed. */
@@ -238,7 +238,7 @@ public class EnvelopedDataTest {
     @Test
     public void executeAESCBCKeySize192() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES/CBC/PKCS5Padding", 192));
+                () -> encryptDecrypt("system.jks", "rsa", "AES/CBC/PKCS5Padding", 192));
     }
 
     @Test
@@ -249,97 +249,97 @@ public class EnvelopedDataTest {
     @Test
     public void executeNotInWhiteListAES256CBC() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES256/CBC/PKCS5Padding", 256));
+                () -> encryptDecrypt("system.jks", "rsa", "AES256/CBC/PKCS5Padding", 256));
     }
 
     @Test
     public void executeNotInWhiteListAES192CBC() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES192/CBC/PKCS5Padding", 192));
+                () -> encryptDecrypt("system.jks", "rsa", "AES192/CBC/PKCS5Padding", 192));
     }
 
     @Test
     public void executerNoImplRSAECB() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "RSA/ECB/OAEP", 0));
+                () -> encryptDecrypt("system.jks", "rsa", "RSA/ECB/OAEP", 0));
     }
 
     @Test
     public void executeNotInWhiteListAESGCM() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES/GCM/NoPadding", 128));
+                () -> encryptDecrypt("system.jks", "rsa", "AES/GCM/NoPadding", 128));
     }
 
     @Test
     public void executeNotInWhiteListAES192GCM() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES192/GCM/NoPadding", 192));
+                () -> encryptDecrypt("system.jks", "rsa", "AES192/GCM/NoPadding", 192));
     }
 
     @Test
     public void executeNotInWhiteListAES256GCM() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES256/GCM/NoPadding", 256));
+                () -> encryptDecrypt("system.jks", "rsa", "AES256/GCM/NoPadding", 256));
     }
 
     @Test
     public void executeNotInWhiteListAES256CCM() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES256/CCM/NoPadding", 256));
+                () -> encryptDecrypt("system.jks", "rsa", "AES256/CCM/NoPadding", 256));
     }
 
     @Test
     public void executeNotInWhiteListIDEACBC() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "IDEA/CBC/PKCS5Padding", 128));
+                () -> encryptDecrypt("system.jks", "rsa", "IDEA/CBC/PKCS5Padding", 128));
     }
 
     @Test
     public void executeNotInWhiteListAESCCM() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES/CCM/NoPadding", 128));
+                () -> encryptDecrypt("system.jks", "rsa", "AES/CCM/NoPadding", 128));
     }
 
     @Test
     public void executeNotInWhiteListAES192CCM() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "AES192/CCM/NoPadding", 192));
+                () -> encryptDecrypt("system.jks", "rsa", "AES192/CCM/NoPadding", 192));
     }
 
     @Test
     public void executeNotInWhiteListRC5CBC() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "RC5/CBC/PKCS5Padding", 0));
+                () -> encryptDecrypt("system.jks", "rsa", "RC5/CBC/PKCS5Padding", 0));
     }
 
     @Test
     public void wrongSecretKeyLength() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 200, "testMessage", "rsa"));
+                () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 200, "testMessage", "rsa"));
     }
 
     @Test
     public void wrongContentEncryptionAlgorithm() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> encryptDecrypt("system.jks", "rsa", "WrongDESede/CBC/PKCS5Padding", 200));
+                () -> encryptDecrypt("system.jks", "rsa", "WrongDESede/CBC/PKCS5Padding", 200));
     }
 
     @Test
     public void wrongEncryptAlias() throws Exception {
         assertThrows(CryptoCmsNoKeyOrCertificateForAliasException.class,
-            () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 128, "testMessage", "wrongAlias"));
+                () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 128, "testMessage", "wrongAlias"));
     }
 
     @Test
     public void encryptWrongAliasAndCorrectAlias() throws Exception {
         assertThrows(CryptoCmsNoKeyOrCertificateForAliasException.class,
-            () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 128, "testMessage", "wrongAlias", "rsa"));
+                () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 128, "testMessage", "wrongAlias", "rsa"));
     }
 
     @Test
     public void encryptTwoWrongAliases() throws Exception {
         assertThrows(CryptoCmsNoKeyOrCertificateForAliasException.class,
-            () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 128, "testMessage", "wrongAlias", "wrongAlias2"));
+                () -> encrypt("system.jks", "DESede/CBC/PKCS5Padding", 128, "testMessage", "wrongAlias", "wrongAlias2"));
     }
 
     @Test
@@ -350,13 +350,13 @@ public class EnvelopedDataTest {
     @Test
     public void wrongEncryptedMessage() throws Exception {
         assertThrows(CryptoCmsFormatException.class,
-            () -> decrypt("system.jks", "TestMessage".getBytes()));
+                () -> decrypt("system.jks", "TestMessage".getBytes()));
     }
 
     @Test
     public void wrongEncryptedEmptyMessage() throws Exception {
         assertThrows(CryptoCmsException.class,
-            () -> decrypt("system.jks", new byte[0]));
+                () -> decrypt("system.jks", new byte[0]));
     }
 
     @Test
@@ -369,7 +369,7 @@ public class EnvelopedDataTest {
     public void decryptionWithNullAliasWrongKeystore() throws Exception {
         byte[] bytes = encrypt("system.jks", "DESede/CBC/PKCS5Padding", 192, "Test Message", "rsa");
         assertThrows(CryptoCmsNoCertificateForRecipientsException.class,
-            () -> decrypt("test.jks", bytes));
+                () -> decrypt("test.jks", bytes));
     }
 
     // @Test
@@ -385,7 +385,8 @@ public class EnvelopedDataTest {
     // Assert.fail("Exception expected");
     // }
 
-    private void encryptDecrypt(String keystoreName, String alias, String contentEncryptionAlgorithm, int secretKeyLength) throws Exception {
+    private void encryptDecrypt(String keystoreName, String alias, String contentEncryptionAlgorithm, int secretKeyLength)
+            throws Exception {
         String message = "Test Message";
 
         byte[] encrypted = encrypt(keystoreName, contentEncryptionAlgorithm, secretKeyLength, message, alias);
@@ -395,8 +396,9 @@ public class EnvelopedDataTest {
         assertEquals(message, actual);
     }
 
-    private byte[] encrypt(String keystoreName, String contentEncryptionAlgorithm, int secretKeyLength, String message, String... aliases)
-        throws UnsupportedEncodingException, Exception {
+    private byte[] encrypt(
+            String keystoreName, String contentEncryptionAlgorithm, int secretKeyLength, String message, String... aliases)
+            throws UnsupportedEncodingException, Exception {
         KeyStoreParameters keystorePas = KeystoreUtil.getKeyStoreParameters(keystoreName);
 
         List<RecipientInfo> recipients = new ArrayList<>(aliases.length);
@@ -420,7 +422,7 @@ public class EnvelopedDataTest {
         Exchange exchange = ExchangeUtil.getExchange();
         exchange.getIn().setBody(new ByteArrayInputStream(message.getBytes("UTF-8")));
         encryptor.process(exchange);
-        byte[] encrypted = (byte[])exchange.getMessage().getBody();
+        byte[] encrypted = (byte[]) exchange.getMessage().getBody();
         return encrypted;
     }
 
@@ -437,7 +439,7 @@ public class EnvelopedDataTest {
 
         decryptor.process(exchangeDecrypt);
 
-        byte[] decrypted = (byte[])exchangeDecrypt.getMessage().getBody();
+        byte[] decrypted = (byte[]) exchangeDecrypt.getMessage().getBody();
 
         return decrypted;
     }

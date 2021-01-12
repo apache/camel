@@ -24,13 +24,13 @@ public enum GmailUsersMessagesApiMethod implements ApiMethod {
         com.google.api.services.gmail.Gmail.Users.Messages.Attachments.class,
         "attachments"),
 
-    BATCHDELETE(
+    BATCH_DELETE(
         com.google.api.services.gmail.Gmail.Users.Messages.BatchDelete.class,
         "batchDelete",
         arg("userId", String.class),
         arg("batchDeleteMessagesRequest", com.google.api.services.gmail.model.BatchDeleteMessagesRequest.class)),
 
-    BATCHMODIFY(
+    BATCH_MODIFY(
         com.google.api.services.gmail.Gmail.Users.Messages.BatchModify.class,
         "batchModify",
         arg("userId", String.class),
@@ -48,13 +48,13 @@ public enum GmailUsersMessagesApiMethod implements ApiMethod {
         arg("userId", String.class),
         arg("id", String.class)),
 
-    GMAILIMPORT(
+    GMAIL_IMPORT(
         com.google.api.services.gmail.Gmail.Users.Messages.GmailImport.class,
         "gmailImport",
         arg("userId", String.class),
         arg("content", com.google.api.services.gmail.model.Message.class)),
 
-    GMAILIMPORT_1(
+    GMAIL_IMPORT_1(
         com.google.api.services.gmail.Gmail.Users.Messages.GmailImport.class,
         "gmailImport",
         arg("userId", String.class),
@@ -110,8 +110,6 @@ public enum GmailUsersMessagesApiMethod implements ApiMethod {
         "untrash",
         arg("userId", String.class),
         arg("id", String.class));
-
-    
 
     private final ApiMethod apiMethod;
 

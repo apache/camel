@@ -51,7 +51,7 @@ public class ManagedEndpointTest extends ManagementTestSupport {
                 Endpoint result = endpoint("mock:result");
 
                 from("seda:test")
-                    .to(result);
+                        .to(result);
             }
         };
     }

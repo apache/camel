@@ -97,7 +97,7 @@ public final class CxfPayloadConverter {
     public static <T> Node cxfPayLoadToNode(CxfPayload<T> payload, Exchange exchange) {
         List<Element> payloadBodyElements = payload.getBody();
 
-        if (payloadBodyElements.size() > 0) {
+        if (!payloadBodyElements.isEmpty()) {
             return payloadBodyElements.get(0);
         }
         return null;
@@ -107,7 +107,7 @@ public final class CxfPayloadConverter {
     public static <T> Source cxfPayLoadToSource(CxfPayload<T> payload, Exchange exchange) {
         List<Source> payloadBody = payload.getBodySources();
 
-        if (payloadBody.size() > 0) {
+        if (!payloadBody.isEmpty()) {
             return payloadBody.get(0);
         }
         return null;
@@ -130,15 +130,15 @@ public final class CxfPayloadConverter {
                     // many of the common format that can have a Source created
                     // directly
                     if (value instanceof InputStream) {
-                        src = new StreamSource((InputStream)value);
+                        src = new StreamSource((InputStream) value);
                     } else if (value instanceof Reader) {
-                        src = new StreamSource((Reader)value);
+                        src = new StreamSource((Reader) value);
                     } else if (value instanceof String) {
-                        src = new StreamSource(new StringReader((String)value));
+                        src = new StreamSource(new StringReader((String) value));
                     } else if (value instanceof Node) {
-                        src = new DOMSource((Node)value);
+                        src = new DOMSource((Node) value);
                     } else if (value instanceof Source) {
-                        src = (Source)value;
+                        src = (Source) value;
                     }
                     if (src == null) {
                         // assuming staxsource is preferred, otherwise use the
@@ -152,29 +152,29 @@ public final class CxfPayloadConverter {
                         }
                     }
                     if (src != null) {
-                        return (T)sourceToCxfPayload(src, exchange);
+                        return (T) sourceToCxfPayload(src, exchange);
                     }
                 }
                 TypeConverter tc = registry.lookup(NodeList.class, value.getClass());
                 if (tc != null) {
                     NodeList nodeList = tc.convertTo(NodeList.class, exchange, value);
-                    return (T)nodeListToCxfPayload(nodeList, exchange);
+                    return (T) nodeListToCxfPayload(nodeList, exchange);
                 }
                 tc = registry.lookup(Document.class, value.getClass());
                 if (tc != null) {
                     Document document = tc.convertTo(Document.class, exchange, value);
-                    return (T)documentToCxfPayload(document, exchange);
+                    return (T) documentToCxfPayload(document, exchange);
                 }
                 // maybe we can convert via an InputStream
                 CxfPayload<?> p;
                 p = convertVia(InputStream.class, exchange, value, registry);
                 if (p != null) {
-                    return (T)p;
+                    return (T) p;
                 }
                 // String is the converter of last resort
                 p = convertVia(String.class, exchange, value, registry);
                 if (p != null) {
-                    return (T)p;
+                    return (T) p;
                 }
             } catch (RuntimeCamelException e) {
                 // the internal conversion to XML can throw an exception if the content is not XML
@@ -206,7 +206,7 @@ public final class CxfPayloadConverter {
                 TypeConverter tc = registry.lookup(type, XMLStreamReader.class);
                 if (tc != null && (s instanceof StaxSource || s instanceof StAXSource)) {
                     XMLStreamReader r = (s instanceof StAXSource)
-                            ? ((StAXSource)s).getXMLStreamReader() : ((StaxSource) s).getXMLStreamReader();
+                            ? ((StAXSource) s).getXMLStreamReader() : ((StaxSource) s).getXMLStreamReader();
                     if (payload.getNsMap() != null) {
                         r = new DelegatingXMLStreamReader(r, payload.getNsMap());
                     }
@@ -260,7 +260,8 @@ public final class CxfPayloadConverter {
         return null;
     }
 
-    private static <T, V> CxfPayload<T> convertVia(Class<V> via, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    private static <
+            T, V> CxfPayload<T> convertVia(Class<V> via, Exchange exchange, Object value, TypeConverterRegistry registry) {
         TypeConverter tc = registry.lookup(via, value.getClass());
         if (tc != null) {
             TypeConverter tc1 = registry.lookup(Document.class, via);

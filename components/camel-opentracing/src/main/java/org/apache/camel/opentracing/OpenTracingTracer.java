@@ -38,15 +38,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To use OpenTracing with Camel then setup this {@link OpenTracingTracer} in
- * your Camel application.
+ * To use OpenTracing with Camel then setup this {@link OpenTracingTracer} in your Camel application.
  * <p/>
- * This class is implemented as both an
- * {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that
- * allows to trap when Camel starts/ends an {@link Exchange} being routed using
- * the {@link RoutePolicy} and during the routing if the {@link Exchange} sends
- * messages, then we track them using the
- * {@link org.apache.camel.spi.EventNotifier}.
+ * This class is implemented as both an {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that allows
+ * to trap when Camel starts/ends an {@link Exchange} being routed using the {@link RoutePolicy} and during the routing
+ * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
 @ManagedResource(description = "OpenTracingTracer")
 public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
@@ -60,14 +56,18 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
 
     private String mapToSpanKind(SpanKind kind) {
         switch (kind) {
-            case SPAN_KIND_CLIENT: return Tags.SPAN_KIND_CLIENT;
-            case SPAN_KIND_SERVER: return Tags.SPAN_KIND_SERVER;
-            case CONSUMER: return Tags.SPAN_KIND_CONSUMER;
-            case PRODUCER: return Tags.SPAN_KIND_PRODUCER;
-            default: return null;
+            case SPAN_KIND_CLIENT:
+                return Tags.SPAN_KIND_CLIENT;
+            case SPAN_KIND_SERVER:
+                return Tags.SPAN_KIND_SERVER;
+            case CONSUMER:
+                return Tags.SPAN_KIND_CONSUMER;
+            case PRODUCER:
+                return Tags.SPAN_KIND_PRODUCER;
+            default:
+                return null;
         }
     }
-
 
     protected void initTracer() {
         if (tracer == null) {
@@ -97,7 +97,8 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
         }
     }
 
-    @Override protected SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent) {
+    @Override
+    protected SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent) {
         SpanBuilder spanBuilder = tracer.buildSpan(operationName).withTag(Tags.SPAN_KIND.getKey(), mapToSpanKind(kind));
         if (parent != null) {
             io.opentracing.Span parentSpan = ((OpenTracingSpanAdapter) parent).getOpenTracingSpan();
@@ -106,14 +107,17 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
         return new OpenTracingSpanAdapter(spanBuilder.start());
     }
 
-    @Override protected SpanAdapter startExchangeBeginSpan(Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
+    @Override
+    protected SpanAdapter startExchangeBeginSpan(
+            Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
         SpanBuilder builder = tracer.buildSpan(operationName);
         if (parent != null) {
             // we found a Span already associated with this exchange, use it as parent
             Span parentFromExchange = ((OpenTracingSpanAdapter) parent).getOpenTracingSpan();
             builder.asChildOf(parentFromExchange);
         } else {
-            SpanContext parentFromHeaders = tracer.extract(Format.Builtin.TEXT_MAP, new OpenTracingExtractAdapter(sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding)));
+            SpanContext parentFromHeaders = tracer.extract(Format.Builtin.TEXT_MAP,
+                    new OpenTracingExtractAdapter(sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding)));
 
             if (parentFromHeaders != null) {
                 // this means it's an inter-process request or the context was manually injected into the headers
@@ -144,6 +148,7 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
 
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
         OpenTracingSpanAdapter openTracingSpanWrapper = (OpenTracingSpanAdapter) span;
-        tracer.inject(openTracingSpanWrapper.getOpenTracingSpan().context(), Format.Builtin.TEXT_MAP, new OpenTracingInjectAdapter(adapter));
+        tracer.inject(openTracingSpanWrapper.getOpenTracingSpan().context(), Format.Builtin.TEXT_MAP,
+                new OpenTracingInjectAdapter(adapter));
     }
 }

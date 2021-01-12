@@ -24,7 +24,7 @@ public final class TestConstants {
     public static final int TEST_GATEWAY_PORT = 7654;
     public static final int TEST_FEEDBACK_PORT = 7843;
     public static final String TEST_HOST = "localhost";
-    
+
     private TestConstants() {
     }
 }

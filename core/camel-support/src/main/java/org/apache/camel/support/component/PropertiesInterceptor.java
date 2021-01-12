@@ -24,8 +24,9 @@ import java.util.Map;
 public interface PropertiesInterceptor {
 
     /**
-     * Intercept method invocation arguments used to find and invoke API method.
-     * Can be overridden to add custom/hidden method arguments.
+     * Intercept method invocation arguments used to find and invoke API method. Can be overridden to add custom/hidden
+     * method arguments.
+     * 
      * @param properties method invocation arguments.
      */
     void interceptProperties(Map<String, Object> properties);

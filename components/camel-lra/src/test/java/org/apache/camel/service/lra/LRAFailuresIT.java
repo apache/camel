@@ -56,7 +56,6 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
         end.assertIsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 

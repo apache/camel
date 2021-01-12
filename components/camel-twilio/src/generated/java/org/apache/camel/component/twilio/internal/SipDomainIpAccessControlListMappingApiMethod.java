@@ -70,8 +70,6 @@ public enum SipDomainIpAccessControlListMappingApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathDomainSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private SipDomainIpAccessControlListMappingApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

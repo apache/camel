@@ -66,8 +66,8 @@ public final class HttpHelper {
      * <p/>
      * The content type will be set to {@link HttpConstants#CONTENT_TYPE_JAVA_SERIALIZED_OBJECT}
      *
-     * @param response servlet response
-     * @param target   object to write
+     * @param  response    servlet response
+     * @param  target      object to write
      * @throws IOException is thrown if error writing
      */
     public static void writeObjectToServletResponse(ServletResponse response, Object target) throws IOException {
@@ -78,8 +78,8 @@ public final class HttpHelper {
     /**
      * Writes the given object as response body to the output stream
      *
-     * @param stream output stream
-     * @param target   object to write
+     * @param  stream      output stream
+     * @param  target      object to write
      * @throws IOException is thrown if error writing
      */
     public static void writeObjectToStream(OutputStream stream, Object target) throws IOException {
@@ -92,28 +92,28 @@ public final class HttpHelper {
     /**
      * Deserializes the input stream to a Java object
      *
-     * @param is input stream for the Java object
-     * @return the java object, or <tt>null</tt> if input stream was <tt>null</tt>
-     * @throws ClassNotFoundException is thrown if class not found
-     * @throws IOException can be thrown
-     * @deprecated Camel 3.0 
-     * Please use the one which has the parameter of camel context
+     * @param      is                     input stream for the Java object
+     * @return                            the java object, or <tt>null</tt> if input stream was <tt>null</tt>
+     * @throws     ClassNotFoundException is thrown if class not found
+     * @throws     IOException            can be thrown
+     * @deprecated                        Camel 3.0 Please use the one which has the parameter of camel context
      */
     @Deprecated
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
         return deserializeJavaObjectFromStream(is, null);
     }
-    
+
     /**
      * Deserializes the input stream to a Java object
      *
-     * @param is input stream for the Java object
-     * @param context the camel context which could help us to apply the customer classloader
-     * @return the java object, or <tt>null</tt> if input stream was <tt>null</tt>
+     * @param  is                     input stream for the Java object
+     * @param  context                the camel context which could help us to apply the customer classloader
+     * @return                        the java object, or <tt>null</tt> if input stream was <tt>null</tt>
      * @throws ClassNotFoundException is thrown if class not found
-     * @throws IOException can be thrown
+     * @throws IOException            can be thrown
      */
-    public static Object deserializeJavaObjectFromStream(InputStream is, CamelContext context) throws ClassNotFoundException, IOException {
+    public static Object deserializeJavaObjectFromStream(InputStream is, CamelContext context)
+            throws ClassNotFoundException, IOException {
         if (is == null) {
             return null;
         }
@@ -132,9 +132,9 @@ public final class HttpHelper {
     /**
      * Reads the request body from the given http servlet request.
      *
-     * @param request  http servlet request
-     * @param exchange the exchange
-     * @return the request body, can be <tt>null</tt> if no body
+     * @param  request     http servlet request
+     * @param  exchange    the exchange
+     * @return             the request body, can be <tt>null</tt> if no body
      * @throws IOException is thrown if error reading request body
      */
     public static Object readRequestBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
@@ -142,13 +142,13 @@ public final class HttpHelper {
         // TODO should readRequestBodyFromInputStream() be invoked instead?
         return readResponseBodyFromInputStream(is, exchange);
     }
-    
+
     /**
      * Reads the request body from the given input stream.
      *
-     * @param is       the input stream
-     * @param exchange the exchange
-     * @return the request body, can be <tt>null</tt> if no body
+     * @param  is          the input stream
+     * @param  exchange    the exchange
+     * @return             the request body, can be <tt>null</tt> if no body
      * @throws IOException is thrown if error reading request body
      */
     public static Object readRequestBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
@@ -166,13 +166,12 @@ public final class HttpHelper {
         }
     }
 
-
     /**
      * Reads the response body from the given input stream.
      *
-     * @param is       the input stream
-     * @param exchange the exchange
-     * @return the response body, can be <tt>null</tt> if no body
+     * @param  is          the input stream
+     * @param  exchange    the exchange
+     * @return             the response body, can be <tt>null</tt> if no body
      * @throws IOException is thrown if error reading response body
      */
     public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
@@ -192,9 +191,9 @@ public final class HttpHelper {
     /**
      * Creates the URL to invoke.
      *
-     * @param exchange the exchange
-     * @param endpoint the endpoint
-     * @return the URL to invoke
+     * @param  exchange the exchange
+     * @param  endpoint the endpoint
+     * @return          the URL to invoke
      */
     public static String createURL(Exchange exchange, HttpCommonEndpoint endpoint) {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
@@ -249,10 +248,10 @@ public final class HttpHelper {
     /**
      * Creates the URI to invoke.
      *
-     * @param exchange the exchange
-     * @param url      the url to invoke
-     * @param endpoint the endpoint
-     * @return the URI to invoke
+     * @param  exchange the exchange
+     * @param  url      the url to invoke
+     * @param  endpoint the endpoint
+     * @return          the URI to invoke
      */
     public static URI createURI(Exchange exchange, String url, HttpCommonEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
@@ -284,12 +283,12 @@ public final class HttpHelper {
     /**
      * Appends the key/value to the headers.
      * <p/>
-     * This implementation supports keys with multiple values. In such situations the value
-     * will be a {@link java.util.List} that contains the multiple values.
+     * This implementation supports keys with multiple values. In such situations the value will be a
+     * {@link java.util.List} that contains the multiple values.
      *
-     * @param headers  headers
-     * @param key      the key
-     * @param value    the value
+     * @param headers headers
+     * @param key     the key
+     * @param value   the value
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
@@ -300,14 +299,13 @@ public final class HttpHelper {
     /**
      * Extracts the parameter value.
      * <p/>
-     * This implementation supports HTTP multi value parameters which
-     * is based on the syntax of <tt>[value1, value2, value3]</tt> by returning
-     * a {@link List} containing the values.
+     * This implementation supports HTTP multi value parameters which is based on the syntax of
+     * <tt>[value1, value2, value3]</tt> by returning a {@link List} containing the values.
      * <p/>
      * If the value is not a HTTP mulit value the value is returned as is.
      *
-     * @param value the parameter value
-     * @return the extracted parameter value, see more details in javadoc.
+     * @param  value the parameter value
+     * @return       the extracted parameter value, see more details in javadoc.
      */
     public static Object extractHttpParameterValue(String value) {
         return org.apache.camel.http.base.HttpHelper.extractHttpParameterValue(value);
@@ -316,11 +314,12 @@ public final class HttpHelper {
     /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
      *
-     * @param exchange  the exchange
-     * @return the created method
+     * @param  exchange           the exchange
+     * @return                    the created method
      * @throws URISyntaxException
      */
-    public static HttpMethods createMethod(Exchange exchange, HttpCommonEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
+    public static HttpMethods createMethod(Exchange exchange, HttpCommonEndpoint endpoint, boolean hasPayload)
+            throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         // We need also check the HTTP_URI header query part
@@ -366,9 +365,9 @@ public final class HttpHelper {
     /**
      * Checks whether the given http status code is within the ok range
      *
-     * @param statusCode the status code
-     * @param okStatusCodeRange the ok range (inclusive)
-     * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
+     * @param  statusCode        the status code
+     * @param  okStatusCodeRange the ok range (inclusive)
+     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
         return org.apache.camel.http.base.HttpHelper.isStatusCodeOk(statusCode, okStatusCodeRange);

@@ -44,8 +44,8 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     }
 
     @Override
-    protected BoxApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return BoxApiName.fromValue(apiNameStr);
+    protected BoxApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(BoxApiName.class, apiNameStr);
     }
 
     /**
@@ -74,7 +74,8 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, BoxApiName apiName,
+    protected Endpoint createEndpoint(
+            String uri, String methodName, BoxApiName apiName,
             BoxConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);

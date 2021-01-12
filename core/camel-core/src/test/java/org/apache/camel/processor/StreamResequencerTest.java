@@ -98,7 +98,8 @@ public class StreamResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(header("seqnum")).stream().timeout(1000).deliveryAttemptInterval(10).to("mock:result");
+                from("direct:start").resequence(header("seqnum")).stream().timeout(1000).deliveryAttemptInterval(10)
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

@@ -39,11 +39,13 @@ public class RoasterEndpointInjectTest {
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyCdiRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MyCdiRouteBuilder.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
         List<CamelEndpointDetails> details = new ArrayList<>();
-        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".", "src/test/java/org/apache/camel/parser/java/MyCdiRouteBuilder.java", details);
+        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".",
+                "src/test/java/org/apache/camel/parser/java/MyCdiRouteBuilder.java", details);
         LOG.info("{}", details);
 
         assertEquals("timer:foo?period=4999", details.get(0).getEndpointUri());
@@ -68,8 +70,8 @@ public class RoasterEndpointInjectTest {
         assertEquals("mock:foo?retainFirst=1", details.get(6).getEndpointUri());
         assertEquals("45", details.get(6).getLineNumber());
         assertEquals("46", details.get(6).getLineNumberEnd());
-        assertEquals(1438, details.get(6).getAbsolutePosition());
-        assertEquals(17, details.get(6).getLinePosition());
+        assertEquals(1454, details.get(6).getAbsolutePosition());
+        assertEquals(21, details.get(6).getLinePosition());
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {

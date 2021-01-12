@@ -17,16 +17,8 @@
 package org.apache.camel.component.geocoder;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
-
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class GeoCoderApiKeyTestBase extends CamelTestSupport {
-
-    @BeforeEach
-    public void before() {
-        assumeTrue(getApiKey() != null, "API key not found in CAMEL_GEOCODER_APIKEY environment variable, skipping this test");
-    }
 
     protected String getApiKey() {
         return System.getenv("CAMEL_GEOCODER_APIKEY");

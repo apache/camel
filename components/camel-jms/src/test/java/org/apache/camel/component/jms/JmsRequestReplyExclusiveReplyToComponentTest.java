@@ -29,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Using exclusive fixed replyTo queues should be faster as there is no need for
- * JMSMessage selectors.
+ * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
 public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSupport {
 
@@ -65,7 +64,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSuppo
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

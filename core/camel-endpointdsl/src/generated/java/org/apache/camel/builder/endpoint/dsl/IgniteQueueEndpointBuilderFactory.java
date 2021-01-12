@@ -42,9 +42,12 @@ public interface IgniteQueueEndpointBuilderFactory {
         /**
          * The queue capacity. Default: non-bounded.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param capacity the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder capacity(int capacity) {
             doSetProperty("capacity", capacity);
@@ -53,9 +56,12 @@ public interface IgniteQueueEndpointBuilderFactory {
         /**
          * The queue capacity. Default: non-bounded.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param capacity the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder capacity(String capacity) {
             doSetProperty("capacity", capacity);
@@ -67,10 +73,12 @@ public interface IgniteQueueEndpointBuilderFactory {
          * options.
          * 
          * The option is a:
-         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.CollectionConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder configuration(Object configuration) {
             doSetProperty("configuration", configuration);
@@ -82,10 +90,12 @@ public interface IgniteQueueEndpointBuilderFactory {
          * options.
          * 
          * The option will be converted to a
-         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.CollectionConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder configuration(String configuration) {
             doSetProperty("configuration", configuration);
@@ -102,10 +112,13 @@ public interface IgniteQueueEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -123,10 +136,14 @@ public interface IgniteQueueEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -140,9 +157,12 @@ public interface IgniteQueueEndpointBuilderFactory {
          * RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.queue.IgniteQueueOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder operation(
                 IgniteQueueOperation operation) {
@@ -156,9 +176,12 @@ public interface IgniteQueueEndpointBuilderFactory {
          * RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.queue.IgniteQueueOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -168,10 +191,13 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -182,10 +208,14 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -195,9 +225,12 @@ public interface IgniteQueueEndpointBuilderFactory {
         /**
          * The queue timeout in milliseconds. Default: no timeout.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeoutMillis the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder timeoutMillis(Long timeoutMillis) {
             doSetProperty("timeoutMillis", timeoutMillis);
@@ -206,9 +239,13 @@ public interface IgniteQueueEndpointBuilderFactory {
         /**
          * The queue timeout in milliseconds. Default: no timeout.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeoutMillis the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder timeoutMillis(String timeoutMillis) {
             doSetProperty("timeoutMillis", timeoutMillis);
@@ -218,10 +255,13 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -232,10 +272,14 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -254,41 +298,16 @@ public interface IgniteQueueEndpointBuilderFactory {
             return (IgniteQueueEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIgniteQueueEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedIgniteQueueEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteQueueEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -299,10 +318,14 @@ public interface IgniteQueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteQueueEndpointBuilder synchronous(
                 String synchronous) {
@@ -349,6 +372,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * The queue name.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder igniteQueue(String path) {
             return IgniteQueueEndpointBuilderFactory.endpointBuilder("ignite-queue", path);
@@ -369,6 +393,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder igniteQueue(
                 String componentName,

@@ -41,8 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for
- * {@link BoxCollaborationsManager} APIs.
+ * Test class for {@link BoxCollaborationsManager} APIs.
  */
 public class BoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSupport {
 

@@ -4,8 +4,10 @@ package org.apache.camel.component.aws2.athena;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,10 +25,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonathenaclient":
         case "amazonAthenaClient": target.getConfiguration().setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
         case "clientRequestToken": target.getConfiguration().setClientRequestToken(property(camelContext, java.lang.String.class, value)); return true;
         case "database": target.getConfiguration().setDatabase(property(camelContext, java.lang.String.class, value)); return true;
@@ -78,39 +76,65 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonAthenaClient", software.amazon.awssdk.services.athena.AthenaClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clientRequestToken", java.lang.String.class);
-        answer.put("database", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("encryptionOption", software.amazon.awssdk.services.athena.model.EncryptionOption.class);
-        answer.put("includeTrace", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("kmsKey", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxAttempts", int.class);
-        answer.put("maxResults", java.lang.Integer.class);
-        answer.put("nextToken", java.lang.String.class);
-        answer.put("operation", org.apache.camel.component.aws2.athena.Athena2Operations.class);
-        answer.put("outputLocation", java.lang.String.class);
-        answer.put("outputType", org.apache.camel.component.aws2.athena.Athena2OutputType.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("queryExecutionId", java.lang.String.class);
-        answer.put("queryString", java.lang.String.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("resetWaitTimeoutOnRetry", boolean.class);
-        answer.put("retry", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("waitTimeout", long.class);
-        answer.put("workGroup", java.lang.String.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonAthenaClient"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonathenaclient":
+        case "amazonAthenaClient": return software.amazon.awssdk.services.athena.AthenaClient.class;
+        case "clientrequesttoken":
+        case "clientRequestToken": return java.lang.String.class;
+        case "database": return java.lang.String.class;
+        case "delay": return long.class;
+        case "encryptionoption":
+        case "encryptionOption": return software.amazon.awssdk.services.athena.model.EncryptionOption.class;
+        case "includetrace":
+        case "includeTrace": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "kmskey":
+        case "kmsKey": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxattempts":
+        case "maxAttempts": return int.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
+        case "nexttoken":
+        case "nextToken": return java.lang.String.class;
+        case "operation": return org.apache.camel.component.aws2.athena.Athena2Operations.class;
+        case "outputlocation":
+        case "outputLocation": return java.lang.String.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.aws2.athena.Athena2OutputType.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "queryexecutionid":
+        case "queryExecutionId": return java.lang.String.class;
+        case "querystring":
+        case "queryString": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "resetwaittimeoutonretry":
+        case "resetWaitTimeoutOnRetry": return boolean.class;
+        case "retry": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "waittimeout":
+        case "waitTimeout": return long.class;
+        case "workgroup":
+        case "workGroup": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -121,10 +145,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonathenaclient":
         case "amazonAthenaClient": return target.getConfiguration().getAmazonAthenaClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientrequesttoken":
         case "clientRequestToken": return target.getConfiguration().getClientRequestToken();
         case "database": return target.getConfiguration().getDatabase();

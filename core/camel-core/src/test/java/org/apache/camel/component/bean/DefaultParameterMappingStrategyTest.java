@@ -134,7 +134,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
             assertNotNull(body);
             assertNotNull(converter);
             assertEquals("Hello", body);
-            assertEquals(new Integer(123), converter.convertTo(Integer.class, "123"));
+            assertEquals(Integer.valueOf(123), converter.convertTo(Integer.class, "123"));
             return "TypeConverter";
         }
 

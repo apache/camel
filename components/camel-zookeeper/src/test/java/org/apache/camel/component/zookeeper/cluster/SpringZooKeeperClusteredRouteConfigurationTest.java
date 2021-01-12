@@ -40,6 +40,7 @@ public class SpringZooKeeperClusteredRouteConfigurationTest extends CamelSpringT
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/zookeeper/cluster/SpringZooKeeperClusteredRouteConfigurationTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/zookeeper/cluster/SpringZooKeeperClusteredRouteConfigurationTest.xml");
     }
 }

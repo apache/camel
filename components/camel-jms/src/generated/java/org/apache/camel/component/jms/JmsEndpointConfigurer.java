@@ -4,8 +4,10 @@ package org.apache.camel.component.jms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -43,8 +45,6 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": target.getConfiguration().setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.getConfiguration().setAutoStartup(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cachelevel":
         case "cacheLevel": target.getConfiguration().setCacheLevel(property(camelContext, int.class, value)); return true;
         case "cachelevelname":
@@ -184,6 +184,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "timetolive":
         case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, long.class, value)); return true;
         case "transacted": target.getConfiguration().setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "transactedinout":
+        case "transactedInOut": target.getConfiguration().setTransactedInOut(property(camelContext, boolean.class, value)); return true;
         case "transactionmanager":
         case "transactionManager": target.getConfiguration().setTransactionManager(property(camelContext, org.springframework.transaction.PlatformTransactionManager.class, value)); return true;
         case "transactionname":
@@ -206,103 +208,192 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("acceptMessagesWhileStopping", boolean.class);
-        answer.put("acknowledgementModeName", java.lang.String.class);
-        answer.put("allowAdditionalHeaders", java.lang.String.class);
-        answer.put("allowNullBody", boolean.class);
-        answer.put("allowReplyManagerQuickStop", boolean.class);
-        answer.put("allowSerializedHeaders", boolean.class);
-        answer.put("alwaysCopyMessage", boolean.class);
-        answer.put("artemisStreamingEnabled", boolean.class);
-        answer.put("asyncConsumer", boolean.class);
-        answer.put("asyncStartListener", boolean.class);
-        answer.put("asyncStopListener", boolean.class);
-        answer.put("autoStartup", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("cacheLevel", int.class);
-        answer.put("cacheLevelName", java.lang.String.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("connectionFactory", javax.jms.ConnectionFactory.class);
-        answer.put("consumerType", org.apache.camel.component.jms.ConsumerType.class);
-        answer.put("correlationProperty", java.lang.String.class);
-        answer.put("defaultTaskExecutorType", org.apache.camel.component.jms.DefaultTaskExecutorType.class);
-        answer.put("deliveryDelay", long.class);
-        answer.put("deliveryMode", java.lang.Integer.class);
-        answer.put("deliveryPersistent", boolean.class);
-        answer.put("destinationResolver", org.springframework.jms.support.destination.DestinationResolver.class);
-        answer.put("disableReplyTo", boolean.class);
-        answer.put("disableTimeToLive", boolean.class);
-        answer.put("durableSubscriptionName", java.lang.String.class);
-        answer.put("eagerLoadingOfProperties", boolean.class);
-        answer.put("eagerPoisonBody", java.lang.String.class);
-        answer.put("errorHandler", org.springframework.util.ErrorHandler.class);
-        answer.put("errorHandlerLogStackTrace", boolean.class);
-        answer.put("errorHandlerLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exceptionListener", javax.jms.ExceptionListener.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("explicitQosEnabled", java.lang.Boolean.class);
-        answer.put("exposeListenerSession", boolean.class);
-        answer.put("forceSendOriginalMessage", boolean.class);
-        answer.put("formatDateHeadersToIso8601", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("idleConsumerLimit", int.class);
-        answer.put("idleTaskExecutionLimit", int.class);
-        answer.put("includeAllJMSXProperties", boolean.class);
-        answer.put("includeSentJMSMessageID", boolean.class);
-        answer.put("jmsKeyFormatStrategy", org.apache.camel.component.jms.JmsKeyFormatStrategy.class);
-        answer.put("jmsMessageType", org.apache.camel.component.jms.JmsMessageType.class);
-        answer.put("lazyCreateTransactionManager", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mapJmsMessage", boolean.class);
-        answer.put("maxConcurrentConsumers", int.class);
-        answer.put("maxMessagesPerTask", int.class);
-        answer.put("messageConverter", org.springframework.jms.support.converter.MessageConverter.class);
-        answer.put("messageCreatedStrategy", org.apache.camel.component.jms.MessageCreatedStrategy.class);
-        answer.put("messageIdEnabled", boolean.class);
-        answer.put("messageListenerContainerFactory", org.apache.camel.component.jms.MessageListenerContainerFactory.class);
-        answer.put("messageTimestampEnabled", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("preserveMessageQos", boolean.class);
-        answer.put("priority", int.class);
-        answer.put("pubSubNoLocal", boolean.class);
-        answer.put("receiveTimeout", long.class);
-        answer.put("recoveryInterval", long.class);
-        answer.put("replyTo", java.lang.String.class);
-        answer.put("replyToCacheLevelName", java.lang.String.class);
-        answer.put("replyToConcurrentConsumers", int.class);
-        answer.put("replyToDeliveryPersistent", boolean.class);
-        answer.put("replyToDestinationSelectorName", java.lang.String.class);
-        answer.put("replyToMaxConcurrentConsumers", int.class);
-        answer.put("replyToOnTimeoutMaxConcurrentConsumers", int.class);
-        answer.put("replyToOverride", java.lang.String.class);
-        answer.put("replyToSameDestinationAllowed", boolean.class);
-        answer.put("replyToType", org.apache.camel.component.jms.ReplyToType.class);
-        answer.put("requestTimeout", long.class);
-        answer.put("requestTimeoutCheckerInterval", long.class);
-        answer.put("selector", java.lang.String.class);
-        answer.put("streamMessageTypeEnabled", boolean.class);
-        answer.put("subscriptionDurable", boolean.class);
-        answer.put("subscriptionName", java.lang.String.class);
-        answer.put("subscriptionShared", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("taskExecutor", org.springframework.core.task.TaskExecutor.class);
-        answer.put("testConnectionOnStartup", boolean.class);
-        answer.put("timeToLive", long.class);
-        answer.put("transacted", boolean.class);
-        answer.put("transactionManager", org.springframework.transaction.PlatformTransactionManager.class);
-        answer.put("transactionName", java.lang.String.class);
-        answer.put("transactionTimeout", int.class);
-        answer.put("transferException", boolean.class);
-        answer.put("transferExchange", boolean.class);
-        answer.put("useMessageIDAsCorrelationID", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("waitForProvisionCorrelationToBeUpdatedCounter", int.class);
-        answer.put("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", long.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptmessageswhilestopping":
+        case "acceptMessagesWhileStopping": return boolean.class;
+        case "acknowledgementmodename":
+        case "acknowledgementModeName": return java.lang.String.class;
+        case "allowadditionalheaders":
+        case "allowAdditionalHeaders": return java.lang.String.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "allowreplymanagerquickstop":
+        case "allowReplyManagerQuickStop": return boolean.class;
+        case "allowserializedheaders":
+        case "allowSerializedHeaders": return boolean.class;
+        case "alwayscopymessage":
+        case "alwaysCopyMessage": return boolean.class;
+        case "artemisstreamingenabled":
+        case "artemisStreamingEnabled": return boolean.class;
+        case "asyncconsumer":
+        case "asyncConsumer": return boolean.class;
+        case "asyncstartlistener":
+        case "asyncStartListener": return boolean.class;
+        case "asyncstoplistener":
+        case "asyncStopListener": return boolean.class;
+        case "autostartup":
+        case "autoStartup": return boolean.class;
+        case "cachelevel":
+        case "cacheLevel": return int.class;
+        case "cachelevelname":
+        case "cacheLevelName": return java.lang.String.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "consumertype":
+        case "consumerType": return org.apache.camel.component.jms.ConsumerType.class;
+        case "correlationproperty":
+        case "correlationProperty": return java.lang.String.class;
+        case "defaulttaskexecutortype":
+        case "defaultTaskExecutorType": return org.apache.camel.component.jms.DefaultTaskExecutorType.class;
+        case "deliverydelay":
+        case "deliveryDelay": return long.class;
+        case "deliverymode":
+        case "deliveryMode": return java.lang.Integer.class;
+        case "deliverypersistent":
+        case "deliveryPersistent": return boolean.class;
+        case "destinationresolver":
+        case "destinationResolver": return org.springframework.jms.support.destination.DestinationResolver.class;
+        case "disablereplyto":
+        case "disableReplyTo": return boolean.class;
+        case "disabletimetolive":
+        case "disableTimeToLive": return boolean.class;
+        case "durablesubscriptionname":
+        case "durableSubscriptionName": return java.lang.String.class;
+        case "eagerloadingofproperties":
+        case "eagerLoadingOfProperties": return boolean.class;
+        case "eagerpoisonbody":
+        case "eagerPoisonBody": return java.lang.String.class;
+        case "errorhandler":
+        case "errorHandler": return org.springframework.util.ErrorHandler.class;
+        case "errorhandlerlogstacktrace":
+        case "errorHandlerLogStackTrace": return boolean.class;
+        case "errorhandlerlogginglevel":
+        case "errorHandlerLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exceptionlistener":
+        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "explicitqosenabled":
+        case "explicitQosEnabled": return java.lang.Boolean.class;
+        case "exposelistenersession":
+        case "exposeListenerSession": return boolean.class;
+        case "forcesendoriginalmessage":
+        case "forceSendOriginalMessage": return boolean.class;
+        case "formatdateheaderstoiso8601":
+        case "formatDateHeadersToIso8601": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "idleconsumerlimit":
+        case "idleConsumerLimit": return int.class;
+        case "idletaskexecutionlimit":
+        case "idleTaskExecutionLimit": return int.class;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": return boolean.class;
+        case "includesentjmsmessageid":
+        case "includeSentJMSMessageID": return boolean.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.jms.JmsKeyFormatStrategy.class;
+        case "jmsmessagetype":
+        case "jmsMessageType": return org.apache.camel.component.jms.JmsMessageType.class;
+        case "lazycreatetransactionmanager":
+        case "lazyCreateTransactionManager": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mapjmsmessage":
+        case "mapJmsMessage": return boolean.class;
+        case "maxconcurrentconsumers":
+        case "maxConcurrentConsumers": return int.class;
+        case "maxmessagespertask":
+        case "maxMessagesPerTask": return int.class;
+        case "messageconverter":
+        case "messageConverter": return org.springframework.jms.support.converter.MessageConverter.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.jms.MessageCreatedStrategy.class;
+        case "messageidenabled":
+        case "messageIdEnabled": return boolean.class;
+        case "messagelistenercontainerfactory":
+        case "messageListenerContainerFactory": return org.apache.camel.component.jms.MessageListenerContainerFactory.class;
+        case "messagetimestampenabled":
+        case "messageTimestampEnabled": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "preservemessageqos":
+        case "preserveMessageQos": return boolean.class;
+        case "priority": return int.class;
+        case "pubsubnolocal":
+        case "pubSubNoLocal": return boolean.class;
+        case "receivetimeout":
+        case "receiveTimeout": return long.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return long.class;
+        case "replyto":
+        case "replyTo": return java.lang.String.class;
+        case "replytocachelevelname":
+        case "replyToCacheLevelName": return java.lang.String.class;
+        case "replytoconcurrentconsumers":
+        case "replyToConcurrentConsumers": return int.class;
+        case "replytodeliverypersistent":
+        case "replyToDeliveryPersistent": return boolean.class;
+        case "replytodestinationselectorname":
+        case "replyToDestinationSelectorName": return java.lang.String.class;
+        case "replytomaxconcurrentconsumers":
+        case "replyToMaxConcurrentConsumers": return int.class;
+        case "replytoontimeoutmaxconcurrentconsumers":
+        case "replyToOnTimeoutMaxConcurrentConsumers": return int.class;
+        case "replytooverride":
+        case "replyToOverride": return java.lang.String.class;
+        case "replytosamedestinationallowed":
+        case "replyToSameDestinationAllowed": return boolean.class;
+        case "replytotype":
+        case "replyToType": return org.apache.camel.component.jms.ReplyToType.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "requesttimeoutcheckerinterval":
+        case "requestTimeoutCheckerInterval": return long.class;
+        case "selector": return java.lang.String.class;
+        case "streammessagetypeenabled":
+        case "streamMessageTypeEnabled": return boolean.class;
+        case "subscriptiondurable":
+        case "subscriptionDurable": return boolean.class;
+        case "subscriptionname":
+        case "subscriptionName": return java.lang.String.class;
+        case "subscriptionshared":
+        case "subscriptionShared": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "taskexecutor":
+        case "taskExecutor": return org.springframework.core.task.TaskExecutor.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
+        case "timetolive":
+        case "timeToLive": return long.class;
+        case "transacted": return boolean.class;
+        case "transactedinout":
+        case "transactedInOut": return boolean.class;
+        case "transactionmanager":
+        case "transactionManager": return org.springframework.transaction.PlatformTransactionManager.class;
+        case "transactionname":
+        case "transactionName": return java.lang.String.class;
+        case "transactiontimeout":
+        case "transactionTimeout": return int.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "transferexchange":
+        case "transferExchange": return boolean.class;
+        case "usemessageidascorrelationid":
+        case "useMessageIDAsCorrelationID": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "waitforprovisioncorrelationtobeupdatedcounter":
+        case "waitForProvisionCorrelationToBeUpdatedCounter": return int.class;
+        case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
+        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": return long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -333,8 +424,6 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "asyncStopListener": return target.getConfiguration().isAsyncStopListener();
         case "autostartup":
         case "autoStartup": return target.getConfiguration().isAutoStartup();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cachelevel":
         case "cacheLevel": return target.getConfiguration().getCacheLevel();
         case "cachelevelname":
@@ -474,6 +563,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "timetolive":
         case "timeToLive": return target.getConfiguration().getTimeToLive();
         case "transacted": return target.getConfiguration().isTransacted();
+        case "transactedinout":
+        case "transactedInOut": return target.getConfiguration().isTransactedInOut();
         case "transactionmanager":
         case "transactionManager": return target.getConfiguration().getTransactionManager();
         case "transactionname":

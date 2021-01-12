@@ -23,20 +23,17 @@ import java.util.Set;
 import org.apache.camel.support.PatternHelper;
 
 /**
- * A default {@link SecurityConstraint} which can be used to define a set of mappings to
- * as constraints.
+ * A default {@link SecurityConstraint} which can be used to define a set of mappings to as constraints.
  * <p/>
- * This constraint will match as <tt>true</tt> if no inclusions has been defined.
- * First all the inclusions is check for matching. If a inclusion matches,
- * then the exclusion is checked, and if any of them matches, then the exclusion
- * will override the match and force returning <tt>false</tt>.
+ * This constraint will match as <tt>true</tt> if no inclusions has been defined. First all the inclusions is check for
+ * matching. If a inclusion matches, then the exclusion is checked, and if any of them matches, then the exclusion will
+ * override the match and force returning <tt>false</tt>.
  * <p/>
  * Wildcards and regular expressions is supported as this implementation uses
  * {@link PatternHelper#matchPattern(String, String)} method for matching.
  * <p/>
- * This restricted constraint allows you to setup context path rules that will restrict
- * access to paths, and then override and have exclusions that may allow access to
- * public paths.
+ * This restricted constraint allows you to setup context path rules that will restrict access to paths, and then
+ * override and have exclusions that may allow access to public paths.
  */
 public class SecurityConstraintMapping implements SecurityConstraint {
 

@@ -23,7 +23,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
-import org.apache.camel.processor.interceptor.BacklogDebugger;
+import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 
@@ -254,12 +254,12 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             }
         }
     }
-    
+
     @Override
     public long getFallbackTimeout() {
         return backlogDebugger.getFallbackTimeout();
     }
-   
+
     @Override
     public void setFallbackTimeout(long fallbackTimeout) {
         backlogDebugger.setFallbackTimeout(fallbackTimeout);

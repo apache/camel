@@ -27,15 +27,14 @@ public class CurrentWeatherConsumerGeolocationProviderTest extends CamelTestSupp
     private static final String APPID = "test";
     private static final String GEOLOCATION_ACCESS_KEY = "IPSTACK_ACCESS_KEY";
     private static final String GEOLOCATION_REQUEST_HOST_IP = "LOCAL_IP";
-    
 
     @Test
     public void checkGeolocationProviderConfig() {
         WeatherEndpoint endpoint = context().getEndpoint("weather:foo?"
-            + "geolocationRequestHostIP=" + GEOLOCATION_REQUEST_HOST_IP 
-            + "&geolocationAccessKey=" + GEOLOCATION_ACCESS_KEY 
-            + "&appid=" + APPID, 
-            WeatherEndpoint.class);
+                                                         + "geolocationRequestHostIP=" + GEOLOCATION_REQUEST_HOST_IP
+                                                         + "&geolocationAccessKey=" + GEOLOCATION_ACCESS_KEY
+                                                         + "&appid=" + APPID,
+                WeatherEndpoint.class);
 
         WeatherConfiguration configuration = endpoint.getConfiguration();
         assertEquals(APPID, configuration.getAppid());

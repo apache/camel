@@ -24,11 +24,10 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * The default {@link DefaultMessageListenerContainer container} which listen for messages
- * on the JMS destination.
+ * The default {@link DefaultMessageListenerContainer container} which listen for messages on the JMS destination.
  * <p/>
- * This implementation extends Springs {@link DefaultMessageListenerContainer} supporting
- * automatic recovery and throttling.
+ * This implementation extends Springs {@link DefaultMessageListenerContainer} supporting automatic recovery and
+ * throttling.
  */
 public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerContainer {
 
@@ -46,9 +45,9 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
     }
 
     /**
-     * Whether this {@link DefaultMessageListenerContainer} allows the {@link #runningAllowed()} to quick stop
-     * in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()} is enabled, and {@link org.apache.camel.CamelContext}
-     * is currently being stopped.
+     * Whether this {@link DefaultMessageListenerContainer} allows the {@link #runningAllowed()} to quick stop in case
+     * {@link JmsConfiguration#isAcceptMessagesWhileStopping()} is enabled, and {@link org.apache.camel.CamelContext} is
+     * currently being stopped.
      */
     protected boolean isAllowQuickStop() {
         return allowQuickStop;
@@ -65,7 +64,8 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
 
         if (quickStop) {
             // log at debug level so its quicker to see we are stopping quicker from the logs
-            logger.debug("runningAllowed() -> false due CamelContext is stopping and endpoint configured to not accept messages while stopping");
+            logger.debug(
+                    "runningAllowed() -> false due CamelContext is stopping and endpoint configured to not accept messages while stopping");
             return false;
         } else {
             // otherwise we only run if the endpoint is running
@@ -83,8 +83,9 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
      * {@link JmsConfiguration#getDefaultTaskExecutorType()}. For more details, refer to the Javadoc of
      * {@link DefaultTaskExecutorType}.
      * <p />
-     * In all cases, it uses the specified bean name and Camel's {@link org.apache.camel.spi.ExecutorServiceManager}
-     * to resolve the thread name.
+     * In all cases, it uses the specified bean name and Camel's {@link org.apache.camel.spi.ExecutorServiceManager} to
+     * resolve the thread name.
+     * 
      * @see JmsConfiguration#setDefaultTaskExecutorType(DefaultTaskExecutorType)
      * @see ThreadPoolTaskExecutor#setBeanName(String)
      */
@@ -121,7 +122,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
     public void stop() throws JmsException {
         if (logger.isDebugEnabled()) {
             logger.debug("Stopping listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
-                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+                         + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
         }
         super.stop();
 
@@ -135,7 +136,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
     public void destroy() {
         if (logger.isDebugEnabled()) {
             logger.debug("Destroying listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
-                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+                         + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
         }
         super.destroy();
 

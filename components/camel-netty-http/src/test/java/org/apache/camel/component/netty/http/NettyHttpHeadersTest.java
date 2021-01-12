@@ -47,8 +47,8 @@ public class NettyHttpHeadersTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

@@ -59,8 +59,7 @@ public class LRAClient implements Closeable {
                 new LRAUrlBuilder()
                         .host(sagaService.getCoordinatorUrl())
                         .path(sagaService.getCoordinatorContextPath())
-                        .build()
-        );
+                        .build());
     }
 
     public CompletableFuture<URL> newLRA() {
@@ -89,7 +88,6 @@ public class LRAClient implements Closeable {
                     .compensation(step.getCompensation())
                     .completion(step.getCompletion());
 
-
             String compensationURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE).build();
             String completionURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE).build();
 
@@ -97,7 +95,6 @@ public class LRAClient implements Closeable {
             link.append('<').append(compensationURL).append('>').append("; rel=compensate");
             link.append(',');
             link.append('<').append(completionURL).append('>').append("; rel=complete");
-
 
             WebTarget joinTarget = client.target(lra.toString());
             if (step.getTimeoutInMilliseconds().isPresent()) {

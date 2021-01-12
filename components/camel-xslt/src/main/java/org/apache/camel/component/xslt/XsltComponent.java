@@ -55,7 +55,8 @@ public class XsltComponent extends DefaultComponent {
     }
 
     /**
-     * To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.
+     * To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with
+     * the option 'uriResolver'.
      */
     public void setUriResolverFactory(XsltUriResolverFactory uriResolverFactory) {
         this.uriResolverFactory = uriResolverFactory;
@@ -77,9 +78,9 @@ public class XsltComponent extends DefaultComponent {
     }
 
     /**
-     * Cache for the resource content (the stylesheet file) when it is loaded.
-     * If set to false Camel will reload the stylesheet file on each message processing. This is good for development.
-     * A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+     * Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the
+     * stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to
+     * reload at runtime via JMX using the clearCachedStylesheet operation.
      */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
@@ -120,7 +121,8 @@ public class XsltComponent extends DefaultComponent {
         return new XsltEndpoint(uri, this);
     }
 
-    protected void configureEndpoint(Endpoint endpoint, final String remaining, Map<String, Object> parameters) throws Exception {
+    protected void configureEndpoint(Endpoint endpoint, final String remaining, Map<String, Object> parameters)
+            throws Exception {
         XsltEndpoint xslt = (XsltEndpoint) endpoint;
         xslt.setContentCache(isContentCache());
 
@@ -132,7 +134,8 @@ public class XsltComponent extends DefaultComponent {
         }
         if (resolver == null) {
             // lookup custom resolver factory to use
-            XsltUriResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
+            XsltUriResolverFactory resolverFactory
+                    = resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
             if (resolverFactory == null) {
                 // not in endpoint then use component specific resolver factory
                 resolverFactory = getUriResolverFactory();

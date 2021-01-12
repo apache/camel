@@ -47,9 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaWithNamedQueryAndParametersTest {
-    
+
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryAndParametersTest.class);
-    
+
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
@@ -91,7 +91,7 @@ public class JpaWithNamedQueryAndParametersTest {
         // now lets assert that there is a result
         results = entityManager.createQuery(queryText).getResultList();
         assertEquals(1, results.size(), "Should have results: " + results);
-        Customer customer = (Customer)results.get(0);
+        Customer customer = (Customer) results.get(0);
         assertEquals("Willem", customer.getName(), "name property");
 
         // now lets create a consumer to consume it
@@ -107,7 +107,7 @@ public class JpaWithNamedQueryAndParametersTest {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertReceivedResult(receivedExchange);
-        
+
         JpaConsumer jpaConsumer = (JpaConsumer) consumer;
         assertURIQueryOption(jpaConsumer);
     }
@@ -118,7 +118,7 @@ public class JpaWithNamedQueryAndParametersTest {
         assertNotNull(result, "Received a POJO");
         assertEquals("Willem", result.getName(), "name property");
     }
-   
+
     protected void assertURIQueryOption(JpaConsumer jpaConsumer) {
         assertEquals("findAllCustomersWithName", jpaConsumer.getNamedQuery());
     }
@@ -134,13 +134,13 @@ public class JpaWithNamedQueryAndParametersTest {
         camelContext.setRegistry(registry);
 
         camelContext.start();
-        
+
         template = camelContext.createProducerTemplate();
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull(value, "Could not find endpoint!");
         assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
-        endpoint = (JpaEndpoint)value;
+        endpoint = (JpaEndpoint) value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
         entityManager = endpoint.createEntityManager();

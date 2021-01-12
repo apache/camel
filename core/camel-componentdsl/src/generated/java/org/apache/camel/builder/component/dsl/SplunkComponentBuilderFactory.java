@@ -37,6 +37,8 @@ public interface SplunkComponentBuilderFactory {
      * Category: iot,monitoring
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
+     * 
+     * @return the dsl builder
      */
     static SplunkComponentBuilder splunk() {
         return new SplunkComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface SplunkComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface SplunkComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,26 +97,35 @@ public interface SplunkComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default SplunkComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SplunkComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use the SplunkConfigurationFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.splunk.SplunkConfigurationFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.splunk.SplunkConfigurationFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param splunkConfigurationFactory the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder splunkConfigurationFactory(
                 org.apache.camel.component.splunk.SplunkConfigurationFactory splunkConfigurationFactory) {
@@ -134,7 +151,7 @@ public interface SplunkComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((SplunkComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SplunkComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((SplunkComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SplunkComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "splunkConfigurationFactory": ((SplunkComponent) component).setSplunkConfigurationFactory((org.apache.camel.component.splunk.SplunkConfigurationFactory) value); return true;
             default: return false;
             }

@@ -50,7 +50,7 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
         });
         assertNotNull(exchange.getIn().getHeader(KinesisFirehose2Constants.RECORD_ID));
     }
-    
+
     @Test
     public void testFirehoseBatchRouting() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -71,7 +71,8 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
+                from("direct:start")
+                        .to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
             }
         };
     }

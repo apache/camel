@@ -4,8 +4,10 @@ package org.apache.camel.component.jclouds;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JcloudsEndpoint target = (JcloudsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -52,34 +52,42 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blobName", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("container", java.lang.String.class);
-        answer.put("directory", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("group", java.lang.String.class);
-        answer.put("hardwareId", java.lang.String.class);
-        answer.put("imageId", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("locationId", java.lang.String.class);
-        answer.put("nodeId", java.lang.String.class);
-        answer.put("nodeState", java.lang.String.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blobname":
+        case "blobName": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "container": return java.lang.String.class;
+        case "directory": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "group": return java.lang.String.class;
+        case "hardwareid":
+        case "hardwareId": return java.lang.String.class;
+        case "imageid":
+        case "imageId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "locationid":
+        case "locationId": return java.lang.String.class;
+        case "nodeid":
+        case "nodeId": return java.lang.String.class;
+        case "nodestate":
+        case "nodeState": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JcloudsEndpoint target = (JcloudsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobname":
         case "blobName": return target.getConfiguration().getBlobName();
         case "bridgeerrorhandler":

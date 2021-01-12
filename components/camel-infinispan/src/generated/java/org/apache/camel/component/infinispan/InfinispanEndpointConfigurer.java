@@ -4,8 +4,10 @@ package org.apache.camel.component.infinispan;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfinispanEndpoint target = (InfinispanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachecontainer":
@@ -36,6 +36,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "customlistener":
         case "customListener": target.getConfiguration().setCustomListener(property(camelContext, org.apache.camel.component.infinispan.InfinispanCustomListener.class, value)); return true;
+        case "defaultvalue":
+        case "defaultValue": target.getConfiguration().setDefaultValue(property(camelContext, java.lang.Object.class, value)); return true;
         case "eventtypes":
         case "eventTypes": target.getConfiguration().setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -44,54 +46,99 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "flags": target.getConfiguration().setFlags(property(camelContext, java.lang.String.class, value)); return true;
         case "hosts": target.getConfiguration().setHosts(property(camelContext, java.lang.String.class, value)); return true;
+        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "oldvalue":
+        case "oldValue": target.getConfiguration().setOldValue(property(camelContext, java.lang.Object.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.infinispan.InfinispanOperation.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "querybuilder":
         case "queryBuilder": target.getConfiguration().setQueryBuilder(property(camelContext, org.apache.camel.component.infinispan.InfinispanQueryBuilder.class, value)); return true;
         case "remappingfunction":
         case "remappingFunction": target.getConfiguration().setRemappingFunction(property(camelContext, java.util.function.BiFunction.class, value)); return true;
         case "resultheader":
         case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.Object.class, value)); return true;
+        case "saslmechanism":
+        case "saslMechanism": target.getConfiguration().setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
+        case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
+        case "securityrealm":
+        case "securityRealm": target.getConfiguration().setSecurityRealm(property(camelContext, java.lang.String.class, value)); return true;
+        case "securityservername":
+        case "securityServerName": target.getConfiguration().setSecurityServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Object.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
-        answer.put("cacheContainerConfiguration", java.lang.Object.class);
-        answer.put("clusteredListener", boolean.class);
-        answer.put("command", java.lang.String.class);
-        answer.put("configurationProperties", java.util.Map.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("customListener", org.apache.camel.component.infinispan.InfinispanCustomListener.class);
-        answer.put("eventTypes", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("flags", java.lang.String.class);
-        answer.put("hosts", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
-        answer.put("queryBuilder", org.apache.camel.component.infinispan.InfinispanQueryBuilder.class);
-        answer.put("remappingFunction", java.util.function.BiFunction.class);
-        answer.put("resultHeader", java.lang.Object.class);
-        answer.put("sync", boolean.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public String[] getAutowiredNames() {
+        return new String[]{"cacheContainer"};
+    }
+
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachecontainer":
+        case "cacheContainer": return org.infinispan.commons.api.BasicCacheContainer.class;
+        case "cachecontainerconfiguration":
+        case "cacheContainerConfiguration": return java.lang.Object.class;
+        case "clusteredlistener":
+        case "clusteredListener": return boolean.class;
+        case "command": return java.lang.String.class;
+        case "configurationproperties":
+        case "configurationProperties": return java.util.Map.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "customlistener":
+        case "customListener": return org.apache.camel.component.infinispan.InfinispanCustomListener.class;
+        case "defaultvalue":
+        case "defaultValue": return java.lang.Object.class;
+        case "eventtypes":
+        case "eventTypes": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "flags": return java.lang.String.class;
+        case "hosts": return java.lang.String.class;
+        case "key": return java.lang.Object.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oldvalue":
+        case "oldValue": return java.lang.Object.class;
+        case "operation": return org.apache.camel.component.infinispan.InfinispanOperation.class;
+        case "password": return java.lang.String.class;
+        case "querybuilder":
+        case "queryBuilder": return org.apache.camel.component.infinispan.InfinispanQueryBuilder.class;
+        case "remappingfunction":
+        case "remappingFunction": return java.util.function.BiFunction.class;
+        case "resultheader":
+        case "resultHeader": return java.lang.Object.class;
+        case "saslmechanism":
+        case "saslMechanism": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "securityrealm":
+        case "securityRealm": return java.lang.String.class;
+        case "securityservername":
+        case "securityServerName": return java.lang.String.class;
+        case "sync": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "value": return java.lang.Object.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfinispanEndpoint target = (InfinispanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachecontainer":
@@ -107,6 +154,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "configurationUri": return target.getConfiguration().getConfigurationUri();
         case "customlistener":
         case "customListener": return target.getConfiguration().getCustomListener();
+        case "defaultvalue":
+        case "defaultValue": return target.getConfiguration().getDefaultValue();
         case "eventtypes":
         case "eventTypes": return target.getConfiguration().getEventTypes();
         case "exceptionhandler":
@@ -115,17 +164,39 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return target.getExchangePattern();
         case "flags": return target.getConfiguration().getFlags();
         case "hosts": return target.getConfiguration().getHosts();
+        case "key": return target.getConfiguration().getKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "oldvalue":
+        case "oldValue": return target.getConfiguration().getOldValue();
         case "operation": return target.getConfiguration().getOperation();
+        case "password": return target.getConfiguration().getPassword();
         case "querybuilder":
         case "queryBuilder": return target.getConfiguration().getQueryBuilder();
         case "remappingfunction":
         case "remappingFunction": return target.getConfiguration().getRemappingFunction();
         case "resultheader":
         case "resultHeader": return target.getConfiguration().getResultHeader();
+        case "saslmechanism":
+        case "saslMechanism": return target.getConfiguration().getSaslMechanism();
+        case "secure": return target.getConfiguration().isSecure();
+        case "securityrealm":
+        case "securityRealm": return target.getConfiguration().getSecurityRealm();
+        case "securityservername":
+        case "securityServerName": return target.getConfiguration().getSecurityServerName();
         case "sync": return target.getConfiguration().isSync();
         case "synchronous": return target.isSynchronous();
+        case "username": return target.getConfiguration().getUsername();
+        case "value": return target.getConfiguration().getValue();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurationproperties":
+        case "configurationProperties": return java.lang.String.class;
         default: return null;
         }
     }

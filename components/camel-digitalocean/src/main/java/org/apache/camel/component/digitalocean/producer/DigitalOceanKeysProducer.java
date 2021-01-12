@@ -59,7 +59,6 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
     }
 
-
     private void getKey(Exchange exchange) throws Exception {
         Integer keyId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
         String fingerprint = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_FINGERPRINT, String.class);
@@ -70,7 +69,8 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         } else if (ObjectHelper.isNotEmpty(fingerprint)) {
             key = getEndpoint().getDigitalOceanClient().getKeyInfo(fingerprint);
         } else {
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+            throw new IllegalArgumentException(
+                    DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
         }
         LOG.trace("Key [{}] ", key);
         exchange.getOut().setBody(key);
@@ -92,13 +92,13 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         } else if (ObjectHelper.isNotEmpty(fingerprint)) {
             delete = getEndpoint().getDigitalOceanClient().deleteKey(fingerprint);
         } else {
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+            throw new IllegalArgumentException(
+                    DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
         }
 
         LOG.trace("Delete Key {}", delete);
         exchange.getOut().setBody(delete);
     }
-
 
     private void createKey(Exchange exchange) throws Exception {
         Key key = new Key();
@@ -142,12 +142,12 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         } else if (ObjectHelper.isNotEmpty(fingerprint)) {
             key = getEndpoint().getDigitalOceanClient().updateKey(fingerprint, name);
         } else {
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+            throw new IllegalArgumentException(
+                    DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
         }
 
         LOG.trace("Update Key [{}] ", key);
         exchange.getOut().setBody(key);
     }
-
 
 }

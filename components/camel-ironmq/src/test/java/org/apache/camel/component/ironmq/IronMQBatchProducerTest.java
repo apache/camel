@@ -39,7 +39,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
 
     @Test
     public void testProduceBatch() throws Exception {
-        String[] messages = new String[] {"{foo:bar}", "{foo2:bar2}"};
+        String[] messages = new String[] { "{foo:bar}", "{foo2:bar2}" };
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody("direct:start", messages);
@@ -47,13 +47,13 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
         assertThat(mock.getReceivedExchanges().size(), equalTo(1));
         Object header = mock.getReceivedExchanges().get(0).getIn().getHeader(IronMQConstants.MESSAGE_ID);
         assertIsInstanceOf(Ids.class, header);
-        assertThat(((Ids)header).getSize(), equalTo(2));
+        assertThat(((Ids) header).getSize(), equalTo(2));
     }
 
     @Test
     public void testProduceBatchWithIllegalPayload() throws Exception {
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:start", Arrays.asList("foo", "bar")));
+                () -> template.sendBody("direct:start", Arrays.asList("foo", "bar")));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq", "testqueue", parameters);
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq", "testqueue", parameters);
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

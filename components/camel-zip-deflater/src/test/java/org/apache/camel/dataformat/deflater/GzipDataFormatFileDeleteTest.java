@@ -64,9 +64,9 @@ public class GzipDataFormatFileDeleteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
-                    .marshal().gzipDeflater()
-                    .to("file:target/data/gzip/out?fileName=${file:name}.gz")
-                    .to("mock:result");
+                        .marshal().gzipDeflater()
+                        .to("file:target/data/gzip/out?fileName=${file:name}.gz")
+                        .to("mock:result");
             }
         };
     }

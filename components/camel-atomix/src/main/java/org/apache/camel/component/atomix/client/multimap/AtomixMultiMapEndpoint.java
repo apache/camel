@@ -25,13 +25,14 @@ import org.apache.camel.spi.UriParam;
  * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmultimap">distributed multi map</a>.
  */
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "atomix-multimap",
-    title = "Atomix MultiMap",
-    syntax = "atomix-multimap:resourceName",
-    producerOnly = true,
-    label = "clustering")
-public final class AtomixMultiMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMultiMapComponent, AtomixMultiMapConfiguration> {
+             firstVersion = "2.20.0",
+             scheme = "atomix-multimap",
+             title = "Atomix MultiMap",
+             syntax = "atomix-multimap:resourceName",
+             producerOnly = true,
+             label = "clustering")
+public final class AtomixMultiMapEndpoint
+        extends AbstractAtomixClientEndpoint<AtomixMultiMapComponent, AtomixMultiMapConfiguration> {
     @UriParam
     private AtomixMultiMapConfiguration configuration;
 

@@ -40,7 +40,6 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         return decoders;
     }
 
-
     @Test
     public void testContentType() throws Exception {
 
@@ -53,8 +52,6 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         // The decoded out has some space to clean up.
         assertEquals("Bye World", out.trim());
 
-
-
     }
 
     @Override
@@ -63,7 +60,7 @@ public class NettyHttpCompressTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?compression=true")
-                    .transform().constant("Bye World").setHeader("content-type").constant("text/plain; charset=\"UTF-8\"");
+                        .transform().constant("Bye World").setHeader("content-type").constant("text/plain; charset=\"UTF-8\"");
             }
         };
     }

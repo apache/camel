@@ -34,7 +34,8 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
     private QueueConsumerTask queueConsumerTask;
     private HazelcastQueueConfiguration config;
 
-    public HazelcastQueueConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName, final HazelcastQueueConfiguration configuration) {
+    public HazelcastQueueConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
+                                  final HazelcastQueueConfiguration configuration) {
         super(hazelcastInstance, endpoint, processor, cacheName);
         this.processor = processor;
         this.config = configuration;
@@ -43,7 +44,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = ((HazelcastQueueEndpoint)getEndpoint()).createExecutor();
+        executor = ((HazelcastQueueEndpoint) getEndpoint()).createExecutor();
 
         CamelItemListener camelItemListener = new CamelItemListener(this, cacheName);
         queueConsumerTask = new QueueConsumerTask(camelItemListener);
@@ -84,7 +85,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                     try {
                         final Object body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
                         Exchange exchange = getEndpoint().createExchange();
-                        exchange.getOut().setBody(body);
+                        exchange.getIn().setBody(body);
                         try {
                             processor.process(exchange);
                         } catch (Exception e) {

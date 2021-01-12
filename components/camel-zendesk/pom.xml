@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-zendesk</artifactId>
@@ -83,10 +83,10 @@
                                 <api>
                                     <apiName />
                                     <proxyClass>org.zendesk.client.v2.Zendesk</proxyClass>
-                                    <fromJavadoc>
-                                        <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets
+                                    <fromJavasource>
+                                        <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets|createMappe
                                         </excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>deleteSuspendedTicket|checkHasId</method>
@@ -125,7 +125,7 @@
                                             <replacement>articleAttachments</replacement>
                                         </substitution>
                                         <substitution>
-                                            <method>createTickets|createTicketsAsync</method>
+                                            <method>createTickets|createTicketsAsync|updateTickets|updateTicketsAsync</method>
                                             <argType>java.util.List</argType>
                                             <argName>tickets</argName>
                                             <replacement>ticketList</replacement>
@@ -143,10 +143,22 @@
                                             <replacement>userId0</replacement>
                                         </substitution>
                                         <substitution>
-                                            <method>createOrganizations|createOrganizationsAsync</method>
+                                            <method>createOrganizations|createOrganizationsAsync|updateOrganizations|updateOrganizationsAsync</method>
                                             <argType>java.util.List</argType>
                                             <argName>organizations</argName>
                                             <replacement>organizationList</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>createOrganizationMemberships|createOrganizationMembershipsAsync</method>
+                                            <argType>java.util.List</argType>
+                                            <argName>organizationMemberships</argName>
+                                            <replacement>organizationMembershipList</replacement>
+                                        </substitution>
+                                        <substitution>
+                                            <method>createUsers|createUsersAsync|createOrUpdateUsers|createOrUpdateUsersAsync|updateUsers|updateUsersAsync</method>
+                                            <argType>java.util.List</argType>
+                                            <argName>users</argName>
+                                            <replacement>usersList</replacement>
                                         </substitution>
                                         <substitution>
                                             <method>updateTrigger</method>
@@ -166,6 +178,12 @@
                                             <argName>articleID</argName>
                                             <replacement>articleId</replacement>
                                         </substitution>
+                                        <substitution>
+                                            <method>getSearchResults</method>
+                                            <argType>java.lang.String</argType>
+                                            <argName>params</argName>
+                                            <replacement>parameters</replacement>
+                                        </substitution>
                                     </substitutions>
                                 </api>
                             </apis>
@@ -177,7 +195,7 @@
                         <groupId>com.cloudbees.thirdparty</groupId>
                         <artifactId>zendesk-java-client</artifactId>
                         <version>${zendesk-client-version}</version>
-                        <type>javadoc</type>
+                        <classifier>sources</classifier>
                     </dependency>
                 </dependencies>
             </plugin>

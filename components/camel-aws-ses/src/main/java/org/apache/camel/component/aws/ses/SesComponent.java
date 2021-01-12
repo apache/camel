@@ -55,7 +55,8 @@ public class SesComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSESClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
         }
 
@@ -72,7 +73,7 @@ public class SesComponent extends DefaultComponent {
     public void setConfiguration(SesConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     private void checkAndSetRegistryClient(SesConfiguration configuration) {
         Set<AmazonSimpleEmailService> clients = getCamelContext().getRegistry().findByType(AmazonSimpleEmailService.class);
         if (clients.size() == 1) {

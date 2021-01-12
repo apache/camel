@@ -62,7 +62,6 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

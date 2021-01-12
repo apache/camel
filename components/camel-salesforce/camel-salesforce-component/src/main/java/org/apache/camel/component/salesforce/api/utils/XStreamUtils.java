@@ -36,14 +36,19 @@ import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 
 public final class XStreamUtils {
-    private static final String PERMISSIONS_PROPERTY_DEFAULT = "java.lang.*,java.util.*";
+    public static String packageWhiteList = "";
+
+    private static final String PERMISSIONS_PROPERTY_DEFAULT
+            = "org.apache.camel.**";
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
 
     private XStreamUtils() {
     }
 
     public static void addDefaultPermissions(final XStream xstream) {
-        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY, PERMISSIONS_PROPERTY_DEFAULT));
+        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY,
+                PERMISSIONS_PROPERTY_DEFAULT));
+        addPermissions(xstream, packageWhiteList);
     }
 
     public static void addPermissions(final XStream xstream, final String permissions) {
@@ -65,10 +70,10 @@ public final class XStreamUtils {
                 typePermission = AnyTypePermission.ANY;
             } else if (pterm.indexOf('*') < 0) {
                 // exact type
-                typePermission = new ExplicitTypePermission(new String[] {pterm});
+                typePermission = new ExplicitTypePermission(new String[] { pterm });
             } else if (pterm.length() > 0) {
                 // wildcard type
-                typePermission = new WildcardTypePermission(new String[] {pterm});
+                typePermission = new WildcardTypePermission(new String[] { pterm });
             }
             if (typePermission != null) {
                 if (aod) {
@@ -81,7 +86,8 @@ public final class XStreamUtils {
     }
 
     public static XStream createXStream(final Class<?>... additionalTypes) {
-        final PureJavaReflectionProvider reflectionProvider = new PureJavaReflectionProvider(new FieldDictionary(new AnnotationFieldKeySorter()));
+        final PureJavaReflectionProvider reflectionProvider
+                = new PureJavaReflectionProvider(new FieldDictionary(new AnnotationFieldKeySorter()));
 
         // use NoNameCoder to avoid escaping __ in custom field names
         // and CompactWriter to avoid pretty printing
@@ -94,6 +100,7 @@ public final class XStreamUtils {
         };
 
         final XStream result = new XStream(reflectionProvider, hierarchicalStreamDriver);
+        XStream.setupDefaultSecurity(result);
         result.aliasSystemAttribute(null, "class");
         result.ignoreUnknownElements();
         XStreamUtils.addDefaultPermissions(result);

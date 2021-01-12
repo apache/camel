@@ -47,7 +47,7 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getTopic("foo")).thenReturn(topic);
+        when(hazelcastInstance.<String> getTopic("foo")).thenReturn(topic);
         when(topic.addMessageListener(any())).thenReturn(UUID.randomUUID());
     }
 
@@ -79,10 +79,10 @@ public class HazelcastTopicConsumerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
                 from(String.format("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)).log("object...")
                         .choice()
-                            .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.RECEIVED))
-                                .log("...received").to("mock:received")
+                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.RECEIVED))
+                        .log("...received").to("mock:received")
                         .otherwise()
-                            .log("fail!");
+                        .log("fail!");
             }
         };
     }

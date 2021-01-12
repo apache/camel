@@ -89,13 +89,13 @@ public class ManagedRoutingSlipTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .routingSlip(header("whereTo")).id("mysend");
+                        .routingSlip(header("whereTo")).id("mysend");
 
                 from("direct:foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
 
                 from("direct:bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

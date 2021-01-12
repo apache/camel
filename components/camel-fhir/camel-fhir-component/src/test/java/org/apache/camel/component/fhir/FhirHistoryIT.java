@@ -33,13 +33,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirHistory} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirHistory} APIs. The class source won't be generated
+ * again if the generator MOJO finds it under src/test/java.
  */
 public class FhirHistoryIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirHistoryIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirHistoryApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = FhirApiCollection.getCollection().getApiName(FhirHistoryApiMethod.class).getName();
 
     @Test
     public void testOnInstance() throws Exception {
@@ -96,8 +97,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         // parameter type is Integer
         headers.put("CamelFhir.count", 1);
         // only include the identifier and name
-        headers.put(ExtraParameters.SUBSET_ELEMENTS.getHeaderName(), new String[]{"identifier", "name"});
-
+        headers.put(ExtraParameters.SUBSET_ELEMENTS.getHeaderName(), new String[] { "identifier", "name" });
 
         Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
@@ -112,15 +112,15 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for onInstance
                 from("direct://ON_INSTANCE")
-                    .to("fhir://" + PATH_PREFIX + "/onInstance");
+                        .to("fhir://" + PATH_PREFIX + "/onInstance");
 
                 // test route for onServer
                 from("direct://ON_SERVER")
-                    .to("fhir://" + PATH_PREFIX + "/onServer");
+                        .to("fhir://" + PATH_PREFIX + "/onServer");
 
                 // test route for onType
                 from("direct://ON_TYPE")
-                    .to("fhir://" + PATH_PREFIX + "/onType");
+                        .to("fhir://" + PATH_PREFIX + "/onType");
             }
         };
     }

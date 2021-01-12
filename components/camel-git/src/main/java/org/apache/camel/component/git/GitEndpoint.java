@@ -34,7 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations on git repositories.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = {Category.FILE})
+@UriEndpoint(firstVersion = "2.16.0", scheme = "git", title = "Git", syntax = "git:localPath", category = { Category.FILE })
 public class GitEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -44,22 +44,22 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String branchName;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String tagName;
 
     @UriParam(enums = "commit,tag,branch", label = "consumer")
     private GitType type;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String username;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String password;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String remotePath;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String remoteName;
 
     // Set to true for backward compatibility , better to set to false (native git behavior)
@@ -67,7 +67,8 @@ public class GitEndpoint extends DefaultEndpoint {
     @Metadata(label = "producer")
     private boolean allowEmpty = true;
 
-    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick,remoteAdd,remoteList", label = "producer")
+    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick,remoteAdd,remoteList",
+              label = "producer")
     private String operation;
 
     public GitEndpoint(String uri, GitComponent component) {

@@ -20,6 +20,7 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.support.cache.EmptyProducerCache;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

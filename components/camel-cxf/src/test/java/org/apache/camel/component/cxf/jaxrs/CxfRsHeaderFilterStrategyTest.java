@@ -31,13 +31,15 @@ public class CxfRsHeaderFilterStrategyTest {
         assertTrue(filter.applyFilterToCamelHeaders("content-type", "just a test", null), "Get a wrong filtered result");
         assertTrue(filter.applyFilterToCamelHeaders("Content-Type", "just a test", null), "Get a wrong filtered result");
     }
-    
+
     @Test
     public void testFilterCamelHeaders() throws Exception {
         HeaderFilterStrategy filter = new CxfRsHeaderFilterStrategy();
         assertTrue(filter.applyFilterToCamelHeaders(Exchange.CHARSET_NAME, "just a test", null), "Get a wrong filtered result");
-        assertTrue(filter.applyFilterToCamelHeaders(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, "just a test", null), "Get a wrong filtered result");
-        assertTrue(filter.applyFilterToCamelHeaders("org.apache.camel.such.Header", "just a test", null), "Get a wrong filtered result");
+        assertTrue(filter.applyFilterToCamelHeaders(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, "just a test", null),
+                "Get a wrong filtered result");
+        assertTrue(filter.applyFilterToCamelHeaders("org.apache.camel.such.Header", "just a test", null),
+                "Get a wrong filtered result");
         assertTrue(filter.applyFilterToCamelHeaders("camel.result", "just a test", null), "Get a wrong filtered result");
 
         assertFalse(filter.applyFilterToCamelHeaders("MyWorld", "just a test", null), "Get a wrong filtered result");

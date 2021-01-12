@@ -64,7 +64,7 @@ public class FilerConsumerShouldSkipDoneFilePrefixTest extends ContextTestSuppor
         template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         assertFalse(file.exists(), "Done file should be deleted: " + file);
@@ -75,7 +75,8 @@ public class FilerConsumerShouldSkipDoneFilePrefixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=done-${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/done?doneFileName=done-${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

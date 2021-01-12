@@ -20,9 +20,9 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelContextFactoryBeanTest {
-    
+
     private CamelContextFactoryBean factory;
 
     @BeforeEach
@@ -49,21 +49,21 @@ public class CamelContextFactoryBeanTest {
     public void testGetDefaultUuidGenerator() throws Exception {
         factory.setApplicationContext(new StaticApplicationContext());
         factory.afterPropertiesSet();
-        
+
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
-        
+
         assertTrue(uuidGenerator instanceof DefaultUuidGenerator);
     }
-    
+
     @Test
     public void testGetCustomUuidGenerator() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("uuidGenerator", SimpleUuidGenerator.class);
         factory.setApplicationContext(applicationContext);
         factory.afterPropertiesSet();
-        
+
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
-        
+
         assertTrue(uuidGenerator instanceof SimpleUuidGenerator);
     }
 

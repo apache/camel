@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents the content of a text message to be sent as the result of an inline query.
  *
  * @see <a href="https://core.telegram.org/bots/api#inputtextmessagecontent">
- *     https://core.telegram.org/bots/api#inputtextmessagecontent</a>
+ *      https://core.telegram.org/bots/api#inputtextmessagecontent</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InputTextMessageContent implements InputMessageContent {

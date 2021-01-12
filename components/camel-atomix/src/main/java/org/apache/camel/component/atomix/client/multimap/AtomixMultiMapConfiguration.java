@@ -50,8 +50,7 @@ public class AtomixMultiMapConfiguration extends AtomixClientConfiguration {
     }
 
     /**
-     * The key to use if none is set in the header or to listen for events for
-     * a specific key.
+     * The key to use if none is set in the header or to listen for events for a specific key.
      */
     public void setKey(Object defaultKey) {
         this.key = defaultKey;

@@ -48,7 +48,7 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         assertNotNull(exchange.getMessage().getBody(String.class));
-        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));
     }
 
     @Override
@@ -57,7 +57,8 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:invokeFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient").to("mock:result");
+                from("direct:invokeFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient")
+                        .to("mock:result");
 
             }
         };

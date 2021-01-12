@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerTemplateTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/template?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/template?password=admin";
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
 
         // file should still exists
         Thread.sleep(500);
-        File file = new File(FTP_ROOT_DIR + "/template/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/template/hello.txt");
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 
@@ -96,7 +96,7 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
 
         // file should still exists
         Thread.sleep(500);
-        File file = new File(FTP_ROOT_DIR + "/template/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/template/hello.txt");
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 
@@ -111,7 +111,7 @@ public class FtpConsumerTemplateTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/template/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/template/hello.txt");
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 

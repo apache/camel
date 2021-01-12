@@ -42,9 +42,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder apiVersion(
                 String apiVersion) {
@@ -54,9 +57,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -66,9 +72,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -79,9 +88,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -99,10 +111,13 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -120,10 +135,14 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -133,9 +152,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * Producer operation to do on Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -144,9 +166,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -155,10 +180,13 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: producer
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder portProtocol(
                 String portProtocol) {
@@ -168,9 +196,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder caCertData(
                 String caCertData) {
@@ -180,9 +211,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder caCertFile(
                 String caCertFile) {
@@ -192,9 +226,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -204,9 +241,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -216,9 +256,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -228,9 +271,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -240,9 +286,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -252,9 +301,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -264,9 +316,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder oauthToken(
                 String oauthToken) {
@@ -276,9 +331,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -287,9 +345,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
@@ -299,10 +360,13 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder trustCerts(
                 String trustCerts) {
@@ -312,9 +376,12 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -332,40 +399,15 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
             return (OpenshiftBuildConfigsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -376,10 +418,13 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -390,10 +435,13 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -404,10 +452,14 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(
                 String synchronous) {
@@ -431,6 +483,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
                 String path) {
@@ -452,6 +505,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
                 String componentName,

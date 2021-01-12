@@ -89,9 +89,9 @@ public class AsyncQueueProducerTest extends CamelTestSupport {
                                 afterThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("sjms:queue:foo?synchronous=false");
+                        .to("sjms:queue:foo");
 
-                from("sjms:queue:foo?synchronous=false")
+                from("sjms:queue:foo?asyncConsumer=true")
                         .to("mock:after")
                         .to("log:after")
                         .delay(1000)

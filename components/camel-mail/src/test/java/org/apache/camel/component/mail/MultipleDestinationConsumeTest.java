@@ -59,8 +59,9 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         message.setText(body);
 
         message.setRecipients(Message.RecipientType.TO,
-                              new Address[] {new InternetAddress("james@localhost"),
-                                             new InternetAddress("bar@localhost")});
+                new Address[] {
+                        new InternetAddress("james@localhost"),
+                        new InternetAddress("bar@localhost") });
 
         Transport.send(message);
 

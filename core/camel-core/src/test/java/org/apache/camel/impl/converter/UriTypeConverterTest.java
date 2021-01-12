@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 import java.net.URI;
 
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.converter.UriTypeConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,8 +35,7 @@ public class UriTypeConverterTest {
 
     @Test
     public void shouldComplainOnInvalidStringUrisConvertingToUri() {
-        assertThrows(TypeConversionException.class, () -> 
-            UriTypeConverter.toUri(INVALID));
+        assertThrows(TypeConversionException.class, () -> UriTypeConverter.toUri(INVALID));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class UriTypeConverterTest {
 
     @Test
     public void shouldConvertFromUrisToStrings() {
-        assertEquals(EXAMPLE, UriTypeConverter.toCharSequence(EXAMPLE_URI));
+        assertEquals(EXAMPLE, UriTypeConverter.toString(EXAMPLE_URI));
     }
 
 }

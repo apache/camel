@@ -40,8 +40,9 @@ public class MvelResourceTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().mvel("resource:classpath:mymvel.txt")
-                    .to("mock:result");
+                        .setHeader("multiplier", constant(2))
+                        .transform().mvel("resource:classpath:mymvel.txt")
+                        .to("mock:result");
             }
         };
     }

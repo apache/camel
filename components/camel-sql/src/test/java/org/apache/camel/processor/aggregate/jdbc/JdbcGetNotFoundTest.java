@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class JdbcGetNotFoundTest extends AbstractJdbcAggregationTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcGetNotFoundTest.class);
+
     @Test
     public void testGetNotFound() {
         Exchange exchange = new DefaultExchange(context);

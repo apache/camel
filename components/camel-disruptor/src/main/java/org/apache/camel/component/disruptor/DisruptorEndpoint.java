@@ -46,11 +46,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides asynchronous SEDA behavior using LMAX Disruptor.
  *
- * This component works much as the standard SEDA Component, but utilizes a Disruptor
- * instead of a BlockingQueue utilized by the standard SEDA.
+ * This component works much as the standard SEDA Component, but utilizes a Disruptor instead of a BlockingQueue
+ * utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", category = {Category.ENDPOINT})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
+             syntax = "disruptor:name", category = { Category.ENDPOINT })
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
@@ -59,7 +60,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
     private final DisruptorReference disruptorReference;
 
-    @UriPath(description = "Name of queue") @Metadata(required = true)
+    @UriPath(description = "Name of queue")
+    @Metadata(required = true)
     private String name;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers;
@@ -123,9 +125,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * Option to specify whether the caller should wait for the async task to complete or not before continuing.
-     * The following three options are supported: Always, Never or IfReplyExpected. The first two values are self-explanatory.
-     * The last value, IfReplyExpected, will only wait if the message is Request Reply based.
+     * Option to specify whether the caller should wait for the async task to complete or not before continuing. The
+     * following three options are supported: Always, Never or IfReplyExpected. The first two values are
+     * self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based.
      */
     public void setWaitForTaskToComplete(final WaitForTaskToComplete waitForTaskToComplete) {
         this.waitForTaskToComplete = waitForTaskToComplete;
@@ -137,8 +139,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete.
-     * You can disable timeout by using 0 or a negative value.
+     * Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete. You can
+     * disable timeout by using 0 or a negative value.
      */
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
@@ -150,11 +152,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * The maximum capacity of the Disruptors ringbuffer
-     * Will be effectively increased to the nearest power of two.
-     * Notice: Mind if you use this option, then its the first endpoint being created with the queue name,
-     * that determines the size. To make sure all endpoints use same size, then configure the size option
-     * on all of them, or the first endpoint being created.
+     * The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest power of two.
+     * Notice: Mind if you use this option, then its the first endpoint being created with the queue name, that
+     * determines the size. To make sure all endpoints use same size, then configure the size option on all of them, or
+     * the first endpoint being created.
      */
     public void setSize(int size) {
         this.size = size;
@@ -171,9 +172,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * Specifies whether multiple consumers are allowed.
-     * If enabled, you can use Disruptor for Publish-Subscribe messaging.
-     * That is, you can send a message to the queue and have each consumer receive a copy of the message.
+     * Specifies whether multiple consumers are allowed. If enabled, you can use Disruptor for Publish-Subscribe
+     * messaging. That is, you can send a message to the queue and have each consumer receive a copy of the message.
      * When enabled, this option should be specified on every consumer endpoint.
      */
     public void setMultipleConsumers(boolean multipleConsumers) {
@@ -200,9 +200,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * Whether a thread that sends messages to a full Disruptor will block until the ringbuffer's capacity is no longer exhausted.
-     * By default, the calling thread will block and wait until the message can be accepted.
-     * By disabling this option, an exception will be thrown stating that the queue is full.
+     * Whether a thread that sends messages to a full Disruptor will block until the ringbuffer's capacity is no longer
+     * exhausted. By default, the calling thread will block and wait until the message can be accepted. By disabling
+     * this option, an exception will be thrown stating that the queue is full.
      */
     public void setBlockWhenFull(boolean blockWhenFull) {
         this.blockWhenFull = blockWhenFull;
@@ -214,8 +214,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * Defines the strategy used by consumer threads to wait on new exchanges to be published.
-     * The options allowed are:Blocking, Sleeping, BusySpin and Yielding.
+     * Defines the strategy used by consumer threads to wait on new exchanges to be published. The options allowed
+     * are:Blocking, Sleeping, BusySpin and Yielding.
      */
     public void setWaitStrategy(DisruptorWaitStrategy waitStrategy) {
         this.waitStrategy = waitStrategy;
@@ -227,9 +227,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     }
 
     /**
-     * Defines the producers allowed on the Disruptor.
-     * The options allowed are: Multi to allow multiple producers and Single to enable certain optimizations only
-     * allowed when one concurrent producer (on one thread or otherwise synchronized) is active.
+     * Defines the producers allowed on the Disruptor. The options allowed are: Multi to allow multiple producers and
+     * Single to enable certain optimizations only allowed when one concurrent producer (on one thread or otherwise
+     * synchronized) is active.
      */
     public void setProducerType(DisruptorProducerType producerType) {
         this.producerType = producerType;
@@ -275,7 +275,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
 
     @Override
     public DisruptorComponent getComponent() {
-        return (DisruptorComponent)super.getComponent();
+        return (DisruptorComponent) super.getComponent();
     }
 
     void onStarted(final DisruptorConsumer consumer) throws Exception {
@@ -289,11 +289,11 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
                 LOGGER.debug("Starting consumer {} on endpoint {}", consumer, getEndpointUri());
                 getDisruptor().reconfigure();
             } else {
-                LOGGER.debug("Tried to start Consumer {} on endpoint {} but it was already started", consumer, getEndpointUri());
+                LOGGER.debug("Tried to start Consumer {} on endpoint {} but it was already started", consumer,
+                        getEndpointUri());
             }
         }
     }
-
 
     void onStopped(final DisruptorConsumer consumer) throws Exception {
         synchronized (this) {
@@ -348,7 +348,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     @Override
     public boolean equals(Object object) {
         boolean result = super.equals(object);
-        return result && getCamelContext().equals(((DisruptorEndpoint)object).getCamelContext());
+        return result && getCamelContext().equals(((DisruptorEndpoint) object).getCamelContext());
     }
 
     @Override

@@ -26,7 +26,8 @@ public class AhcOperationFailedExceptionTest {
 
     @Test
     public void testUrlIsSanitized() {
-        AhcOperationFailedException ahcOperationFailedException = new AhcOperationFailedException("http://user:password@host", 500, "", "", null, "");
+        AhcOperationFailedException ahcOperationFailedException
+                = new AhcOperationFailedException("http://user:password@host", 500, "", "", null, "");
 
         assertThat(ahcOperationFailedException.getMessage(), not(containsString("password")));
         assertThat(ahcOperationFailedException.getUrl(), not(containsString("password")));

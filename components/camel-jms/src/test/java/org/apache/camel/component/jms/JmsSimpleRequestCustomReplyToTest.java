@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -65,7 +64,11 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
 
         result.assertIsSatisfied();
         assertNotNull(out);
-        assertFalse(out.hasOut());
+        /*
+          The getMessage returns the In message if the Out one is not present. Therefore, we check if
+          the body of the returned message equals to the In one and infer that the out one was null.
+         */
+        assertEquals("Hello World", out.getMessage().getBody(), "There shouldn't be an out message");
 
         // get the reply from the special reply queue
         Endpoint end = context.getEndpoint(componentName + ":" + myReplyTo);

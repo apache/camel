@@ -43,7 +43,6 @@ public class InspectContainerCmdHeaderTest extends BaseDockerHeaderTest<InspectC
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).inspectContainerCmd(containerId);

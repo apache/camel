@@ -37,6 +37,8 @@ public interface CaffeineCacheComponentBuilderFactory {
      * Category: cache,datagrid,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
+     * 
+     * @return the dsl builder
      */
     static CaffeineCacheComponentBuilder caffeineCache() {
         return new CaffeineCacheComponentBuilderImpl();
@@ -52,34 +54,27 @@ public interface CaffeineCacheComponentBuilderFactory {
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder action(java.lang.String action) {
             doSetProperty("action", action);
             return this;
         }
         /**
-         * To configure an already instantiated cache to be used.
-         * 
-         * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.Cache</code> type.
-         * 
-         * Group: producer
-         */
-        default CaffeineCacheComponentBuilder cache(
-                com.github.benmanes.caffeine.cache.Cache cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.CacheLoader&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cacheLoader the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder cacheLoader(
                 com.github.benmanes.caffeine.cache.CacheLoader cacheLoader) {
@@ -90,10 +85,13 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -104,10 +102,13 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Set the eviction Type for this cache.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.caffeine.EvictionType&lt;/code&gt; type.
          * 
          * Default: SIZE_BASED
          * Group: producer
+         * 
+         * @param evictionType the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder evictionType(
                 org.apache.camel.component.caffeine.EvictionType evictionType) {
@@ -118,10 +119,13 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Set the expire After Access Time in case of time based Eviction (in
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: producer
+         * 
+         * @param expireAfterAccessTime the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder expireAfterAccessTime(
                 int expireAfterAccessTime) {
@@ -132,10 +136,13 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Set the expire After Access Write in case of time based Eviction (in
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: producer
+         * 
+         * @param expireAfterWriteTime the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder expireAfterWriteTime(
                 int expireAfterWriteTime) {
@@ -145,10 +152,13 @@ public interface CaffeineCacheComponentBuilderFactory {
         /**
          * Set the initial Capacity for the cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param initialCapacity the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder initialCapacity(
                 int initialCapacity) {
@@ -159,9 +169,12 @@ public interface CaffeineCacheComponentBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder key(java.lang.Object key) {
             doSetProperty("key", key);
@@ -178,10 +191,13 @@ public interface CaffeineCacheComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -191,10 +207,13 @@ public interface CaffeineCacheComponentBuilderFactory {
         /**
          * Set the maximum size for the cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param maximumSize the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder maximumSize(int maximumSize) {
             doSetProperty("maximumSize", maximumSize);
@@ -204,9 +223,12 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Set a specific removal Listener for the cache.
          * 
          * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.RemovalListener&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param removalListener the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder removalListener(
                 com.github.benmanes.caffeine.cache.RemovalListener removalListener) {
@@ -217,10 +239,12 @@ public interface CaffeineCacheComponentBuilderFactory {
          * Set a specific Stats Counter for the cache stats.
          * 
          * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
-         * type.
+         * &lt;code&gt;com.github.benmanes.caffeine.cache.stats.StatsCounter&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param statsCounter the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder statsCounter(
                 com.github.benmanes.caffeine.cache.stats.StatsCounter statsCounter) {
@@ -230,36 +254,49 @@ public interface CaffeineCacheComponentBuilderFactory {
         /**
          * To enable stats on the cache.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param statsEnabled the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder statsEnabled(boolean statsEnabled) {
             doSetProperty("statsEnabled", statsEnabled);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default CaffeineCacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CaffeineCacheComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Sets the global component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.caffeine.CaffeineConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.caffeine.CaffeineConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder configuration(
                 org.apache.camel.component.caffeine.CaffeineConfiguration configuration) {
@@ -269,9 +306,12 @@ public interface CaffeineCacheComponentBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyType the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder keyType(java.lang.String keyType) {
             doSetProperty("keyType", keyType);
@@ -280,9 +320,12 @@ public interface CaffeineCacheComponentBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param valueType the value to set
+         * @return the dsl builder
          */
         default CaffeineCacheComponentBuilder valueType(
                 java.lang.String valueType) {
@@ -314,7 +357,6 @@ public interface CaffeineCacheComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "action": getOrCreateConfiguration((CaffeineCacheComponent) component).setAction((java.lang.String) value); return true;
-            case "cache": getOrCreateConfiguration((CaffeineCacheComponent) component).setCache((com.github.benmanes.caffeine.cache.Cache) value); return true;
             case "cacheLoader": getOrCreateConfiguration((CaffeineCacheComponent) component).setCacheLoader((com.github.benmanes.caffeine.cache.CacheLoader) value); return true;
             case "createCacheIfNotExist": getOrCreateConfiguration((CaffeineCacheComponent) component).setCreateCacheIfNotExist((boolean) value); return true;
             case "evictionType": getOrCreateConfiguration((CaffeineCacheComponent) component).setEvictionType((org.apache.camel.component.caffeine.EvictionType) value); return true;
@@ -327,7 +369,7 @@ public interface CaffeineCacheComponentBuilderFactory {
             case "removalListener": getOrCreateConfiguration((CaffeineCacheComponent) component).setRemovalListener((com.github.benmanes.caffeine.cache.RemovalListener) value); return true;
             case "statsCounter": getOrCreateConfiguration((CaffeineCacheComponent) component).setStatsCounter((com.github.benmanes.caffeine.cache.stats.StatsCounter) value); return true;
             case "statsEnabled": getOrCreateConfiguration((CaffeineCacheComponent) component).setStatsEnabled((boolean) value); return true;
-            case "basicPropertyBinding": ((CaffeineCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CaffeineCacheComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((CaffeineCacheComponent) component).setConfiguration((org.apache.camel.component.caffeine.CaffeineConfiguration) value); return true;
             case "keyType": getOrCreateConfiguration((CaffeineCacheComponent) component).setKeyType((java.lang.String) value); return true;
             case "valueType": getOrCreateConfiguration((CaffeineCacheComponent) component).setValueType((java.lang.String) value); return true;

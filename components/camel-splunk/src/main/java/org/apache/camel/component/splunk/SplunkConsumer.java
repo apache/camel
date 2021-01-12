@@ -51,7 +51,8 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
                 throw new RuntimeException("Missing option 'search' with normal or realtime search");
             }
         }
-        if (consumerType.equals(ConsumerType.SAVEDSEARCH) && ObjectHelper.isEmpty(endpoint.getConfiguration().getSavedSearch())) {
+        if (consumerType.equals(ConsumerType.SAVEDSEARCH)
+                && ObjectHelper.isEmpty(endpoint.getConfiguration().getSavedSearch())) {
             throw new RuntimeException("Missing option 'savedSearch' with saved search");
         }
         dataReader = new SplunkDataReader(endpoint, consumerType);
@@ -81,9 +82,10 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
                             exchange.setException(e);
                         }
                         if (exchange.getException() != null) {
-                            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
                         }
-                        
+
                     }
 
                 });

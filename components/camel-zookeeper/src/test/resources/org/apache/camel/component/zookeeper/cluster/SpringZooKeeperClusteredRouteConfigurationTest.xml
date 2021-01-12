@@ -25,7 +25,7 @@
          http://camel.apache.org/schema/spring
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="zkContainer" class="org.apache.camel.component.zookeeper.ZooKeeperContainer" init-method="start" destroy-method="start">
+  <bean id="zkContainer" class="org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer" init-method="start" destroy-method="start">
     <constructor-arg>
       <value>zookeeper</value>
     </constructor-arg>

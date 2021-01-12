@@ -177,7 +177,7 @@ public class FakeAWSDaemon {
         }
 
         private TestSubsegment convertSubsegment(JsonObject json) {
-            TestSubsegment subsegment = new TestSubsegment((String)json.get("name"));
+            TestSubsegment subsegment = new TestSubsegment((String) json.get("name"));
             if (json.has("subsegments")) {
                 List<TestSubsegment> subsegments = convertSubsegments((JsonArray) json.get("subsegments"));
                 for (TestSubsegment tss : subsegments) {

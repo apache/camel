@@ -18,12 +18,15 @@ package org.apache.camel.catalog;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -108,7 +111,37 @@ public class RuntimeCamelCatalogTest {
         map.put("showExchangePattern", "false");
         map.put("style", "Tab");
 
-        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab", catalog.asEndpointUri("log", map, false));
+        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
+                catalog.asEndpointUri("log", map, false));
+    }
+
+    @Test
+    public void testAsEndpointUriSecrets() throws Exception {
+        // create a custom instance of the catalog to hack the model to post
+        // process options.
+        catalog = new DefaultRuntimeCamelCatalog() {
+            @Override
+            public ComponentModel componentModel(String name) {
+                ComponentModel model = super.componentModel(name);
+                if (model != null && "timer".equals(name)) {
+                    model.getEndpointParameterOptions().stream()
+                            .filter(o -> Objects.equals(o.getName(), "period"))
+                            .forEach(o -> o.setSecret(true));
+                    model.getEndpointPathOptions().stream()
+                            .filter(o -> Objects.equals(o.getName(), "timerName"))
+                            .forEach(o -> o.setDefaultValue("defaultName"));
+                }
+                return model;
+            }
+        };
+        catalog.setCamelContext(new DefaultCamelContext());
+
+        assertEquals(
+                "timer:foo?period=RAW(5000)",
+                catalog.asEndpointUri("timer", mapOf("timerName", "foo", "period", "5000"), false));
+        assertEquals(
+                "timer:defaultName?period=RAW(5000)",
+                catalog.asEndpointUri("timer", mapOf("period", "5000"), false));
     }
 
     @Test

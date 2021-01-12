@@ -60,7 +60,8 @@ public class ManagedJmsEndpointTopicTest extends CamelTestSupport {
     public void testJmsEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        Set<ObjectName> objectNames = mbeanServer.queryNames(new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://topic:start\""), null);
+        Set<ObjectName> objectNames = mbeanServer.queryNames(
+                new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://topic:start\""), null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 
@@ -91,6 +92,5 @@ public class ManagedJmsEndpointTopicTest extends CamelTestSupport {
             }
         };
     }
-
 
 }

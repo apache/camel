@@ -6,6 +6,7 @@
 :since: 3.3
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-blob.adoc[opts=optional]
 //Manually maintained attributes
 :group: Azure
 
@@ -42,7 +43,7 @@ for this component:
 azure-storage-blob://accountName[/containerName][?options]
 ------------------------------
 
-In case of consumer, accountName, containerName and blobName are required. In case of producer, it depends on the operation that being
+In case of consumer, accountName, containerName are required. In case of producer, it depends on the operation that being
 requested, for example if operation is on a container level, e.b: createContainer, accountName and containerName are only required, but in case
 of operation being requested in blob level, e.g: getBlob, accountName, containerName and blobName are required.
 
@@ -64,7 +65,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 27 options, which are listed below.
+The Azure Storage Blob Service component supports 28 options, which are listed below.
 
 
 
@@ -72,9 +73,9 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 |===
 | Name | Description | Default | Type
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
-| *blobName* (common) | The blob name, required for consumer. However on producer, is only required for the operations on the blob level |  | String
+| *blobName* (common) | The blob name, to consume specific blob from a container. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
-| *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. The value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
+| *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. There are 3 enums and the value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
 | *closeStreamAfterRead* (common) | Close the stream after read or keep it open, default is true | true | boolean
 | *configuration* (common) | The component configurations |  | BlobConfiguration
 | *credentials* (common) | StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information |  | StorageSharedKeyCredential
@@ -83,20 +84,21 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 | *maxResultsPerPage* (common) | Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items. |  | Integer
 | *maxRetryRequests* (common) | Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body. | 0 | int
 | *prefix* (common) | Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs. |  | String
-| *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through getBlobContainerClient(String), and operations on a blob are available on BlobClient through getBlobContainerClient(String).getBlobClient(String). |  | BlobServiceClient
+| *regex* (common) | Filters the results to return only blobs whose names match the specified regular expression. May be null to return all if both prefix and regex are set, regex takes the priority and prefix is ignored. |  | String
+| *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
-| *blockListType* (producer) | Specifies which type of blocks to return. The value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
+| *blockListType* (producer) | Specifies which type of blocks to return. There are 3 enums and the value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *commitBlockListLater* (producer) | When is set to true, the staged blocks will not be committed directly. | true | boolean
 | *createAppendBlob* (producer) | When is set to true, the append blocks will be created when committing append blocks. | true | boolean
 | *createPageBlob* (producer) | When is set to true, the page blob will be created when uploading page blob. | true | boolean
 | *downloadLinkExpiration* (producer) | Override the default expiration (millis) of URL download link. |  | Long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The blob operation that can be used with this component on the producer. The value can be one of: listBlobContainers, createBlobContainer, deleteBlobContainer, listBlobs, getBlob, deleteBlob, downloadBlobToFile, downloadLink, uploadBlockBlob, stageBlockBlobList, commitBlobBlockList, getBlobBlockList, createAppendBlob, commitAppendBlob, createPageBlob, uploadPageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges | listBlobContainers | BlobOperationsDefinition
+| *operation* (producer) | The blob operation that can be used with this component on the producer. There are 19 enums and the value can be one of: listBlobContainers, createBlobContainer, deleteBlobContainer, listBlobs, getBlob, deleteBlob, downloadBlobToFile, downloadLink, uploadBlockBlob, stageBlockBlobList, commitBlobBlockList, getBlobBlockList, createAppendBlob, commitAppendBlob, createPageBlob, uploadPageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges | listBlobContainers | BlobOperationsDefinition
 | *pageBlobSize* (producer) | Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary. | 512 | Long
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Access key for the associated azure account name to be used for authentication with azure blob services |  | String
 |===
 // component options: END
@@ -105,7 +107,7 @@ The Azure Storage Blob Service component supports 27 options, which are listed b
 The Azure Storage Blob Service endpoint is configured using URI syntax:
 
 ----
-azure-storage-blob:containerName
+azure-storage-blob:accountName/containerName
 ----
 
 with the following path and query parameters:
@@ -128,10 +130,10 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
-| *blobName* (common) | The blob name, required for consumer. However on producer, is only required for the operations on the blob level |  | String
+| *blobName* (common) | The blob name, to consume specific blob from a container. However on producer, is only required for the operations on the blob level |  | String
 | *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | long
 | *blobServiceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through getBlobContainerClient(String), and operations on a blob are available on BlobClient through getBlobContainerClient(String).getBlobClient(String). |  | BlobServiceClient
-| *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. The value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
+| *blobType* (common) | The blob type in order to initiate the appropriate settings for each blob type. There are 3 enums and the value can be one of: blockblob, appendblob, pageblob | blockblob | BlobType
 | *closeStreamAfterRead* (common) | Close the stream after read or keep it open, default is true | true | boolean
 | *credentials* (common) | StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information |  | StorageSharedKeyCredential
 | *dataCount* (common) | How many bytes to include in the range. Must be greater than or equal to 0 if specified. |  | Long
@@ -139,22 +141,22 @@ with the following path and query parameters:
 | *maxResultsPerPage* (common) | Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items. |  | Integer
 | *maxRetryRequests* (common) | Specifies the maximum number of additional HTTP Get requests that will be made while reading the data from a response body. | 0 | int
 | *prefix* (common) | Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs. |  | String
-| *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through getBlobContainerClient(String), and operations on a blob are available on BlobClient through getBlobContainerClient(String).getBlobClient(String). |  | BlobServiceClient
+| *regex* (common) | Filters the results to return only blobs whose names match the specified regular expression. May be null to return all if both prefix and regex are set, regex takes the priority and prefix is ignored. |  | String
+| *serviceClient* (common) | Client to a storage account. This client does not hold any state about a particular storage account but is instead a convenient way of sending off appropriate requests to the resource on the service. It may also be used to construct URLs to blobs and containers. This client contains operations on a service account. Operations on a container are available on BlobContainerClient through BlobServiceClient#getBlobContainerClient(String), and operations on a blob are available on BlobClient through BlobContainerClient#getBlobClient(String). |  | BlobServiceClient
 | *timeout* (common) | An optional timeout value beyond which a RuntimeException will be raised. |  | Duration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *blobSequenceNumber* (producer) | A user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 263 - 1.The default value is 0. | 0 | Long
-| *blockListType* (producer) | Specifies which type of blocks to return. The value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
+| *blockListType* (producer) | Specifies which type of blocks to return. There are 3 enums and the value can be one of: committed, uncommitted, all | COMMITTED | BlockListType
 | *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
 | *commitBlockListLater* (producer) | When is set to true, the staged blocks will not be committed directly. | true | boolean
 | *createAppendBlob* (producer) | When is set to true, the append blocks will be created when committing append blocks. | true | boolean
 | *createPageBlob* (producer) | When is set to true, the page blob will be created when uploading page blob. | true | boolean
 | *downloadLinkExpiration* (producer) | Override the default expiration (millis) of URL download link. |  | Long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | The blob operation that can be used with this component on the producer. The value can be one of: listBlobContainers, createBlobContainer, deleteBlobContainer, listBlobs, getBlob, deleteBlob, downloadBlobToFile, downloadLink, uploadBlockBlob, stageBlockBlobList, commitBlobBlockList, getBlobBlockList, createAppendBlob, commitAppendBlob, createPageBlob, uploadPageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges | listBlobContainers | BlobOperationsDefinition
+| *operation* (producer) | The blob operation that can be used with this component on the producer. There are 19 enums and the value can be one of: listBlobContainers, createBlobContainer, deleteBlobContainer, listBlobs, getBlob, deleteBlob, downloadBlobToFile, downloadLink, uploadBlockBlob, stageBlockBlobList, commitBlobBlockList, getBlobBlockList, createAppendBlob, commitAppendBlob, createPageBlob, uploadPageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges | listBlobContainers | BlobOperationsDefinition
 | *pageBlobSize* (producer) | Specifies the maximum size for the page blob, up to 8 TB. The page blob size must be aligned to a 512-byte boundary. | 512 | Long
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Access key for the associated azure account name to be used for authentication with azure blob services |  | String
 |===
@@ -163,6 +165,7 @@ with the following path and query parameters:
 *Required information options:*
 
 To use this component, you have 3 options in order to provide the required Azure authentication information:
+
 - Provide `accountName` and `accessKey` for your Azure account, this is the simplest way to get started. The accessKey can
 be generated through your Azure portal.
 - Provide a https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-java/staging/apidocs/com/azure/storage/common/StorageSharedKeyCredential.html[StorageSharedKeyCredential] instance which can be
@@ -170,6 +173,15 @@ provided into `credentials` option.
 - Provide a https://azuresdkdocs.blob.core.windows.net/$web/java/azure-storage-blob/12.0.0/com/azure/storage/blob/BlobServiceClient.html[BlobServiceClient] instance which can be
 provided into `blobServiceClient`. Note: You don't need to create a specific client, e.g: BlockBlobClient, the BlobServiceClient represents the upper level which
 can be used to retrieve lower level clients.
+
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
 
 
 == Usage
@@ -184,7 +196,7 @@ can be used to retrieve lower level clients.
 |`CamelAzureStorageBlobPublicAccessType`|`BlobConstants.PUBLIC_ACCESS_TYPE`|`PublicAccessType`|`createContainer`|Specifies how the data in this container is available to the public. Pass `null` for no public access.
 |`CamelAzureStorageBlobRequestCondition`|`BlobConstants.BLOB_REQUEST_CONDITION`|`BlobRequestConditions`|Operations related to container and blob|This contains values which will restrict the successful operation of a variety of requests to the conditions present. These conditions are entirely optional.
 |`CamelAzureStorageBlobListDetails`|`BlobConstants.BLOB_LIST_DETAILS`|`BlobListDetails`|`listBlobs`|The details for listing specific blobs
-|`CamelAzureStorageBlobPrefix`|`BlobConstants.PREFIX`|`String`|`listBlobs`|Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
+|`CamelAzureStorageBlobPrefix`|`BlobConstants.PREFIX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names begin with the specified prefix. May be null to return all blobs.
 |`CamelAzureStorageBlobMaxResultsPerPage`|`BlobConstants.MAX_RESULTS_PER_PAGE`|`Integer`|`listBlobs`| Specifies the maximum number of blobs to return, including all BlobPrefix elements. If the request does not specify maxResultsPerPage or specifies a value greater than 5,000, the server will return up to 5,000 items.
 |`CamelAzureStorageBlobListBlobOptions`|`BlobConstants.LIST_BLOB_OPTIONS`|`ListBlobsOptions`|`listBlobs`|Defines options available to configure the behavior of a call to listBlobsFlatSegment on a {@link BlobContainerClient} object.
 |`CamelAzureStorageBlobHttpHeaders`|`BlobConstants.BLOB_HTTP_HEADERS`|`BlobHttpHeaders`|`uploadBlockBlob`, `commitBlobBlockList`, `createAppendBlob`, `createPageBlob`|  Additional parameters for a set of operations.
@@ -205,6 +217,7 @@ can be used to retrieve lower level clients.
 |`CamelAzureStorageBlobBlobName`|`BlobConstants.BLOB_NAME`|`String`|Operations related to blob| Override/set the blob name on the exchange headers.
 |`CamelAzureStorageBlobContainerName`|`BlobConstants.BLOB_CONTAINER_NAME`|`String`|Operations related to container and blob|Override/set the container name on the exchange headers.
 |`CamelAzureStorageBlobOperation`|`BlobConstants.BLOB_OPERATION`|`BlobOperationsDefinition`|All|Specify the producer operation to execute, please see the doc on this page related to producer operation.
+|`CamelAzureStorageBlobRegex`|`BlobConstants.REGEX`|`String`|`listBlobs`,`getBlob`|Filters the results to return only blobs whose names match the specified regular expression. May be null to return all. If both prefix and regex are set, regex takes the priority and prefix is ignored.
 |=======================================================================
 
 === Message headers set by either component producer or consumer
@@ -345,6 +358,15 @@ However, you can also write to file directly without using the file component, y
 from("azure-storage-blob:/camelazure/container1?blobName=hello.txt&accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
 to("mock:results");
 --------------------------------------------------------------------------------
+
+Also, the component supports batch consumer, hence you can consume multiple blobs with only specifying the container name, the consumer will
+return multiple exchanges depending on the number of the blobs in the container. Example:
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-storage-blob:/camelazure/container1?accountName=yourAccountName&accessKey=yourAccessKey&fileDir=/var/to/awesome/dir").
+to("mock:results");
+--------------------------------------------------------------------------------
+
 
 
 === Producer Operations Examples
@@ -662,8 +684,10 @@ from("direct:start")
 
 
 === Development Notes (Important)
-When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
-you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
+All integration tests use [Testcontainers](https://www.testcontainers.org/) and run by default.
+Obtaining of Azure accessKey and accountName is needed to be able to run all integration tests using Azure services.
+In addition to the mocked unit tests you *will need to run the integration tests
+with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
 To run the integration tests, on this component directory, run the following maven command:
 ----
 mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey

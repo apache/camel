@@ -72,7 +72,7 @@ public class IronMQComponentSpringTest extends CamelSpringTestSupport {
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(IronMQConstants.MESSAGE_ID));
 
-        assertNotNull(exchange.getOut().getHeader(IronMQConstants.MESSAGE_ID));
+        assertNotNull(exchange.getMessage().getHeader(IronMQConstants.MESSAGE_ID));
     }
 
     @Override

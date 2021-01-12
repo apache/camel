@@ -84,7 +84,7 @@ public class HealthCheckConfiguration implements Cloneable {
 
     public HealthCheckConfiguration copy() {
         try {
-            return (HealthCheckConfiguration)super.clone();
+            return (HealthCheckConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

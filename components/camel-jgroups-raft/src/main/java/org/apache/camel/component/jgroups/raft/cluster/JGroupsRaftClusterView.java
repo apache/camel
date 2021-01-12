@@ -40,7 +40,8 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
     private String raftId;
     private volatile boolean isMaster;
 
-    protected JGroupsRaftClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig, String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
+    protected JGroupsRaftClusterView(CamelClusterService cluster, String namespace, String jgroupsConfig,
+                                     String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
         super(cluster, namespace);
 
         this.jgroupsConfig = jgroupsConfig;
@@ -65,7 +66,11 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
 
     @Override
     public List<CamelClusterMember> getMembers() {
-        return new ArrayList<CamelClusterMember>() {{ add(localMember); }};
+        return new ArrayList<CamelClusterMember>() {
+            {
+                add(localMember);
+            }
+        };
     }
 
     @Override
@@ -73,7 +78,8 @@ public class JGroupsRaftClusterView extends AbstractCamelClusterView {
         if (raftHandle == null && jgroupsConfig != null && !jgroupsConfig.isEmpty()) {
             raftHandle = new RaftHandle(new JChannel(jgroupsConfig), new NopStateMachine()).raftId(raftId);
         } else if (raftHandle == null) {
-            raftHandle = new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG), new NopStateMachine()).raftId(raftId);
+            raftHandle = new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG), new NopStateMachine())
+                    .raftId(raftId);
         }
         fireLeadershipChangedEvent(Optional.empty());
         raftHandle.addRoleListener(new ClusterRoleChangeListener(this));

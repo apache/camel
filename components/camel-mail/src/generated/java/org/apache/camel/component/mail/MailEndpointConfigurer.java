@@ -4,8 +4,10 @@ package org.apache.camel.component.mail;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -32,8 +34,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bcc": target.getConfiguration().setBcc(property(camelContext, java.lang.String.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.mail.MailBinding.class, value)); return true;
         case "bridgeerrorhandler":
@@ -51,6 +51,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "copyTo": target.getConfiguration().setCopyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "debugmode":
         case "debugMode": target.getConfiguration().setDebugMode(property(camelContext, boolean.class, value)); return true;
+        case "decodefilename":
+        case "decodeFilename": target.getConfiguration().setDecodeFilename(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "delete": target.getConfiguration().setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -108,7 +110,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "searchterm":
@@ -140,76 +142,126 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalJavaMailProperties", java.util.Properties.class);
-        answer.put("alternativeBodyHeader", java.lang.String.class);
-        answer.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
-        answer.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bcc", java.lang.String.class);
-        answer.put("binding", org.apache.camel.component.mail.MailBinding.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cc", java.lang.String.class);
-        answer.put("closeFolder", boolean.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("contentType", java.lang.String.class);
-        answer.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
-        answer.put("copyTo", java.lang.String.class);
-        answer.put("debugMode", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("delete", boolean.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fetchSize", int.class);
-        answer.put("folderName", java.lang.String.class);
-        answer.put("from", java.lang.String.class);
-        answer.put("greedy", boolean.class);
-        answer.put("handleFailedMessage", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("idempotentRepository", org.apache.camel.spi.IdempotentRepository.class);
-        answer.put("idempotentRepositoryRemoveOnCommit", boolean.class);
-        answer.put("ignoreUnsupportedCharset", boolean.class);
-        answer.put("ignoreUriScheme", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("javaMailProperties", java.util.Properties.class);
-        answer.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mailUidGenerator", org.apache.camel.component.mail.MailUidGenerator.class);
-        answer.put("mapMailMessage", boolean.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("mimeDecodeHeaders", boolean.class);
-        answer.put("moveTo", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("peek", boolean.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("postProcessAction", org.apache.camel.component.mail.MailBoxPostProcessAction.class);
-        answer.put("repeatCount", long.class);
-        answer.put("replyTo", java.lang.String.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("searchTerm", javax.mail.search.SearchTerm.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("session", javax.mail.Session.class);
-        answer.put("skipFailedMessage", boolean.class);
-        answer.put("sortTerm", com.sun.mail.imap.SortTerm[].class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("to", java.lang.String.class);
-        answer.put("unseen", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("useInlineAttachments", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionaljavamailproperties":
+        case "additionalJavaMailProperties": return java.util.Properties.class;
+        case "alternativebodyheader":
+        case "alternativeBodyHeader": return java.lang.String.class;
+        case "attachmentscontenttransferencodingresolver":
+        case "attachmentsContentTransferEncodingResolver": return org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class;
+        case "authenticator": return org.apache.camel.component.mail.MailAuthenticator.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bcc": return java.lang.String.class;
+        case "binding": return org.apache.camel.component.mail.MailBinding.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cc": return java.lang.String.class;
+        case "closefolder":
+        case "closeFolder": return boolean.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
+        case "contenttyperesolver":
+        case "contentTypeResolver": return org.apache.camel.component.mail.ContentTypeResolver.class;
+        case "copyto":
+        case "copyTo": return java.lang.String.class;
+        case "debugmode":
+        case "debugMode": return boolean.class;
+        case "decodefilename":
+        case "decodeFilename": return boolean.class;
+        case "delay": return long.class;
+        case "delete": return boolean.class;
+        case "disconnect": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fetchsize":
+        case "fetchSize": return int.class;
+        case "foldername":
+        case "folderName": return java.lang.String.class;
+        case "from": return java.lang.String.class;
+        case "greedy": return boolean.class;
+        case "handlefailedmessage":
+        case "handleFailedMessage": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "idempotentrepository":
+        case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "idempotentrepositoryremoveoncommit":
+        case "idempotentRepositoryRemoveOnCommit": return boolean.class;
+        case "ignoreunsupportedcharset":
+        case "ignoreUnsupportedCharset": return boolean.class;
+        case "ignoreurischeme":
+        case "ignoreUriScheme": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "javamailproperties":
+        case "javaMailProperties": return java.util.Properties.class;
+        case "javamailsender":
+        case "javaMailSender": return org.apache.camel.component.mail.JavaMailSender.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mailuidgenerator":
+        case "mailUidGenerator": return org.apache.camel.component.mail.MailUidGenerator.class;
+        case "mapmailmessage":
+        case "mapMailMessage": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "mimedecodeheaders":
+        case "mimeDecodeHeaders": return boolean.class;
+        case "moveto":
+        case "moveTo": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "peek": return boolean.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "postprocessaction":
+        case "postProcessAction": return org.apache.camel.component.mail.MailBoxPostProcessAction.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "replyto":
+        case "replyTo": return java.lang.String.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "searchterm":
+        case "searchTerm": return javax.mail.search.SearchTerm.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "session": return javax.mail.Session.class;
+        case "skipfailedmessage":
+        case "skipFailedMessage": return boolean.class;
+        case "sortterm":
+        case "sortTerm": return com.sun.mail.imap.SortTerm[].class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "subject": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "to": return java.lang.String.class;
+        case "unseen": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "useinlineattachments":
+        case "useInlineAttachments": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -229,8 +281,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bcc": return target.getConfiguration().getBcc();
         case "binding": return target.getBinding();
         case "bridgeerrorhandler":
@@ -248,6 +298,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "copyTo": return target.getConfiguration().getCopyTo();
         case "debugmode":
         case "debugMode": return target.getConfiguration().isDebugMode();
+        case "decodefilename":
+        case "decodeFilename": return target.getConfiguration().isDecodeFilename();
         case "delay": return target.getDelay();
         case "delete": return target.getConfiguration().isDelete();
         case "disconnect": return target.getConfiguration().isDisconnect();
@@ -332,6 +384,15 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useinlineattachments":
         case "useInlineAttachments": return target.getConfiguration().isUseInlineAttachments();
         case "username": return target.getConfiguration().getUsername();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

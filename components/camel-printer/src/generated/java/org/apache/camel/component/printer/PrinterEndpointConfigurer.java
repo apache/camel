@@ -4,8 +4,10 @@ package org.apache.camel.component.printer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PrinterEndpoint target = (PrinterEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "copies": target.getConfig().setCopies(property(camelContext, int.class, value)); return true;
         case "docflavor":
         case "docFlavor": target.getConfig().setDocFlavor(property(camelContext, javax.print.DocFlavor.class, value)); return true;
@@ -45,30 +45,35 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("copies", int.class);
-        answer.put("docFlavor", javax.print.DocFlavor.class);
-        answer.put("flavor", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mediaSize", java.lang.String.class);
-        answer.put("mediaTray", java.lang.String.class);
-        answer.put("mimeType", java.lang.String.class);
-        answer.put("orientation", java.lang.String.class);
-        answer.put("printerPrefix", java.lang.String.class);
-        answer.put("sendToPrinter", boolean.class);
-        answer.put("sides", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "copies": return int.class;
+        case "docflavor":
+        case "docFlavor": return javax.print.DocFlavor.class;
+        case "flavor": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mediasize":
+        case "mediaSize": return java.lang.String.class;
+        case "mediatray":
+        case "mediaTray": return java.lang.String.class;
+        case "mimetype":
+        case "mimeType": return java.lang.String.class;
+        case "orientation": return java.lang.String.class;
+        case "printerprefix":
+        case "printerPrefix": return java.lang.String.class;
+        case "sendtoprinter":
+        case "sendToPrinter": return boolean.class;
+        case "sides": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PrinterEndpoint target = (PrinterEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "copies": return target.getConfig().getCopies();
         case "docflavor":
         case "docFlavor": return target.getConfig().getDocFlavor();

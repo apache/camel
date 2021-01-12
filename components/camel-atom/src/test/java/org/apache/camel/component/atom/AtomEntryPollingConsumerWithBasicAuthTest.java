@@ -27,14 +27,17 @@ public class AtomEntryPollingConsumerWithBasicAuthTest extends AtomEntryPollingC
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&delay=500&username=camel&password=camelPass")
-                        .to("mock:result1");
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=true&delay=500&username=camel&password=camelPass")
+                             .to("mock:result1");
 
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&filter=false&delay=500&username=camel&password=camelPass")
-                        .to("mock:result2");
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=true&filter=false&delay=500&username=camel&password=camelPass")
+                             .to("mock:result2");
 
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500&username=camel&password=camelPass")
-                        .to("mock:result3");
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500&username=camel&password=camelPass")
+                             .to("mock:result3");
             }
         };
     }

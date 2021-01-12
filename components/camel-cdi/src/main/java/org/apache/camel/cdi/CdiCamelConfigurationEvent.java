@@ -16,6 +16,9 @@
  */
 package org.apache.camel.cdi;
 
+import javax.enterprise.inject.Vetoed;
+
+@Vetoed
 /* package-private */ final class CdiCamelConfigurationEvent implements CdiCamelConfiguration {
 
     private boolean autoConfigureRoutes = true;

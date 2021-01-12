@@ -4,8 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.HealthCheckConfigurationProperties;
 
@@ -32,13 +34,18 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Enabled", boolean.class);
-        answer.put("FailureThreshold", int.class);
-        answer.put("Interval", long.class);
-        answer.put("Parent", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "enabled":
+        case "Enabled": return boolean.class;
+        case "failurethreshold":
+        case "FailureThreshold": return int.class;
+        case "interval":
+        case "Interval": return long.class;
+        case "parent":
+        case "Parent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

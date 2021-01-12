@@ -49,7 +49,8 @@ public class SplunkHECIntegrationTest extends CamelTestSupport {
         configuration.setSource("camel");
         configuration.setSourceType("camel");
         SplunkHECComponent component = new SplunkHECComponent();
-        SplunkHECEndpoint endpoint = new SplunkHECEndpoint("splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd", component, configuration);
+        SplunkHECEndpoint endpoint = new SplunkHECEndpoint(
+                "splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd", component, configuration);
         assertEquals("4b35e71f-6a0f-4bab-94ce-f591ff45eecd", endpoint.getToken());
         endpoint.setCamelContext(ctx);
         SplunkHECProducer producer = new SplunkHECProducer(endpoint);
@@ -90,7 +91,9 @@ public class SplunkHECIntegrationTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:hec").to("splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd?source=camelsource&skipTlsVerify=true").to("mock:hec-result");
+                from("direct:hec").to(
+                        "splunk-hec:localhost:8088/4b35e71f-6a0f-4bab-94ce-f591ff45eecd?source=camelsource&skipTlsVerify=true")
+                        .to("mock:hec-result");
             }
         };
     }

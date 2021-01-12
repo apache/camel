@@ -37,6 +37,8 @@ public interface EtcdWatchComponentBuilderFactory {
      * Category: clustering,database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-etcd
+     * 
+     * @return the dsl builder
      */
     static EtcdWatchComponentBuilder etcdWatch() {
         return new EtcdWatchComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface EtcdWatchComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -71,9 +76,12 @@ public interface EtcdWatchComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.etcd.EtcdConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder configuration(
                 org.apache.camel.component.etcd.EtcdConfiguration configuration) {
@@ -83,10 +91,13 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -95,10 +106,13 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: consumer
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder servicePath(
                 java.lang.String servicePath) {
@@ -108,9 +122,12 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder timeout(java.lang.Long timeout) {
             doSetProperty("timeout", timeout);
@@ -119,10 +136,13 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder uris(java.lang.String uris) {
             doSetProperty("uris", uris);
@@ -131,10 +151,13 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * To send an empty message in case of timeout watching for a key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyExchangeOnTimeout the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder sendEmptyExchangeOnTimeout(
                 boolean sendEmptyExchangeOnTimeout) {
@@ -144,35 +167,48 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer (advanced)
+         * 
+         * @param fromIndex the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder fromIndex(long fromIndex) {
             doSetProperty("fromIndex", fromIndex);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default EtcdWatchComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default EtcdWatchComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -182,9 +218,12 @@ public interface EtcdWatchComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -194,10 +233,13 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -207,9 +249,12 @@ public interface EtcdWatchComponentBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdWatchComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);
@@ -247,7 +292,7 @@ public interface EtcdWatchComponentBuilderFactory {
             case "uris": getOrCreateConfiguration((EtcdWatchComponent) component).setUris((java.lang.String) value); return true;
             case "sendEmptyExchangeOnTimeout": getOrCreateConfiguration((EtcdWatchComponent) component).setSendEmptyExchangeOnTimeout((boolean) value); return true;
             case "fromIndex": getOrCreateConfiguration((EtcdWatchComponent) component).setFromIndex((long) value); return true;
-            case "basicPropertyBinding": ((EtcdWatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((EtcdWatchComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((EtcdWatchComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((EtcdWatchComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((EtcdWatchComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;

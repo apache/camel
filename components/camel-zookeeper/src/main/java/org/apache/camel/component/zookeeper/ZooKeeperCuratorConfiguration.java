@@ -56,7 +56,7 @@ public class ZooKeeperCuratorConfiguration implements Cloneable {
 
         // from org.apache.curator.framework.CuratorFrameworkFactory
         this.sessionTimeout = Integer.getInteger("curator-default-session-timeout", 60 * 1000);
-        this.sessionTimeoutUnit =  TimeUnit.MILLISECONDS;
+        this.sessionTimeoutUnit = TimeUnit.MILLISECONDS;
 
         // from org.apache.curator.framework.CuratorFrameworkFactory
         this.connectionTimeout = Integer.getInteger("curator-default-connection-timeout", 15 * 1000);
@@ -85,8 +85,7 @@ public class ZooKeeperCuratorConfiguration implements Cloneable {
 
     public void setNodes(String nodes) {
         this.nodes = Collections.unmodifiableList(
-            Arrays.stream(nodes.split(",")).collect(Collectors.toList())
-        );
+                Arrays.stream(nodes.split(",")).collect(Collectors.toList()));
     }
 
     public void setNodes(List<String> nodes) {
@@ -239,7 +238,7 @@ public class ZooKeeperCuratorConfiguration implements Cloneable {
 
     public ZooKeeperCuratorConfiguration copy() {
         try {
-            return (ZooKeeperCuratorConfiguration)clone();
+            return (ZooKeeperCuratorConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that we can have URI options for external system
- * (endpoint is lenient)
+ * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
 public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 

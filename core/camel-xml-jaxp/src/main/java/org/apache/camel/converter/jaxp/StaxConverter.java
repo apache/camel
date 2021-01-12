@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A converter of StAX objects
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public class StaxConverter {
     private static final Logger LOG = LoggerFactory.getLogger(StaxConverter.class);
 
@@ -90,11 +90,11 @@ public class StaxConverter {
         INPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
         OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
     }
-    
+
     private XMLInputFactory inputFactory;
     private XMLOutputFactory outputFactory;
 
-    @Converter
+    @Converter(order = 1)
     public XMLEventWriter createXMLEventWriter(OutputStream out, Exchange exchange) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -103,8 +103,8 @@ public class StaxConverter {
             returnXMLOutputFactory(factory);
         }
     }
-    
-    @Converter
+
+    @Converter(order = 2)
     public XMLEventWriter createXMLEventWriter(Writer writer) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -114,7 +114,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 3)
     public XMLEventWriter createXMLEventWriter(Result result) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -123,8 +123,8 @@ public class StaxConverter {
             returnXMLOutputFactory(factory);
         }
     }
-    
-    @Converter
+
+    @Converter(order = 4)
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream, Exchange exchange) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -134,7 +134,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 5)
     public XMLStreamWriter createXMLStreamWriter(Writer writer) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -144,7 +144,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 6)
     public XMLStreamWriter createXMLStreamWriter(Result result) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -154,7 +154,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 7)
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -169,17 +169,19 @@ public class StaxConverter {
         }
     }
 
-    @Converter
-    public XMLStreamReader createXMLStreamReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
+    @Converter(order = 8)
+    public XMLStreamReader createXMLStreamReader(File file, Exchange exchange)
+            throws XMLStreamException, FileNotFoundException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)), ExchangeHelper.getCharsetName(exchange));
+            return factory.createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)),
+                    ExchangeHelper.getCharsetName(exchange));
         } finally {
             returnXMLInputFactory(factory);
         }
     }
 
-    @Converter
+    @Converter(order = 9)
     public XMLStreamReader createXMLStreamReader(Reader reader) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -189,7 +191,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 10)
     public XMLStreamReader createXMLStreamReader(Source in) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -199,7 +201,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 11)
     public XMLStreamReader createXMLStreamReader(String string) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -209,7 +211,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 12)
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -224,17 +226,18 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 13)
     public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLEventReader(IOHelper.buffered(new FileInputStream(file)), ExchangeHelper.getCharsetName(exchange));
+            return factory.createXMLEventReader(IOHelper.buffered(new FileInputStream(file)),
+                    ExchangeHelper.getCharsetName(exchange));
         } finally {
             returnXMLInputFactory(factory);
         }
     }
 
-    @Converter
+    @Converter(order = 14)
     public XMLEventReader createXMLEventReader(Reader reader) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -244,7 +247,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 15)
     public XMLEventReader createXMLEventReader(XMLStreamReader reader) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -254,7 +257,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 16)
     public XMLEventReader createXMLEventReader(Source in) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
@@ -264,7 +267,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 17)
     public InputStream createInputStream(XMLStreamReader reader, Exchange exchange) {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -275,7 +278,7 @@ public class StaxConverter {
         }
     }
 
-    @Converter
+    @Converter(order = 18)
     public Reader createReader(XMLStreamReader reader, Exchange exchange) {
         XMLOutputFactory factory = getOutputFactory();
         try {
@@ -296,13 +299,13 @@ public class StaxConverter {
         }
         return f;
     }
-    
+
     private void returnXMLInputFactory(XMLInputFactory factory) {
         if (factory != inputFactory) {
             INPUT_FACTORY_POOL.offer(factory);
         }
     }
-    
+
     private XMLOutputFactory getXMLOutputFactory() {
         XMLOutputFactory f = OUTPUT_FACTORY_POOL.poll();
         if (f == null) {
@@ -310,13 +313,13 @@ public class StaxConverter {
         }
         return f;
     }
-    
+
     private void returnXMLOutputFactory(XMLOutputFactory factory) {
         if (factory != outputFactory) {
             OUTPUT_FACTORY_POOL.offer(factory);
         }
     }
-    
+
     public static XMLInputFactory createXMLInputFactory(boolean nsAware) {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         setProperty(factory, XMLInputFactory.IS_NAMESPACE_AWARE, nsAware);
@@ -324,9 +327,10 @@ public class StaxConverter {
         setProperty(factory, XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
         setProperty(factory, XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
         factory.setXMLResolver(new XMLResolver() {
-            public Object resolveEntity(String publicID, String systemID,
-                                        String baseURI, String namespace)
-                throws XMLStreamException {
+            public Object resolveEntity(
+                    String publicID, String systemID,
+                    String baseURI, String namespace)
+                    throws XMLStreamException {
                 throw new XMLStreamException("Reading external entities is disabled");
             }
         });
@@ -336,19 +340,20 @@ public class StaxConverter {
             LOG.debug("Created Woodstox XMLInputFactory: {}", factory);
         } else {
             // log a hint that woodstock may be a better factory to use
-            LOG.info("Created XMLInputFactory: {}. DOMSource/DOMResult may have issues with {}. We suggest using Woodstox.", factory, factory);
+            LOG.info("Created XMLInputFactory: {}. DOMSource/DOMResult may have issues with {}. We suggest using Woodstox.",
+                    factory, factory);
         }
         return factory;
     }
-    
+
     private static void setProperty(XMLInputFactory f, String p, Object o) {
         try {
-            f.setProperty(p,  o);
+            f.setProperty(p, o);
         } catch (Throwable t) {
             //ignore
         }
     }
-    
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -365,7 +370,7 @@ public class StaxConverter {
         }
         return outputFactory;
     }
-    
+
     public void setInputFactory(XMLInputFactory inputFactory) {
         this.inputFactory = inputFactory;
     }

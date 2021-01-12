@@ -43,6 +43,9 @@ create a new Maven project for XML DSL routes using Spring.
 |camel-archetype-spring-boot |This archetype is used to
 create a new Maven project for Camel routes using Spring Boot.
 
+|camel-archetype-endpointdsl |This archetype is used to
+create a new Maven project for Camel routes using Endpoint DSL.
+
 |=======================================================================
 
 The maven coordinates for these archetypes is the following:
@@ -60,14 +63,14 @@ The maven coordinates for these archetypes is the following:
 If you would like to use an archetype from an unreleased version of
 Camel, you just need to let the maven-archetype-plugin know where to
 look for it. For example, say someone wanted to create a Java based
-project based on Camel 3.5.0-SNAPSHOT. He'd need to use the following command
+project based on Camel 3.8.0-SNAPSHOT. He'd need to use the following command
 
 [source,shell]
 ----
 mvn archetype:generate \
   -DarchetypeGroupId=org.apache.camel.archetypes \
   -DarchetypeArtifactId=camel-archetype-java \
-  -DarchetypeVersion=3.5.0-SNAPSHOT 
+  -DarchetypeVersion=3.8.0-SNAPSHOT 
 ----
 
 When the project is created, you may need to add another repository to

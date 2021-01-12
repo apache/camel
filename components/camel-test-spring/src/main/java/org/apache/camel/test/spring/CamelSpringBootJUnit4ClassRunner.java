@@ -19,8 +19,8 @@ package org.apache.camel.test.spring;
 import org.junit.runners.model.InitializationError;
 
 /**
- * The class {@link CamelSpringBootJUnit4ClassRunner} has been renamed to {@link CamelSpringBootRunner}
- * which is a shorter and easier to remember name.
+ * The class {@link CamelSpringBootJUnit4ClassRunner} has been renamed to {@link CamelSpringBootRunner} which is a
+ * shorter and easier to remember name.
  *
  * @deprecated use {@link CamelSpringBootRunner}
  */

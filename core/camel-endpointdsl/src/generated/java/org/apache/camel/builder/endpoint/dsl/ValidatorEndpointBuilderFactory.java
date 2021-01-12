@@ -40,10 +40,13 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -52,10 +55,14 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder failOnNullBody(String failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -64,10 +71,13 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullHeader the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
@@ -77,10 +87,14 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullHeader the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
@@ -90,9 +104,12 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * To validate against a header instead of the message body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param headerName the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder headerName(String headerName) {
             doSetProperty("headerName", headerName);
@@ -109,10 +126,13 @@ public interface ValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -130,10 +150,14 @@ public interface ValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -152,42 +176,17 @@ public interface ValidatorEndpointBuilderFactory {
             return (ValidatorEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedValidatorEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedValidatorEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * To use a custom
          * org.apache.camel.processor.validation.ValidatorErrorHandler. The
          * default error handler captures the errors and throws an exception.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
+         * &lt;code&gt;org.apache.camel.support.processor.validation.ValidatorErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
@@ -200,9 +199,12 @@ public interface ValidatorEndpointBuilderFactory {
          * default error handler captures the errors and throws an exception.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
+         * &lt;code&gt;org.apache.camel.support.processor.validation.ValidatorErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
@@ -213,9 +215,13 @@ public interface ValidatorEndpointBuilderFactory {
          * To use a custom LSResourceResolver. Do not use together with
          * resourceResolverFactory.
          * 
-         * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;org.w3c.dom.ls.LSResourceResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
                 Object resourceResolver) {
@@ -227,9 +233,12 @@ public interface ValidatorEndpointBuilderFactory {
          * resourceResolverFactory.
          * 
          * The option will be converted to a
-         * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
+         * &lt;code&gt;org.w3c.dom.ls.LSResourceResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
                 String resourceResolver) {
@@ -243,9 +252,12 @@ public interface ValidatorEndpointBuilderFactory {
          * system. Do not use together with resourceResolver.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
@@ -259,9 +271,12 @@ public interface ValidatorEndpointBuilderFactory {
          * system. Do not use together with resourceResolver.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
@@ -271,10 +286,13 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * To use a custom javax.xml.validation.SchemaFactory.
          * 
-         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(
                 Object schemaFactory) {
@@ -285,9 +303,12 @@ public interface ValidatorEndpointBuilderFactory {
          * To use a custom javax.xml.validation.SchemaFactory.
          * 
          * The option will be converted to a
-         * <code>javax.xml.validation.SchemaFactory</code> type.
+         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(
                 String schemaFactory) {
@@ -297,10 +318,13 @@ public interface ValidatorEndpointBuilderFactory {
         /**
          * Configures the W3C XML Schema Namespace URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://www.w3.org/2001/XMLSchema
          * Group: advanced
+         * 
+         * @param schemaLanguage the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder schemaLanguage(
                 String schemaLanguage) {
@@ -311,10 +335,13 @@ public interface ValidatorEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -324,10 +351,14 @@ public interface ValidatorEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -338,10 +369,13 @@ public interface ValidatorEndpointBuilderFactory {
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param useSharedSchema the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
@@ -353,10 +387,14 @@ public interface ValidatorEndpointBuilderFactory {
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param useSharedSchema the value to set
+         * @return the dsl builder
          */
         default AdvancedValidatorEndpointBuilder useSharedSchema(
                 String useSharedSchema) {
@@ -382,6 +420,7 @@ public interface ValidatorEndpointBuilderFactory {
          * on the file system which contains the XSD to validate against.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder validator(String path) {
             return ValidatorEndpointBuilderFactory.endpointBuilder("validator", path);
@@ -404,6 +443,7 @@ public interface ValidatorEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder validator(
                 String componentName,

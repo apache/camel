@@ -39,8 +39,8 @@ public class MinaFileTcpTest extends BaseMinaTest {
                 // lets setup a server
                 from(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort())).to("mock:results");
 
-                from("file:src/test/data?noop=true&fileName=message1.txt").
-                    to(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort()));
+                from("file:src/test/data?noop=true&fileName=message1.txt")
+                        .to(String.format("mina:tcp://localhost:%1$s?sync=false&textline=true", getPort()));
             }
         };
     }

@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends TcpServerConsumerEndOfDataAndValidationTestSupport {
+public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest
+        extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 
     @Override
     boolean validatePayload() {
@@ -60,7 +61,6 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends Tc
         runMessageContainingEmbeddedStartOfBlock();
     }
 
-
     @Override
     @Test
     public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
@@ -78,7 +78,8 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends Tc
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
+        mllpClient.sendFramedData(
+                Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Exchange should have completed");
     }
@@ -107,4 +108,3 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends Tc
         runMessageWithoutEndOfDataByte();
     }
 }
-

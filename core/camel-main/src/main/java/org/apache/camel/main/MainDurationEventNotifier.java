@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link org.apache.camel.spi.EventNotifier} to trigger shutdown of the Main JVM
- * when maximum number of messages has been processed.
+ * A {@link org.apache.camel.spi.EventNotifier} to trigger shutdown of the Main JVM when maximum number of messages has
+ * been processed.
  */
 public class MainDurationEventNotifier extends EventNotifierSupport {
 
@@ -55,7 +55,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         this.maxIdleSeconds = maxIdleSeconds;
         this.shutdownStrategy = shutdownStrategy;
         this.stopCamelContext = stopCamelContext;
-        this.doneMessages = new AtomicInteger(0);
+        this.doneMessages = new AtomicInteger();
     }
 
     @Override
@@ -88,7 +88,8 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
     @Override
     public boolean isEnabled(CamelEvent event) {
-        return event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
+        return event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent
+                || event instanceof ExchangeFailedEvent;
     }
 
     @Override

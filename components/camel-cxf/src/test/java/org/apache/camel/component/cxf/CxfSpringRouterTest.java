@@ -37,7 +37,6 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
         super.setUp();
         assertNotNull(applicationContext, "Should have created a valid spring context");
 
-
     }
 
     @Override
@@ -45,7 +44,7 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     public void tearDown() throws Exception {
         // Don't close the application context, as it will cause some trouble on the bus shutdown
         super.tearDown();
-        
+
     }
 
     @Override
@@ -61,7 +60,6 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfSpringRouterBeans.xml");

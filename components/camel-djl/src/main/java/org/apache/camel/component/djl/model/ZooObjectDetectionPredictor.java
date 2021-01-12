@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.djl.model;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
+import java.io.*;
 
 import ai.djl.Application;
 import ai.djl.inference.Predictor;
+import ai.djl.modality.cv.Image;
+import ai.djl.modality.cv.ImageFactory;
 import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
@@ -40,16 +36,15 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZooObjectDetectionPredictor.class);
 
-    private final ZooModel<BufferedImage, DetectedObjects> model;
+    private final ZooModel<Image, DetectedObjects> model;
 
     public ZooObjectDetectionPredictor(String artifactId) throws Exception {
-        Criteria<BufferedImage, DetectedObjects> criteria =
-                Criteria.builder()
-                        .optApplication(Application.CV.OBJECT_DETECTION)
-                        .setTypes(BufferedImage.class, DetectedObjects.class)
-                        .optArtifactId(artifactId)
-                        .optProgress(new ProgressBar())
-                        .build();
+        Criteria<Image, DetectedObjects> criteria = Criteria.builder()
+                .optApplication(Application.CV.OBJECT_DETECTION)
+                .setTypes(Image.class, DetectedObjects.class)
+                .optArtifactId(artifactId)
+                .optProgress(new ProgressBar())
+                .build();
         this.model = ModelZoo.loadModel(criteria);
     }
 
@@ -70,9 +65,9 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
         }
     }
 
-    public DetectedObjects classify(BufferedImage input) throws Exception {
-        try (Predictor<BufferedImage, DetectedObjects> predictor = model.newPredictor()) {
-            DetectedObjects detectedObjects = predictor.predict(input);
+    public DetectedObjects classify(Image image) throws Exception {
+        try (Predictor<Image, DetectedObjects> predictor = model.newPredictor()) {
+            DetectedObjects detectedObjects = predictor.predict(image);
             return detectedObjects;
         } catch (TranslateException e) {
             throw new RuntimeException("Could not process input or output", e);
@@ -81,7 +76,8 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
 
     public DetectedObjects classify(File input) throws Exception {
         try {
-            return classify(ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+            return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
@@ -90,7 +86,8 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
 
     public DetectedObjects classify(InputStream input) throws Exception {
         try {
-            return classify(ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(input);
+            return classify(image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);

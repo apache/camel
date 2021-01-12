@@ -26,26 +26,24 @@ public enum FhirDeleteApiMethod implements ApiMethod {
         arg("resource", org.hl7.fhir.instance.model.api.IBaseResource.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID(
+    RESOURCE_BY_ID(
         org.hl7.fhir.instance.model.api.IBaseOperationOutcome.class,
         "resourceById",
         arg("id", org.hl7.fhir.instance.model.api.IIdType.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID_1(
+    RESOURCE_BY_ID_1(
         org.hl7.fhir.instance.model.api.IBaseOperationOutcome.class,
         "resourceById",
         arg("type", String.class),
         arg("stringId", String.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCECONDITIONALBYURL(
+    RESOURCE_CONDITIONAL_BY_URL(
         org.hl7.fhir.instance.model.api.IBaseOperationOutcome.class,
         "resourceConditionalByUrl",
         arg("url", String.class),
         arg("extraParameters", java.util.Map.class));
-
-    
 
     private final ApiMethod apiMethod;
 

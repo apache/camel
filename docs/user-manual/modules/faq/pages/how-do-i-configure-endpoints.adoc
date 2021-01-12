@@ -218,7 +218,7 @@ documentation for more details.
 </camelContext>
 ----
 
-And the Camel route now refers to the placeholder using the `{\{key\}}`
+And the Camel route now refers to the placeholder using the `{\{key}}`
 notation:
 
 [source,java]
@@ -344,7 +344,7 @@ shown below:
 </route>
 ----
 
-Notice that it still requires escaping `&` as `&amp;` in XML. Also you
+Notice that it still requires escaping `&` as `&amp;amp;` in XML. Also you
 can have multiple options in one line, eg this is the same:
 
 [source,xml]

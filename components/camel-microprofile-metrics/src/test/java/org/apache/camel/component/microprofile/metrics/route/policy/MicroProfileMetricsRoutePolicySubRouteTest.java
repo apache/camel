@@ -51,22 +51,19 @@ public class MicroProfileMetricsRoutePolicySubRouteTest extends MicroProfileMetr
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo")
-                    .to("direct:bar")
-                    .to("mock:foo");
+                        .to("direct:bar")
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsRoutePolicyFactory factory = new MicroProfileMetricsRoutePolicyFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addRoutePolicyFactory(factory);
+        camelContext.addRoutePolicyFactory(new MicroProfileMetricsRoutePolicyFactory());
         return camelContext;
     }
 }

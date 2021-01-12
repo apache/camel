@@ -32,14 +32,15 @@ public class Property {
                 .setReturnType(type)
                 .setBody("return " + name + ";\n");
         mutator = new Method().setPublic().setName("set" + name.substring(0, 1).toUpperCase() + name.substring(1))
-            .addParameter(type, name)
-            .setReturnType(void.class)
-            .setBody("this." + name + " = " + name + ";\n");
+                .addParameter(type, name)
+                .setReturnType(void.class)
+                .setBody("this." + name + " = " + name + ";\n");
     }
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -47,6 +48,7 @@ public class Property {
     public GenericType getType() {
         return type;
     }
+
     public void setType(GenericType type) {
         this.type = type;
     }

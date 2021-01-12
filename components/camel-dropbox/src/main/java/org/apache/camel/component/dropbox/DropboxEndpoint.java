@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", category = {Category.CLOUD, Category.FILE, Category.API})
+@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation",
+             category = { Category.CLOUD, Category.FILE, Category.API })
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
@@ -62,7 +63,8 @@ public class DropboxEndpoint extends DefaultEndpoint {
 
     /**
      * Create one of the camel producer available based on the configuration
-     * @return the camel producer
+     * 
+     * @return           the camel producer
      * @throws Exception
      */
     @Override
@@ -86,8 +88,9 @@ public class DropboxEndpoint extends DefaultEndpoint {
 
     /**
      * Create one of the camel consumer available based on the configuration
-     * @param processor  the given processor
-     * @return the camel consumer
+     * 
+     * @param  processor the given processor
+     * @return           the camel consumer
      * @throws Exception
      */
     @Override

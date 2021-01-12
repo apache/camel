@@ -18,61 +18,39 @@ package org.apache.camel.component.kubernetes.cluster.utils;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Central lock for testing leader election.
+ * Central lock for testing leader election based on ConfigMap.
  */
-public class ConfigMapLockSimulator {
+public class ConfigMapLockSimulator extends ResourceLockSimulator<ConfigMap> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigMapLockSimulator.class);
-
-    private String configMapName;
-
-    private ConfigMap currentMap;
-
-    private long versionCounter = 1000000;
-
-    public ConfigMapLockSimulator(String configMapName) {
-        this.configMapName = configMapName;
+    public ConfigMapLockSimulator(String resourceName) {
+        super(resourceName);
     }
 
-    public String getConfigMapName() {
-        return configMapName;
+    @Override
+    protected ConfigMap withNewResourceVersion(ConfigMap resource, String newResourceVersion) {
+        return new ConfigMapBuilder(resource).editOrNewMetadata().withResourceVersion(newResourceVersion)
+                .endMetadata().build();
     }
 
-    public synchronized boolean setConfigMap(ConfigMap map, boolean insert) {
-        // Insert
-        if (insert && currentMap != null) {
-            LOG.error("Current map should have been null");
-            return false;
-        }
-
-        // Update
-        if (!insert && currentMap == null) {
-            LOG.error("Current map should not have been null");
-            return false;
-        }
-        String version = map.getMetadata() != null ? map.getMetadata().getResourceVersion() : null;
-        if (version != null) {
-            long versionLong = Long.parseLong(version);
-            if (versionLong != versionCounter) {
-                LOG.warn("Current resource version is {} while the update is related to version {}", versionCounter, versionLong);
-                return false;
-            }
-        }
-
-        this.currentMap = new ConfigMapBuilder(map).editOrNewMetadata().withResourceVersion(String.valueOf(++versionCounter)).endMetadata().build();
-        return true;
+    @Override
+    protected ConfigMap copyOf(ConfigMap resource) {
+        return new ConfigMapBuilder(resource).build();
     }
 
-    public synchronized ConfigMap getConfigMap() {
-        if (currentMap == null) {
-            return null;
-        }
-
-        return new ConfigMapBuilder(currentMap).build();
+    @Override
+    public String getResourcePath() {
+        return "configmaps";
     }
 
+    @Override
+    public String getAPIPath() {
+        return "/api/v1";
+    }
+
+    @Override
+    public Class<ConfigMap> getResourceClass() {
+        return ConfigMap.class;
+    }
 }

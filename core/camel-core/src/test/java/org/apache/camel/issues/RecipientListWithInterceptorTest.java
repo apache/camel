@@ -42,7 +42,9 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
         private static int doneCount;
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
+                throws Exception {
             if (definition instanceof RecipientListDefinition<?>) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
 

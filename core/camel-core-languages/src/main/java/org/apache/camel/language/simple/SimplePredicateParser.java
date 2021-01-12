@@ -25,15 +25,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.ast.BinaryExpression;
+import org.apache.camel.language.simple.ast.BooleanExpression;
 import org.apache.camel.language.simple.ast.DoubleQuoteEnd;
 import org.apache.camel.language.simple.ast.DoubleQuoteStart;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.LogicalExpression;
 import org.apache.camel.language.simple.ast.NullExpression;
+import org.apache.camel.language.simple.ast.NumericExpression;
 import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
@@ -48,6 +51,10 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.StringHelper;
+
+import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
+import static org.apache.camel.support.ObjectHelper.isNumber;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
@@ -57,14 +64,15 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // use caches to avoid re-parsing the same expressions over and over again
     private Map<String, Expression> cacheExpression;
 
-    public SimplePredicateParser(String expression, boolean allowEscape, Map<String, Expression> cacheExpression) {
-        super(expression, allowEscape);
+    public SimplePredicateParser(CamelContext camelContext, String expression, boolean allowEscape,
+                                 Map<String, Expression> cacheExpression) {
+        super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
     }
 
     public Predicate parsePredicate() {
-        clear();
         try {
+            parseTokens();
             return doParsePredicate();
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
@@ -75,8 +83,26 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
     }
 
-    protected Predicate doParsePredicate() {
+    public String parseCode() {
+        try {
+            parseTokens();
+            return doParseCode();
+        } catch (SimpleParserException e) {
+            // catch parser exception and turn that into a syntax exceptions
+            throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
+        } catch (Exception e) {
+            // include exception in rethrown exception
+            throw new SimpleIllegalSyntaxException(expression, -1, e.getMessage(), e);
+        }
+    }
 
+    /**
+     * First step parsing into a list of nodes.
+     *
+     * This is used as SPI for camel-csimple to do AST transformation and parse into java source code.
+     */
+    public List<SimpleNode> parseTokens() {
+        clear();
         // parse using the following grammar
         nextToken();
         while (!token.getType().isEol()) {
@@ -117,6 +143,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
         // compact and stack logical expressions
         prepareLogicalExpressions();
 
+        return nodes;
+    }
+
+    /**
+     * Second step parsing into a predicate
+     */
+    protected Predicate doParsePredicate() {
         // create and return as a Camel predicate
         List<Predicate> predicates = createPredicates();
         if (predicates.isEmpty()) {
@@ -130,13 +163,57 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     /**
+     * Second step parsing into code
+     */
+    protected String doParseCode() {
+        StringBuilder sb = new StringBuilder();
+        for (SimpleNode node : nodes) {
+            String exp = node.createCode(expression);
+            if (node instanceof LiteralNode) {
+                exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+                sb.append("\"");
+                // " should be escaped to \"
+                exp = escapeQuotes(exp);
+                // \n \t \r should be escaped
+                exp = exp.replaceAll("\n", "\\\\n");
+                exp = exp.replaceAll("\t", "\\\\t");
+                exp = exp.replaceAll("\r", "\\\\r");
+                if (exp.endsWith("\\") && !exp.endsWith("\\\\")) {
+                    // there is a single trailing slash which we need to escape
+                    exp += "\\";
+                }
+                sb.append(exp);
+                sb.append("\"");
+            } else {
+                sb.append(exp);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String escapeQuotes(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char prev = i > 0 ? text.charAt(i - 1) : 0;
+            char ch = text.charAt(i);
+
+            if (ch == '"' && (i == 0 || prev != '\\')) {
+                sb.append('\\');
+                sb.append('"');
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Parses the tokens and crates the AST nodes.
      * <p/>
-     * After the initial parsing of the input (input -> tokens) then we
-     * parse again (tokens -> ast).
+     * After the initial parsing of the input (input -> tokens) then we parse again (tokens -> ast).
      * <p/>
-     * In this parsing the balance of the blocks is checked, so that each block has a matching
-     * start and end token. For example a single quote block, or a function block etc.
+     * In this parsing the balance of the blocks is checked, so that each block has a matching start and end token. For
+     * example a single quote block, or a function block etc.
      */
     protected void parseTokensAndCreateNodes() {
         // we loop the tokens and create a sequence of ast nodes
@@ -146,9 +223,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
         SimpleNode lastSingle = null;
         SimpleNode lastDouble = null;
         SimpleNode lastFunction = null;
-        AtomicBoolean startSingle = new AtomicBoolean(false);
-        AtomicBoolean startDouble = new AtomicBoolean(false);
-        AtomicBoolean startFunction = new AtomicBoolean(false);
+        AtomicBoolean startSingle = new AtomicBoolean();
+        AtomicBoolean startDouble = new AtomicBoolean();
+        AtomicBoolean startFunction = new AtomicBoolean();
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -171,7 +248,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
                 // a new token was created so the current image token need to be added first
                 if (imageToken != null) {
-                    nodes.add(imageToken);
+                    addImageToken(imageToken);
                     imageToken = null;
                 }
                 // and then add the created node
@@ -190,7 +267,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         // append any leftover image tokens (when we reached eol)
         if (imageToken != null) {
-            nodes.add(imageToken);
+            addImageToken(imageToken);
         }
 
         // validate the single, double quote pairs and functions is in balance
@@ -209,18 +286,31 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
     }
 
+    private void addImageToken(LiteralNode imageToken) {
+        // this can be many things but lets check if this is numeric based, then we can optimize this
+        String text = imageToken.getText();
+
+        // lets see if its numeric then we can optimize this
+        boolean numeric = isNumber(text) || isFloatingNumber(text);
+        if (numeric) {
+            nodes.add(new NumericExpression(imageToken.getToken(), text));
+        } else {
+            nodes.add(imageToken);
+        }
+    }
 
     /**
      * Creates a node from the given token
      *
-     * @param token         the token
-     * @param startSingle   state of single quoted blocks
-     * @param startDouble   state of double quoted blocks
-     * @param startFunction state of function blocks
-     * @return the created node, or <tt>null</tt> to let a default node be created instead.
+     * @param  token         the token
+     * @param  startSingle   state of single quoted blocks
+     * @param  startDouble   state of double quoted blocks
+     * @param  startFunction state of function blocks
+     * @return               the created node, or <tt>null</tt> to let a default node be created instead.
      */
-    private SimpleNode createNode(SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
-                                  AtomicBoolean startFunction) {
+    private SimpleNode createNode(
+            SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
+            AtomicBoolean startFunction) {
         if (token.getType().isFunctionStart()) {
             startFunction.set(true);
             return new SimpleFunctionStart(token, cacheExpression);
@@ -267,7 +357,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
 
         // okay we are not inside a function or quote, so we want to support operators
-        // and the special null value as well
+        // and the special null/boolean value as well
         if (token.getType().isUnary()) {
             return new UnaryExpression(token);
         } else if (token.getType().isBinary()) {
@@ -276,6 +366,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             return new LogicalExpression(token);
         } else if (token.getType().isNullValue()) {
             return new NullExpression(token);
+        } else if (token.getType().isBooleanValue()) {
+            return new BooleanExpression(token);
         }
 
         // by returning null, we will let the parser determine what to do
@@ -285,9 +377,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
     /**
      * Removes any ignorable whitespace tokens.
      * <p/>
-     * During the initial parsing (input -> tokens), then there may
-     * be excessive whitespace tokens, which can safely be removed,
-     * which makes the succeeding parsing easier.
+     * During the initial parsing (input -> tokens), then there may be excessive whitespace tokens, which can safely be
+     * removed, which makes the succeeding parsing easier.
      */
     private void removeIgnorableWhiteSpaceTokens() {
         // white space can be removed if its not part of a quoted text or within function(s)
@@ -314,13 +405,11 @@ public class SimplePredicateParser extends BaseSimpleParser {
     /**
      * Prepares binary expressions.
      * <p/>
-     * This process prepares the binary expressions in the AST. This is done
-     * by linking the binary operator with both the right and left hand side
-     * nodes, to have the AST graph updated and prepared properly.
+     * This process prepares the binary expressions in the AST. This is done by linking the binary operator with both
+     * the right and left hand side nodes, to have the AST graph updated and prepared properly.
      * <p/>
-     * So when the AST node is later used to create the {@link Predicate}s
-     * to be used by Camel then the AST graph has a linked and prepared
-     * graph of nodes which represent the input expression.
+     * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
+     * linked and prepared graph of nodes which represent the input expression.
      */
     private void prepareBinaryExpressions() {
         Deque<SimpleNode> stack = new ArrayDeque<>();
@@ -340,16 +429,22 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 String operator = binary.getOperator().toString();
 
                 if (left == null) {
-                    throw new SimpleParserException("Binary operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Binary operator " + operator + " has no left hand side token", token.getToken().getIndex());
                 }
                 if (!binary.acceptLeftNode(left)) {
-                    throw new SimpleParserException("Binary operator " + operator + " does not support left hand side token " + left.getToken(), token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Binary operator " + operator + " does not support left hand side token " + left.getToken(),
+                            token.getToken().getIndex());
                 }
                 if (right == null) {
-                    throw new SimpleParserException("Binary operator " + operator + " has no right hand side token", token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Binary operator " + operator + " has no right hand side token", token.getToken().getIndex());
                 }
                 if (!binary.acceptRightNode(right)) {
-                    throw new SimpleParserException("Binary operator " + operator + " does not support right hand side token " + right.getToken(), token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Binary operator " + operator + " does not support right hand side token " + right.getToken(),
+                            token.getToken().getIndex());
                 }
 
                 // pop previous as we need to replace it with this binary operator
@@ -375,13 +470,11 @@ public class SimplePredicateParser extends BaseSimpleParser {
     /**
      * Prepares logical expressions.
      * <p/>
-     * This process prepares the logical expressions in the AST. This is done
-     * by linking the logical operator with both the right and left hand side
-     * nodes, to have the AST graph updated and prepared properly.
+     * This process prepares the logical expressions in the AST. This is done by linking the logical operator with both
+     * the right and left hand side nodes, to have the AST graph updated and prepared properly.
      * <p/>
-     * So when the AST node is later used to create the {@link Predicate}s
-     * to be used by Camel then the AST graph has a linked and prepared
-     * graph of nodes which represent the input expression.
+     * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
+     * linked and prepared graph of nodes which represent the input expression.
      */
     private void prepareLogicalExpressions() {
         Deque<SimpleNode> stack = new ArrayDeque<>();
@@ -401,16 +494,22 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 String operator = logical.getOperator().toString();
 
                 if (left == null) {
-                    throw new SimpleParserException("Logical operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Logical operator " + operator + " has no left hand side token", token.getToken().getIndex());
                 }
                 if (!logical.acceptLeftNode(left)) {
-                    throw new SimpleParserException("Logical operator " + operator + " does not support left hand side token " + left.getToken(), token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Logical operator " + operator + " does not support left hand side token " + left.getToken(),
+                            token.getToken().getIndex());
                 }
                 if (right == null) {
-                    throw new SimpleParserException("Logical operator " + operator + " has no right hand side token", token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Logical operator " + operator + " has no right hand side token", token.getToken().getIndex());
                 }
                 if (!logical.acceptRightNode(right)) {
-                    throw new SimpleParserException("Logical operator " + operator + " does not support right hand side token " + left.getToken(), token.getToken().getIndex());
+                    throw new SimpleParserException(
+                            "Logical operator " + operator + " does not support right hand side token " + left.getToken(),
+                            token.getToken().getIndex());
                 }
 
                 // pop previous as we need to replace it with this binary operator
@@ -441,7 +540,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     private List<Predicate> createPredicates() {
         List<Predicate> answer = new ArrayList<>();
         for (SimpleNode node : nodes) {
-            Expression exp = node.createExpression(expression);
+            Expression exp = node.createExpression(camelContext, expression);
             if (exp != null) {
                 Predicate predicate = ExpressionToPredicateAdapter.toPredicate(exp);
                 answer.add(predicate);
@@ -646,7 +745,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     expect(TokenType.whiteSpace);
                 }
             } else {
-                throw new SimpleParserException("Logical operator " + operatorType + " does not support token " + token, token.getIndex());
+                throw new SimpleParserException(
+                        "Logical operator " + operatorType + " does not support token " + token, token.getIndex());
             }
             return true;
         }
@@ -667,7 +767,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         return accept(TokenType.nullValue);
         // no other tokens to check so do not use nextToken
     }
-    
+
     protected boolean minusValue() {
         nextToken();
         return accept(TokenType.numericValue);

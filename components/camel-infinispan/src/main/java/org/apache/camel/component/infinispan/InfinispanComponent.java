@@ -53,7 +53,8 @@ public class InfinispanComponent extends DefaultComponent {
         // init default embedded cache if config parameters aren't specified or cacheContainer is set using setMethod
         if (!isConfigProvided(parameters, conf)) {
             if (defaultCacheManager == null) {
-                defaultCacheManager = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build(),
+                defaultCacheManager = new DefaultCacheManager(
+                        new GlobalConfigurationBuilder().defaultCacheName("default").build(),
                         new org.infinispan.configuration.cache.ConfigurationBuilder().build());
                 LOG.debug("Default cacheContainer has been created");
             }
@@ -90,7 +91,7 @@ public class InfinispanComponent extends DefaultComponent {
             return true;
         }
 
-        String[] confParameters = new String[] {"hosts", "cacheContainerConfiguration", "configurationUri", "cacheContainer"};
+        String[] confParameters = new String[] { "hosts", "cacheContainerConfiguration", "configurationUri", "cacheContainer" };
         return Arrays.stream(confParameters).anyMatch(parameters::containsKey);
     }
 

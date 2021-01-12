@@ -48,7 +48,7 @@ public class MongoDbBigDecimalConverterTest extends AbstractMongoDbTest {
         Document b = testCollection.find(new BasicDBObject("_id", testClass._id)).first();
         assertNotNull(b, "No record with 'testInsertString' _id");
 
-        assertTrue(testClass.aNumber.equals(new BigDecimal((double) b.get("aNumber"))));
+        assertEquals(new BigDecimal((double) b.get("aNumber")), testClass.aNumber);
         assertEquals(testClass.bNumber, new BigDecimal((double) b.get("bNumber")));
     }
 
@@ -57,9 +57,8 @@ public class MongoDbBigDecimalConverterTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insert")
-                    .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
             }
         };
     }
 }
-

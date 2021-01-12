@@ -45,7 +45,8 @@ import static org.springframework.ws.test.server.ResponseMatchers.serverOrReceiv
 @CamelSpringTest
 public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
 
     @Autowired
     private CamelEndpointMapping endpointMapping;
@@ -79,7 +80,7 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
     public void testValidUri() throws Exception {
         String deprecate = "spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping";
         String sanitized = "spring-ws:rootqname:(http://www.webserviceX.NET/)GetQuote?endpointMapping=#endpointMapping";
-        Endpoint endpoint = context.getComponent("spring-ws").createEndpoint(deprecate); 
+        Endpoint endpoint = context.getComponent("spring-ws").createEndpoint(deprecate);
         assertEquals(sanitized, endpoint.getEndpointUri());
         assertNotNull(new URI(endpoint.getEndpointUri()));
     }

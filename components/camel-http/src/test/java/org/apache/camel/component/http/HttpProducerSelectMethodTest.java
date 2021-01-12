@@ -43,16 +43,13 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
-                registerHandler("/mypost", new BasicValidationHandler(POST.name(), null, null, getExpectedContent())).
-                registerHandler("/myget2", new BasicValidationHandler(GET.name(), "q=Camel", null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .registerHandler("/mypost", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
+                .registerHandler("/myget2", new BasicValidationHandler(GET.name(), "q=Camel", null, getExpectedContent()))
+                .create();
         localServer.start();
 
         baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();

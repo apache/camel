@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 @XmlSchema(
-    xmlns = { 
-        @XmlNs(prefix = "order", namespaceURI = "http://www.camel.apache.org/jaxb/example/order/1"),
-        @XmlNs(prefix = "address", namespaceURI = "http://www.camel.apache.org/jaxb/example/address/1")
-        }
-)
+           xmlns = {
+                   @XmlNs(prefix = "order", namespaceURI = "http://www.camel.apache.org/jaxb/example/order/1"),
+                   @XmlNs(prefix = "address", namespaceURI = "http://www.camel.apache.org/jaxb/example/address/1")
+           })
 package org.apache.camel.example;
 
 import javax.xml.bind.annotation.XmlNs;

@@ -106,12 +106,14 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchOperation.DeleteIndex;
         }
 
-        ElasticsearchOperation operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.class);
+        ElasticsearchOperation operationConfig
+                = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.class);
         if (operationConfig == null) {
             operationConfig = configuration.getOperation();
         }
         if (operationConfig == null) {
-            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
+            throw new IllegalArgumentException(
+                    ElasticsearchConstants.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
         }
         return operationConfig;
     }
@@ -164,13 +166,15 @@ public class ElasticsearchProducer extends DefaultProducer {
         if (operation == ElasticsearchOperation.Index) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
             if (indexRequest == null) {
-                throw new IllegalArgumentException("Wrong body type. Only Map, String, byte[], XContentBuilder or IndexRequest is allowed as a type");
+                throw new IllegalArgumentException(
+                        "Wrong body type. Only Map, String, byte[], XContentBuilder or IndexRequest is allowed as a type");
             }
             message.setBody(restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.Update) {
             UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
             if (updateRequest == null) {
-                throw new IllegalArgumentException("Wrong body type. Only Map, String, byte[], XContentBuilder or UpdateRequest is allowed as a type");
+                throw new IllegalArgumentException(
+                        "Wrong body type. Only Map, String, byte[], XContentBuilder or UpdateRequest is allowed as a type");
             }
             message.setBody(restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.GetById) {
@@ -182,13 +186,15 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (operation == ElasticsearchOperation.Bulk) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             if (bulkRequest == null) {
-                throw new IllegalArgumentException("Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
+                throw new IllegalArgumentException(
+                        "Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
             }
             message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             if (bulkRequest == null) {
-                throw new IllegalArgumentException("Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
+                throw new IllegalArgumentException(
+                        "Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
             }
             message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.Delete) {
@@ -208,7 +214,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.size(0);
             sourceBuilder.terminateAfter(1);
-            SearchRequest searchRequest = new SearchRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
+            SearchRequest searchRequest
+                    = new SearchRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
             searchRequest.source(sourceBuilder);
             try {
                 restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
@@ -229,8 +236,10 @@ public class ElasticsearchProducer extends DefaultProducer {
             // is it a scroll request ?
             boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
             if (useScroll) {
-                int scrollKeepAliveMs = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
-                ElasticsearchScrollRequestIterator scrollRequestIterator = new ElasticsearchScrollRequestIterator(searchRequest, restHighLevelClient, scrollKeepAliveMs, exchange);
+                int scrollKeepAliveMs
+                        = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
+                ElasticsearchScrollRequestIterator scrollRequestIterator = new ElasticsearchScrollRequestIterator(
+                        searchRequest, restHighLevelClient, scrollKeepAliveMs, exchange);
                 exchange.getIn().setBody(scrollRequestIterator);
             } else {
                 message.setBody(restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT).getHits());
@@ -244,7 +253,8 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (operation == ElasticsearchOperation.Ping) {
             message.setBody(restHighLevelClient.ping(RequestOptions.DEFAULT));
         } else {
-            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
+            throw new IllegalArgumentException(
+                    ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
         // If we set params via the configuration on this exchange, remove them
         // now. This preserves legacy behavior for this component and enables a
@@ -282,11 +292,13 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
     }
 
-    private void startClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnknownHostException {
+    private void startClient()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
+            UnknownHostException {
         if (client == null) {
             LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
-                && !configuration.getHostAddressesList().isEmpty()) {
+                    && !configuration.getHostAddressesList().isEmpty()) {
                 client = createClient();
             } else {
                 LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
@@ -294,14 +306,16 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
     }
 
-    private RestClient createClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private RestClient createClient()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
-        builder.setRequestConfigCallback(requestConfigBuilder ->
-            requestConfigBuilder.setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
+        builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
+                .setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
         if (configuration.getUser() != null && configuration.getPassword() != null) {
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()));
+            credentialsProvider.setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()));
             builder.setHttpClientConfigCallback(httpClientBuilder -> {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
                 return httpClientBuilder;
@@ -316,7 +330,6 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
         return restClient;
     }
-
 
     @Override
     protected void doStop() throws Exception {
@@ -336,7 +349,8 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
-            super(restClient, client -> { }, Collections.emptyList());
+            super(restClient, client -> {
+            }, Collections.emptyList());
         }
     }
 }

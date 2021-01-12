@@ -4,8 +4,10 @@ package org.apache.camel.component.mail;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -33,8 +35,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": getOrCreateConfiguration(target).setAttachmentsContentTransferEncodingResolver(property(camelContext, org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class, value)); return true;
         case "authenticator": getOrCreateConfiguration(target).setAuthenticator(property(camelContext, org.apache.camel.component.mail.MailAuthenticator.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bcc": getOrCreateConfiguration(target).setBcc(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -52,6 +54,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyTo": getOrCreateConfiguration(target).setCopyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "debugmode":
         case "debugMode": getOrCreateConfiguration(target).setDebugMode(property(camelContext, boolean.class, value)); return true;
+        case "decodefilename":
+        case "decodeFilename": getOrCreateConfiguration(target).setDecodeFilename(property(camelContext, boolean.class, value)); return true;
         case "delete": getOrCreateConfiguration(target).setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": getOrCreateConfiguration(target).setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "fetchsize":
@@ -101,51 +105,82 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalJavaMailProperties", java.util.Properties.class);
-        answer.put("alternativeBodyHeader", java.lang.String.class);
-        answer.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
-        answer.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bcc", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cc", java.lang.String.class);
-        answer.put("closeFolder", boolean.class);
-        answer.put("configuration", org.apache.camel.component.mail.MailConfiguration.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("contentType", java.lang.String.class);
-        answer.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
-        answer.put("copyTo", java.lang.String.class);
-        answer.put("debugMode", boolean.class);
-        answer.put("delete", boolean.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("fetchSize", int.class);
-        answer.put("folderName", java.lang.String.class);
-        answer.put("from", java.lang.String.class);
-        answer.put("handleFailedMessage", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("ignoreUnsupportedCharset", boolean.class);
-        answer.put("ignoreUriScheme", boolean.class);
-        answer.put("javaMailProperties", java.util.Properties.class);
-        answer.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mapMailMessage", boolean.class);
-        answer.put("mimeDecodeHeaders", boolean.class);
-        answer.put("moveTo", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("peek", boolean.class);
-        answer.put("replyTo", java.lang.String.class);
-        answer.put("session", javax.mail.Session.class);
-        answer.put("skipFailedMessage", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("to", java.lang.String.class);
-        answer.put("unseen", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("useInlineAttachments", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionaljavamailproperties":
+        case "additionalJavaMailProperties": return java.util.Properties.class;
+        case "alternativebodyheader":
+        case "alternativeBodyHeader": return java.lang.String.class;
+        case "attachmentscontenttransferencodingresolver":
+        case "attachmentsContentTransferEncodingResolver": return org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class;
+        case "authenticator": return org.apache.camel.component.mail.MailAuthenticator.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bcc": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cc": return java.lang.String.class;
+        case "closefolder":
+        case "closeFolder": return boolean.class;
+        case "configuration": return org.apache.camel.component.mail.MailConfiguration.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "contenttype":
+        case "contentType": return java.lang.String.class;
+        case "contenttyperesolver":
+        case "contentTypeResolver": return org.apache.camel.component.mail.ContentTypeResolver.class;
+        case "copyto":
+        case "copyTo": return java.lang.String.class;
+        case "debugmode":
+        case "debugMode": return boolean.class;
+        case "decodefilename":
+        case "decodeFilename": return boolean.class;
+        case "delete": return boolean.class;
+        case "disconnect": return boolean.class;
+        case "fetchsize":
+        case "fetchSize": return int.class;
+        case "foldername":
+        case "folderName": return java.lang.String.class;
+        case "from": return java.lang.String.class;
+        case "handlefailedmessage":
+        case "handleFailedMessage": return boolean.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "ignoreunsupportedcharset":
+        case "ignoreUnsupportedCharset": return boolean.class;
+        case "ignoreurischeme":
+        case "ignoreUriScheme": return boolean.class;
+        case "javamailproperties":
+        case "javaMailProperties": return java.util.Properties.class;
+        case "javamailsender":
+        case "javaMailSender": return org.apache.camel.component.mail.JavaMailSender.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mapmailmessage":
+        case "mapMailMessage": return boolean.class;
+        case "mimedecodeheaders":
+        case "mimeDecodeHeaders": return boolean.class;
+        case "moveto":
+        case "moveTo": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "peek": return boolean.class;
+        case "replyto":
+        case "replyTo": return java.lang.String.class;
+        case "session": return javax.mail.Session.class;
+        case "skipfailedmessage":
+        case "skipFailedMessage": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "subject": return java.lang.String.class;
+        case "to": return java.lang.String.class;
+        case "unseen": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "useinlineattachments":
+        case "useInlineAttachments": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -159,8 +194,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": return getOrCreateConfiguration(target).getAttachmentsContentTransferEncodingResolver();
         case "authenticator": return getOrCreateConfiguration(target).getAuthenticator();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bcc": return getOrCreateConfiguration(target).getBcc();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
@@ -178,6 +213,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyTo": return getOrCreateConfiguration(target).getCopyTo();
         case "debugmode":
         case "debugMode": return getOrCreateConfiguration(target).isDebugMode();
+        case "decodefilename":
+        case "decodeFilename": return getOrCreateConfiguration(target).isDecodeFilename();
         case "delete": return getOrCreateConfiguration(target).isDelete();
         case "disconnect": return getOrCreateConfiguration(target).isDisconnect();
         case "fetchsize":

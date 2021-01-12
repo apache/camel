@@ -33,11 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
 public class CxfCustomerStartStopTest {
-    static final int PORT1 = CXFTestSupport.getPort1();  
+    static final int PORT1 = CXFTestSupport.getPort1();
     static final int PORT2 = CXFTestSupport.getPort1();
 
-
-    
     @Test
     public void startAndStopService() throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -45,10 +43,10 @@ public class CxfCustomerStartStopTest {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("cxf:http://localhost:" + PORT1 + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")
-                    .to("log:endpoint");
+                        .to("log:endpoint");
             }
         });
-        
+
         context.start();
         Thread.sleep(300);
         context.stop();
@@ -60,33 +58,27 @@ public class CxfCustomerStartStopTest {
         String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
         bus.shutdown(true);
         System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort",
-                           orig == null ? "true" : "false");
+                orig == null ? "true" : "false");
         engine = factory.retrieveJettyHTTPServerEngine(PORT1);
         assertNull(engine, "Jetty engine should be removed");
     }
-    
+
     @Test
     public void startAndStopServiceFromSpring() throws Exception {
         System.setProperty("CamelCxfConsumerContext.port2", Integer.toString(PORT2));
-        
-        ClassPathXmlApplicationContext applicationContext = 
-            new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
+
+        ClassPathXmlApplicationContext applicationContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
         Bus bus = applicationContext.getBean("cxf", Bus.class);
         // Bus shutdown will be called when the application context is closed.
         String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
         IOHelper.close(applicationContext);
         System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort",
-                           orig == null ? "true" : "false");
+                orig == null ? "true" : "false");
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);
         // test if the port is still used
         JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT2);
         assertNull(engine, "Jetty engine should be removed");
     }
-    
-    
-    
-    
-    
-    
 
 }

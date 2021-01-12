@@ -105,10 +105,12 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         return context;
     }
 
-    private int countActiveFromEndpoints(ArrayList<CamelContext> lcc, ArrayList<String> rn) throws NoSuchFieldException, IllegalAccessException {
+    private int countActiveFromEndpoints(ArrayList<CamelContext> lcc, ArrayList<String> rn)
+            throws NoSuchFieldException, IllegalAccessException {
         int result = 0;
         if (lcc.size() != rn.size()) {
-            throw new UnsupportedOperationException("CamelContext list and Route ids list must have the same number of elements!");
+            throw new UnsupportedOperationException(
+                    "CamelContext list and Route ids list must have the same number of elements!");
         }
         for (int i = 0; i < lcc.size(); i++) {
             Route route = lcc.get(i).getRoute(rn.get(i));

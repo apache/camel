@@ -29,10 +29,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(GroupedExchangeRoundtripTest.class);
 
     private static final String TOPIC_NAME = "groupTopic";
     private static final String SUBSCRIPTION_NAME = "groupSubscription";
@@ -57,7 +60,12 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
 
     @Override
     public void createTopicSubscription() {
-        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
+        try {
+            createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
+        } catch (Exception e) {
+            // May be ignored because it could have been created.
+            LOG.warn("Failed to create the subscription pair {}", e.getMessage());
+        }
     }
 
     @Override
@@ -65,8 +73,9 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from(aggregator).routeId("Group_Send").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2).completionTimeout(5000L).to(topic)
-                    .to(sendResult);
+                from(aggregator).routeId("Group_Send").aggregate(new GroupedExchangeAggregationStrategy()).constant(true)
+                        .completionSize(2).completionTimeout(5000L).to(topic)
+                        .to(sendResult);
 
                 from(pubsubSubscription).routeId("Group_Receive").to(receiveResult);
 

@@ -38,7 +38,7 @@ public final class AtmosConfigurationValidator {
     /**
      * Validate the parameters passed in the incoming url.
      *
-     * @param configuration object containing the parameters.
+     * @param  configuration  object containing the parameters.
      * @throws AtmosException
      */
     public static void validate(AtmosConfiguration configuration) throws AtmosException {

@@ -47,16 +47,16 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
 
         // if any of the properties is not set, load test-options.properties
         if (!properties.containsKey("consumer.key")
-            || !properties.containsKey("consumer.secret")
-            || !properties.containsKey("access.token")
-            || !properties.containsKey("access.token.secret")) {
+                || !properties.containsKey("consumer.secret")
+                || !properties.containsKey("access.token")
+                || !properties.containsKey("access.token.secret")) {
 
             URL url = getClass().getResource("/test-options.properties");
 
             try (InputStream inStream = url.openStream()) {
                 properties.load(inStream);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warn("I/O exception loading test-options.properties: {}", e.getMessage(), e);
                 throw new IllegalAccessError("test-options.properties could not be found");
             }
         }
@@ -74,9 +74,9 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
 
     protected String getUriTokens() {
         return "consumerKey=" + consumerKey
-            + "&consumerSecret=" + consumerSecret
-            + "&accessToken=" + accessToken
-            + "&accessTokenSecret=" + accessTokenSecret;
+               + "&consumerSecret=" + consumerSecret
+               + "&accessToken=" + accessToken
+               + "&accessTokenSecret=" + accessTokenSecret;
     }
 
     protected Map<String, Object> getParameters() {

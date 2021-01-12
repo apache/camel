@@ -42,6 +42,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     private final NettyProducer producer;
     private volatile boolean messageReceived;
     private volatile boolean exceptionHandled;
+    private volatile boolean disconnecting;
 
     public ClientChannelHandler(NettyProducer producer) {
         this.producer = producer;
@@ -54,6 +55,11 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         // to keep track of open sockets
         producer.getAllChannels().add(ctx.channel());
+
+        // reset flags
+        disconnecting = false;
+        messageReceived = false;
+        exceptionHandled = false;
 
         super.channelActive(ctx);
     }
@@ -113,7 +119,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.channel());
 
-        if (exchange != null) {
+        if (exchange != null && !disconnecting) {
             // this channel is maybe closing graceful and the exchange is already done
             // and if so we should not trigger an exception
             boolean doneUoW = exchange.getUnitOfWork() == null;
@@ -130,12 +136,16 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 }
                 // don't fail the exchange if we actually specify to disconnect
                 if (!configuration.isDisconnect()) {
-                    exchange.setException(new CamelExchangeException("No response received from remote server: " + address, exchange));
+                    exchange.setException(
+                            new CamelExchangeException("No response received from remote server: " + address, exchange));
                 }
                 // signal callback
                 callback.done(false);
             }
         }
+
+        // reset flag as the channel has been disconnected (state is now inactive)
+        disconnecting = false;
 
         // make sure the event can be processed by other handlers
         super.channelInactive(ctx);
@@ -210,6 +220,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
                 }
+                // flag to know we are forcing a disconnect
+                disconnecting = true;
                 NettyHelper.close(ctx.channel());
             }
         } finally {
@@ -226,14 +238,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
-     * Gets the Camel {@link Message} to use as the message to be set on the current {@link Exchange} when
-     * we have received a reply message.
+     * Gets the Camel {@link Message} to use as the message to be set on the current {@link Exchange} when we have
+     * received a reply message.
      * <p/>
      *
-     * @param exchange      the current exchange
-     * @param ctx       the channel handler context
-     * @param message  the incoming event which has the response message from Netty.
-     * @return the Camel {@link Message} to set on the current {@link Exchange} as the response message.
+     * @param  exchange  the current exchange
+     * @param  ctx       the channel handler context
+     * @param  message   the incoming event which has the response message from Netty.
+     * @return           the Camel {@link Message} to set on the current {@link Exchange} as the response message.
      * @throws Exception is thrown if error getting the response message
      */
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {

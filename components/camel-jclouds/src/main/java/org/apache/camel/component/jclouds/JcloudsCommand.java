@@ -18,5 +18,6 @@ package org.apache.camel.component.jclouds;
 
 public enum JcloudsCommand {
 
-    blobstore, compute
+    blobstore,
+    compute
 }

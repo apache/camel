@@ -4,8 +4,10 @@ package org.apache.camel.component.dozer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DozerEndpoint target = (DozerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mappingconfiguration":
@@ -41,26 +41,31 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mappingConfiguration", org.apache.camel.converter.dozer.DozerBeanMapperConfiguration.class);
-        answer.put("mappingFile", java.lang.String.class);
-        answer.put("marshalId", java.lang.String.class);
-        answer.put("sourceModel", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("targetModel", java.lang.String.class);
-        answer.put("unmarshalId", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mappingconfiguration":
+        case "mappingConfiguration": return org.apache.camel.converter.dozer.DozerBeanMapperConfiguration.class;
+        case "mappingfile":
+        case "mappingFile": return java.lang.String.class;
+        case "marshalid":
+        case "marshalId": return java.lang.String.class;
+        case "sourcemodel":
+        case "sourceModel": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "targetmodel":
+        case "targetModel": return java.lang.String.class;
+        case "unmarshalid":
+        case "unmarshalId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DozerEndpoint target = (DozerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mappingconfiguration":

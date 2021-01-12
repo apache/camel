@@ -25,8 +25,6 @@ public enum DriveChannelsApiMethod implements ApiMethod {
         "stop",
         arg("contentChannel", com.google.api.services.drive.model.Channel.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private DriveChannelsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

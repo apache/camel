@@ -1,4 +1,4 @@
-[[shiro-component]]
+[[shiro-other]]
 = Shiro Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-shiro/src/main/docs/shiro.adoc
@@ -7,6 +7,7 @@
 :description: Security using Shiro
 :since: 2.5
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/shiro.adoc[opts=optional]
 
 *Since Camel {since}*
 

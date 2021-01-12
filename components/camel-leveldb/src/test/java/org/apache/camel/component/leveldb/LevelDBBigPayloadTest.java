@@ -21,10 +21,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,18 +34,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test issue with leveldb file store growing to large
  */
 @Disabled("Run this test manually")
-public class LevelDBBigPayloadTest extends CamelTestSupport {
+public class LevelDBBigPayloadTest extends LevelDBTestSupport {
 
     private static final long TIME = 60 * 1000;
     private static final AtomicLong NUMBER = new AtomicLong();
-    private LevelDBAggregationRepository repo;
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
         super.setUp();
     }
 
@@ -71,9 +68,9 @@ public class LevelDBBigPayloadTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:foo")
-                    .bean(BigPayload.class)
-                    .aggregate(method(LevelDBBigPayloadTest.class, "number"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(repo)
+                        .bean(BigPayload.class)
+                        .aggregate(method(LevelDBBigPayloadTest.class, "number"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(getRepo())
                         .completionSize(2).completionTimeout(5000)
                         .log("Aggregated key ${header.CamelAggregatedCorrelationKey}");
             }

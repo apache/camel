@@ -38,10 +38,12 @@ public class RoasterMySedaRouteBuilderTest {
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySedaRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MySedaRouteBuilder.java"));
 
         List<CamelEndpointDetails> details = new ArrayList<>();
-        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".", "src/test/java/org/apache/camel/parser/java/MySedaRouteBuilder.java", details);
+        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".",
+                "src/test/java/org/apache/camel/parser/java/MySedaRouteBuilder.java", details);
         LOG.info("{}", details);
 
         assertEquals(7, details.size());

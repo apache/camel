@@ -19,16 +19,17 @@ package org.apache.camel.main;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Global configuration for Health Check
  */
-@Configurer
-public class HealthConfigurationProperties {
+@Configurer(bootstrap = true)
+public class HealthConfigurationProperties implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     @Metadata(defaultValue = "true")
     private Boolean enabled;
@@ -46,6 +47,13 @@ public class HealthConfigurationProperties {
 
     public MainConfigurationProperties end() {
         return parent;
+    }
+
+    @Override
+    public void close() {
+        config.clear();
+        config = null;
+        parent = null;
     }
 
     public Boolean getEnabled() {

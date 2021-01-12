@@ -27,8 +27,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 
 /**
- * A basic implementation of a CamelCookie handler based on the JDK
- * CookieManager.
+ * A basic implementation of a CamelCookie handler based on the JDK CookieManager.
  */
 public abstract class BaseCookieHandler implements CookieHandler {
 

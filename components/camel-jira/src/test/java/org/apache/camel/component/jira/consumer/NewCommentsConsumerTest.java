@@ -74,8 +74,6 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
-
-
     @Override
     protected void bindToRegistry(Registry registry) {
         registry.bind(JIRA_REST_CLIENT_FACTORY, jiraRestClientFactory);
@@ -117,7 +115,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jira://newComments?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=500")
+                from("jira://newComments?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=1000")
                         .to(mockResult);
             }
         };
@@ -137,7 +135,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         Promise<Issue> promiseIssue = Promises.promise(issue);
         when(issueRestClient.getIssue(anyString())).thenReturn(promiseIssue);
         List<Comment> comments = new ArrayList<>();
-        for (Comment c: issue.getComments()) {
+        for (Comment c : issue.getComments()) {
             comments.add(c);
         }
         // reverse the order, from oldest comment to recent
@@ -163,7 +161,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         SearchResult searchResult = new SearchResult(0, 50, 3, newIssues);
         Promise<SearchResult> searchResultPromise = Promises.promise(searchResult);
         when(searchRestClient.searchJql(anyString(), any(), any(), any())).thenReturn(searchResultPromise);
-        AtomicInteger regulator = new AtomicInteger(0);
+        AtomicInteger regulator = new AtomicInteger();
         when(issueRestClient.getIssue(anyString())).then(inv -> {
             int idx = regulator.getAndIncrement();
             Issue issue = issueWithNoComments;
@@ -173,8 +171,8 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
             return Promises.promise(issue);
         });
         List<Comment> comments = new ArrayList<>();
-        for (Issue issue: newIssues) {
-            for (Comment c: issue.getComments()) {
+        for (Issue issue : newIssues) {
+            for (Comment c : issue.getComments()) {
                 comments.add(c);
             }
         }

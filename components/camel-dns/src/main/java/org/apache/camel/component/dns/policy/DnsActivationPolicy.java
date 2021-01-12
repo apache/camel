@@ -84,13 +84,13 @@ public class DnsActivationPolicy extends RoutePolicySupport {
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
-        LOG.debug("onExchange start " + route.getId() + "/" + exchange.getExchangeId());
+        LOG.debug("onExchange start {}/{}", route.getId(), exchange.getExchangeId());
         // noop
     }
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        LOG.debug("onExchange end " + route.getId() + "/" + exchange.getExchangeId());
+        LOG.debug("onExchange end {}/{}", route.getId(), exchange.getExchangeId());
         // noop
     }
 
@@ -169,7 +169,7 @@ public class DnsActivationPolicy extends RoutePolicySupport {
             LOG.info("Resuming {}", route.getId());
             startConsumer(route.getConsumer());
         } else {
-            LOG.debug("Nothing to do " + route.getId() + " is " + routeStatus);
+            LOG.debug("Nothing to do {} is {}", route.getId(), routeStatus);
         }
     }
 
@@ -191,7 +191,7 @@ public class DnsActivationPolicy extends RoutePolicySupport {
             LOG.info("Stopping {}", route.getId());
             stopRoute(route);
         } else {
-            LOG.debug("Nothing to do " + route.getId() + " is " + routeStatus);
+            LOG.debug("Nothing to do {} is {}", route.getId(), routeStatus);
         }
     }
 
@@ -228,5 +228,3 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         }
     }
 }
-
-

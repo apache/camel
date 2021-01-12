@@ -26,8 +26,8 @@ import java.util.List;
 import org.apache.camel.spi.ClassResolver;
 
 /**
- * Allows a user to customize a field mapping using a POJO that is not
- * required to extend/implement Dozer-specific classes.
+ * Allows a user to customize a field mapping using a POJO that is not required to extend/implement Dozer-specific
+ * classes.
  */
 public class CustomMapper extends BaseConverter {
 
@@ -38,10 +38,11 @@ public class CustomMapper extends BaseConverter {
     }
 
     @Override
-    public Object convert(Object existingDestinationFieldValue,
-                          Object sourceFieldValue,
-                          Class<?> destinationClass,
-                          Class<?> sourceClass) {
+    public Object convert(
+            Object existingDestinationFieldValue,
+            Object sourceFieldValue,
+            Class<?> destinationClass,
+            Class<?> sourceClass) {
         try {
             return mapCustom(sourceFieldValue, sourceClass);
         } finally {
@@ -49,10 +50,12 @@ public class CustomMapper extends BaseConverter {
         }
     }
 
-    private Object invokeFunction(Method method,
-                                  Object customObj,
-                                  Object source,
-                                  String[][] parameters) throws Exception {
+    private Object invokeFunction(
+            Method method,
+            Object customObj,
+            Object source,
+            String[][] parameters)
+            throws Exception {
         Class<?>[] prmTypes = method.getParameterTypes();
         Object[] methodPrms = new Object[prmTypes.length];
         methodPrms[0] = source;
@@ -61,7 +64,8 @@ public class CustomMapper extends BaseConverter {
                 Object array = Array.newInstance(prmTypes[methodPrmNdx].getComponentType(), parameters.length - parameterNdx);
                 for (int arrayNdx = 0; parameterNdx < parameters.length; parameterNdx++, arrayNdx++) {
                     String[] parts = parameters[parameterNdx];
-                    Array.set(array, arrayNdx, resolver.resolveClass(parts[0]).getConstructor(String.class).newInstance(parts[1]));
+                    Array.set(array, arrayNdx,
+                            resolver.resolveClass(parts[0]).getConstructor(String.class).newInstance(parts[1]));
                 }
                 methodPrms[methodPrmNdx] = array;
             } else {
@@ -139,8 +143,9 @@ public class CustomMapper extends BaseConverter {
         }
     }
 
-    private boolean parametersMatchParameterList(Class<?>[] prmTypes,
-                                                 String[][] parameters) {
+    private boolean parametersMatchParameterList(
+            Class<?>[] prmTypes,
+            String[][] parameters) {
         int ndx = 0;
         while (ndx < prmTypes.length) {
             Class<?> prmType = prmTypes[ndx];
@@ -167,8 +172,9 @@ public class CustomMapper extends BaseConverter {
         return true;
     }
 
-    Method selectMethod(Class<?> customClass,
-                        Class<?> sourceClass) {
+    Method selectMethod(
+            Class<?> customClass,
+            Class<?> sourceClass) {
         Method method = null;
         for (Method m : customClass.getDeclaredMethods()) {
             if (m.getReturnType() != null
@@ -183,10 +189,11 @@ public class CustomMapper extends BaseConverter {
 
     // Assumes source is a separate parameter in method even if it has var args and that there are no
     // ambiguous calls based upon number and types of parameters
-    private Method selectMethod(Class<?> customClass,
-                                String operation,
-                                Class<?> sourceClass,
-                                String[][] parameters) {
+    private Method selectMethod(
+            Class<?> customClass,
+            String operation,
+            Class<?> sourceClass,
+            String[][] parameters) {
         // Create list of potential methods
         List<Method> methods = new ArrayList<>();
         for (Method method : customClass.getDeclaredMethods()) {
@@ -224,6 +231,6 @@ public class CustomMapper extends BaseConverter {
             }
         }
 
-        return methods.size() > 0 ? methods.get(0) : null;
+        return !methods.isEmpty() ? methods.get(0) : null;
     }
 }

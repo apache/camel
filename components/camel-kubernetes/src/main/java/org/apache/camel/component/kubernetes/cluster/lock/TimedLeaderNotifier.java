@@ -31,8 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Receives information about the current leader and handles expiration
- * automatically.
+ * Receives information about the current leader and handles expiration automatically.
  */
 public class TimedLeaderNotifier implements Service {
 
@@ -95,7 +94,8 @@ public class TimedLeaderNotifier implements Service {
     @Override
     public void start() {
         if (this.executor == null) {
-            this.executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelKubernetesLeaderNotifier");
+            this.executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "CamelKubernetesLeaderNotifier");
         }
     }
 
@@ -165,12 +165,8 @@ public class TimedLeaderNotifier implements Service {
             lastCommunicatedLeader = newLeader;
             LOG.info("The cluster has a new leader: {}", newLeader);
             try {
-                handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent() {
-                    @Override
-                    public Optional<String> getData() {
-                        return newLeader;
-                    }
-                });
+                handler.onKubernetesClusterEvent(
+                        (KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) () -> newLeader);
             } catch (Throwable t) {
                 LOG.warn("Error while communicating the new leader to the handler", t);
             }
@@ -181,12 +177,8 @@ public class TimedLeaderNotifier implements Service {
             lastCommunicatedMembers = newMembers;
             LOG.info("The list of cluster members has changed: {}", newMembers);
             try {
-                handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent() {
-                    @Override
-                    public Set<String> getData() {
-                        return newMembers;
-                    }
-                });
+                handler.onKubernetesClusterEvent(
+                        (KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) () -> newMembers);
             } catch (Throwable t) {
                 LOG.warn("Error while communicating the cluster members to the handler", t);
             }

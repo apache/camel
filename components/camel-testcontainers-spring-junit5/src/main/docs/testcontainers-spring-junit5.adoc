@@ -1,10 +1,11 @@
-[[testcontainers-spring-junit5-component]]
+[[testcontainers-spring-junit5-other]]
 = Testcontainers Spring Junit5 Component
 :docTitle: Testcontainers Spring Junit5
 :artifactId: camel-testcontainers-spring-junit5
 :description: Camel unit testing with Spring, testcontainers and JUnit 5
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers-spring-junit5.adoc[opts=optional]
 
 *Since Camel {since}*
 

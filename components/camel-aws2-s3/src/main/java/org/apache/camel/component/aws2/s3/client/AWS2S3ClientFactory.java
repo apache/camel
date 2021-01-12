@@ -26,17 +26,16 @@ import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
 public final class AWS2S3ClientFactory {
 
     private AWS2S3ClientFactory() {
-        // Prevent instantiation of this factory class.
-        throw new RuntimeException("Do not instantiate a Factory class! Refer to the class " + "to learn how to properly use this factory implementation.");
     }
 
     /**
      * Return the correct aws s3 client (based on remote vs local).
      * 
-     * @param configuration configuration
-     * @return AWSS3Client
+     * @param  configuration configuration
+     * @return               AWSS3Client
      */
     public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration) {
-        return configuration.isUseIAMCredentials() ? new AWS2S3ClientIAMOptimizedImpl(configuration) : new AWS2S3ClientStandardImpl(configuration);
+        return configuration.isUseDefaultCredentialsProvider()
+                ? new AWS2S3ClientIAMOptimizedImpl(configuration) : new AWS2S3ClientStandardImpl(configuration);
     }
 }

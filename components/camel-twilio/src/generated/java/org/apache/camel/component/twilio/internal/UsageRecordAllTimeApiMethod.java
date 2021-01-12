@@ -29,8 +29,6 @@ public enum UsageRecordAllTimeApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private UsageRecordAllTimeApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

@@ -46,8 +46,10 @@ public class AMQ2240Test {
     public void testBadVMTransportOptionsJMSPrefix() throws Exception {
 
         try {
-            final String vmUri = "vm://localhost?" + "jms.redeliveryPolicy.maximumRedeliveries=0&" + "jms.redeliveryPolicy.initialRedeliveryDelay=500&"
-                                 + "jms.useAsyncSend=false&jms.sendTimeout=ABC&" + "jms.maxXXXXReconnectAttempts=1&jms.timeout=3000";
+            final String vmUri
+                    = "vm://localhost?" + "jms.redeliveryPolicy.maximumRedeliveries=0&"
+                      + "jms.redeliveryPolicy.initialRedeliveryDelay=500&"
+                      + "jms.useAsyncSend=false&jms.sendTimeout=ABC&" + "jms.maxXXXXReconnectAttempts=1&jms.timeout=3000";
 
             LOG.info("creating context with bad URI: " + vmUri);
             ActiveMQComponent amq = ActiveMQComponent.activeMQComponent(vmUri);

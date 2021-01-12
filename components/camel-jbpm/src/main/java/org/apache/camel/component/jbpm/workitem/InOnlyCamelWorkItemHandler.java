@@ -35,14 +35,15 @@ import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.runtime.process.WorkItemManager;
 
 /**
- * Camel jBPM {@link WorkItemHandler} that sends {@link Exchange Exchanges} with an <code>InOnly</code> Message Exchange Pattern.
+ * Camel jBPM {@link WorkItemHandler} that sends {@link Exchange Exchanges} with an <code>InOnly</code> Message Exchange
+ * Pattern.
  * <p/>
- * This handler does <b>NOT<b/> complete the {@link WorkItem}, and will not parse any response from the Camel route, other than possible exceptions.
- * The use-case for this handler is asynchronous, one-way, communication, where an external party is responsible for completing the
- * {@link WorkItem} at a later point in time.
+ * This handler does <b>NOT<b/> complete the {@link WorkItem}, and will not parse any response from the Camel route,
+ * other than possible exceptions. The use-case for this handler is asynchronous, one-way, communication, where an
+ * external party is responsible for completing the {@link WorkItem} at a later point in time.
  * <p/>
- * The handler creates a Camel Exchange and sets the {@link WorkItem} as the body of the {@link Message}. Furthermore, the following message
- * headers are set:
+ * The handler creates a Camel Exchange and sets the {@link WorkItem} as the body of the {@link Message}. Furthermore,
+ * the following message headers are set:
  * <ul>
  * <li>deploymentId</li>
  * <li>processInstanceId</li>
@@ -50,29 +51,28 @@ import org.kie.api.runtime.process.WorkItemManager;
  * </ul>
  */
 @Wid(
-        widfile = "InOnlyCamelConnector.wid",
-        name = "InOnlyCamelConnector",
-        displayName = "InOnlyCamelConnector",
-        category = "Camel",
-        defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOnlyCamelWorkItemHandler()",
-        documentation = "${artifactId}/index.html",
-        parameters = {
-                @WidParameter(name = JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM)
-        },
-        results = {
-                @WidResult(name = JBPMConstants.RESPONSE_WI_PARAM),
-                @WidResult(name = JBPMConstants.MESSAGE_WI_PARAM) },
-        mavenDepends = {
-                @WidMavenDepends(group = "${groupId}",
-                        artifact = "${artifactId}",
-                        version = "${version}")
-        },
-        serviceInfo = @WidService(category = "${name}",
-                description = "${description}",
-                keywords = "apache,camel,payload,route,connector",
-                action = @WidAction(title = "Send payload to a Camel endpoint")),
-        icon = "InOnlyCamelConnector.png"  
-    )
+     widfile = "InOnlyCamelConnector.wid",
+     name = "InOnlyCamelConnector",
+     displayName = "InOnlyCamelConnector",
+     category = "Camel",
+     defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOnlyCamelWorkItemHandler()",
+     documentation = "${artifactId}/index.html",
+     parameters = {
+             @WidParameter(name = JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM)
+     },
+     results = {
+             @WidResult(name = JBPMConstants.RESPONSE_WI_PARAM),
+             @WidResult(name = JBPMConstants.MESSAGE_WI_PARAM) },
+     mavenDepends = {
+             @WidMavenDepends(group = "${groupId}",
+                              artifact = "${artifactId}",
+                              version = "${version}")
+     },
+     serviceInfo = @WidService(category = "${name}",
+                               description = "${description}",
+                               keywords = "apache,camel,payload,route,connector",
+                               action = @WidAction(title = "Send payload to a Camel endpoint")),
+     icon = "InOnlyCamelConnector.png")
 public class InOnlyCamelWorkItemHandler extends AbstractCamelWorkItemHandler {
 
     public InOnlyCamelWorkItemHandler() {

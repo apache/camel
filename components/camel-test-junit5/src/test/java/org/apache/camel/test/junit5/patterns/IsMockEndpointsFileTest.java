@@ -63,7 +63,8 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/input").choice().when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel").otherwise().to("file:target/messages/others");
+                from("file:target/input").choice().when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel")
+                        .otherwise().to("file:target/messages/others");
             }
         };
     }

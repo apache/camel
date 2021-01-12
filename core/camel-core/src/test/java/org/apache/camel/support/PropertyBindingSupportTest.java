@@ -27,11 +27,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -125,9 +121,10 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("bar.gold-customer", "true");
         prop.put("bar.work.name", "{{companyName}}");
 
-        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James").withProperty("bar.work.id", "123")
-            // and add the rest
-            .withProperties(prop).bind();
+        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James")
+                .withProperty("bar.work.id", "123")
+                // and add the rest
+                .withProperties(prop).bind();
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -137,6 +134,23 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals("Acme", foo.getBar().getWork().getName());
 
         assertTrue(prop.isEmpty(), "Should bind all properties");
+    }
+
+    @Test
+    public void testPropertiesNoReflection() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.AGE", "33");
+
+        PropertyBindingSupport.build().withReflection(false).bind(context, foo, prop);
+
+        assertNull(foo.getName());
+        assertEquals(0, foo.getBar().getAge());
+
+        // should not bind any properties as reflection is off
+        assertEquals(2, prop.size());
     }
 
     @Test
@@ -152,6 +166,30 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("bar.WORk.naME", "{{companyName}}");
 
         PropertyBindingSupport.build().withIgnoreCase(true).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertTrue(prop.isEmpty(), "Should bind all properties");
+    }
+
+    @Test
+    public void testPropertiesDash() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.age", "33");
+        prop.put("bar.{{committer}}", "true");
+        prop.put("bar.gold-customer", "true");
+        prop.put("bar.work.id", "123");
+        prop.put("bar.work.name", "{{companyName}}");
+
+        PropertyBindingSupport.build().bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -336,8 +374,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             PropertyBindingSupport.build().withMandatory(true).bind(context, foo, "bar.myAge", "33");
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.myAge", e.getPropertyName());
-            assertSame(foo, e.getTarget());
+            assertEquals("myAge", e.getPropertyName());
+            assertSame(foo.getBar(), e.getTarget());
         }
     }
 
@@ -407,7 +445,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
@@ -419,7 +458,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('Donald Duck', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.Animal('Donald Duck', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
@@ -431,7 +471,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Tiger')");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.AnimalFactory#createAnimal('Tiger')");
 
         assertEquals("James", foo.getName());
         assertEquals("Tiger", foo.getAnimal().getName());
@@ -443,7 +484,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('Donald Duck', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.AnimalFactory#createAnimal('Donald Duck', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
@@ -455,7 +497,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, "name", "James");
-        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.AnimalFactory#createAnimal('{{companyName}}', false)");
+        PropertyBindingSupport.build().bind(context, foo, "animal",
+                "#class:org.apache.camel.support.AnimalFactory#createAnimal('{{companyName}}', false)");
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
@@ -534,7 +577,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
             fail("Should fail");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.unknown", e.getPropertyName());
+            assertEquals("unknown", e.getPropertyName());
         }
     }
 
@@ -572,7 +615,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Company work; // has no default value but Camel can automatic
-                              // create one if there is a setter
+                             // create one if there is a setter
         private boolean goldCustomer;
 
         public int getAge() {

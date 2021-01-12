@@ -54,7 +54,8 @@ public class IrcMessage extends DefaultMessage {
         setBody(message);
     }
 
-    public IrcMessage(CamelContext camelContext, String messageType, String target, IRCUser user, String whoWasKickedNick, String message) {
+    public IrcMessage(CamelContext camelContext, String messageType, String target, IRCUser user, String whoWasKickedNick,
+                      String message) {
         super(camelContext);
         this.messageType = messageType;
         this.target = target;

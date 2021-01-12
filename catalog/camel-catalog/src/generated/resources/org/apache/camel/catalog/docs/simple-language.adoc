@@ -5,6 +5,7 @@
 :description: Evaluate Camel's built-in Simple language expression against the Camel Exchange.
 :since: 1.1
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/simple.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -26,6 +27,11 @@ choose a more expressive and powerful language such as:
 * xref:ognl-language.adoc[OGNL]
 
 The simple language uses `${body`} placeholders for complex expressions or functions.
+
+[NOTE]
+====
+See also the xref:csimple-language.adoc[CSimple] language which is *compiled*.
+====
 
 [TIP]
 ====
@@ -668,16 +674,6 @@ And of course the `||` is also supported. The sample would be:
 -----
 simple("${in.header.title} contains 'Camel' || ${in.header.type'} == 'gold'")
 -----
-
-*Notice:* Currently `&&` or `||` can only be used *once* in a simple
-language expression. This might change in the future. +
- So you *cannot* do:
-
-[source,java]
------
-simple("${in.header.title} contains 'Camel' && ${in.header.type'} == 'gold' && ${in.header.number} range 100..200")
------
-
 
 == Samples
 

@@ -64,7 +64,6 @@ public class MllpException extends Exception {
         }
     }
 
-
     /**
      * Determine if there is an HL7 message payload associated with this exception.
      *
@@ -73,7 +72,6 @@ public class MllpException extends Exception {
     public boolean hasHl7MessageBytes() {
         return hl7MessageBytes != null && hl7MessageBytes.length > 0;
     }
-
 
     /**
      * Get the HL7 message payload associated with this exception, if any.
@@ -114,17 +112,18 @@ public class MllpException extends Exception {
         if (hasHl7MessageBytes() || hasHl7AcknowledgementBytes()) {
             String parentMessage = super.getMessage();
 
-            StringBuilder messageBuilder = new StringBuilder(parentMessage.length()
-                + (hasHl7MessageBytes() ? hl7MessageBytes.length : 0)
-                + (hasHl7AcknowledgementBytes() ? hl7AcknowledgementBytes.length : 0)
-            );
+            StringBuilder messageBuilder = new StringBuilder(
+                    parentMessage.length()
+                                                             + (hasHl7MessageBytes() ? hl7MessageBytes.length : 0)
+                                                             + (hasHl7AcknowledgementBytes()
+                                                                     ? hl7AcknowledgementBytes.length : 0));
 
             messageBuilder.append(parentMessage);
 
             if (hasHl7MessageBytes()) {
                 messageBuilder.append("\n\t{hl7Message [")
-                    .append(hl7MessageBytes.length)
-                    .append("] = ");
+                        .append(hl7MessageBytes.length)
+                        .append("] = ");
 
                 Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7MessageBytes, 0, hl7MessageBytes.length);
 
@@ -133,10 +132,11 @@ public class MllpException extends Exception {
 
             if (hasHl7AcknowledgementBytes()) {
                 messageBuilder.append("\n\t{hl7Acknowledgement [")
-                    .append(hl7AcknowledgementBytes.length)
-                    .append("] = ");
+                        .append(hl7AcknowledgementBytes.length)
+                        .append("] = ");
 
-                Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7AcknowledgementBytes, 0, hl7AcknowledgementBytes.length);
+                Hl7Util.appendBytesAsPrintFriendlyString(messageBuilder, hl7AcknowledgementBytes, 0,
+                        hl7AcknowledgementBytes.length);
 
                 messageBuilder.append('}');
             }

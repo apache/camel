@@ -39,8 +39,8 @@ public class NettyHttpSimpleUriParametersTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().simple("Bye ${header.name}");
+                        .to("mock:input")
+                        .transform().simple("Bye ${header.name}");
             }
         };
     }

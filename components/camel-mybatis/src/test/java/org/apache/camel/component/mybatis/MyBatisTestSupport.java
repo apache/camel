@@ -62,9 +62,9 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
         super.setUp();
 
         try (Connection connection = createConnection();
-            ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
-            Statement deletePreExistingTableStatement = connection.createStatement();
-            Statement createTableStatement = connection.createStatement()) {
+             ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
+             Statement deletePreExistingTableStatement = connection.createStatement();
+             Statement createTableStatement = connection.createStatement()) {
 
             // delete any pre-existing ACCOUNT table
             if (checkTableExistResultSet.next()) {
@@ -89,7 +89,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
             account2.setLastName("Ibsen");
             account2.setEmailAddress("Noname@gmail.com");
 
-            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] {account1, account2});
+            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] { account1, account2 });
         }
     }
 

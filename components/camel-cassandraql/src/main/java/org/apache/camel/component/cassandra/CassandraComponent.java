@@ -26,8 +26,8 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Represents the component that manages {@link CassandraEndpoint}. This
- * component is based on Datastax Java Driver for Cassandra.
+ * Represents the component that manages {@link CassandraEndpoint}. This component is based on Datastax Java Driver for
+ * Cassandra.
  * <p/>
  * URI examples:
  * <ul>

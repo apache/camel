@@ -53,7 +53,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface WebTest {
 
     @Retention(RUNTIME)
-    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    @Target({ ElementType.FIELD, ElementType.PARAMETER })
     @interface Resource {
     }
 
@@ -173,7 +173,8 @@ public @interface WebTest {
 
         @Override
         public void afterAll(ExtensionContext context) throws Exception {
-            JettyEmbeddedContainer container = getStore(context).get(JettyEmbeddedContainer.class, JettyEmbeddedContainer.class);
+            JettyEmbeddedContainer container
+                    = getStore(context).get(JettyEmbeddedContainer.class, JettyEmbeddedContainer.class);
             container.stop();
         }
 
@@ -193,6 +194,7 @@ public @interface WebTest {
             public T get() {
                 return store.get(type, type);
             }
+
             public void set(T value) {
                 store.put(type, value);
             }
@@ -200,4 +202,3 @@ public @interface WebTest {
 
     }
 }
-

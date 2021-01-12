@@ -46,7 +46,6 @@ public class AtomixClusterConfiguration extends AtomixConfiguration<AtomixReplic
     // Properties
     // ******************************************
 
-
     public Class<? extends Transport> getClientTransport() {
         return clientTransport;
     }

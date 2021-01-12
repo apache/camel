@@ -49,7 +49,7 @@ public class IPFSProducer extends DefaultProducer {
 
     @Override
     public IPFSEndpoint getEndpoint() {
-        return (IPFSEndpoint)super.getEndpoint();
+        return (IPFSEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -102,17 +102,16 @@ public class IPFSProducer extends DefaultProducer {
     private Path pathFromBody(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
         if (body instanceof Path) {
-            return (Path)body;
+            return (Path) body;
         }
         if (body instanceof String) {
-            return Paths.get((String)body);
+            return Paths.get((String) body);
         }
         if (body instanceof File) {
-            return ((File)body).toPath();
+            return ((File) body).toPath();
         }
         throw new IllegalArgumentException("Invalid path: " + body);
     }
-
 
     public IPFSCommand getCommand() {
         String cmd = getEndpoint().getConfiguration().getIpfsCmd();
@@ -159,6 +158,5 @@ public class IPFSProducer extends DefaultProducer {
         }
         return client;
     }
-
 
 }

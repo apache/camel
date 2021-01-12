@@ -17,9 +17,12 @@
 package org.apache.camel.generator.openapi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import io.apicurio.datamodels.core.util.ReferenceUtil;
 import io.apicurio.datamodels.openapi.models.OasOperation;
@@ -51,7 +54,8 @@ class OperationVisitor<T> {
 
     private final String path;
 
-    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path, final DestinationGenerator destinationGenerator) {
+    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
+                     final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.filter = filter;
         this.path = path;
@@ -129,7 +133,7 @@ class OperationVisitor<T> {
                     }
 
                     if ("array".equals(dataType) && schema.items != null
-                        && schema.items instanceof Oas30ItemsSchema) {
+                            && schema.items instanceof Oas30ItemsSchema) {
                         emit("arrayType", ((Oas30ItemsSchema) schema.items).type);
                     }
                 }
@@ -146,12 +150,12 @@ class OperationVisitor<T> {
         return emitter;
     }
 
-    CodeEmitter<T> emit(final String method, final List<String> values) {
+    CodeEmitter<T> emit(final String method, final Collection<String> values) {
         if (values == null || values.isEmpty()) {
             return emitter;
         }
 
-        return emitter.emit(method, new Object[] {values.toArray(new String[values.size()])});
+        return emitter.emit(method, new Object[] { values.toArray(new String[values.size()]) });
     }
 
     CodeEmitter<T> emit(final String method, final Object value) {
@@ -169,31 +173,33 @@ class OperationVisitor<T> {
 
             emit("id", operation.operationId);
             emit("description", operation.description);
-            List<String> operationLevelConsumes = new ArrayList<>();
+            Set<String> operationLevelConsumes = new LinkedHashSet<>();
             if (operation instanceof Oas20Operation) {
-                operationLevelConsumes = ((Oas20Operation) operation).consumes;
+                Oas20Operation oas20Operation = (Oas20Operation) operation;
+                if (oas20Operation.consumes != null) {
+                    operationLevelConsumes.addAll(oas20Operation.consumes);
+                }
             } else if (operation instanceof Oas30Operation) {
-                final Oas30Operation oas30Operation = (Oas30Operation) operation;
+                Oas30Operation oas30Operation = (Oas30Operation) operation;
                 if (oas30Operation.requestBody != null
-                    && oas30Operation.requestBody.content != null) {
-                    for (final String ct : oas30Operation.requestBody.content.keySet()) {
-                        operationLevelConsumes.add(ct);
-                    }
+                        && oas30Operation.requestBody.content != null) {
+                    operationLevelConsumes.addAll(oas30Operation.requestBody.content.keySet());
                 }
 
             }
             emit("consumes", operationLevelConsumes);
-            List<String> operationLevelProduces = new ArrayList<>();
+            Set<String> operationLevelProduces = new LinkedHashSet<>();
             if (operation instanceof Oas20Operation) {
-                operationLevelProduces = ((Oas20Operation) operation).produces;
+                Oas20Operation oas20Operation = (Oas20Operation) operation;
+                if (oas20Operation.produces != null) {
+                    operationLevelProduces.addAll(oas20Operation.produces);
+                }
             } else if (operation instanceof Oas30Operation) {
                 final Oas30Operation oas30Operation = (Oas30Operation) operation;
                 if (oas30Operation.responses != null) {
-                    for (final OasResponse response : oas30Operation.responses.getResponses()) {
-                        final Oas30Response oas30Response = (Oas30Response) response;
-                        for (final String ct : oas30Response.content.keySet()) {
-                            operationLevelProduces.add(ct);
-                        }
+                    for (OasResponse response : oas30Operation.responses.getResponses()) {
+                        Oas30Response oas30Response = (Oas30Response) response;
+                        operationLevelProduces.addAll(oas30Response.content.keySet());
                     }
                 }
             }

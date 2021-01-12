@@ -37,6 +37,8 @@ public interface ApnsComponentBuilderFactory {
      * Category: eventbus,mobile
      * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-apns
+     * 
+     * @return the dsl builder
      */
     static ApnsComponentBuilder apns() {
         return new ApnsComponentBuilderImpl();
@@ -51,9 +53,13 @@ public interface ApnsComponentBuilderFactory {
          * org.apache.camel.component.apns.factory.ApnsServiceFactory can be
          * used to build a ApnsService.
          * 
-         * The option is a: <code>com.notnoop.apns.ApnsService</code> type.
+         * The option is a:
+         * &lt;code&gt;com.notnoop.apns.ApnsService&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apnsService the value to set
+         * @return the dsl builder
          */
         default ApnsComponentBuilder apnsService(
                 com.notnoop.apns.ApnsService apnsService) {
@@ -69,10 +75,13 @@ public interface ApnsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ApnsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -90,27 +99,36 @@ public interface ApnsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ApnsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default ApnsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ApnsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -133,7 +151,7 @@ public interface ApnsComponentBuilderFactory {
             case "apnsService": ((ApnsComponent) component).setApnsService((com.notnoop.apns.ApnsService) value); return true;
             case "bridgeErrorHandler": ((ApnsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((ApnsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((ApnsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ApnsComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

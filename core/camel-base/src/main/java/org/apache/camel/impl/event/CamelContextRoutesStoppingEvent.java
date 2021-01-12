@@ -19,7 +19,8 @@ package org.apache.camel.impl.event;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 
-public class CamelContextRoutesStoppingEvent extends AbstractContextEvent implements CamelEvent.CamelContextRoutesStoppingEvent {
+public class CamelContextRoutesStoppingEvent extends AbstractContextEvent
+        implements CamelEvent.CamelContextRoutesStoppingEvent {
     private static final long serialVersionUID = -1120225323715688981L;
 
     public CamelContextRoutesStoppingEvent(CamelContext source) {

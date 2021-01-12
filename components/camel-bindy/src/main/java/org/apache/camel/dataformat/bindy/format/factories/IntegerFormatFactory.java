@@ -50,7 +50,7 @@ public class IntegerFormatFactory extends AbstractFormatFactory {
 
         @Override
         public Integer parse(String string) throws Exception {
-            return new Integer(string);
+            return Integer.valueOf(string);
         }
 
     }

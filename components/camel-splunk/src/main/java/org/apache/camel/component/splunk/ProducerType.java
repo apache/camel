@@ -17,7 +17,9 @@
 package org.apache.camel.component.splunk;
 
 public enum ProducerType {
-    TCP, SUBMIT, STREAM;
+    TCP,
+    SUBMIT,
+    STREAM;
 
     public static ProducerType fromUri(String uri) {
         for (ProducerType producerType : ProducerType.values()) {

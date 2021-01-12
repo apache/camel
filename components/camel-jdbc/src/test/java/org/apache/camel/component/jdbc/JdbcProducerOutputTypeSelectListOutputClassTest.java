@@ -59,7 +59,9 @@ public class JdbcProducerOutputTypeSelectListOutputClassTest extends AbstractJdb
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("jdbc:testdb?outputType=SelectList&outputClass=org.apache.camel.component.jdbc.CustomerModel").to("mock:result");
+                from("direct:start")
+                        .to("jdbc:testdb?outputType=SelectList&outputClass=org.apache.camel.component.jdbc.CustomerModel")
+                        .to("mock:result");
             }
         };
     }

@@ -31,15 +31,15 @@ public class SelectCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         SelectRequest request = new SelectRequest()
-            .withSelectExpression(determineSelectExpression())
-            .withConsistentRead(determineConsistentRead())
-            .withNextToken(determineNextToken());
+                .withSelectExpression(determineSelectExpression())
+                .withConsistentRead(determineConsistentRead())
+                .withNextToken(determineNextToken());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         SelectResult result = this.sdbClient.select(request);
-        
+
         log.trace("Received result [{}]", result);
-        
+
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(SdbConstants.ITEMS, result.getItems());
         msg.setHeader(SdbConstants.NEXT_TOKEN, result.getNextToken());
@@ -48,7 +48,7 @@ public class SelectCommand extends AbstractSdbCommand {
     protected String determineSelectExpression() {
         return exchange.getIn().getHeader(SdbConstants.SELECT_EXPRESSION, String.class);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

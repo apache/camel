@@ -21,6 +21,7 @@ import java.util.function.Function;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -37,6 +38,7 @@ import static org.apache.camel.support.CamelContextHelper.getMandatoryEndpoint;
 import static org.apache.camel.support.service.ServiceHelper.initService;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+@Vetoed
 final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
 
     private final BeanManager manager;
@@ -47,7 +49,8 @@ final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
 
     private final Class<?> type;
 
-    XmlServiceExporterBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<T>, String> toString, Bean<?> context, CamelServiceExporterDefinition exporter) {
+    XmlServiceExporterBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, Function<Bean<T>, String> toString,
+                           Bean<?> context, CamelServiceExporterDefinition exporter) {
         super(manager, annotated, type, null, toString);
         this.manager = manager;
         this.context = context;
@@ -59,8 +62,8 @@ final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
     public T create(CreationalContext<T> creationalContext) {
         try {
             CamelContext context = isNotEmpty(exporter.getCamelContextId())
-                ? getReferenceByName(manager, exporter.getCamelContextId(), CamelContext.class).get()
-                : getReference(manager, CamelContext.class, this.context);
+                    ? getReferenceByName(manager, exporter.getCamelContextId(), CamelContext.class).get()
+                    : getReference(manager, CamelContext.class, this.context);
 
             Bean<?> bean = manager.resolve(manager.getBeans(exporter.getServiceRef()));
             if (bean == null) {

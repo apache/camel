@@ -69,7 +69,7 @@ public class HttpRequestResponseTest extends BaseJettyTest {
             assertNotNull(res);
 
             // and they should also be on HttpMessage
-            HttpMessage msg = (HttpMessage)exchange.getIn();
+            HttpMessage msg = (HttpMessage) exchange.getIn();
             assertNotNull(msg.getRequest());
             assertNotNull(msg.getResponse());
 
@@ -80,7 +80,7 @@ public class HttpRequestResponseTest extends BaseJettyTest {
             assertEquals("bookid=123", body);
 
             // send a html response
-            exchange.getOut().setBody("<html><body>Book 123 is Camel in Action</body></html>");
+            exchange.getMessage().setBody("<html><body>Book 123 is Camel in Action</body></html>");
         }
     }
 

@@ -51,7 +51,7 @@ public class JdbcAggregateTest extends AbstractJdbcAggregationTestSupport {
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                                // use our created jdbc repo as aggregation repository
+                        // use our created jdbc repo as aggregation repository
                         .completionSize(5).aggregationRepository(repo)
                         .to("mock:aggregated");
             }

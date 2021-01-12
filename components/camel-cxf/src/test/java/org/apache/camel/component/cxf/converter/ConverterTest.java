@@ -46,37 +46,37 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 public class ConverterTest {
-    
+
     @Test
     public void testToArray() throws Exception {
         List<String> testList = new ArrayList<>();
         testList.add("string 1");
         testList.add("string 2");
-        
+
         Object[] array = CxfConverter.toArray(testList);
         assertNotNull(array, "The array should not be null");
         assertEquals(2, array.length, "The array size should not be wrong");
     }
-    
+
     @Test
     public void testToInputStream() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
-        
+
         Response response = mock(Response.class);
         InputStream is = mock(InputStream.class);
-        
+
         when(response.getEntity()).thenReturn(is);
-        
+
         InputStream result = CxfConverter.toInputStream(response, exchange);
         assertEquals(is, result, "We should get the inputStream here");
-        
+
         reset(response);
         when(response.getEntity()).thenReturn("Hello World");
         result = CxfConverter.toInputStream(response, exchange);
         assertTrue(result instanceof ByteArrayInputStream, "We should get the inputStream here");
     }
-    
+
     @Test
     public void testFallbackConverter() throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -87,7 +87,7 @@ public class ConverterTest {
         exchange.getIn().setBody(list);
         Node node = exchange.getIn().getBody(Node.class);
         assertNull(node);
-        
+
         File file = new File("src/test/resources/org/apache/camel/component/cxf/converter/test.xml");
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
@@ -98,6 +98,7 @@ public class ConverterTest {
         elements.add(document.getDocumentElement());
         nl = new NodeListWrapper(elements);
         list.clear();
+        // there is only 1 element in the list so it can be converted to a single node element
         list.add(nl);
         exchange.getIn().setBody(list);
         node = exchange.getIn().getBody(Node.class);

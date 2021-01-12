@@ -32,15 +32,15 @@ public class GsonMarshalListTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
-        
+
         List<TestPojo> inList = new ArrayList<>();
-        
+
         TestPojo in1 = new TestPojo();
         in1.setName("Camel1");
-        
+
         TestPojo in2 = new TestPojo();
         in2.setName("Camel2");
-        
+
         inList.add(in1);
         inList.add(in2);
 
@@ -62,9 +62,10 @@ public class GsonMarshalListTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                
+
                 GsonDataFormat formatPojo = new GsonDataFormat();
-                Type genericType = new TypeToken<List<TestPojo>>() { }.getType();
+                Type genericType = new TypeToken<List<TestPojo>>() {
+                }.getType();
                 formatPojo.setUnmarshalGenericType(genericType);
 
                 from("direct:inPojo").marshal(formatPojo);

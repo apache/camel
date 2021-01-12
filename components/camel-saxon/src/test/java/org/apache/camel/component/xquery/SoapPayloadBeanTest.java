@@ -41,8 +41,8 @@ public class SoapPayloadBeanTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:src/test/resources/?fileName=payload.xml&noop=true")
-                    .bean(SoapPayloadBean.class)
-                    .to("log:xml", "mock:result");
+                        .bean(SoapPayloadBean.class)
+                        .to("log:xml", "mock:result");
             }
         };
     }

@@ -50,7 +50,7 @@ public class CollectionConverterTest {
             }
         }));
         // no conversion should occur for the list itself
-        assertSame(SMURFS, CollectionConverter.toList((Iterable<String>)SMURFS));
+        assertSame(SMURFS, CollectionConverter.toList((Iterable<String>) SMURFS));
     }
 
     private void assertSmurfs(Collection<String> result) {

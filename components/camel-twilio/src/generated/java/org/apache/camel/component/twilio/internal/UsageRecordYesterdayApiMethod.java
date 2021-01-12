@@ -29,8 +29,6 @@ public enum UsageRecordYesterdayApiMethod implements ApiMethod {
         "reader",
         arg("pathAccountSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private UsageRecordYesterdayApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

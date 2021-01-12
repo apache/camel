@@ -38,5 +38,5 @@ public class SampleInitializingBean implements InitializingBean {
     public void afterPropertiesSet() {
         entries.add(name);
     }
-    
+
 }

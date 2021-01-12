@@ -27,8 +27,6 @@ public enum GmailUsersMessagesAttachmentsApiMethod implements ApiMethod {
         arg("messageId", String.class),
         arg("id", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private GmailUsersMessagesAttachmentsApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

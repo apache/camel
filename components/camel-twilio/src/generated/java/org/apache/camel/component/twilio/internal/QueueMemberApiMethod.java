@@ -49,8 +49,7 @@ public enum QueueMemberApiMethod implements ApiMethod {
         "updater",
         arg("pathQueueSid", String.class),
         arg("pathCallSid", String.class),
-        arg("url", java.net.URI.class),
-        arg("method", com.twilio.http.HttpMethod.class)),
+        arg("url", java.net.URI.class)),
 
     UPDATER_1(
         com.twilio.rest.api.v2010.account.queue.MemberUpdater.class,
@@ -58,10 +57,7 @@ public enum QueueMemberApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathQueueSid", String.class),
         arg("pathCallSid", String.class),
-        arg("url", java.net.URI.class),
-        arg("method", com.twilio.http.HttpMethod.class));
-
-    
+        arg("url", java.net.URI.class));
 
     private final ApiMethod apiMethod;
 

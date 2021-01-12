@@ -22,11 +22,12 @@ import java.util.Map;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 
 /**
- * Runtime catalog which limited API needed by components that supports
- * {@link ComponentVerifierExtension} or {@link SendDynamicAware}.
+ * Runtime catalog which limited API needed by components that supports {@link ComponentVerifierExtension} or
+ * {@link SendDynamicAware}.
  */
 public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
@@ -36,12 +37,17 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
     String FACTORY = "runtime-camelcatalog";
 
     /**
+     * Factory key for {@link EndpointUriFactory}
+     */
+    String ENDPOINT_URI_ASSEMBLER_FACTORY = "runtime-camelcatalog-endpointuriassembler";
+
+    /**
      * Returns the component information as JSON format.
      * <p/>
      * This API is needed by {@link ComponentVerifierExtension}.
      *
-     * @param name the component name
-     * @return component details in JSon
+     * @param  name the component name
+     * @return      component details in JSon
      */
     String componentJSonSchema(String name);
 
@@ -50,8 +56,8 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * <p/>
      * This API is needed by {@link SendDynamicAware}.
      *
-     * @param uri  the endpoint uri
-     * @return properties as key value pairs of each endpoint option
+     * @param  uri the endpoint uri
+     * @return     properties as key value pairs of each endpoint option
      */
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
@@ -62,8 +68,8 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * <p/>
      * This API is needed by {@link SendDynamicAware}.
      *
-     * @param uri  the endpoint uri
-     * @return properties as key value pairs of each lenient properties
+     * @param  uri the endpoint uri
+     * @return     properties as key value pairs of each lenient properties
      */
     Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException;
 
@@ -72,9 +78,9 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * <p/>
      * This API is needed by {@link ComponentVerifierExtension}.
      *
-     * @param scheme  the endpoint scheme
-     * @param properties  the endpoint properties
-     * @return validation result
+     * @param  scheme     the endpoint scheme
+     * @param  properties the endpoint properties
+     * @return            validation result
      */
     EndpointValidationResult validateProperties(String scheme, Map<String, String> properties);
 
@@ -83,10 +89,10 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * <p/>
      * This API is needed by {@link SendDynamicAware}.
      *
-     * @param scheme the endpoint schema
-     * @param properties the properties as key value pairs
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
+     * @param  scheme                      the endpoint schema
+     * @param  properties                  the properties as key value pairs
+     * @param  encode                      whether to URL encode the returned uri or not
+     * @return                             the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
     String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;

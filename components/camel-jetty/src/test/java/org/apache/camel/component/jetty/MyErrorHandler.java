@@ -26,7 +26,8 @@ import org.eclipse.jetty.server.handler.ErrorHandler;
 public class MyErrorHandler extends ErrorHandler {
 
     @Override
-    protected void writeErrorPageBody(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException {
+    protected void writeErrorPageBody(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks)
+            throws IOException {
         String uri = request.getRequestURI();
 
         writeErrorPageMessage(request, writer, code, message, uri);

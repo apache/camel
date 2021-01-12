@@ -97,7 +97,8 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
     public void testAMessageToClusterIsConsumed() throws Exception {
         to.expectedMessageCount(1);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        Producer<String> producer
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         producer.send("Hello World!");
 

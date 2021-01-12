@@ -4,8 +4,10 @@ package org.apache.camel.component.scp;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -64,33 +64,48 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowNullBody", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("chmod", java.lang.String.class);
-        answer.put("ciphers", java.lang.String.class);
-        answer.put("connectTimeout", int.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("disconnectOnBatchComplete", boolean.class);
-        answer.put("fileName", java.lang.String.class);
-        answer.put("flatten", boolean.class);
-        answer.put("jailStartingDirectory", boolean.class);
-        answer.put("knownHostsFile", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("moveExistingFileStrategy", org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("preferredAuthentications", java.lang.String.class);
-        answer.put("privateKeyBytes", byte[].class);
-        answer.put("privateKeyFile", java.lang.String.class);
-        answer.put("privateKeyFilePassphrase", java.lang.String.class);
-        answer.put("soTimeout", int.class);
-        answer.put("strictHostKeyChecking", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", int.class);
-        answer.put("useUserKnownHostsFile", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "chmod": return java.lang.String.class;
+        case "ciphers": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": return boolean.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "flatten": return boolean.class;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": return boolean.class;
+        case "knownhostsfile":
+        case "knownHostsFile": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": return org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class;
+        case "password": return java.lang.String.class;
+        case "preferredauthentications":
+        case "preferredAuthentications": return java.lang.String.class;
+        case "privatekeybytes":
+        case "privateKeyBytes": return byte[].class;
+        case "privatekeyfile":
+        case "privateKeyFile": return java.lang.String.class;
+        case "privatekeyfilepassphrase":
+        case "privateKeyFilePassphrase": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return int.class;
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -99,8 +114,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "chmod": return target.getConfiguration().getChmod();
         case "ciphers": return target.getConfiguration().getCiphers();
         case "connecttimeout":

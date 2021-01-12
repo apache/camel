@@ -56,7 +56,9 @@ public class AtomixValueConsumerTest extends AtomixClientTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        value.close();
+        if (value != null) {
+            value.close();
+        }
 
         super.tearDown();
     }
@@ -93,7 +95,7 @@ public class AtomixValueConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-value:%s", VALUE_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

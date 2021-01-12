@@ -31,7 +31,8 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
     @Test
     public void testServletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/lives",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/lives",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -67,12 +68,12 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    // just return the default country here
-                    .get("lives").to("direct:start")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+                        // just return the default country here
+                        .get("lives").to("direct:start")
+                        .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
                         .bean(new UserService(), "livesWhere");
-                
+
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");
                 country.setCountry("England");

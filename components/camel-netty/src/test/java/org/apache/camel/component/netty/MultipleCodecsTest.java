@@ -81,7 +81,8 @@ public class MultipleCodecsTest extends BaseNettyTest {
                 // START SNIPPET: routes
                 from("direct:multiple-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
 
-                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
+                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false")
+                        .to("mock:multiple-codec");
                 // START SNIPPET: routes
             }
         };

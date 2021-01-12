@@ -51,8 +51,9 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages
-     * into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases.
+     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming
+     * messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming
+     * in some cases.
      */
     public void setAllowStreaming(Boolean allowStreaming) {
         this.allowStreaming = allowStreaming;
@@ -76,9 +77,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having
-     * URI format cxf:bean:<i>beanId</i> or transport address endpoint having URI format
-     * cxf://<i>transportAddress</i>.
+     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having URI format cxf:bean:<i>beanId</i> or
+     * transport address endpoint having URI format cxf://<i>transportAddress</i>.
      */
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -137,7 +137,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters)
+            throws Exception {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }

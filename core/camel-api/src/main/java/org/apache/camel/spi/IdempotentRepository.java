@@ -27,8 +27,8 @@ import org.apache.camel.Service;
  * <p/>
  * The repository supports eager (default) and non-eager mode.
  * <ul>
- *     <li>eager: calls <tt>add</tt> and <tt>confirm</tt> if complete, or <tt>remove</tt> if failed</li>
- *     <li>non-eager: calls <tt>contains</tt> and <tt>add</tt> if complete, or <tt>remove</tt> if failed</li>
+ * <li>eager: calls <tt>add</tt> and <tt>confirm</tt> if complete, or <tt>remove</tt> if failed</li>
+ * <li>non-eager: calls <tt>contains</tt> and <tt>add</tt> if complete, or <tt>remove</tt> if failed</li>
  * </ul>
  * Notice the remove callback, can be configured to be disabled.
  */
@@ -39,8 +39,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message for duplicate test
-     * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified element
+     * @param  key the key of the message for duplicate test
+     * @return     <tt>true</tt> if this repository did <b>not</b> already contain the specified element
      */
     boolean add(String key);
 
@@ -49,8 +49,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message
-     * @return <tt>true</tt> if this repository contains the specified element
+     * @param  key the key of the message
+     * @return     <tt>true</tt> if this repository contains the specified element
      */
     boolean contains(String key);
 
@@ -61,8 +61,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message for duplicate test
-     * @return <tt>true</tt> if the key was removed
+     * @param  key the key of the message for duplicate test
+     * @return     <tt>true</tt> if the key was removed
      */
     boolean remove(String key);
 
@@ -71,11 +71,11 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message for duplicate test
-     * @return <tt>true</tt> if the key was confirmed
+     * @param  key the key of the message for duplicate test
+     * @return     <tt>true</tt> if the key was confirmed
      */
     boolean confirm(String key);
-    
+
     /**
      * Clear the repository.
      * <p/>
@@ -88,8 +88,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message for duplicate test
-     * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified element
+     * @param  key the key of the message for duplicate test
+     * @return     <tt>true</tt> if this repository did <b>not</b> already contain the specified element
      */
     default boolean add(Exchange exchange, String key) {
         return add(key);
@@ -100,8 +100,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message
-     * @return <tt>true</tt> if this repository contains the specified element
+     * @param  key the key of the message
+     * @return     <tt>true</tt> if this repository contains the specified element
      */
     default boolean contains(Exchange exchange, String key) {
         return contains(key);
@@ -114,8 +114,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message for duplicate test
-     * @return <tt>true</tt> if the key was removed
+     * @param  key the key of the message for duplicate test
+     * @return     <tt>true</tt> if the key was removed
      */
     default boolean remove(Exchange exchange, String key) {
         return remove(key);
@@ -126,8 +126,8 @@ public interface IdempotentRepository extends Service {
      * <p/>
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      *
-     * @param key the key of the message for duplicate test
-     * @return <tt>true</tt> if the key was confirmed
+     * @param  key the key of the message for duplicate test
+     * @return     <tt>true</tt> if the key was confirmed
      */
     default boolean confirm(Exchange exchange, String key) {
         return confirm(key);

@@ -20,16 +20,15 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class LevelDBAggregationRepositoryRecoverExistingTest extends CamelTestSupport {
+public class LevelDBAggregationRepositoryRecoverExistingTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
 
@@ -45,7 +44,7 @@ public class LevelDBAggregationRepositoryRecoverExistingTest extends CamelTestSu
 
     @Test
     public void testExisting() throws Exception {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
         repo.setReturnOldExchange(true);

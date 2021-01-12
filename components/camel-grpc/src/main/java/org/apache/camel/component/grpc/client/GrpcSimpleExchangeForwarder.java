@@ -55,8 +55,8 @@ class GrpcSimpleExchangeForwarder implements GrpcExchangeForwarder {
     public void forward(Exchange exchange) {
         Message message = exchange.getIn();
         Object outBody = GrpcUtils.invokeSyncMethod(grpcStub, configuration.getMethod(), message.getBody());
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        exchange.getOut().setBody(outBody);
+        exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
+        exchange.getMessage().setBody(outBody);
     }
 
     @Override

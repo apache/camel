@@ -59,7 +59,8 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         }
     }
 
-    private void process(final Exchange exchange, final Consumer<byte[]> consumer, final Message<byte[]> message) throws Exception {
+    private void process(final Exchange exchange, final Consumer<byte[]> consumer, final Message<byte[]> message)
+            throws Exception {
         pulsarConsumer.getProcessor().process(exchange);
         acknowledge(consumer, message);
     }

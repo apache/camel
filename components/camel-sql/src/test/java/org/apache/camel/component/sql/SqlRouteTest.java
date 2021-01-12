@@ -40,6 +40,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -64,7 +65,8 @@ public class SqlRouteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:simple", "Camel", SqlConstants.SQL_QUERY, "select * from projects where project = ? order by id");
+        template.sendBodyAndHeader("direct:simple", "Camel", SqlConstants.SQL_QUERY,
+                "select * from projects where project = ? order by id");
         mock.assertIsSatisfied();
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
@@ -73,7 +75,8 @@ public class SqlRouteTest extends CamelTestSupport {
         mock.reset();
 
         mock.expectedMessageCount(1);
-        template.sendBodyAndHeader("direct:simple", 3, SqlConstants.SQL_QUERY, "select * from projects where id = ? order by id");
+        template.sendBodyAndHeader("direct:simple", 3, SqlConstants.SQL_QUERY,
+                "select * from projects where id = ? order by id");
         mock.assertIsSatisfied();
         received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         row = assertIsInstanceOf(Map.class, received.get(0));
@@ -93,7 +96,7 @@ public class SqlRouteTest extends CamelTestSupport {
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         Map<?, ?> firstRow = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals(1, firstRow.get("ID"));
-        
+
         // unlikely to have accidental ordering with 3 rows x 3 columns
         for (Object obj : received) {
             Map<?, ?> row = assertIsInstanceOf(Map.class, obj);
@@ -102,25 +105,20 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLowNumberOfParameter() throws Exception {
-        try {
-            template.sendBody("direct:list", "ASF");
-            fail();
-        } catch (RuntimeCamelException e) {
-            // should have DataAccessException thrown
-            assertTrue(e.getCause() instanceof DataAccessException, "Exception thrown is wrong");
-        }
+    public void testLowNumberOfParameter() {
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:list", "ASF"));
+
+        // should have DataAccessException thrown
+        assertTrue(ex.getCause() instanceof DataAccessException, "Exception thrown is wrong");
     }
 
     @Test
-    public void testHighNumberOfParameter() throws Exception {
-        try {
-            template.sendBody("direct:simple", new Object[] {"ASF", "Foo"});
-            fail();
-        } catch (RuntimeCamelException e) {
-            // should have DataAccessException thrown
-            assertTrue(e.getCause() instanceof DataAccessException, "Exception thrown is wrong");
-        }
+    public void testHighNumberOfParameter() {
+        Exception ex = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:simple", new Object[] { "ASF", "Foo" }));
+
+        // should have DataAccessException thrown
+        assertTrue(ex.getCause() instanceof DataAccessException, "Exception thrown is wrong");
     }
 
     @Test
@@ -159,7 +157,7 @@ public class SqlRouteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:insert", new Object[] {10, "test", "test"});
+        template.sendBody("direct:insert", new Object[] { 10, "test", "test" });
         mock.assertIsSatisfied();
         try {
             String projectName = jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
@@ -182,20 +180,21 @@ public class SqlRouteTest extends CamelTestSupport {
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row.get("PROJECT"));
     }
-    
+
     @Test
     public void testHashesInQuery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody("direct:no-param-insert", "XGPL");
         mock.assertIsSatisfied();
-        Number received = assertIsInstanceOf(Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
+        Number received = assertIsInstanceOf(Number.class,
+                mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
         assertEquals(1, received.intValue());
         Map<?, ?> projectNameInserted = jdbcTemplate.queryForMap("select project, license from projects where id = 5");
         assertEquals("#", projectNameInserted.get("PROJECT"));
         assertEquals("XGPL", projectNameInserted.get("LICENSE"));
     }
-    
+
     @Test
     public void testBodyButNoParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -211,10 +210,12 @@ public class SqlRouteTest extends CamelTestSupport {
     public void testBatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        List<?> data = Arrays.asList(Arrays.asList(6, "abc", "def"), Arrays.asList(7, "ghi", "jkl"), Arrays.asList(8, "mno", "pqr"));
+        List<?> data
+                = Arrays.asList(Arrays.asList(6, "abc", "def"), Arrays.asList(7, "ghi", "jkl"), Arrays.asList(8, "mno", "pqr"));
         template.sendBody("direct:batch", data);
         mock.assertIsSatisfied();
-        Number received = assertIsInstanceOf(Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
+        Number received = assertIsInstanceOf(Number.class,
+                mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
         assertEquals(3, received.intValue());
         assertEquals("abc", jdbcTemplate.queryForObject("select project from projects where id = 6", String.class));
         assertEquals("def", jdbcTemplate.queryForObject("select license from projects where id = 6", String.class));
@@ -223,41 +224,42 @@ public class SqlRouteTest extends CamelTestSupport {
         assertEquals("mno", jdbcTemplate.queryForObject("select project from projects where id = 8", String.class));
         assertEquals("pqr", jdbcTemplate.queryForObject("select license from projects where id = 8", String.class));
     }
-    
+
     @Test
-    public void testBatchMissingParamAtEnd() throws Exception {
-        try {
-            List<?> data = Arrays.asList(Arrays.asList(9, "stu", "vwx"), Arrays.asList(10, "yza"));
-            template.sendBody("direct:batch", data);
-            fail();
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof UncategorizedSQLException);
-        }
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
+    public void testBatchMissingParamAtEnd() {
+        List<?> data = Arrays.asList(Arrays.asList(9, "stu", "vwx"), Arrays.asList(10, "yza"));
+
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:batch", data));
+
+        assertTrue(ex.getCause() instanceof UncategorizedSQLException);
+
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
-    
+
     @Test
-    public void testBatchMissingParamAtBeginning() throws Exception {
-        try {
-            List<?> data = Arrays.asList(Arrays.asList(9, "stu"), Arrays.asList(10, "vwx", "yza"));
-            template.sendBody("direct:batch", data);
-            fail();
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof UncategorizedSQLException);
-        }
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
-        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
+    public void testBatchMissingParamAtBeginning() {
+        List<?> data = Arrays.asList(Arrays.asList(9, "stu"), Arrays.asList(10, "vwx", "yza"));
+
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:batch", data));
+        assertTrue(ex.getCause() instanceof UncategorizedSQLException);
+
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-        
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
         jdbcTemplate = new JdbcTemplate(db);
-        
+
         super.setUp();
     }
 
@@ -265,7 +267,7 @@ public class SqlRouteTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        
+
         db.shutdown();
     }
 
@@ -276,41 +278,42 @@ public class SqlRouteTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 errorHandler(noErrorHandler());
-                
+
                 from("direct:simple").to("sql:select * from projects where license = # order by id")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("direct:list")
-                    .to("sql:select * from projects where license = # and project = # order by id")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = # and project = # order by id")
+                        .to("mock:result");
 
                 from("direct:simpleLimited")
-                    .to("sql:select * from projects where license = # order by id?template.maxRows=1")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = # order by id?template.maxRows=1")
+                        .to("mock:result");
 
                 from("direct:insert").to("sql:insert into projects values (#, #, #)").to("mock:result");
-                
+
                 from("direct:no-param").to("sql:select * from projects order by id").to("mock:result");
-                
-                from("direct:no-param-insert").to("sql:insert into projects values (5, '#', param)?placeholder=param").to("mock:result");
-                
+
+                from("direct:no-param-insert").to("sql:insert into projects values (5, '#', param)?placeholder=param")
+                        .to("mock:result");
+
                 from("direct:batch")
-                    .to("sql:insert into projects values (#, #, #)?batch=true")
-                    .to("mock:result");
+                        .to("sql:insert into projects values (#, #, #)?batch=true")
+                        .to("mock:result");
             }
         };
     }
-    
+
     private boolean isOrdered(Set<?> keySet) {
         assertTrue(keySet.contains("id"), "isOrdered() requires the following keys: id, project, license");
         assertTrue(keySet.contains("project"), "isOrdered() requires the following keys: id, project, license");
         assertTrue(keySet.contains("license"), "isOrdered() requires the following keys: id, project, license");
-        
+
         // the implementation uses a case insensitive Map
         final Iterator<?> it = keySet.iterator();
         return "id".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
-            && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
-            && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
+                && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
+                && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
     }
 
 }

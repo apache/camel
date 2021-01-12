@@ -54,7 +54,9 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
             @Override
             public void configure() throws Exception {
                 from("file:target/data/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile&initialDelay=0&delay=10")
-                    .pollEnrich("file:target/data/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10").to("mock:result");
+                        .pollEnrich(
+                                "file:target/data/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10")
+                        .to("mock:result");
             }
         };
     }

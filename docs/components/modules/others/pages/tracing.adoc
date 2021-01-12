@@ -1,4 +1,4 @@
-[[tracing-component]]
+[[tracing-other]]
 = Tracing Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-tracing/src/main/docs/tracing.adoc
@@ -6,7 +6,8 @@
 :artifactId: camel-tracing
 :description: Distributed tracing common interfaces
 :since: 3.5
-:supportLevel: Preview
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/tracing.adoc[opts=optional]
 
 *Since Camel {since}*
 

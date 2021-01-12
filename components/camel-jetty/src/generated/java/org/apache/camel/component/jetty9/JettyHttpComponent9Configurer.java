@@ -4,8 +4,10 @@ package org.apache.camel.component.jetty9;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,8 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "continuationtimeout":
@@ -87,41 +89,73 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowJavaSerializedObject", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("continuationTimeout", java.lang.Long.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("errorHandler", org.eclipse.jetty.server.handler.ErrorHandler.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        answer.put("jettyHttpBinding", org.apache.camel.component.jetty.JettyHttpBinding.class);
-        answer.put("keystore", java.lang.String.class);
-        answer.put("maxThreads", java.lang.Integer.class);
-        answer.put("mbContainer", org.eclipse.jetty.jmx.MBeanContainer.class);
-        answer.put("minThreads", java.lang.Integer.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("requestBufferSize", java.lang.Integer.class);
-        answer.put("requestHeaderSize", java.lang.Integer.class);
-        answer.put("responseBufferSize", java.lang.Integer.class);
-        answer.put("responseHeaderSize", java.lang.Integer.class);
-        answer.put("sendServerVersion", boolean.class);
-        answer.put("socketConnectorProperties", java.util.Map.class);
-        answer.put("socketConnectors", java.util.Map.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sslKeyPassword", java.lang.String.class);
-        answer.put("sslPassword", java.lang.String.class);
-        answer.put("sslSocketConnectorProperties", java.util.Map.class);
-        answer.put("sslSocketConnectors", java.util.Map.class);
-        answer.put("threadPool", org.eclipse.jetty.util.thread.ThreadPool.class);
-        answer.put("useContinuation", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("useXForwardedForHeader", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "continuationtimeout":
+        case "continuationTimeout": return java.lang.Long.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "errorhandler":
+        case "errorHandler": return org.eclipse.jetty.server.handler.ErrorHandler.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "jettyhttpbinding":
+        case "jettyHttpBinding": return org.apache.camel.component.jetty.JettyHttpBinding.class;
+        case "keystore": return java.lang.String.class;
+        case "maxthreads":
+        case "maxThreads": return java.lang.Integer.class;
+        case "mbcontainer":
+        case "mbContainer": return org.eclipse.jetty.jmx.MBeanContainer.class;
+        case "minthreads":
+        case "minThreads": return java.lang.Integer.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "requestbuffersize":
+        case "requestBufferSize": return java.lang.Integer.class;
+        case "requestheadersize":
+        case "requestHeaderSize": return java.lang.Integer.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "responseheadersize":
+        case "responseHeaderSize": return java.lang.Integer.class;
+        case "sendserverversion":
+        case "sendServerVersion": return boolean.class;
+        case "socketconnectorproperties":
+        case "socketConnectorProperties": return java.util.Map.class;
+        case "socketconnectors":
+        case "socketConnectors": return java.util.Map.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslpassword":
+        case "sslPassword": return java.lang.String.class;
+        case "sslsocketconnectorproperties":
+        case "sslSocketConnectorProperties": return java.util.Map.class;
+        case "sslsocketconnectors":
+        case "sslSocketConnectors": return java.util.Map.class;
+        case "threadpool":
+        case "threadPool": return org.eclipse.jetty.util.thread.ThreadPool.class;
+        case "usecontinuation":
+        case "useContinuation": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "usexforwardedforheader":
+        case "useXForwardedForHeader": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -130,8 +164,8 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "continuationtimeout":
@@ -191,6 +225,21 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "usexforwardedforheader":
         case "useXForwardedForHeader": return target.isUseXForwardedForHeader();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "socketconnectorproperties":
+        case "socketConnectorProperties": return java.lang.Object.class;
+        case "socketconnectors":
+        case "socketConnectors": return org.eclipse.jetty.server.Connector.class;
+        case "sslsocketconnectorproperties":
+        case "sslSocketConnectorProperties": return java.lang.Object.class;
+        case "sslsocketconnectors":
+        case "sslSocketConnectors": return org.eclipse.jetty.server.Connector.class;
         default: return null;
         }
     }

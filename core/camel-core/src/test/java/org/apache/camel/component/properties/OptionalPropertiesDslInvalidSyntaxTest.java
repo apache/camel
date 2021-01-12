@@ -34,7 +34,8 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast().stopOnException("{{xxx}}").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                from("direct:start").multicast().stopOnException("{{xxx}}").to("mock:a")
+                        .throwException(new IllegalAccessException("Damn")).to("mock:b");
             }
         });
         try {

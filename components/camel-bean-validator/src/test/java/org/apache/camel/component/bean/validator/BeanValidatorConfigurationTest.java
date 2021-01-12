@@ -67,8 +67,11 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     @Test
     void configureBeanValidator() {
         BeanValidatorEndpoint endpoint = context
-            .getEndpoint("bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks" + "&messageInterpolator=#myMessageInterpolator"
-                         + "&traversableResolver=#myTraversableResolver" + "&constraintValidatorFactory=#myConstraintValidatorFactory", BeanValidatorEndpoint.class);
+                .getEndpoint("bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
+                             + "&messageInterpolator=#myMessageInterpolator"
+                             + "&traversableResolver=#myTraversableResolver"
+                             + "&constraintValidatorFactory=#myConstraintValidatorFactory",
+                        BeanValidatorEndpoint.class);
 
         assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", endpoint.getGroup());
         assertSame(this.messageInterpolator, endpoint.getMessageInterpolator());
@@ -92,12 +95,16 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     class MyTraversableResolver implements TraversableResolver {
 
         @Override
-        public boolean isCascadable(Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject, ElementType elementType) {
+        public boolean isCascadable(
+                Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject,
+                ElementType elementType) {
             return false;
         }
 
         @Override
-        public boolean isReachable(Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject, ElementType elementType) {
+        public boolean isReachable(
+                Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject,
+                ElementType elementType) {
             return false;
         }
     }

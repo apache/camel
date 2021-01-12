@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "csimple-joor",
+    "title": "CSimple jOOR",
+    "description": "jOOR compiler for csimple language",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-csimple-joor",
+    "version": "3.8.0-SNAPSHOT"
+  }
+}

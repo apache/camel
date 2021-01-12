@@ -37,6 +37,8 @@ public interface AhcComponentBuilderFactory {
      * Category: http
      * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-ahc
+     * 
+     * @return the dsl builder
      */
     static AhcComponentBuilder ahc() {
         return new AhcComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface AhcComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -73,10 +78,13 @@ public interface AhcComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -84,17 +92,23 @@ public interface AhcComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default AhcComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AhcComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -102,9 +116,13 @@ public interface AhcComponentBuilderFactory {
          * between AHC and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.ahc.AhcBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder binding(
                 org.apache.camel.component.ahc.AhcBinding binding) {
@@ -114,10 +132,13 @@ public interface AhcComponentBuilderFactory {
         /**
          * To use a custom AsyncHttpClient.
          * 
-         * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder client(
                 org.asynchttpclient.AsyncHttpClient client) {
@@ -129,9 +150,13 @@ public interface AhcComponentBuilderFactory {
          * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
          * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfig the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder clientConfig(
                 org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
@@ -143,9 +168,13 @@ public interface AhcComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -159,9 +188,12 @@ public interface AhcComponentBuilderFactory {
          * option at the endpoint or component level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -171,10 +203,13 @@ public interface AhcComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default AhcComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -200,7 +235,7 @@ public interface AhcComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((AhcComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((AhcComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "basicPropertyBinding": ((AhcComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((AhcComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "binding": ((AhcComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
             case "client": ((AhcComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
             case "clientConfig": ((AhcComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;

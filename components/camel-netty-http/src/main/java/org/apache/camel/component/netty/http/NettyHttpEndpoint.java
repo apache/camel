@@ -46,17 +46,19 @@ import org.slf4j.LoggerFactory;
  * Netty HTTP server and client using the Netty 4.x.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-        syntax = "netty-http:protocol:host:port/path",  category = {Category.NETWORKING, Category.HTTP}, lenientProperties = true)
+             syntax = "netty-http:protocol:host:port/path", category = { Category.NETWORKING, Category.HTTP },
+             lenientProperties = true)
 @Metadata(excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
-                + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
+                              + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
 
     @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty.http.NettyHttpConfiguration",
-            description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+    @UriParam(label = "advanced", name = "configuration",
+              javaType = "org.apache.camel.component.netty.http.NettyHttpConfiguration",
+              description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
     private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
     @UriParam(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
@@ -91,7 +93,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
 
         if (nettySharedHttpServer != null) {
             answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
-            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
+            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer,
+                    nettySharedHttpServer.getPort());
         } else {
             // reuse pipeline factory for the same address
             HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
@@ -167,7 +170,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     }
 
     /**
-     * To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
+     * To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel
+     * Message API.
      */
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
@@ -225,7 +229,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     }
 
     /**
-     * Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources.
+     * Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web
+     * resources.
      */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;

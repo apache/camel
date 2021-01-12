@@ -1,4 +1,4 @@
-[[cdi-component]]
+[[cdi-other]]
 = CDI Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cdi/src/main/docs/cdi.adoc
@@ -7,6 +7,7 @@
 :description: Using Camel with CDI
 :since: 2.10
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/cdi.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -454,11 +455,11 @@ PlatformTransactionManager createTransactionManager(TransactionManager transacti
 == Camel events to CDI events
 
 Camel provides a set
-of http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/event/package-summary.html[management
-events] that can be subscribed to for listening to Camel context,
+of https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/spi/CamelEvent.html[events] 
+that can be subscribed to for listening to Camel context,
 service, route and exchange events. Camel CDI seamlessly translates
 these Camel events into CDI events that can be observed using
-CDI http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
+CDI https://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#observer_methods[observer
 methods], e.g.:
 
 [source,java]

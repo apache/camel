@@ -40,7 +40,8 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
     @Test
     public void testEncodedQuery() throws Exception {
-        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null, String.class);
+        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null,
+                String.class);
         assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
@@ -84,19 +85,21 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                     // send back the query
                     exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                 };
-                
+
                 from("netty-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                        .to("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
-                
+                        .to("netty-http:http://localhost:" + port1
+                            + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+
                 from("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
 
                 from("netty-http:http://localhost:" + port4 + "/nettyTestRouteC?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteC route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                        .to("netty-http:http://localhost:" + port3 + "/nettyTestRouteD?throwExceptionOnFailure=false&bridgeEndpoint=true");
-                
+                        .to("netty-http:http://localhost:" + port3
+                            + "/nettyTestRouteD?throwExceptionOnFailure=false&bridgeEndpoint=true");
+
                 from("netty-http:http://localhost:" + port3 + "/nettyTestRouteD?matchOnUriPrefix=true")
                         .log("Using NettyTestRouteD route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .setBody(constant("test"))

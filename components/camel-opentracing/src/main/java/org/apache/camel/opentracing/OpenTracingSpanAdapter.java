@@ -50,35 +50,43 @@ public class OpenTracingSpanAdapter implements SpanAdapter {
         return this.span;
     }
 
-    @Override public void setComponent(String component) {
+    @Override
+    public void setComponent(String component) {
         span.setTag(Tags.COMPONENT.getKey(), component);
     }
 
-    @Override public void setError(boolean error) {
+    @Override
+    public void setError(boolean error) {
         span.setTag(Tags.ERROR.getKey(), error);
     }
 
-    @Override public void setTag(Tag key, String value) {
+    @Override
+    public void setTag(Tag key, String value) {
         span.setTag(tagMap.get(key).getKey(), value);
     }
 
-    @Override public void setTag(Tag key, Number value) {
+    @Override
+    public void setTag(Tag key, Number value) {
         span.setTag(tagMap.get(key).getKey(), value);
     }
 
-    @Override public void setTag(String key, String value) {
+    @Override
+    public void setTag(String key, String value) {
         span.setTag(key, value);
     }
 
-    @Override public void setTag(String key, Number value) {
+    @Override
+    public void setTag(String key, Number value) {
         span.setTag(key, value);
     }
 
-    @Override public void setTag(String key, Boolean value) {
+    @Override
+    public void setTag(String key, Boolean value) {
         span.setTag(key, value);
     }
 
-    @Override public void log(Map<String, String> fields) {
+    @Override
+    public void log(Map<String, String> fields) {
         this.span.log(fields);
     }
 

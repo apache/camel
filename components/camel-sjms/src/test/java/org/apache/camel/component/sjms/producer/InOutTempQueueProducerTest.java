@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutTempQueueProducerTest extends JmsTestSupport {
-    
+
     @Override
     protected boolean useJmx() {
         return true;
@@ -77,16 +77,16 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
         mc.close();
 
     }
-    
+
     protected class MyMessageListener implements MessageListener {
         private String requestText;
         private String responseText;
-        
+
         public MyMessageListener(String request, String response) {
             this.requestText = request;
             this.responseText = response;
         }
-        
+
         @Override
         public void onMessage(Message message) {
             try {
@@ -94,7 +94,7 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
                 assertNotNull(request);
                 String text = request.getText();
                 assertEquals(requestText, text);
-                
+
                 TextMessage response = getSession().createTextMessage();
                 response.setText(responseText);
                 response.setJMSCorrelationID(request.getJMSCorrelationID());

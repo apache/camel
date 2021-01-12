@@ -29,49 +29,49 @@ public class GoraConfigurationTest {
     public void setKeyClassClassShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(IllegalArgumentException.class,
-            () -> conf.setValueClass(null));
+                () -> conf.setValueClass(null));
     }
 
     @Test
     public void setKeyClassShouldThrowExceptionIfEmpty() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(IllegalArgumentException.class,
-            () -> conf.setValueClass(""));
+                () -> conf.setValueClass(""));
     }
 
     @Test
     public void setValueClassClassShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(IllegalArgumentException.class,
-            () -> conf.setValueClass(null));
+                () -> conf.setValueClass(null));
     }
 
     @Test
     public void setValueClassClassShouldThrowExceptionIfEmpty() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(IllegalArgumentException.class,
-            () -> conf.setValueClass(""));
+                () -> conf.setValueClass(""));
     }
 
     @Test
     public void setDataStoreClassShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(IllegalArgumentException.class,
-            () -> conf.setDataStoreClass(null));
+                () -> conf.setDataStoreClass(null));
     }
 
     @Test
     public void setDataStoreClassShouldThrowExceptionIfEmpty() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(IllegalArgumentException.class,
-            () -> conf.setDataStoreClass(""));
+                () -> conf.setDataStoreClass(""));
     }
 
     @Test
     public void setHadoopConfigurationShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
         assertThrows(NullPointerException.class,
-            () -> conf.setHadoopConfiguration(null));
+                () -> conf.setHadoopConfiguration(null));
     }
 
 }

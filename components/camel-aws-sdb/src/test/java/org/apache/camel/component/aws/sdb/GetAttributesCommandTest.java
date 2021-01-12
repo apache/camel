@@ -36,7 +36,7 @@ public class GetAttributesCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
+
     @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
@@ -44,7 +44,7 @@ public class GetAttributesCommandTest {
         configuration.setDomainName("DOMAIN1");
         configuration.setConsistentRead(Boolean.TRUE);
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new GetAttributesCommand(sdbClient, configuration, exchange);
     }
 
@@ -55,14 +55,14 @@ public class GetAttributesCommandTest {
         attributeNames.add("ATTRIBUTE1");
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTE_NAMES, attributeNames);
         exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
-        
+
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.getAttributesRequest.getDomainName());
         assertEquals("ITEM1", sdbClient.getAttributesRequest.getItemName());
         assertEquals(Boolean.TRUE, sdbClient.getAttributesRequest.getConsistentRead());
         assertEquals(attributeNames, sdbClient.getAttributesRequest.getAttributeNames());
-        
+
         List<Attribute> attributes = exchange.getIn().getHeader(SdbConstants.ATTRIBUTES, List.class);
         assertEquals(2, attributes.size());
         assertEquals("AttributeOne", attributes.get(0).getName());
@@ -70,7 +70,7 @@ public class GetAttributesCommandTest {
         assertEquals("AttributeTwo", attributes.get(1).getName());
         assertEquals("Value Two", attributes.get(1).getValue());
     }
-    
+
     @Test
     public void executeWithoutItemName() {
         List<String> attributeNames = new ArrayList<>();
@@ -78,17 +78,17 @@ public class GetAttributesCommandTest {
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTE_NAMES, attributeNames);
 
         assertThrows(IllegalArgumentException.class,
-            () -> command.execute());
+                () -> command.execute());
     }
-    
+
     @Test
     public void determineAttributeNames() {
         assertNull(this.command.determineAttributeNames());
-        
+
         List<String> attributeNames = new ArrayList<>();
         attributeNames.add("ATTRIBUTE1");
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTE_NAMES, attributeNames);
-        
+
         assertEquals(attributeNames, this.command.determineAttributeNames());
     }
 }

@@ -118,7 +118,8 @@ public class JCacheComponent extends DefaultComponent {
     }
 
     /**
-     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring jcache.
+     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring
+     * jcache.
      */
     public void setCacheConfigurationPropertiesRef(String cacheConfigurationPropertiesRef) {
         this.cacheConfigurationPropertiesRef = cacheConfigurationPropertiesRef;

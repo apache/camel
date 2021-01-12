@@ -31,7 +31,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionThrottlingRoutePolicyTest.xml");
+                "/org/apache/camel/component/jms/tx/JMSTransactionThrottlingRoutePolicyTest.xml");
     }
 
     @Override

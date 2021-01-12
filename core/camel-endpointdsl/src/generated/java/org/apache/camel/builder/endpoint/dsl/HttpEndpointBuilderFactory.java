@@ -57,10 +57,13 @@ public interface HttpEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -85,10 +88,14 @@ public interface HttpEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
             doSetProperty("disableStreamCache", disableStreamCache);
@@ -99,9 +106,13 @@ public interface HttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -113,9 +124,13 @@ public interface HttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -128,10 +143,13 @@ public interface HttpEndpointBuilderFactory {
          * option throwExceptionOnFailure to be false to let the HttpProducer
          * send all the fault response back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -143,10 +161,14 @@ public interface HttpEndpointBuilderFactory {
          * option throwExceptionOnFailure to be false to let the HttpProducer
          * send all the fault response back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             doSetProperty("bridgeEndpoint", bridgeEndpoint);
@@ -156,10 +178,13 @@ public interface HttpEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder chunked(boolean chunked) {
             doSetProperty("chunked", chunked);
@@ -169,10 +194,14 @@ public interface HttpEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder chunked(String chunked) {
             doSetProperty("chunked", chunked);
@@ -183,10 +212,13 @@ public interface HttpEndpointBuilderFactory {
          * This ensures the cookies store does not keep growing by adding new
          * cookies which is newer removed when they are expired.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param clearExpiredCookies the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder clearExpiredCookies(
                 boolean clearExpiredCookies) {
@@ -198,10 +230,14 @@ public interface HttpEndpointBuilderFactory {
          * This ensures the cookies store does not keep growing by adding new
          * cookies which is newer removed when they are expired.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param clearExpiredCookies the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder clearExpiredCookies(
                 String clearExpiredCookies) {
@@ -212,10 +248,13 @@ public interface HttpEndpointBuilderFactory {
          * Specifies whether a Connection Close header must be added to HTTP
          * Request. By default connectionClose is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param connectionClose the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder connectionClose(boolean connectionClose) {
             doSetProperty("connectionClose", connectionClose);
@@ -225,10 +264,14 @@ public interface HttpEndpointBuilderFactory {
          * Specifies whether a Connection Close header must be added to HTTP
          * Request. By default connectionClose is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param connectionClose the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder connectionClose(String connectionClose) {
             doSetProperty("connectionClose", connectionClose);
@@ -240,10 +283,13 @@ public interface HttpEndpointBuilderFactory {
          * allows to only include the headers from the HTTP response (not
          * propagating IN headers).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder copyHeaders(boolean copyHeaders) {
             doSetProperty("copyHeaders", copyHeaders);
@@ -255,10 +301,14 @@ public interface HttpEndpointBuilderFactory {
          * allows to only include the headers from the HTTP response (not
          * propagating IN headers).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder copyHeaders(String copyHeaders) {
             doSetProperty("copyHeaders", copyHeaders);
@@ -268,9 +318,12 @@ public interface HttpEndpointBuilderFactory {
          * To use custom host header for producer. When not set in query will be
          * ignored. When set will override host header derived from url.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param customHostHeader the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder customHostHeader(String customHostHeader) {
             doSetProperty("customHostHeader", customHostHeader);
@@ -281,9 +334,13 @@ public interface HttpEndpointBuilderFactory {
          * override this option if set.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpMethods</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpMethods&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param httpMethod the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder httpMethod(HttpMethods httpMethod) {
             doSetProperty("httpMethod", httpMethod);
@@ -294,9 +351,13 @@ public interface HttpEndpointBuilderFactory {
          * override this option if set.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpMethods</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpMethods&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param httpMethod the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder httpMethod(String httpMethod) {
             doSetProperty("httpMethod", httpMethod);
@@ -306,10 +367,13 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, The http producer won't read response body
          * and cache the input stream.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param ignoreResponseBody the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder ignoreResponseBody(
                 boolean ignoreResponseBody) {
@@ -320,10 +384,14 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, The http producer won't read response body
          * and cache the input stream.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param ignoreResponseBody the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder ignoreResponseBody(String ignoreResponseBody) {
             doSetProperty("ignoreResponseBody", ignoreResponseBody);
@@ -340,10 +408,13 @@ public interface HttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -360,10 +431,14 @@ public interface HttpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -377,10 +452,13 @@ public interface HttpEndpointBuilderFactory {
          * client, this allows applications which use the Host header to
          * generate accurate URL's for a proxied service.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param preserveHostHeader the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder preserveHostHeader(
                 boolean preserveHostHeader) {
@@ -395,10 +473,14 @@ public interface HttpEndpointBuilderFactory {
          * client, this allows applications which use the Host header to
          * generate accurate URL's for a proxied service.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param preserveHostHeader the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder preserveHostHeader(String preserveHostHeader) {
             doSetProperty("preserveHostHeader", preserveHostHeader);
@@ -409,10 +491,13 @@ public interface HttpEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -424,10 +509,14 @@ public interface HttpEndpointBuilderFactory {
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -445,10 +534,13 @@ public interface HttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder transferException(boolean transferException) {
             doSetProperty("transferException", transferException);
@@ -465,10 +557,14 @@ public interface HttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder transferException(String transferException) {
             doSetProperty("transferException", transferException);
@@ -477,9 +573,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication domain to use with NTML.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthDomain the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             doSetProperty("proxyAuthDomain", proxyAuthDomain);
@@ -488,9 +587,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthHost the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthHost(String proxyAuthHost) {
             doSetProperty("proxyAuthHost", proxyAuthHost);
@@ -499,20 +601,40 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication method to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthMethod the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
             doSetProperty("proxyAuthMethod", proxyAuthMethod);
             return this;
         }
         /**
-         * Proxy authentication password.
+         * Proxy authentication domain (workstation name) to use with NTML.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthNtHost the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder proxyAuthNtHost(String proxyAuthNtHost) {
+            doSetProperty("proxyAuthNtHost", proxyAuthNtHost);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthPassword the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthPassword(String proxyAuthPassword) {
             doSetProperty("proxyAuthPassword", proxyAuthPassword);
@@ -521,20 +643,27 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthPort the value to set
+         * @return the dsl builder
          */
-        default HttpEndpointBuilder proxyAuthPort(int proxyAuthPort) {
+        default HttpEndpointBuilder proxyAuthPort(Integer proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
             return this;
         }
         /**
          * Proxy authentication port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthPort the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthPort(String proxyAuthPort) {
             doSetProperty("proxyAuthPort", proxyAuthPort);
@@ -543,9 +672,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication scheme to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthScheme the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthScheme(String proxyAuthScheme) {
             doSetProperty("proxyAuthScheme", proxyAuthScheme);
@@ -554,9 +686,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy authentication username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyAuthUsername the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyAuthUsername(String proxyAuthUsername) {
             doSetProperty("proxyAuthUsername", proxyAuthUsername);
@@ -565,9 +700,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy hostname to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -576,9 +714,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy port to use.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyPort(int proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -587,9 +728,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Proxy port to use.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -598,9 +742,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication domain to use with NTML.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authDomain the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authDomain(String authDomain) {
             doSetProperty("authDomain", authDomain);
@@ -610,10 +757,13 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, camel-http sends preemptive basic
          * authentication to the server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param authenticationPreemptive the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authenticationPreemptive(
                 boolean authenticationPreemptive) {
@@ -624,10 +774,14 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true, camel-http sends preemptive basic
          * authentication to the server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param authenticationPreemptive the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authenticationPreemptive(
                 String authenticationPreemptive) {
@@ -637,9 +791,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication host to use with NTML.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authHost the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authHost(String authHost) {
             doSetProperty("authHost", authHost);
@@ -649,9 +806,12 @@ public interface HttpEndpointBuilderFactory {
          * Authentication methods allowed to use as a comma separated list of
          * values Basic, Digest or NTLM.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authMethod the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authMethod(String authMethod) {
             doSetProperty("authMethod", authMethod);
@@ -661,9 +821,12 @@ public interface HttpEndpointBuilderFactory {
          * Which authentication method to prioritize to use, either as Basic,
          * Digest or NTLM.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authMethodPriority the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authMethodPriority(String authMethodPriority) {
             doSetProperty("authMethodPriority", authMethodPriority);
@@ -672,9 +835,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authPassword the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authPassword(String authPassword) {
             doSetProperty("authPassword", authPassword);
@@ -683,9 +849,12 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Authentication username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authUsername the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder authUsername(String authUsername) {
             doSetProperty("authUsername", authUsername);
@@ -699,9 +868,12 @@ public interface HttpEndpointBuilderFactory {
          * need.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -716,9 +888,12 @@ public interface HttpEndpointBuilderFactory {
          * need.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -729,9 +904,13 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or NoopHostnameVerifier.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param x509HostnameVerifier the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 Object x509HostnameVerifier) {
@@ -743,9 +922,12 @@ public interface HttpEndpointBuilderFactory {
          * or NoopHostnameVerifier.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param x509HostnameVerifier the value to set
+         * @return the dsl builder
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 String x509HostnameVerifier) {
@@ -768,9 +950,13 @@ public interface HttpEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
             doSetProperty("httpBinding", httpBinding);
@@ -781,9 +967,13 @@ public interface HttpEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
             doSetProperty("httpBinding", httpBinding);
@@ -793,9 +983,12 @@ public interface HttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder cookieHandler(Object cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -805,9 +998,12 @@ public interface HttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
+         * &lt;code&gt;org.apache.camel.http.base.cookie.CookieHandler&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param cookieHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder cookieHandler(String cookieHandler) {
             doSetProperty("cookieHandler", cookieHandler);
@@ -822,10 +1018,13 @@ public interface HttpEndpointBuilderFactory {
          * store is also forced to be a noop cookie store as cookie handling is
          * then performed by the cookieHandler.
          * 
-         * The option is a: <code>org.apache.http.client.CookieStore</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.http.client.CookieStore&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param cookieStore the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder cookieStore(Object cookieStore) {
             doSetProperty("cookieStore", cookieStore);
@@ -841,9 +1040,12 @@ public interface HttpEndpointBuilderFactory {
          * then performed by the cookieHandler.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.client.CookieStore</code> type.
+         * &lt;code&gt;org.apache.http.client.CookieStore&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param cookieStore the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder cookieStore(String cookieStore) {
             doSetProperty("cookieStore", cookieStore);
@@ -854,10 +1056,13 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP DELETE do not include any HTTP body. However in some
          * rare cases users may need to be able to include the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param deleteWithBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder deleteWithBody(
                 boolean deleteWithBody) {
@@ -869,10 +1074,14 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP DELETE do not include any HTTP body. However in some
          * rare cases users may need to be able to include the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param deleteWithBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder deleteWithBody(String deleteWithBody) {
             doSetProperty("deleteWithBody", deleteWithBody);
@@ -883,10 +1092,13 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP GET do not include any HTTP body. However in some rare
          * cases users may need to be able to include the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param getWithBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder getWithBody(boolean getWithBody) {
             doSetProperty("getWithBody", getWithBody);
@@ -897,10 +1109,14 @@ public interface HttpEndpointBuilderFactory {
          * default HTTP GET do not include any HTTP body. However in some rare
          * cases users may need to be able to include the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param getWithBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder getWithBody(String getWithBody) {
             doSetProperty("getWithBody", getWithBody);
@@ -912,42 +1128,17 @@ public interface HttpEndpointBuilderFactory {
          * e.g. 200-204,209,301-304. Each range must be a single number or
          * from-to with the dash included.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 200-299
          * Group: producer (advanced)
+         * 
+         * @param okStatusCodeRange the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder okStatusCodeRange(
                 String okStatusCodeRange) {
             doSetProperty("okStatusCodeRange", okStatusCodeRange);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedHttpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedHttpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -956,9 +1147,12 @@ public interface HttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
             doSetProperty("clientBuilder", clientBuilder);
@@ -970,9 +1164,12 @@ public interface HttpEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientBuilder the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder clientBuilder(String clientBuilder) {
             doSetProperty("clientBuilder", clientBuilder);
@@ -982,9 +1179,12 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpClientConnectionManager to manage connections.
          * 
          * The option is a:
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
+         * &lt;code&gt;org.apache.http.conn.HttpClientConnectionManager&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientConnectionManager the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 Object clientConnectionManager) {
@@ -995,9 +1195,12 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpClientConnectionManager to manage connections.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
+         * &lt;code&gt;org.apache.http.conn.HttpClientConnectionManager&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientConnectionManager the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 String clientConnectionManager) {
@@ -1007,10 +1210,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections per route.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: advanced
+         * 
+         * @param connectionsPerRoute the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 int connectionsPerRoute) {
@@ -1020,10 +1226,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections per route.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: advanced
+         * 
+         * @param connectionsPerRoute the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 String connectionsPerRoute) {
@@ -1033,9 +1242,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Sets a custom HttpClient to be used by the producer.
          * 
-         * The option is a: <code>org.apache.http.client.HttpClient</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.http.client.HttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
             doSetProperty("httpClient", httpClient);
@@ -1045,9 +1258,12 @@ public interface HttpEndpointBuilderFactory {
          * Sets a custom HttpClient to be used by the producer.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.client.HttpClient</code> type.
+         * &lt;code&gt;org.apache.http.client.HttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
             doSetProperty("httpClient", httpClient);
@@ -1059,10 +1275,12 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.http.HttpClientConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 Object httpClientConfigurer) {
@@ -1075,10 +1293,12 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.http.HttpClientConfigurer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientConfigurer the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 String httpClientConfigurer) {
@@ -1088,13 +1308,17 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * httpClientOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 String key,
@@ -1105,13 +1329,16 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To configure the HttpClient using the key/values from the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * httpClientOptions(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(Map values) {
             doSetMultiValueProperties("httpClientOptions", "httpClient.", values);
@@ -1120,10 +1347,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom HttpContext instance.
          * 
-         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.http.protocol.HttpContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpContext the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
             doSetProperty("httpContext", httpContext);
@@ -1133,9 +1363,12 @@ public interface HttpEndpointBuilderFactory {
          * To use a custom HttpContext instance.
          * 
          * The option will be converted to a
-         * <code>org.apache.http.protocol.HttpContext</code> type.
+         * &lt;code&gt;org.apache.http.protocol.HttpContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpContext the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder httpContext(String httpContext) {
             doSetProperty("httpContext", httpContext);
@@ -1146,10 +1379,13 @@ public interface HttpEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
@@ -1161,10 +1397,14 @@ public interface HttpEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
@@ -1176,10 +1416,13 @@ public interface HttpEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
@@ -1191,10 +1434,14 @@ public interface HttpEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
@@ -1206,10 +1453,13 @@ public interface HttpEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
@@ -1221,10 +1471,14 @@ public interface HttpEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
@@ -1234,10 +1488,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 int maxTotalConnections) {
@@ -1247,10 +1504,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * The maximum number of connections.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
@@ -1261,10 +1521,13 @@ public interface HttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1274,10 +1537,14 @@ public interface HttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1286,10 +1553,13 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use System Properties as fallback for configuration.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useSystemProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 boolean useSystemProperties) {
@@ -1299,10 +1569,14 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use System Properties as fallback for configuration.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useSystemProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 String useSystemProperties) {
@@ -1341,6 +1615,7 @@ public interface HttpEndpointBuilderFactory {
          * The url of the HTTP endpoint to call.
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default HttpEndpointBuilder http(String path) {
             return HttpEndpointBuilderFactory.endpointBuilder("http", path);
@@ -1361,6 +1636,7 @@ public interface HttpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default HttpEndpointBuilder http(String componentName, String path) {
             return HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1379,6 +1655,7 @@ public interface HttpEndpointBuilderFactory {
          * The url of the HTTP endpoint to call.
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default HttpEndpointBuilder https(String path) {
             return HttpEndpointBuilderFactory.endpointBuilder("https", path);

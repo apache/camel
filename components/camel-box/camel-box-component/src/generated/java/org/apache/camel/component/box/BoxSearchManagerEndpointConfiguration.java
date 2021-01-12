@@ -4,21 +4,27 @@
  */
 package org.apache.camel.component.box;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxSearchManager
+ * Camel endpoint configuration for {@link org.apache.camel.component.box.api.BoxSearchManager}.
  */
+@ApiParams(apiName = "search", producerOnly = true,
+           description = "Provides operations to manage Box searches",
+           apiMethods = {@ApiMethod(methodName = "searchFolder", description="Search folder and all descendant folders using the given query", signatures={"java.util.Collection<com.box.sdk.BoxItem> searchFolder(String folderId, String query)"})}, aliases = {"searchFolder=search"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class BoxSearchManagerEndpointConfiguration extends BoxConfiguration {
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchFolder", description="The id of folder searched")})
     private String folderId;
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchFolder", description="The search query")})
     private String query;
 
     public String getFolderId() {

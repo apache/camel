@@ -65,7 +65,7 @@ public class SearchProducer extends DefaultProducer {
         if (endpoint.getProperties().isFilterOld() && myLastId != 0) {
             query.setSinceId(myLastId);
         }
-        
+
         // since id
         Long sinceId = exchange.getIn().getHeader(TwitterConstants.TWITTER_SINCEID, Long.class);
         if (sinceId == null) {
@@ -74,7 +74,7 @@ public class SearchProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(sinceId)) {
             query.setSinceId(sinceId);
         }
-        
+
         // max id
         Long maxId = exchange.getIn().getHeader(TwitterConstants.TWITTER_MAXID, Long.class);
         if (ObjectHelper.isNotEmpty(maxId)) {

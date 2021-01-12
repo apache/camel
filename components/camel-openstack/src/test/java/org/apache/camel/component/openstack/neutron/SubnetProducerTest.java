@@ -37,7 +37,6 @@ import org.openstack4j.model.network.Subnet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -116,7 +115,7 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
         producer.process(exchange);
 
         final List<Subnet> result = msg.getBody(List.class);
-        assertTrue(result.size() == 2);
+        assertEquals(2, result.size());
         assertEquals(testOSsubnet, result.get(0));
     }
 

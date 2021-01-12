@@ -45,7 +45,7 @@ public class SpringCBORDataFormatTest extends CamelSpringTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     void testMarshalAndUnmarshalAuthor() throws Exception {
         Author auth = new Author();
@@ -59,7 +59,7 @@ public class SpringCBORDataFormatTest extends CamelSpringTestSupport {
         Object marshalled = template.requestBody("direct:in-auth", auth);
 
         template.sendBody("direct:back-auth", marshalled);
-        
+
         Author authReturned = mock.getExchanges().get(0).getIn().getBody(Author.class);
         assertEquals("Don", authReturned.getName());
         assertEquals("Winslow", authReturned.getSurname());

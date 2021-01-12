@@ -38,9 +38,9 @@ import org.springframework.jms.support.destination.DestinationResolver;
  * A {@link ReplyManager} when using temporary queues.
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
-    
+
     final TemporaryReplyQueueDestinationResolver destResolver = new TemporaryReplyQueueDestinationResolver();
-    
+
     public TemporaryQueueReplyManager(CamelContext camelContext) {
         super(camelContext);
     }
@@ -54,10 +54,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
         return super.getReplyTo();
     }
-    
+
     @Override
-    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+    protected ReplyHandler createReplyHandler(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+            String originalCorrelationId, String correlationId, long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
@@ -97,7 +98,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
-        DefaultMessageListenerContainer answer = new DefaultJmsMessageListenerContainer(endpoint, endpoint.isAllowReplyManagerQuickStop());
+        DefaultMessageListenerContainer answer
+                = new DefaultJmsMessageListenerContainer(endpoint, endpoint.isAllowReplyManagerQuickStop());
 
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(destResolver);
@@ -119,7 +121,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         // msgs from the JMS Connection that created the temp destination in the first place
         if (endpoint.getReplyToCacheLevelName() != null) {
             if ("CACHE_NONE".equals(endpoint.getReplyToCacheLevelName())) {
-                throw new IllegalArgumentException("ReplyToCacheLevelName cannot be CACHE_NONE when using temporary reply queues. The value must be either CACHE_CONSUMER, or CACHE_SESSION");
+                throw new IllegalArgumentException(
+                        "ReplyToCacheLevelName cannot be CACHE_NONE when using temporary reply queues. The value must be either CACHE_CONSUMER, or CACHE_SESSION");
             }
             answer.setCacheLevelName(endpoint.getReplyToCacheLevelName());
         } else {
@@ -133,15 +136,16 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         // we cannot do request-reply over JMS with transaction
         answer.setSessionTransacted(false);
-        
+
         // other optional properties
         answer.setExceptionListener(new TemporaryReplyQueueExceptionListener(destResolver, endpoint.getExceptionListener()));
 
         if (endpoint.getErrorHandler() != null) {
             answer.setErrorHandler(endpoint.getErrorHandler());
         } else {
-            answer.setErrorHandler(new DefaultSpringErrorHandler(endpoint.getCamelContext(), TemporaryQueueReplyManager.class, 
-                                                                 endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+            answer.setErrorHandler(new DefaultSpringErrorHandler(
+                    endpoint.getCamelContext(), TemporaryQueueReplyManager.class,
+                    endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
         }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
@@ -164,7 +168,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (answer.getConcurrentConsumers() > 1) {
             // log that we are using concurrent consumers
             log.info("Using {}-{} concurrent consumers on {}",
-                    new Object[]{answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name});
+                    new Object[] { answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name });
         }
         return answer;
     }
@@ -173,8 +177,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private final TemporaryReplyQueueDestinationResolver destResolver;
         private final ExceptionListener delegate;
 
-        private TemporaryReplyQueueExceptionListener(TemporaryReplyQueueDestinationResolver destResolver, 
-                ExceptionListener delegate) {
+        private TemporaryReplyQueueExceptionListener(TemporaryReplyQueueDestinationResolver destResolver,
+                                                     ExceptionListener delegate) {
             this.destResolver = destResolver;
             this.delegate = delegate;
         }
@@ -182,8 +186,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         @Override
         public void onException(JMSException exception) {
             // capture exceptions, and schedule a refresh of the ReplyTo destination
-            log.warn("Exception inside the DMLC for Temporary ReplyTo Queue for destination " + endpoint.getDestinationName()
-                     + ", refreshing ReplyTo destination", exception);
+            log.warn("Exception inside the DMLC for Temporary ReplyTo Queue for destination {}, refreshing ReplyTo destination",
+                    endpoint.getDestinationName(), exception);
             destResolver.scheduleRefresh();
             // serve as a proxy for any exception listener the user may have set explicitly
             if (delegate != null) {
@@ -195,10 +199,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     private final class TemporaryReplyQueueDestinationResolver implements DestinationResolver {
         private TemporaryQueue queue;
-        private final AtomicBoolean refreshWanted = new AtomicBoolean(false);
+        private final AtomicBoolean refreshWanted = new AtomicBoolean();
 
         @Override
-        public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
+        public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
+                throws JMSException {
             // use a temporary queue to gather the reply message
             synchronized (refreshWanted) {
                 if (queue == null || refreshWanted.get()) {
@@ -213,11 +218,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             }
             return queue;
         }
-        
+
         public void scheduleRefresh() {
             refreshWanted.set(true);
         }
-        
+
         public void destinationReady() throws InterruptedException {
             if (refreshWanted.get()) {
                 synchronized (refreshWanted) {

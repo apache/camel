@@ -16,18 +16,12 @@
  */
 package org.apache.camel.test.spring;
 
-import java.util.List;
-
 import org.junit.runners.model.InitializationError;
-import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.TestExecutionListener;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * An implementation bringing the functionality of {@link CamelSpringTestSupport} to
- * Spring Boot Test based test cases.  This approach allows developers to implement tests
- * for their Spring Boot based applications/routes using the typical Spring Test conventions
- * for test development.
+ * An implementation bringing the functionality of {@link CamelSpringTestSupport} to Spring Boot Test based test cases.
+ * This approach allows developers to implement tests for their Spring Boot based applications/routes using the typical
+ * Spring Test conventions for test development.
  */
 public class CamelSpringBootRunner extends CamelSpringRunner {
 

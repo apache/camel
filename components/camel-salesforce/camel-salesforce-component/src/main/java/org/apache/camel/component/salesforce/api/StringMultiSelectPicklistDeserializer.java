@@ -29,8 +29,7 @@ import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 /**
- * Jackson deserializer base class for reading ';' separated strings for
- * MultiSelect pick-lists.
+ * Jackson deserializer base class for reading ';' separated strings for MultiSelect pick-lists.
  */
 public class StringMultiSelectPicklistDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
 
@@ -66,7 +65,8 @@ public class StringMultiSelectPicklistDeserializer extends StdDeserializer<Objec
     }
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext context, BeanProperty property) throws JsonMappingException {
+    public JsonDeserializer<?> createContextual(DeserializationContext context, BeanProperty property)
+            throws JsonMappingException {
         final Class<?> rawClass = property.getType().getRawClass();
         final Class<?> componentType = rawClass.getComponentType();
         if (componentType == null || componentType != String.class) {

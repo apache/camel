@@ -23,7 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -51,16 +51,26 @@ public class SplitListListIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < 5; i++) {
-            assertTrue(getMockEndpoint("mock:a").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0).equals("number" + i));
-            assertTrue(getMockEndpoint("mock:a").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1).equals("Camel"));
-            assertTrue(getMockEndpoint("mock:b").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0).equals("number" + i));
-            assertTrue(getMockEndpoint("mock:b").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1).equals("Camel"));
-            assertTrue(getMockEndpoint("mock:c").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0).equals("number" + i));
-            assertTrue(getMockEndpoint("mock:c").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1).equals("Camel"));
-            assertTrue(getMockEndpoint("mock:d").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0).equals("number" + i));
-            assertTrue(getMockEndpoint("mock:d").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1).equals("Camel"));
-            assertTrue(getMockEndpoint("mock:e").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0).equals("number" + i));
-            assertTrue(getMockEndpoint("mock:e").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1).equals("Camel"));
+            assertEquals("number" + i,
+                    getMockEndpoint("mock:a").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
+            assertEquals("Camel",
+                    getMockEndpoint("mock:a").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
+            assertEquals("number" + i,
+                    getMockEndpoint("mock:b").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
+            assertEquals("Camel",
+                    getMockEndpoint("mock:b").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
+            assertEquals("number" + i,
+                    getMockEndpoint("mock:c").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
+            assertEquals("Camel",
+                    getMockEndpoint("mock:c").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
+            assertEquals("number" + i,
+                    getMockEndpoint("mock:d").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
+            assertEquals("Camel",
+                    getMockEndpoint("mock:d").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
+            assertEquals("number" + i,
+                    getMockEndpoint("mock:e").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
+            assertEquals("Camel",
+                    getMockEndpoint("mock:e").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
         }
     }
 

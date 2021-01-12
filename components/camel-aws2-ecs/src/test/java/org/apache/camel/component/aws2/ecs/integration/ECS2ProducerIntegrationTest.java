@@ -45,7 +45,7 @@ public class ECS2ProducerIntegrationTest extends CamelTestSupport {
             }
         });
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(0, resultGet.clusterArns().size());
     }
 
@@ -54,7 +54,9 @@ public class ECS2ProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:listClusters").to("aws2-ecs://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&operation=listClusters").to("mock:result");
+                from("direct:listClusters")
+                        .to("aws2-ecs://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=eu-west-1&operation=listClusters")
+                        .to("mock:result");
             }
         };
     }

@@ -37,7 +37,6 @@ public class CombinedServiceFilter implements ServiceFilter {
         return this.delegates;
     }
 
-
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         for (int i = 0; i < delegatesSize; i++) {

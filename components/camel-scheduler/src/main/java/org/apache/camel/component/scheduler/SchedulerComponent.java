@@ -67,7 +67,8 @@ public class SchedulerComponent extends DefaultComponent {
         synchronized (executors) {
             answer = executors.get(name);
             if (answer == null) {
-                answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "scheduler://" + name, concurrentTasks);
+                answer = getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, "scheduler://" + name,
+                        concurrentTasks);
                 executors.put(name, answer);
                 // store new reference counter
                 refCounts.put(name, new AtomicInteger(1));

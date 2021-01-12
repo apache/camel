@@ -38,7 +38,8 @@ public class FluentProducerTemplateAutoRegisterTest extends SpringRunWithTestSup
     public void testHasFluentTemplate() {
         assertNotNull(template, "Should have injected a fluent producer template");
 
-        FluentProducerTemplate lookup = context.getRegistry().lookupByNameAndType("fluentTemplate", FluentProducerTemplate.class);
+        FluentProducerTemplate lookup
+                = context.getRegistry().lookupByNameAndType("fluentTemplate", FluentProducerTemplate.class);
         assertNotNull(lookup, "Should lookup fluent producer template");
     }
 }

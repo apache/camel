@@ -46,8 +46,7 @@ public class BonitaAuthFilterAlreadyConnectedTest {
 
     @Test
     public void testAlreadyConnected() throws Exception {
-        BonitaAPIConfig bonitaApiConfig =
-                new BonitaAPIConfig("hostname", "port", "username", "password");
+        BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("hostname", "port", "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
     }

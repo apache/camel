@@ -34,7 +34,8 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
 
     @InvokeOnHeader(ConsulSessionActions.CREATE)
     protected void create(Message message) throws Exception {
-        setBodyAndResult(message, getClient().createSession(message.getMandatoryBody(Session.class), message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)));
+        setBodyAndResult(message, getClient().createSession(message.getMandatoryBody(Session.class),
+                message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)));
     }
 
     @InvokeOnHeader(ConsulSessionActions.DESTROY)
@@ -42,7 +43,8 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
         String sessionId = message.getHeader(ConsulConstants.CONSUL_SESSION, String.class);
 
         if (ObjectHelper.isEmpty(sessionId)) {
-            getClient().destroySession(message.getMandatoryBody(String.class), message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class));
+            getClient().destroySession(message.getMandatoryBody(String.class),
+                    message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class));
         } else {
             getClient().destroySession(sessionId, message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class));
         }
@@ -56,9 +58,12 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
 
         if (ObjectHelper.isEmpty(sessionId)) {
             setBodyAndResult(message,
-                             getClient().getSessionInfo(message.getMandatoryBody(String.class), message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)).orElse(null));
+                    getClient().getSessionInfo(message.getMandatoryBody(String.class),
+                            message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)).orElse(null));
         } else {
-            setBodyAndResult(message, getClient().getSessionInfo(sessionId, message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class)).orElse(null));
+            setBodyAndResult(message,
+                    getClient().getSessionInfo(sessionId, message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class))
+                            .orElse(null));
         }
     }
 
@@ -72,9 +77,12 @@ public final class ConsulSessionProducer extends AbstractConsulProducer<SessionC
         String sessionId = message.getHeader(ConsulConstants.CONSUL_SESSION, String.class);
 
         if (ObjectHelper.isEmpty(sessionId)) {
-            setBodyAndResult(message, getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class), message.getMandatoryBody(String.class)));
+            setBodyAndResult(message,
+                    getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class),
+                            message.getMandatoryBody(String.class)));
         } else {
-            setBodyAndResult(message, getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class), sessionId));
+            setBodyAndResult(message,
+                    getClient().renewSession(message.getHeader(ConsulConstants.CONSUL_DATACENTER, String.class), sessionId));
         }
     }
 }

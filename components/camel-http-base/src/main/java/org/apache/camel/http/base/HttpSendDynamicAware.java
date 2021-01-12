@@ -22,41 +22,37 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.support.component.SendDynamicAwareSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * HTTP based {@link SendDynamicAware} which allows to optimise HTTP components
- * with the toD (dynamic to) DSL in Camel. This implementation optimises by allowing
- * to provide dynamic parameters via {@link Exchange#HTTP_PATH} and {@link Exchange#HTTP_QUERY} headers
- * instead of the endpoint uri. That allows to use a static endpoint and its producer to service
- * dynamic requests.
+ * HTTP based {@link org.apache.camel.spi.SendDynamicAware} which allows to optimise HTTP components with the toD
+ * (dynamic to) DSL in Camel. This implementation optimises by allowing to provide dynamic parameters via
+ * {@link Exchange#HTTP_PATH} and {@link Exchange#HTTP_QUERY} headers instead of the endpoint uri. That allows to use a
+ * static endpoint and its producer to service dynamic requests.
  */
-public class HttpSendDynamicAware implements SendDynamicAware {
+public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
     private final Processor postProcessor = new HttpSendDynamicPostProcessor();
 
-    private String scheme;
-
     @Override
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
+    public boolean isOnlyDynamicQueryParameters() {
+        // we compute our own host:port/path so its okay so say true here
+        return true;
     }
 
     @Override
-    public String getScheme() {
-        return scheme;
+    public boolean isLenientProperties() {
+        return true;
     }
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
-        Map<String, String> properties = catalog.endpointProperties(uri);
-        Map<String, String> lenient = catalog.endpointLenientProperties(uri);
+        Map<String, Object> properties = endpointProperties(exchange, uri);
+        Map<String, Object> lenient = endpointLenientProperties(exchange, uri);
         return new DynamicAwareEntry(uri, originalUri, properties, lenient);
     }
 
@@ -68,23 +64,25 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         if (path != null || !entry.getLenientProperties().isEmpty()) {
             // the context path can be dynamic or any lenient properties
             // and therefore build a new static uri without path or lenient options
-            Map<String, String> params = new LinkedHashMap<>(entry.getProperties());
+            Map<String, Object> params = entry.getProperties();
             for (String k : entry.getLenientProperties().keySet()) {
                 params.remove(k);
             }
             if (path != null) {
-                // httpUri/httpURI contains the host and path, so replace it with just the host as the context-path is dynamic
-                if (params.containsKey("httpUri")) {
-                    params.put("httpUri", host);
-                } else if (params.containsKey("httpURI")) {
-                    params.put("httpURI", host);
-                } else if ("netty-http".equals(scheme)) {
+                params.remove("httpUri");
+                params.remove("httpURI");
+                if ("netty-http".equals(getScheme())) {
                     // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
                     params.remove("path");
                 }
             }
-            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
-            return catalog.asEndpointUri(scheme, params, false);
+
+            // build static url with the known parameters
+            String url = getScheme() + ":" + host;
+            if (!params.isEmpty()) {
+                url += "?" + URISupport.createQueryString(params, false);
+            }
+            return url;
         } else {
             // no need for optimisation
             return null;
@@ -99,6 +97,10 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         if (!entry.getLenientProperties().isEmpty()) {
             // all lenient properties can be dynamic and provided in the HTTP_QUERY header
             query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
+        }
+
+        if (query == null && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_QUERY))) {
+            query = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
         }
 
         if (path != null || query != null) {
@@ -118,10 +120,10 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         String u = entry.getUri();
 
         // remove scheme prefix (unless its camel-http or camel-http)
-        boolean httpComponent = "http".equals(scheme) || "https".equals(scheme);
+        boolean httpComponent = "http".equals(getScheme()) || "https".equals(getScheme());
         if (!httpComponent) {
-            String prefix = scheme + "://";
-            String prefix2 = scheme + ":";
+            String prefix = getScheme() + "://";
+            String prefix2 = getScheme() + ":";
             if (u.startsWith(prefix)) {
                 u = u.substring(prefix.length());
             } else if (u.startsWith(prefix2)) {
@@ -145,6 +147,10 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                 if (port > 0 && port != 80 && port != 443) {
                     host += ":" + port;
                 }
+                // remove double slash for path
+                while (path.startsWith("//")) {
+                    path = path.substring(1);
+                }
                 if (!httpComponent) {
                     // include scheme for components that are not camel-http
                     String scheme = parse.getScheme();
@@ -152,15 +158,15 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                         host = scheme + "://" + host;
                     }
                 }
-                return new String[]{host, path};
+                return new String[] { host, path };
             }
         } catch (URISyntaxException e) {
             // ignore
-            return new String[]{u, null};
+            return new String[] { u, null };
         }
 
         // no context path
-        return new String[]{u, null};
+        return new String[] { u, null };
     }
-    
+
 }

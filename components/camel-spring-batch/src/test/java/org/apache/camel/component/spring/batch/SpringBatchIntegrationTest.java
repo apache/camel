@@ -34,7 +34,7 @@ public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
     @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
-    String[] inputMessages = new String[]{"foo", "bar", "baz", null};
+    String[] inputMessages = new String[] { "foo", "bar", "baz", null };
 
     @Override
     @BeforeEach
@@ -63,13 +63,13 @@ public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
 
         jobExecutionEventsQueueEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testMessageHeader() throws Exception {
         headerEndpoint.expectedHeaderReceived("header", 1);
-        
+
         template.sendBodyAndHeader("direct:header", null, "header", "1");
-        
+
         headerEndpoint.assertIsSatisfied();
     }
 

@@ -37,6 +37,8 @@ public interface FreemarkerComponentBuilderFactory {
      * Category: transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
+     * 
+     * @return the dsl builder
      */
     static FreemarkerComponentBuilder freemarker() {
         return new FreemarkerComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface FreemarkerComponentBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default FreemarkerComponentBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -72,10 +77,13 @@ public interface FreemarkerComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default FreemarkerComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -93,10 +101,13 @@ public interface FreemarkerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FreemarkerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,26 +115,37 @@ public interface FreemarkerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default FreemarkerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default FreemarkerComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use an existing freemarker.template.Configuration instance as the
          * configuration.
          * 
-         * The option is a: <code>freemarker.template.Configuration</code> type.
+         * The option is a:
+         * &lt;code&gt;freemarker.template.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default FreemarkerComponentBuilder configuration(
                 freemarker.template.Configuration configuration) {
@@ -150,7 +172,7 @@ public interface FreemarkerComponentBuilderFactory {
             case "allowContextMapAll": ((FreemarkerComponent) component).setAllowContextMapAll((boolean) value); return true;
             case "allowTemplateFromHeader": ((FreemarkerComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((FreemarkerComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((FreemarkerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((FreemarkerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((FreemarkerComponent) component).setConfiguration((freemarker.template.Configuration) value); return true;
             default: return false;
             }

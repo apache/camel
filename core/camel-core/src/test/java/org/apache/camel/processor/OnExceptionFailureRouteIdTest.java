@@ -19,8 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test to test that route id of the failed route is available to the end
- * user.
+ * Unit test to test that route id of the failed route is available to the end user.
  */
 public class OnExceptionFailureRouteIdTest extends DeadLetterChannelFailureRouteIdTest {
 

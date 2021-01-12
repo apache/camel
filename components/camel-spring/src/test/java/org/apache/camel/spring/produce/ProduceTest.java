@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 public class ProduceTest extends SpringRunWithTestSupport {
-    
+
     @Produce("direct:start")
     protected MyListener producer;
 

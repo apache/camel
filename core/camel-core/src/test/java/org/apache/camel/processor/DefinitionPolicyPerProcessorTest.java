@@ -61,9 +61,9 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // only wrap policy foo around the to(mock:foo) - notice the
-                    // end()
-                    .policy("foo").setBody().constant("body not altered").to("mock:foo").end();
+                        // only wrap policy foo around the to(mock:foo) - notice the
+                        // end()
+                        .policy("foo").setBody().constant("body not altered").to("mock:foo").end();
             }
         };
     }
@@ -83,7 +83,7 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
         @Override
         public void beforeWrap(Route route, NamedNode definition) {
-            SetBodyDefinition bodyDef = (SetBodyDefinition)((ProcessorDefinition<?>)definition).getOutputs().get(0);
+            SetBodyDefinition bodyDef = (SetBodyDefinition) ((ProcessorDefinition<?>) definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 

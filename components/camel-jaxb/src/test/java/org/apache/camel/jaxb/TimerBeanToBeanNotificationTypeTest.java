@@ -39,9 +39,9 @@ public class TimerBeanToBeanNotificationTypeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:foo?delay=500&repeatCount=1")
-                    .log("Timer triggered")
-                    .bean(MyNotificationService.class, "createNotification")
-                    .bean(MyNotificationService.class, "sendNotification");
+                        .log("Timer triggered")
+                        .bean(MyNotificationService.class, "createNotification")
+                        .bean(MyNotificationService.class, "sendNotification");
             }
         };
     }

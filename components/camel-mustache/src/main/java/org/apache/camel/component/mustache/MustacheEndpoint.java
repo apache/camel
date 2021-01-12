@@ -43,7 +43,8 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEM
 /**
  * Transform messages using a Mustache template.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri",
+             producerOnly = true, category = { Category.TRANSFORMATION })
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;
@@ -89,7 +90,8 @@ public class MustacheEndpoint extends ResourceEndpoint {
         }
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(MustacheConstants.MUSTACHE_RESOURCE_URI);
-            MustacheEndpoint newEndpoint = getCamelContext().getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);
+            MustacheEndpoint newEndpoint
+                    = getCamelContext().getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);
             newEndpoint.onExchange(exchange);
             return;
         }
@@ -122,9 +124,9 @@ public class MustacheEndpoint extends ResourceEndpoint {
     /**
      * Read and compile a Mustache template
      *
-     * @param resourceReader Reader used to get template
-     * @param resourceUri    Template Id
-     * @return Template
+     * @param  resourceReader Reader used to get template
+     * @param  resourceUri    Template Id
+     * @return                Template
      */
     private Mustache createMustache(Reader resourceReader, String resourceUri) throws IOException {
         ClassLoader oldcl = Thread.currentThread().getContextClassLoader();
@@ -222,8 +224,8 @@ public class MustacheEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;

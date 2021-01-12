@@ -46,66 +46,45 @@ public final class OpenApiHelper {
     }
 
     /**
-     * Clears all the vendor extension on the openApi model. This may be needed as some API tooling does not support this.
+     * Clears all the vendor extension on the openApi model. This may be needed as some API tooling does not support
+     * this.
      */
     public static void clearVendorExtensions(OasDocument openApi) {
-        
-        if (openApi instanceof Oas20Document) {
-        
-            if (openApi.getExtensions() != null) {
-                openApi.getExtensions().clear();
-            }
 
-            if (((Oas20Document)openApi).definitions.getDefinitions() != null) {
-                for (Oas20SchemaDefinition schemaDefinition : ((Oas20Document)openApi).definitions.getDefinitions()) {
-                    if (schemaDefinition.getExtensions() != null) {
-                        schemaDefinition.getExtensions().clear();
-                    }
+        if (openApi instanceof Oas20Document) {
+            openApi.clearExtensions();
+            if (((Oas20Document) openApi).definitions.getDefinitions() != null) {
+                for (Oas20SchemaDefinition schemaDefinition : ((Oas20Document) openApi).definitions.getDefinitions()) {
+                    schemaDefinition.clearExtensions();
                 }
             }
-
             if (openApi.paths != null) {
                 for (OasPathItem path : openApi.paths.getPathItems()) {
-                    if (path.getExtensions() != null) {
-                        path.getExtensions().clear();
-                    }
+                    path.clearExtensions();
                     for (OasOperation op : getOperationMap(path).values()) {
-                        if (op.getExtensions() != null) {
-                            op.getExtensions().clear();
-                        }
+                        op.clearExtensions();
                     }
                 }
             }
         } else if (openApi instanceof Oas30Document) {
-            if (openApi.getExtensions() != null) {
-                openApi.getExtensions().clear();
-            }
-
-            if (((Oas30Document)openApi).components != null 
-                && ((Oas30Document)openApi).components.schemas != null) {
-                for (Oas30SchemaDefinition schemaDefinition : ((Oas30Document)openApi).components.schemas.values()) {
-                    if (schemaDefinition.getExtensions() != null) {
-                        schemaDefinition.getExtensions().clear();
-                    }
+            openApi.clearExtensions();
+            if (((Oas30Document) openApi).components != null
+                    && ((Oas30Document) openApi).components.schemas != null) {
+                for (Oas30SchemaDefinition schemaDefinition : ((Oas30Document) openApi).components.schemas.values()) {
+                    schemaDefinition.clearExtensions();
                 }
             }
-
             if (openApi.paths != null) {
                 for (OasPathItem path : openApi.paths.getPathItems()) {
-                    if (path.getExtensions() != null) {
-                        path.getExtensions().clear();
-                    }
+                    path.clearExtensions();
                     for (OasOperation op : getOperationMap(path).values()) {
-                        if (op.getExtensions() != null) {
-                            op.getExtensions().clear();
-                        }
+                        op.clearExtensions();
                     }
                 }
             }
         }
-
     }
-    
+
     private static Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
         Map<HttpMethod, OasOperation> result = new LinkedHashMap<HttpMethod, OasOperation>();
 
@@ -133,7 +112,7 @@ public final class OpenApiHelper {
 
         return result;
     }
-    
+
     enum HttpMethod {
         POST,
         GET,

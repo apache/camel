@@ -73,7 +73,7 @@ public class ManagedResequencerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .resequence(header("num")).size(3).id("mysend")
+                        .resequence(header("num")).size(3).id("mysend")
                         .to("mock:foo");
             }
         };

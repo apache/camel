@@ -37,6 +37,8 @@ public interface NagiosComponentBuilderFactory {
      * Category: monitoring
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-nagios
+     * 
+     * @return the dsl builder
      */
     static NagiosComponentBuilder nagios() {
         return new NagiosComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface NagiosComponentBuilderFactory {
         /**
          * Connection timeout in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default NagiosComponentBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -71,10 +76,13 @@ public interface NagiosComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NagiosComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -84,37 +92,48 @@ public interface NagiosComponentBuilderFactory {
         /**
          * Sending timeout in millis.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default NagiosComponentBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default NagiosComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default NagiosComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use a shared NagiosConfiguration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.nagios.NagiosConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.nagios.NagiosConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default NagiosComponentBuilder configuration(
                 org.apache.camel.component.nagios.NagiosConfiguration configuration) {
@@ -125,9 +144,12 @@ public interface NagiosComponentBuilderFactory {
          * To specify an encryption method.
          * 
          * The option is a:
-         * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
+         * &lt;code&gt;com.googlecode.jsendnsca.encryption.Encryption&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param encryption the value to set
+         * @return the dsl builder
          */
         default NagiosComponentBuilder encryption(
                 com.googlecode.jsendnsca.encryption.Encryption encryption) {
@@ -137,9 +159,12 @@ public interface NagiosComponentBuilderFactory {
         /**
          * Password to be authenticated when sending checks to Nagios.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NagiosComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -172,7 +197,7 @@ public interface NagiosComponentBuilderFactory {
             case "connectionTimeout": getOrCreateConfiguration((NagiosComponent) component).setConnectionTimeout((int) value); return true;
             case "lazyStartProducer": ((NagiosComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": getOrCreateConfiguration((NagiosComponent) component).setTimeout((int) value); return true;
-            case "basicPropertyBinding": ((NagiosComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((NagiosComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((NagiosComponent) component).setConfiguration((org.apache.camel.component.nagios.NagiosConfiguration) value); return true;
             case "encryption": getOrCreateConfiguration((NagiosComponent) component).setEncryption((com.googlecode.jsendnsca.encryption.Encryption) value); return true;
             case "password": getOrCreateConfiguration((NagiosComponent) component).setPassword((java.lang.String) value); return true;

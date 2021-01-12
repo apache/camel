@@ -1,10 +1,11 @@
-[[resilience4j-component]]
+[[resilience4j-other]]
 = Resilience4j Component
 :docTitle: Resilience4j
 :artifactId: camel-resilience4j
 :description: Circuit Breaker EIP using Resilience4j
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resilience4j.adoc[opts=optional]
 
 *Since Camel {since}*
 

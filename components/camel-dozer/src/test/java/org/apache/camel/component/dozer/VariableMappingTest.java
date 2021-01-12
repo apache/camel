@@ -33,18 +33,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class VariableMappingTest {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
-    
+
     @Produce("direct:start")
     private ProducerTemplate startEndpoint;
-    
+
     @AfterEach
     public void tearDown() {
         resultEndpoint.reset();
     }
-    
+
     @Test
     void testLiteralMapping() throws Exception {
         resultEndpoint.expectedMessageCount(1);
@@ -55,7 +55,7 @@ public class VariableMappingTest {
         // check results
         resultEndpoint.assertIsSatisfied();
         XYZOrder result = resultEndpoint.getExchanges().get(0).getIn().getBody(XYZOrder.class);
-        assertEquals(result.getPriority(), "GOLD");
+        assertEquals("GOLD", result.getPriority());
         assertEquals("ACME-SALES", result.getCustId());
         assertEquals("W123-EG", result.getOrderId());
     }

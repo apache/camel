@@ -39,8 +39,8 @@ public class DefaultUndertowHttpBindingTest {
     @Timeout(1)
     public void readEntireDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
-            "",
-            "chunk",
+                "",
+                "chunk",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -54,9 +54,9 @@ public class DefaultUndertowHttpBindingTest {
     @Timeout(1)
     public void readEntireMultiDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
-            "",
-            "first ",
-            "second",
+                "",
+                "first ",
+                "second",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -74,10 +74,10 @@ public class DefaultUndertowHttpBindingTest {
     @Timeout(1)
     public void readEntireMultiDelayedWithPausePayload() throws Exception {
         String[] delayedPayloads = new String[] {
-            "",
-            "first ",
-            "",
-            "second",
+                "",
+                "first ",
+                "",
+                "second",
         };
 
         StreamSourceChannel source = source(delayedPayloads);

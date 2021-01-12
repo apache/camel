@@ -17,7 +17,9 @@
 package org.apache.camel.component.optaplanner;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -33,9 +35,11 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * Solve planning problems with OptaPlanner.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", category = {Category.ENGINE, Category.PLANNING})
+@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile",
+             category = { Category.ENGINE, Category.PLANNING })
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
+    private static final Map<Long, Set<OptaplannerSolutionEventListener>> SOLUTION_LISTENER = new HashMap();
 
     private SolverFactory<Object> solverFactory;
 
@@ -63,6 +67,8 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     protected Solver<Object> createSolver() {
+        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
+        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
         return solverFactory.buildSolver();
     }
 
@@ -87,19 +93,39 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
-        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
     @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
-            for (Map.Entry<String, Solver<Object>> solver: SOLVERS.entrySet()) {
+            for (Map.Entry<String, Solver<Object>> solver : SOLVERS.entrySet()) {
                 solver.getValue().terminateEarly();
                 SOLVERS.remove(solver.getKey());
             }
         }
         super.doStop();
+    }
+
+    protected Set<OptaplannerSolutionEventListener> getSolutionEventListeners(Long problemId) {
+        return SOLUTION_LISTENER.get(problemId);
+    }
+
+    protected synchronized void addSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
+        Set<OptaplannerSolutionEventListener> listeners = SOLUTION_LISTENER.get(problemId);
+        if (listeners == null) {
+            listeners = new HashSet<>();
+            listeners.add(listener);
+            SOLUTION_LISTENER.put(problemId, listeners);
+        } else {
+            listeners.add(listener);
+        }
+    }
+
+    protected synchronized void removeSolutionEventListener(Long problemId, OptaplannerSolutionEventListener listener) {
+        Set<OptaplannerSolutionEventListener> listeners = SOLUTION_LISTENER.get(problemId);
+        listeners.remove(listener);
+        if (listeners.isEmpty()) {
+            SOLUTION_LISTENER.remove(problemId);
+        }
     }
 }

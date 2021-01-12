@@ -51,8 +51,7 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
     }
 
     /**
-     * Default to transform values retrieved from Consul i.e. on KV endpoint to
-     * string.
+     * Default to transform values retrieved from Consul i.e. on KV endpoint to string.
      */
     public void setValueAsString(boolean valueAsString) {
         this.valueAsString = valueAsString;
@@ -87,7 +86,7 @@ public class ConsulConfiguration extends ConsulClientConfiguration {
     @Override
     public ConsulConfiguration copy() {
         try {
-            return (ConsulConfiguration)super.clone();
+            return (ConsulConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

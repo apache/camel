@@ -6,6 +6,7 @@
 :since: 2.6
 :supportLevel: Stable
 :component-header: Only consumer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/jmx.adoc[opts=optional]
 
 *Since Camel {since}*
 
@@ -34,7 +35,7 @@ The JMX component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -57,22 +58,21 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (31 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *format* (consumer) | Format for the message body. Either xml or raw. If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body. The value can be one of: xml, raw | xml | String
+| *format* (consumer) | Format for the message body. Either xml or raw. If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body. There are 2 enums and the value can be one of: xml, raw | xml | String
 | *granularityPeriod* (consumer) | The frequency to poll the bean to check the monitor (monitor types only). | 10000 | long
-| *monitorType* (consumer) | The type of monitor to create. One of string, gauge, counter (monitor types only). The value can be one of: counter, gauge, string |  | String
+| *monitorType* (consumer) | The type of monitor to create. One of string, gauge, counter (monitor types only). There are 3 enums and the value can be one of: counter, gauge, string |  | String
 | *objectDomain* (consumer) | *Required* The domain for the mbean you're connecting to |  | String
 | *objectName* (consumer) | The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed. |  | String
 | *observedAttribute* (consumer) | The attribute to observe for the monitor bean or consumer. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *executorService* (advanced) | To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications. |  | ExecutorService
 | *handback* (advanced) | Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object
 | *notificationFilter* (advanced) | Reference to a bean that implements the NotificationFilter. |  | NotificationFilter

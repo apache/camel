@@ -37,7 +37,7 @@ public class ServletRootPathTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 from("servlet:/")
-                    .setBody().constant("Bye World");
+                        .setBody().constant("Bye World");
             }
         };
     }

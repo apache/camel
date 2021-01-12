@@ -28,10 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test support for Salesforce compound data types. This test requires a custom
- * field in the <code>Account</code> object called
- * <code>"Shipping Location"</code> of type <code>Geolocation</code> in decimal
- * units.
+ * Test support for Salesforce compound data types. This test requires a custom field in the <code>Account</code> object
+ * called <code>"Shipping Location"</code> of type <code>Geolocation</code> in decimal units.
  * 
  * @see <a href=
  *      "https://www.salesforce.com/developer/docs/api/index_Left.htm#CSHID=compound_fields.htm|StartTopic=Content%2Fcompound_fields.htm|SkinName=webhelp">Compound
@@ -72,7 +70,8 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
         account.setShipping_Location__Latitude__s(37.793779);
         account.setShipping_Location__Longitude__s(-122.39448);
 
-        CreateSObjectResult result = template().requestBody("direct:createSObject" + suffix, account, CreateSObjectResult.class);
+        CreateSObjectResult result
+                = template().requestBody("direct:createSObject" + suffix, account, CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue(result.getSuccess(), "Create success");
         LOG.debug("Create: " + result);
@@ -86,7 +85,8 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
             assertNotNull(account.getShippingAddress(), "Shipping Address");
             assertNotNull(account.getShippingAddress(), "Shipping Location");
 
-            LOG.debug("Retrieved fields billing address: {}, shipping location: {}", account.getBillingAddress(), account.getShipping_Location__c());
+            LOG.debug("Retrieved fields billing address: {}, shipping location: {}", account.getBillingAddress(),
+                    account.getShipping_Location__c());
 
         } finally {
             // delete the test SObject
@@ -106,9 +106,11 @@ public class CompoundTypesIntegrationTest extends AbstractSalesforceTestBase {
                 from("direct:createSObjectXml").to("salesforce:createSObject?format=XML&sObjectName=Account");
 
                 // testGetSObject
-                from("direct:getSObject").to("salesforce:getSObject?sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
+                from("direct:getSObject").to(
+                        "salesforce:getSObject?sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
 
-                from("direct:getSObjectXml").to("salesforce:getSObject?format=XML&sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
+                from("direct:getSObjectXml").to(
+                        "salesforce:getSObject?format=XML&sObjectName=Account&sObjectFields=Id,BillingAddress,ShippingAddress,Shipping_Location__c");
 
                 // testDeleteSObject
                 from("direct:deleteSObject").to("salesforce:deleteSObject?sObjectName=Account");

@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitStatus;
@@ -43,12 +42,10 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
 
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullRequestStateProducerProcessor())
-                        .to("github://pullRequestState?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
+                        .to("github://pullRequestState?state=success&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
 
         };
     }
@@ -76,11 +73,10 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             fail("Commit status sent to service is different from response");
         }
 
-        assertEquals(status.getState(), "success");
+        assertEquals("success", status.getState());
 
         assertEquals(status.getDescription(), text);
     }
-
 
     public class MockPullRequestStateProducerProcessor implements Processor {
         @Override
@@ -90,6 +86,5 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);
         }
     }
-
 
 }

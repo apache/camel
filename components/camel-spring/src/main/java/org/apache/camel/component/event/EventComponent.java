@@ -61,9 +61,11 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
     public ConfigurableApplicationContext getConfigurableApplicationContext() {
         ApplicationContext applicationContext = getApplicationContext();
         if (applicationContext instanceof ConfigurableApplicationContext) {
-            return (ConfigurableApplicationContext)applicationContext;
+            return (ConfigurableApplicationContext) applicationContext;
         } else {
-            throw new IllegalArgumentException("Class: " + applicationContext.getClass().getName() + " is not an instanceof ConfigurableApplicationContext.");
+            throw new IllegalArgumentException(
+                    "Class: " + applicationContext.getClass().getName()
+                                               + " is not an instanceof ConfigurableApplicationContext.");
         }
     }
 
@@ -88,7 +90,7 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
             try {
                 endpoint.onApplicationEvent(event);
             } catch (Exception e) {
-                LOG.warn("Error on application event " + event + ". This exception will be ignored.", e);
+                LOG.warn("Error on application event {}. This exception will be ignored.", event, e);
             }
         }
     }

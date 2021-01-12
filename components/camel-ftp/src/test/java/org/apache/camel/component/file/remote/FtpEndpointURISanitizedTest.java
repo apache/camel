@@ -33,13 +33,13 @@ public class FtpEndpointURISanitizedTest extends FtpServerTestSupport {
     private String password = "secret";
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/////foo?password=" + password + "&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/////foo?password=" + password + "&delay=5000";
     }
 
     @Test
     public void testFtpDirectoryRelative() throws Exception {
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
-        assertThat(((FtpEndpoint<?>)endpoint).getConfiguration().getDirectoryName(), equalTo("foo"));
+        assertThat(((FtpEndpoint<?>) endpoint).getConfiguration().getDirectoryName(), equalTo("foo"));
     }
 
     @Test

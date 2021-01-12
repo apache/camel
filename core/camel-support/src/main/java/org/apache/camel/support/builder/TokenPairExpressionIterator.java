@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -32,11 +34,11 @@ import org.apache.camel.util.Scanner;
 import org.apache.camel.util.StringHelper;
 
 /**
- * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body
- * using an {@link Iterator}, which grabs the content between a start and end token.
+ * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body using an {@link Iterator}, which
+ * grabs the content between a start and end token.
  * <p/>
- * The message body must be able to convert to {@link InputStream} type which is used as stream
- * to access the message body.
+ * The message body must be able to convert to {@link InputStream} type which is used as stream to access the message
+ * body.
  * <p/>
  * For splitting XML files use {@link TokenXMLExpressionIterator} instead.
  */
@@ -45,6 +47,8 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     protected final String startToken;
     protected final String endToken;
     protected final boolean includeTokens;
+    private Expression startExp;
+    private Expression endExp;
 
     public TokenPairExpressionIterator(String startToken, String endToken, boolean includeTokens) {
         StringHelper.notEmpty(startToken, "startToken");
@@ -52,6 +56,18 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
         this.startToken = startToken;
         this.endToken = endToken;
         this.includeTokens = includeTokens;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        if (LanguageSupport.hasSimpleFunction(startToken)) {
+            startExp = context.resolveLanguage("simple").createExpression(startToken);
+            startExp.init(context);
+        }
+        if (LanguageSupport.hasSimpleFunction(endToken)) {
+            endExp = context.resolveLanguage("simple").createExpression(endToken);
+            endExp.init(context);
+        }
     }
 
     @Override
@@ -71,9 +87,9 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     /**
      * Strategy to evaluate the exchange
      *
-     * @param exchange   the exchange
-     * @param closeStream whether to close the stream before returning from this method.
-     * @return the evaluated value
+     * @param  exchange    the exchange
+     * @param  closeStream whether to close the stream before returning from this method.
+     * @return             the evaluated value
      */
     protected Object doEvaluate(Exchange exchange, boolean closeStream) {
         InputStream in = null;
@@ -97,19 +113,19 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     /**
      * Strategy to create the iterator
      *
-     * @param exchange the exchange
-     * @param in input stream to iterate
-     * @param charset charset
-     * @return the iterator
+     * @param  exchange the exchange
+     * @param  in       input stream to iterate
+     * @param  charset  charset
+     * @return          the iterator
      */
     protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
         String start = startToken;
-        if (LanguageSupport.hasSimpleFunction(start)) {
-            start = exchange.getContext().resolveLanguage("simple").createExpression(start).evaluate(exchange, String.class);
+        if (startExp != null) {
+            start = startExp.evaluate(exchange, String.class);
         }
         String end = endToken;
-        if (LanguageSupport.hasSimpleFunction(end)) {
-            end = exchange.getContext().resolveLanguage("simple").createExpression(end).evaluate(exchange, String.class);
+        if (endExp != null) {
+            end = endExp.evaluate(exchange, String.class);
         }
         TokenPairIterator iterator = new TokenPairIterator(start, end, includeTokens, in, charset);
         iterator.init();
@@ -150,14 +166,14 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
                 scanStartToken = "\\" + scanStartToken;
             }
             if (scanStartToken.endsWith("]")) {
-                scanStartToken = scanStartToken.substring(0, startToken.length() - 1)  + "\\]";
+                scanStartToken = scanStartToken.substring(0, startToken.length() - 1) + "\\]";
             }
             scanEndToken = endToken;
             if (scanEndToken.startsWith("[")) {
                 scanEndToken = "\\" + scanEndToken;
             }
             if (scanEndToken.endsWith("]")) {
-                scanEndToken = scanEndToken.substring(0, scanEndToken.length() - 1)  + "\\]";
+                scanEndToken = scanEndToken.substring(0, scanEndToken.length() - 1) + "\\]";
             }
         }
 

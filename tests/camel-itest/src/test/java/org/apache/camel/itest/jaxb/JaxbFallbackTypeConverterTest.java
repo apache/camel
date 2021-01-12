@@ -61,7 +61,7 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
                         // make sure we can get the InputStream rightly.
                         exchange.getMessage().setBody(is);
                     }
-                    
+
                 });
             }
         };

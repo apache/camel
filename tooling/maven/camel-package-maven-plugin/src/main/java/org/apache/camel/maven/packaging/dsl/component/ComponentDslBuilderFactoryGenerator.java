@@ -23,6 +23,7 @@ import javax.annotation.Generated;
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
@@ -38,7 +39,8 @@ public final class ComponentDslBuilderFactoryGenerator {
     private ComponentDslInnerBuilderGenerator componentDslInnerBuilderGenerator;
     private ComponentDslInnerImplBuilderGenerator componentDslInnerImplBuilderGenerator;
 
-    private ComponentDslBuilderFactoryGenerator(final ComponentModel componentModel, final ClassLoader classLoader, final String packageName) {
+    private ComponentDslBuilderFactoryGenerator(final ComponentModel componentModel, final ClassLoader classLoader,
+                                                final String packageName) {
         this.componentModel = componentModel;
         this.packageName = packageName;
 
@@ -47,7 +49,8 @@ public final class ComponentDslBuilderFactoryGenerator {
         generateJavaClass();
     }
 
-    public static ComponentDslBuilderFactoryGenerator generateClass(final ComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
+    public static ComponentDslBuilderFactoryGenerator generateClass(
+            final ComponentModel componentModel, final ClassLoader classLoader, final String componentDslPackageName) {
         Objects.requireNonNull(componentModel);
         Objects.requireNonNull(classLoader);
 
@@ -85,9 +88,12 @@ public final class ComponentDslBuilderFactoryGenerator {
         setJavaDoc();
         setMainAnnotations();
         setBuilderFactoryClassNameAndType();
-        componentDslInnerBuilderGenerator = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel);
-        componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel, componentDslInnerBuilderGenerator.getGeneratedInterfaceName());
-        setDslEntryMethod(componentDslInnerBuilderGenerator.getGeneratedInterfaceName(), componentDslInnerImplBuilderGenerator.getGeneratedClassName());
+        componentDslInnerBuilderGenerator
+                = ComponentDslInnerBuilderGenerator.generateClass(javaClass.addNestedType(), componentModel);
+        componentDslInnerImplBuilderGenerator = ComponentDslInnerImplBuilderGenerator.generateClass(javaClass.addNestedType(),
+                componentModel, componentDslInnerBuilderGenerator.getGeneratedInterfaceName());
+        setDslEntryMethod(componentDslInnerBuilderGenerator.getGeneratedInterfaceName(),
+                componentDslInnerImplBuilderGenerator.getGeneratedClassName());
     }
 
     private void setPackage() {
@@ -106,6 +112,8 @@ public final class ComponentDslBuilderFactoryGenerator {
         if (!componentModel.getDescription().isEmpty()) {
             doc = componentModel.getDescription() + "\n\n" + doc;
         }
+        // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+        doc = JavadocHelper.xmlEncode(doc);
         javaClass.getJavaDoc().setText(doc);
     }
 
@@ -130,6 +138,10 @@ public final class ComponentDslBuilderFactoryGenerator {
             method.addAnnotation(Deprecated.class);
         }
 
-        method.getJavaDoc().setFullText(DslHelper.getMainDescriptionWithoutPathOptions(componentModel));
+        String doc = DslHelper.getMainDescriptionWithoutPathOptions(componentModel);
+        // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+        doc = JavadocHelper.xmlEncode(doc);
+        doc += "\n\n@return the dsl builder\n";
+        method.getJavaDoc().setText(doc);
     }
 }

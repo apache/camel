@@ -48,10 +48,13 @@ public interface VmEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default VmEndpointConsumerBuilder size(int size) {
             doSetProperty("size", size);
@@ -62,10 +65,13 @@ public interface VmEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default VmEndpointConsumerBuilder size(String size) {
             doSetProperty("size", size);
@@ -80,10 +86,13 @@ public interface VmEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -99,10 +108,14 @@ public interface VmEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -112,10 +125,13 @@ public interface VmEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default VmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -125,10 +141,13 @@ public interface VmEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default VmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -152,10 +171,13 @@ public interface VmEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -169,9 +191,12 @@ public interface VmEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -181,9 +206,13 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -194,9 +223,12 @@ public interface VmEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -209,10 +241,13 @@ public interface VmEndpointBuilderFactory {
          * configured with a greater number. You can disable that check by
          * turning this option off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param limitConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
@@ -225,10 +260,14 @@ public interface VmEndpointBuilderFactory {
          * configured with a greater number. You can disable that check by
          * turning this option off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param limitConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
@@ -242,10 +281,13 @@ public interface VmEndpointBuilderFactory {
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param multipleConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
@@ -259,10 +301,14 @@ public interface VmEndpointBuilderFactory {
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param multipleConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
@@ -274,10 +320,13 @@ public interface VmEndpointBuilderFactory {
          * can check whether it is allowed to continue running. Setting a lower
          * value allows the consumer to react more quickly upon shutdown.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer (advanced)
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -288,10 +337,13 @@ public interface VmEndpointBuilderFactory {
          * can check whether it is allowed to continue running. Setting a lower
          * value allows the consumer to react more quickly upon shutdown.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer (advanced)
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder pollTimeout(String pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -302,10 +354,13 @@ public interface VmEndpointBuilderFactory {
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param purgeWhenStopping the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
@@ -317,10 +372,14 @@ public interface VmEndpointBuilderFactory {
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param purgeWhenStopping the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
@@ -328,40 +387,15 @@ public interface VmEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define the queue instance which will be used by the endpoint.
          * 
-         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder queue(BlockingQueue queue) {
             doSetProperty("queue", queue);
@@ -371,9 +405,12 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.BlockingQueue</code> type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -383,10 +420,13 @@ public interface VmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -397,10 +437,14 @@ public interface VmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointConsumerBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -422,10 +466,13 @@ public interface VmEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder size(int size) {
             doSetProperty("size", size);
@@ -436,10 +483,13 @@ public interface VmEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder size(String size) {
             doSetProperty("size", size);
@@ -452,10 +502,13 @@ public interface VmEndpointBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
             doSetProperty("blockWhenFull", blockWhenFull);
@@ -468,10 +521,14 @@ public interface VmEndpointBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
             doSetProperty("blockWhenFull", blockWhenFull);
@@ -483,10 +540,13 @@ public interface VmEndpointBuilderFactory {
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
@@ -499,10 +559,14 @@ public interface VmEndpointBuilderFactory {
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
@@ -516,10 +580,13 @@ public interface VmEndpointBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardWhenFull the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder discardWhenFull(
                 boolean discardWhenFull) {
@@ -533,10 +600,14 @@ public interface VmEndpointBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardWhenFull the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder discardWhenFull(String discardWhenFull) {
             doSetProperty("discardWhenFull", discardWhenFull);
@@ -548,10 +619,13 @@ public interface VmEndpointBuilderFactory {
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -564,10 +638,14 @@ public interface VmEndpointBuilderFactory {
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -585,10 +663,13 @@ public interface VmEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -606,10 +687,14 @@ public interface VmEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -621,9 +706,12 @@ public interface VmEndpointBuilderFactory {
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param offerTimeout the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder offerTimeout(long offerTimeout) {
             doSetProperty("offerTimeout", offerTimeout);
@@ -634,9 +722,12 @@ public interface VmEndpointBuilderFactory {
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param offerTimeout the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder offerTimeout(String offerTimeout) {
             doSetProperty("offerTimeout", offerTimeout);
@@ -647,10 +738,13 @@ public interface VmEndpointBuilderFactory {
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -661,10 +755,13 @@ public interface VmEndpointBuilderFactory {
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -678,11 +775,14 @@ public interface VmEndpointBuilderFactory {
          * the message is Request Reply based. The default option is
          * IfReplyExpected.
          * 
-         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
          * 
          * Default: IfReplyExpected
          * Group: producer
+         * 
+         * @param waitForTaskToComplete the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
@@ -698,10 +798,13 @@ public interface VmEndpointBuilderFactory {
          * IfReplyExpected.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.WaitForTaskToComplete</code> type.
+         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
          * 
          * Default: IfReplyExpected
          * Group: producer
+         * 
+         * @param waitForTaskToComplete the value to set
+         * @return the dsl builder
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
@@ -720,40 +823,15 @@ public interface VmEndpointBuilderFactory {
             return (VmEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define the queue instance which will be used by the endpoint.
          * 
-         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointProducerBuilder queue(BlockingQueue queue) {
             doSetProperty("queue", queue);
@@ -763,9 +841,12 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.BlockingQueue</code> type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointProducerBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -775,10 +856,13 @@ public interface VmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -789,10 +873,14 @@ public interface VmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointProducerBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -815,10 +903,13 @@ public interface VmEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default VmEndpointBuilder size(int size) {
             doSetProperty("size", size);
@@ -829,10 +920,13 @@ public interface VmEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default VmEndpointBuilder size(String size) {
             doSetProperty("size", size);
@@ -851,40 +945,15 @@ public interface VmEndpointBuilderFactory {
             return (VmEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedVmEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedVmEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define the queue instance which will be used by the endpoint.
          * 
-         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointBuilder queue(BlockingQueue queue) {
             doSetProperty("queue", queue);
@@ -894,9 +963,12 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.BlockingQueue</code> type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -906,10 +978,13 @@ public interface VmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -919,10 +994,14 @@ public interface VmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVmEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -945,6 +1024,7 @@ public interface VmEndpointBuilderFactory {
          * Name of queue
          * 
          * @param path name
+         * @return the dsl builder
          */
         default VmEndpointBuilder vm(String path) {
             return VmEndpointBuilderFactory.endpointBuilder("vm", path);
@@ -965,6 +1045,7 @@ public interface VmEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default VmEndpointBuilder vm(String componentName, String path) {
             return VmEndpointBuilderFactory.endpointBuilder(componentName, path);

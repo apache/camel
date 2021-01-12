@@ -22,6 +22,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -42,7 +43,7 @@ public class ComplexRequestReplyTest {
     private CamelContext senderContext;
     private CamelContext brokerAContext;
     private CamelContext brokerBContext;
-    
+
     private String brokerAUri;
     private String brokerBUri;
 
@@ -82,31 +83,29 @@ public class ComplexRequestReplyTest {
 
         ProducerTemplate requester = senderContext.createProducerTemplate();
         LOG.info("*** Sending Request 1");
-        String response = (String)requester.requestBody(fromEndpoint, "This is a request");
-        assertNotNull(response != null);
+        String response = (String) requester.requestBody(fromEndpoint, "This is a request");
+        assertNotNull(response);
         LOG.info("Got response: " + response);
 
         /**
-         * You actually don't need to restart the broker, just wait long enough
-         * and the next next send will take out a closed connection and
-         * reconnect, and if you happen to hit the broker you weren't on last
-         * time, then you will see the failure.
+         * You actually don't need to restart the broker, just wait long enough and the next next send will take out a
+         * closed connection and reconnect, and if you happen to hit the broker you weren't on last time, then you will
+         * see the failure.
          */
 
         TimeUnit.SECONDS.sleep(20);
 
         /**
-         * I restart the broker after the wait that exceeds the idle timeout
-         * value of the PooledConnectionFactory to show that it doesn't matter
-         * now as the older connection has already been closed.
+         * I restart the broker after the wait that exceeds the idle timeout value of the PooledConnectionFactory to
+         * show that it doesn't matter now as the older connection has already been closed.
          */
         LOG.info("Restarting Broker A now.");
         shutdownBrokerA();
         createBrokerA();
 
         LOG.info("*** Sending Request 2");
-        response = (String)requester.requestBody(fromEndpoint, "This is a request");
-        assertNotNull(response != null);
+        response = (String) requester.requestBody(fromEndpoint, "This is a request");
+        assertNotNull(response);
         LOG.info("Got response: " + response);
     }
 
@@ -129,7 +128,7 @@ public class ComplexRequestReplyTest {
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fromEndpoint).inOut(toEndpoint);
+                from(fromEndpoint).to(ExchangePattern.InOut, toEndpoint);
             }
         });
         camelContext.start();
@@ -184,11 +183,13 @@ public class ComplexRequestReplyTest {
     private CamelContext createBrokerCamelContext(String brokerName) throws Exception {
 
         CamelContext camelContext = new DefaultCamelContext();
-        camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent("vm://" + brokerName + "?create=false&waitForStart=10000"));
+        camelContext.addComponent("activemq",
+                ActiveMQComponent.activeMQComponent("vm://" + brokerName + "?create=false&waitForStart=10000"));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(brokerEndpoint).setBody().simple("Returning ${body}").log("***Reply sent to ${header.JMSReplyTo} CoorId = ${header.JMSCorrelationID}");
+                from(brokerEndpoint).setBody().simple("Returning ${body}")
+                        .log("***Reply sent to ${header.JMSReplyTo} CoorId = ${header.JMSCorrelationID}");
             }
         });
         camelContext.start();

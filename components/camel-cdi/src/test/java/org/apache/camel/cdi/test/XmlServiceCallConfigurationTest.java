@@ -48,14 +48,14 @@ public class XmlServiceCallConfigurationTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-service-call-configuration.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-service-call-configuration.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -64,7 +64,8 @@ public class XmlServiceCallConfigurationTest {
         assertNotNull("No ServiceCallConfiguration (1)", conf1);
         assertNotNull("No ServiceDiscoveryConfiguration (1)", conf1.getServiceDiscoveryConfiguration());
 
-        StaticServiceCallServiceDiscoveryConfiguration discovery1 = (StaticServiceCallServiceDiscoveryConfiguration)conf1.getServiceDiscoveryConfiguration();
+        StaticServiceCallServiceDiscoveryConfiguration discovery1
+                = (StaticServiceCallServiceDiscoveryConfiguration) conf1.getServiceDiscoveryConfiguration();
         assertEquals(1, discovery1.getServers().size());
         assertEquals("localhost:9091", discovery1.getServers().get(0));
 
@@ -72,7 +73,8 @@ public class XmlServiceCallConfigurationTest {
         assertNotNull("No ServiceCallConfiguration (2)", conf2);
         assertNotNull("No ServiceDiscoveryConfiguration (2)", conf2.getServiceDiscoveryConfiguration());
 
-        StaticServiceCallServiceDiscoveryConfiguration discovery2 = (StaticServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
+        StaticServiceCallServiceDiscoveryConfiguration discovery2
+                = (StaticServiceCallServiceDiscoveryConfiguration) conf2.getServiceDiscoveryConfiguration();
         assertEquals(2, discovery2.getServers().size());
         assertEquals("localhost:9092", discovery2.getServers().get(0));
         assertEquals("localhost:9093,localhost:9094", discovery2.getServers().get(1));

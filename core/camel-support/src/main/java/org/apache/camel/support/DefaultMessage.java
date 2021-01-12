@@ -30,12 +30,11 @@ import org.apache.camel.spi.HeadersMapFactory;
 /**
  * The default implementation of {@link org.apache.camel.Message}
  * <p/>
- * This implementation uses a {@link org.apache.camel.util.CaseInsensitiveMap} storing the headers.
- * This allows us to be able to lookup headers using case insensitive keys, making it easier for end users
- * as they do not have to be worried about using exact keys.
- * See more details at {@link org.apache.camel.util.CaseInsensitiveMap}.
- * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
- * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+ * This implementation uses a {@link org.apache.camel.util.CaseInsensitiveMap} storing the headers. This allows us to be
+ * able to lookup headers using case insensitive keys, making it easier for end users as they do not have to be worried
+ * about using exact keys. See more details at {@link org.apache.camel.util.CaseInsensitiveMap}. The implementation of
+ * the map can be configured by the {@link HeadersMapFactory} which can be set on the {@link CamelContext}. The default
+ * implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  */
 public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
@@ -290,12 +289,10 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A factory method to lazily create the headers to make it easy to create
-     * efficient Message implementations which only construct and populate the
-     * Map on demand
+     * A factory method to lazily create the headers to make it easy to create efficient Message implementations which
+     * only construct and populate the Map on demand
      *
-     * @return return a newly constructed Map possibly containing headers from
-     *         the underlying inbound transport
+     * @return return a newly constructed Map possibly containing headers from the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
         Map<String, Object> map;
@@ -312,8 +309,7 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A strategy method populate the initial set of headers on an inbound
-     * message from an underlying binding
+     * A strategy method populate the initial set of headers on an inbound message from an underlying binding
      *
      * @param map is the empty header map to populate
      */
@@ -322,12 +318,11 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A strategy for component specific messages to determine whether the
-     * message is redelivered or not.
+     * A strategy for component specific messages to determine whether the message is redelivered or not.
      * <p/>
-     * <b>Important: </b> It is not always possible to determine if the transacted is a redelivery
-     * or not, and therefore <tt>null</tt> is returned. Such an example would be a JDBC message.
-     * However JMS brokers provides details if a transacted message is redelivered.
+     * <b>Important: </b> It is not always possible to determine if the transacted is a redelivery or not, and therefore
+     * <tt>null</tt> is returned. Such an example would be a JDBC message. However JMS brokers provides details if a
+     * transacted message is redelivered.
      *
      * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
      */

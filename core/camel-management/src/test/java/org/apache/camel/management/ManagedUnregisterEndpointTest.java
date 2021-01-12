@@ -41,7 +41,7 @@ public class ManagedUnregisterEndpointTest extends ManagementTestSupport {
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-        assertEquals(uri, "mock://result");
+        assertEquals("mock://result", uri);
 
         context.stop();
 

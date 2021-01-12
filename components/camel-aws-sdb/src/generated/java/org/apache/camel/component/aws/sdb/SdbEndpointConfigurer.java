@@ -4,8 +4,10 @@ package org.apache.camel.component.aws.sdb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -23,8 +25,6 @@ public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsdbclient":
         case "amazonSDBClient": target.getConfiguration().setAmazonSDBClient(property(camelContext, com.amazonaws.services.simpledb.AmazonSimpleDB.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "consistentread":
         case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -47,22 +47,31 @@ public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonSDBClient", com.amazonaws.services.simpledb.AmazonSimpleDB.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("consistentRead", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxNumberOfDomains", java.lang.Integer.class);
-        answer.put("operation", org.apache.camel.component.aws.sdb.SdbOperations.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonsdbclient":
+        case "amazonSDBClient": return com.amazonaws.services.simpledb.AmazonSimpleDB.class;
+        case "consistentread":
+        case "consistentRead": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxnumberofdomains":
+        case "maxNumberOfDomains": return java.lang.Integer.class;
+        case "operation": return org.apache.camel.component.aws.sdb.SdbOperations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -73,8 +82,6 @@ public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonsdbclient":
         case "amazonSDBClient": return target.getConfiguration().getAmazonSDBClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "consistentread":
         case "consistentRead": return target.getConfiguration().isConsistentRead();
         case "lazystartproducer":

@@ -22,7 +22,6 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.ExceptionHandler;
 import com.rabbitmq.client.TopologyRecoveryException;
 
-
 public class CustomRabbitExceptionHandler implements ExceptionHandler {
 
     @Override

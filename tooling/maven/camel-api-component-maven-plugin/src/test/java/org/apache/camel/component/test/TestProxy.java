@@ -20,28 +20,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This is the test API.
+ */
 public class TestProxy {
+
+    /**
+     * Just saying hi
+     */
     public String sayHi() {
         return "Hello!";
     }
 
+    /**
+     * Just saying hi
+     *
+     * @param hello should we say hello or hi
+     */
     public String sayHi(boolean hello) {
         return hello ? "Hello!" : "Hi!";
     }
 
+    /**
+     * Just saying hi
+     *
+     * @param name your name
+     */
     public String sayHi(final String name) {
         return "Hello " + name;
     }
 
+    /**
+     * Greeting method for me
+     *
+     * @param name your name
+     */
     public final String greetMe(final String name) {
         return "Greetings " + name;
     }
 
+    /**
+     * Greeting method for us
+     *
+     * @param name1 your name
+     * @param name2 my name
+     */
     public final String greetUs(final String name1, String name2) {
         return "Greetings " + name1 + ", " + name2;
     }
 
-    public final String greetAll(final String[] names) {
+    /**
+     * Greeting method for all
+     *
+     * @param names the names to greet
+     */
+    public final String greetAll(List<String> names) {
         StringBuilder builder = new StringBuilder("Greetings ");
         for (String name : names) {
             builder.append(name).append(", ");
@@ -50,9 +83,9 @@ public class TestProxy {
         return builder.toString();
     }
 
-    public final String greetAll(List<String> names) {
+    public final String greetWildcard(String... wildcardNames) {
         StringBuilder builder = new StringBuilder("Greetings ");
-        for (String name : names) {
+        for (String name : wildcardNames) {
             builder.append(name).append(", ");
         }
         builder.delete(builder.length() - 2, builder.length());
@@ -69,6 +102,10 @@ public class TestProxy {
             result.add("Greetings " + name);
         }
         return result.toArray(new String[result.size()]);
+    }
+
+    public final <K extends OuterChild> String damnGenerics(K someStuff) {
+        return null;
     }
 
     public final String greetInnerChild(InnerChild child) {

@@ -37,10 +37,10 @@ public class CustomExchangeFormatterTest extends SpringTestSupport {
                 continue;
             }
             LogEndpoint log = (LogEndpoint) ep;
-            aaa = "aaa".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getLocalFormatter() : aaa;
-            bbb = "bbb".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getLocalFormatter() : bbb;
+            aaa = "aaa".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getExchangeFormatter() : aaa;
+            bbb = "bbb".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getExchangeFormatter() : bbb;
         }
-        
+
         assertNotNull(aaa);
         assertNotNull(bbb);
         assertNotSame(aaa, bbb);

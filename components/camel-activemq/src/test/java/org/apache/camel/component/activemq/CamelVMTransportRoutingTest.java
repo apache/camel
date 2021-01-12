@@ -81,7 +81,7 @@ public class CamelVMTransportRoutingTest {
         for (int i = 0; i < msgCount; ++i) {
 
             LOG.debug("Attempting Received for Message #" + i);
-            TextMessage received1 = (TextMessage)receiver1.receive(5000);
+            TextMessage received1 = (TextMessage) receiver1.receive(5000);
             assertNotNull(received1);
             assertEquals(msgString, received1.getText());
         }
@@ -145,7 +145,8 @@ public class CamelVMTransportRoutingTest {
 
         LOG.info("creating context and sending message");
         camelContext = new DefaultCamelContext();
-        camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent("vm://localhost?create=false&waitForStart=10000"));
+        camelContext.addComponent("activemq",
+                ActiveMQComponent.activeMQComponent("vm://localhost?create=false&waitForStart=10000"));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

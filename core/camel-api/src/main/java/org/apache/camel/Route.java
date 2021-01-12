@@ -28,13 +28,12 @@ import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 
 /**
- * A <a href="http://camel.apache.org/routes.html">Route</a>
- * defines the processing used on an inbound message exchange
+ * A <a href="http://camel.apache.org/routes.html">Route</a> defines the processing used on an inbound message exchange
  * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
  * <p/>
- * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
- * such as starting and stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)}
- * and {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
+ * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route, such as starting and
+ * stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)} and
+ * {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
  */
 public interface Route extends RuntimeConfiguration {
 
@@ -89,6 +88,11 @@ public interface Route extends RuntimeConfiguration {
     Processor getProcessor();
 
     /**
+     * Sets the {@link Processor}
+     */
+    void setProcessor(Processor processor);
+
+    /**
      * Whether or not the route supports suspension (suspend and resume)
      *
      * @return <tt>true</tt> if this route supports suspension
@@ -128,7 +132,7 @@ public interface Route extends RuntimeConfiguration {
     /**
      * A strategy callback allowing special initialization when services are starting.
      *
-     * @param services the service
+     * @param  services  the service
      * @throws Exception is thrown in case of error
      */
     void onStartingServices(List<Service> services) throws Exception;
@@ -157,8 +161,8 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Returns a list of all the {@link Processor}s from this route that has id's matching the pattern
      *
-     * @param pattern the pattern to match by ids
-     * @return a list of {@link Processor}, is never <tt>null</tt>.
+     * @param  pattern the pattern to match by ids
+     * @return         a list of {@link Processor}, is never <tt>null</tt>.
      */
     List<Processor> filter(String pattern);
 
@@ -192,7 +196,7 @@ public interface Route extends RuntimeConfiguration {
     void setStartupOrder(Integer startupOrder);
 
     /**
-     * Gets the  {@link RouteController} for this route.
+     * Gets the {@link RouteController} for this route.
      *
      * @return the route controller,
      */
@@ -234,11 +238,18 @@ public interface Route extends RuntimeConfiguration {
     String getRouteDescription();
 
     /**
-     * Get the route type
+     * Get the route type.
      *
-     * @return the route type
+     * Important: is null after the route has been created.
+     *
+     * @return the route type during creation of the route, is null after the route has been created.
      */
     NamedNode getRoute();
+
+    /**
+     * Clears the route model when its no longer needed.
+     */
+    void clearRouteModel();
 
     //
     // CREATION TIME
@@ -259,8 +270,8 @@ public interface Route extends RuntimeConfiguration {
     /**
      * Sets a special intercept strategy for management.
      * <p/>
-     * Is by default used to correlate managed performance counters with processors
-     * when the runtime route is being constructed
+     * Is by default used to correlate managed performance counters with processors when the runtime route is being
+     * constructed
      *
      * @param interceptStrategy the managed intercept strategy
      */
@@ -280,46 +291,47 @@ public interface Route extends RuntimeConfiguration {
      */
     List<RoutePolicy> getRoutePolicyList();
 
+    // called at completion time
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
+    // called at runtime
     ErrorHandlerFactory getErrorHandlerFactory();
 
-    Processor createErrorHandler(Processor processor) throws Exception;
-
-    Collection<Processor> getOnCompletions();
-
     // called at runtime
-    Processor getOnCompletion(String onCompletionId);
+    Collection<Processor> getOnCompletions();
 
     // called at completion time
     void setOnCompletion(String onCompletionId, Processor processor);
 
+    // called at runtime
     Collection<Processor> getOnExceptions();
 
+    // called at runtime
     Processor getOnException(String onExceptionId);
 
+    // called at completion time
     void setOnException(String onExceptionId, Processor processor);
 
     /**
      * Adds error handler for the given exception type
      *
-     * @param factory       the error handler factory
-     * @param exception     the exception to handle
+     * @param factory   the error handler factory
+     * @param exception the exception to handle
      */
     void addErrorHandler(ErrorHandlerFactory factory, NamedNode exception);
 
     /**
      * Gets the error handlers
      *
-     * @param factory       the error handler factory
+     * @param factory the error handler factory
      */
     Set<NamedNode> getErrorHandlers(ErrorHandlerFactory factory);
 
     /**
      * Link the error handlers from a factory to another
      *
-     * @param source        the source factory
-     * @param target        the target factory
+     * @param source the source factory
+     * @param target the target factory
      */
     void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target);
 

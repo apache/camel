@@ -54,7 +54,8 @@ public class ConfigurationTest {
 
     @Test
     public void testCamelTragetEndpoint() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[]{"/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml"});
+        context = new ClassPathXmlApplicationContext(
+                new String[] { "/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml" });
         context.start();
 
         CamelTargetAdapter camelTargetA = context.getBean("camelTargetA", CamelTargetAdapter.class);

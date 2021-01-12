@@ -4,8 +4,10 @@ package org.apache.camel.component.undertow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -25,8 +27,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessLogReceiver": target.setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
         case "allowedroles":
         case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cookiehandler":
@@ -83,40 +83,67 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessLog", java.lang.Boolean.class);
-        answer.put("accessLogReceiver", io.undertow.server.handlers.accesslog.AccessLogReceiver.class);
-        answer.put("allowedRoles", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fireWebSocketChannelEvents", boolean.class);
-        answer.put("handlers", java.lang.String.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpMethodRestrict", java.lang.String.class);
-        answer.put("keepAlive", java.lang.Boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("matchOnUriPrefix", java.lang.Boolean.class);
-        answer.put("muteException", java.lang.Boolean.class);
-        answer.put("options", java.util.Map.class);
-        answer.put("optionsEnabled", boolean.class);
-        answer.put("preserveHostHeader", boolean.class);
-        answer.put("reuseAddresses", java.lang.Boolean.class);
-        answer.put("securityConfiguration", java.lang.Object.class);
-        answer.put("securityProvider", org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class);
-        answer.put("sendTimeout", java.lang.Integer.class);
-        answer.put("sendToAll", java.lang.Boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tcpNoDelay", java.lang.Boolean.class);
-        answer.put("throwExceptionOnFailure", java.lang.Boolean.class);
-        answer.put("transferException", java.lang.Boolean.class);
-        answer.put("undertowHttpBinding", org.apache.camel.component.undertow.UndertowHttpBinding.class);
-        answer.put("useStreaming", boolean.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesslog":
+        case "accessLog": return java.lang.Boolean.class;
+        case "accesslogreceiver":
+        case "accessLogReceiver": return io.undertow.server.handlers.accesslog.AccessLogReceiver.class;
+        case "allowedroles":
+        case "allowedRoles": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cookiehandler":
+        case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "firewebsocketchannelevents":
+        case "fireWebSocketChannelEvents": return boolean.class;
+        case "handlers": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "keepalive":
+        case "keepAlive": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return java.lang.Boolean.class;
+        case "muteexception":
+        case "muteException": return java.lang.Boolean.class;
+        case "options": return java.util.Map.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "preservehostheader":
+        case "preserveHostHeader": return boolean.class;
+        case "reuseaddresses":
+        case "reuseAddresses": return java.lang.Boolean.class;
+        case "securityconfiguration":
+        case "securityConfiguration": return java.lang.Object.class;
+        case "securityprovider":
+        case "securityProvider": return org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class;
+        case "sendtimeout":
+        case "sendTimeout": return java.lang.Integer.class;
+        case "sendtoall":
+        case "sendToAll": return java.lang.Boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "tcpnodelay":
+        case "tcpNoDelay": return java.lang.Boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return java.lang.Boolean.class;
+        case "transferexception":
+        case "transferException": return java.lang.Boolean.class;
+        case "undertowhttpbinding":
+        case "undertowHttpBinding": return org.apache.camel.component.undertow.UndertowHttpBinding.class;
+        case "usestreaming":
+        case "useStreaming": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -129,8 +156,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessLogReceiver": return target.getAccessLogReceiver();
         case "allowedroles":
         case "allowedRoles": return target.getAllowedRoles();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cookiehandler":
@@ -182,6 +207,14 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "undertowHttpBinding": return target.getUndertowHttpBinding();
         case "usestreaming":
         case "useStreaming": return target.isUseStreaming();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "options": return java.lang.Object.class;
         default: return null;
         }
     }

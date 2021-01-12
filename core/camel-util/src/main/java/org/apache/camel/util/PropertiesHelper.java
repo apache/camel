@@ -30,6 +30,9 @@ public final class PropertiesHelper {
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
+        if (properties == null) {
+            return new LinkedHashMap<>(0);
+        }
         Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
         for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
@@ -78,5 +81,5 @@ public final class PropertiesHelper {
             return !properties.isEmpty();
         }
     }
-    
+
 }

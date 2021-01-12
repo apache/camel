@@ -119,9 +119,10 @@ public class JmsBridge extends CamelSpringTestSupport {
 
         try {
             brokerSub = createBroker("sub", 61617, true);
-            brokerSub.setPlugins(new BrokerPlugin[] {new BrokerPluginSupport() {
+            brokerSub.setPlugins(new BrokerPlugin[] { new BrokerPluginSupport() {
                 @Override
-                public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend) throws Exception {
+                public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend)
+                        throws Exception {
                     if (sendCount.incrementAndGet() <= errorLimit) {
                         throw new RuntimeException("You need to try send " + errorLimit + " times!");
                     }
@@ -130,12 +131,13 @@ public class JmsBridge extends CamelSpringTestSupport {
 
                 @Override
                 public void addConnection(ConnectionContext context, ConnectionInfo info) throws Exception {
-                    if (((TransportConnector)context.getConnector()).getConnectUri().getScheme().equals("tcp") && connectionCount.incrementAndGet() <= errorLimit) {
+                    if (((TransportConnector) context.getConnector()).getConnectUri().getScheme().equals("tcp")
+                            && connectionCount.incrementAndGet() <= errorLimit) {
                         throw new SecurityException("You need to try connect " + errorLimit + " times!");
                     }
                     super.addConnection(context, info);
                 }
-            }});
+            } });
             brokerSub.start();
 
             brokerPub = createBroker("pub", 61616, true);

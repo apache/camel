@@ -26,7 +26,7 @@ import org.apache.http.entity.ContentType;
 @Converter(generateLoader = true)
 public enum ContentTypeConverter {
     INSTANCE;
-    
+
     @Converter
     public static ContentType toContentType(String contentTypeString) throws CamelException {
         try {

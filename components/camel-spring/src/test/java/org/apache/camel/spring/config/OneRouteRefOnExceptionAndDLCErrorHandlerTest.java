@@ -47,6 +47,7 @@ public class OneRouteRefOnExceptionAndDLCErrorHandlerTest extends SpringTestSupp
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/OneRouteRefOnExceptionAndDLCErrorHandler.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/OneRouteRefOnExceptionAndDLCErrorHandler.xml");
     }
 }

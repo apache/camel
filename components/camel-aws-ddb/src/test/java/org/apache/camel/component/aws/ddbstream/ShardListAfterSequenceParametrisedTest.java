@@ -28,22 +28,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @ExtendWith(MockitoExtension.class)
 public class ShardListAfterSequenceParametrisedTest {
     private ShardList undertest;
 
     public static Collection<Object[]> parameters() {
         List<Object[]> results = new ArrayList<>();
-        results.add(new Object[]{"0", "a"});
-        results.add(new Object[]{"3", "a"});
-        results.add(new Object[]{"6", "b"});
-        results.add(new Object[]{"8", "b"});
-        results.add(new Object[]{"15", "c"});
-        results.add(new Object[]{"16", "d"});
-        results.add(new Object[]{"18", "d"});
-        results.add(new Object[]{"25", "d"});
-        results.add(new Object[]{"30", "d"});
+        results.add(new Object[] { "0", "a" });
+        results.add(new Object[] { "3", "a" });
+        results.add(new Object[] { "6", "b" });
+        results.add(new Object[] { "8", "b" });
+        results.add(new Object[] { "15", "c" });
+        results.add(new Object[] { "16", "d" });
+        results.add(new Object[] { "18", "d" });
+        results.add(new Object[] { "25", "d" });
+        results.add(new Object[] { "30", "d" });
         return results;
     }
 
@@ -54,8 +53,7 @@ public class ShardListAfterSequenceParametrisedTest {
                 "a", "1", "5",
                 "b", "8", "15",
                 "c", "16", "16",
-                "d", "20", null
-        ));
+                "d", "20", null));
     }
 
     @ParameterizedTest

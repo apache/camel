@@ -48,7 +48,7 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
     private MockEndpoint result;
 
     private String expected;
-    
+
     @Test
     @DirtiesContext
     public void testUnMarshallMessageWithTrimBoth() throws Exception {
@@ -61,8 +61,9 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
         result.assertIsSatisfied();
 
         // check the model
-        
-        BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest.Order.class);
+
+        BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest.Order order = result.getReceivedExchanges().get(0).getIn()
+                .getBody(BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest.Order.class);
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertEquals("Pauline", order.getFirstName());
@@ -80,7 +81,7 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
         }
 
     }
-    
+
     @FixedLengthRecord(length = 85)
     public static class Order {
 
@@ -119,7 +120,7 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
 
         @DataField(pos = 66, length = 10, trim = true, align = "L", paddingChar = '#')
         private String comment;
-        
+
         @DataField(pos = 76, length = 10, trim = true, align = "B", paddingChar = 'X')
         private String commentBAligned;
 
@@ -218,7 +219,7 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
         public void setComment(String comment) {
             this.comment = comment;
         }
-        
+
         public String getCommentBAligned() {
             return commentBAligned;
         }
@@ -229,8 +230,10 @@ public class BindySimpleFixedLengthUnmarshallTrimAlignedBFieldTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

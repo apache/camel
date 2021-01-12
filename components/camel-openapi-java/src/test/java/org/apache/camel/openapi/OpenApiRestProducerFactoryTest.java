@@ -27,7 +27,7 @@ public class OpenApiRestProducerFactoryTest {
 
         factory.loadOpenApiModel(new DefaultCamelContext(), "petstore.json");
     }
-    
+
     @Test
     public void shouldLoadOpenApiPetStoreModelV3() throws Exception {
         OpenApiRestProducerFactory factory = new OpenApiRestProducerFactory();

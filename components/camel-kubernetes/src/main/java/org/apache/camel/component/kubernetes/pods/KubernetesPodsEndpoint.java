@@ -27,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Perform operations on Kubernetes Pods and get notified on Pod changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods", syntax = "kubernetes-pods:masterUrl", category = {Category.CONTAINER, Category.CLOUD, Category.PAAS})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods",
+             syntax = "kubernetes-pods:masterUrl", category = { Category.CONTAINER, Category.CLOUD, Category.PAAS })
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPodsEndpoint(String uri, KubernetesPodsComponent component, KubernetesConfiguration config) {

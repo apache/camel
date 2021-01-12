@@ -22,10 +22,11 @@ import java.util.TreeMap;
 /**
  * A map that uses case insensitive keys, but preserves the original key cases.
  * <p/>
- * The map is based on {@link TreeMap} and therefore uses O(n) for lookup and not O(1) as a {@link java.util.HashMap} does.
+ * The map is based on {@link TreeMap} and therefore uses O(n) for lookup and not O(1) as a {@link java.util.HashMap}
+ * does.
  * <p/>
- * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed
- * by the Camel routing engine.
+ * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed by the
+ * Camel routing engine.
  */
 public class CaseInsensitiveMap extends TreeMap<String, Object> {
 

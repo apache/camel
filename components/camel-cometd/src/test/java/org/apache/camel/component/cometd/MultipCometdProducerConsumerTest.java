@@ -35,14 +35,14 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
     @Test
     void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
-        
+
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
         getMockEndpoint("mock:test1").expectedBodiesReceived(person);
-        
+
         //act
         template.requestBodyAndHeader("direct:input1", person, "testHeading", "value");
         template.requestBodyAndHeader("direct:input2", person, "testHeading", "value");
-       
+
         assertMockEndpointsSatisfied();
     }
 
@@ -52,10 +52,10 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         port1 = AvailablePortFinder.getNextAvailable();
         port2 = AvailablePortFinder.getNextAvailable();
         uri1 = "cometd://127.0.0.1:" + port1 + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
         uri2 = "cometd://127.0.0.1:" + port2 + "/service/test?baseResource=file:./target/test-classes/webapp&"
-            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
         super.setUp();
     }
 
@@ -67,9 +67,9 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
                 from("direct:input1").to(uri1);
 
                 from(uri1).to("mock:test1");
-                
+
                 from("direct:input2").to(uri2);
-                
+
                 from(uri2).to("mock:test2");
             }
         };
@@ -102,4 +102,3 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
         }
     }
 }
-

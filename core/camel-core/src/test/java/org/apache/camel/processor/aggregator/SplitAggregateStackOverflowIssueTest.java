@@ -63,7 +63,7 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 from("direct:start")
-                    .split().tokenize("\n").streaming()
+                        .split().tokenize("\n").streaming()
                         .to("log:input?groupSize=100")
                         .process(e -> {
                             if (e.getProperty(Exchange.SPLIT_INDEX, 0, int.class) % 1000 == 0) {
@@ -80,7 +80,7 @@ public class SplitAggregateStackOverflowIssueTest extends ContextTestSupport {
                         .completionSize(10)
                         .completionTimeout(SECONDS.toMillis(5))
                         .completionPredicate(exchangeProperty(SPLIT_COMPLETE))
-                            .to("log:result?groupSize=100", "mock:result");
+                        .to("log:result?groupSize=100", "mock:result");
             }
         };
     }

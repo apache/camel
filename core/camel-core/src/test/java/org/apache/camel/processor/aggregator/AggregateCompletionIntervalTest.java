@@ -51,8 +51,8 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("seda:start").aggregate(header("id"), new UseLatestAggregationStrategy())
-                    // trigger completion every 2nd second
-                    .completionInterval(2000).to("mock:result");
+                        // trigger completion every 2nd second
+                        .completionInterval(2000).to("mock:result");
                 // END SNIPPET: e1
             }
         };

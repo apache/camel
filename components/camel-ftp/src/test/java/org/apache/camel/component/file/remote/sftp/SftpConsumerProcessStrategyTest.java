@@ -23,11 +23,13 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
     @BindToRegistry("myStrategy")
@@ -35,14 +37,12 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        String out = consumer.receiveBody("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&processStrategy=#myStrategy", 5000, String.class);
+        String out = consumer.receiveBody("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                                          + "?username=admin&password=admin&processStrategy=#myStrategy",
+                5000, String.class);
         assertNotNull(out);
         // Apache SSHD appends \u0000 at last byte in retrieved file
         assertTrue(out.startsWith("Hello World"));
@@ -59,22 +59,28 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
         }
 
         @Override
-        public boolean begin(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public boolean begin(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             return true;
         }
 
         @Override
-        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             invoked++;
         }
 
         @Override
-        public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
+        public void rollback(
+                GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file)
+                throws Exception {
             // noop
         }
 

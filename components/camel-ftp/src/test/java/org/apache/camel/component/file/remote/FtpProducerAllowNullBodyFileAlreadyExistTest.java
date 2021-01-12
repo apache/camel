@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/allow?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/allow?password=admin";
     }
 
     @Override
@@ -39,7 +39,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestS
     public void testFileExistAppendAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeAppendResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(FTP_ROOT_DIR + "/allow/hello.txt", "Hello world");
+        mock.expectedFileExists(service.getFtpRootDir() + "/allow/hello.txt", "Hello world");
 
         template.sendBody("direct:appendTypeAppend", null);
 
@@ -50,7 +50,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestS
     public void testFileExistOverrideAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeOverrideResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(FTP_ROOT_DIR + "/allow/hello.txt", "");
+        mock.expectedFileExists(service.getFtpRootDir() + "/allow/hello.txt", "");
 
         template.sendBody("direct:appendTypeOverride", null);
 
@@ -61,11 +61,13 @@ public class FtpProducerAllowNullBodyFileAlreadyExistTest extends FtpServerTestS
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:appendTypeAppend").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to(getFtpUrl() + "&allowNullBody=true&fileExist=Append")
-                    .to("mock:appendTypeAppendResult");
+                from("direct:appendTypeAppend").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to(getFtpUrl() + "&allowNullBody=true&fileExist=Append")
+                        .to("mock:appendTypeAppendResult");
 
-                from("direct:appendTypeOverride").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to(getFtpUrl() + "&allowNullBody=true&fileExist=Override")
-                    .to("mock:appendTypeOverrideResult");
+                from("direct:appendTypeOverride").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to(getFtpUrl() + "&allowNullBody=true&fileExist=Override")
+                        .to("mock:appendTypeOverrideResult");
             }
         };
     }

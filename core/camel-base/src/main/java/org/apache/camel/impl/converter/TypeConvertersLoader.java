@@ -21,8 +21,8 @@ import java.io.IOException;
 import org.apache.camel.TypeConverters;
 
 /**
- * A type converter loader, that <b>only</b> supports scanning a {@link org.apache.camel.TypeConverters} class
- * for methods that has been annotated with {@link org.apache.camel.Converter}.
+ * A type converter loader, that <b>only</b> supports scanning a {@link org.apache.camel.TypeConverters} class for
+ * methods that has been annotated with {@link org.apache.camel.Converter}.
  */
 public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
 
@@ -31,7 +31,7 @@ public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
     /**
      * Creates the loader
      *
-     * @param typeConverters  The implementation that has the type converters
+     * @param typeConverters The implementation that has the type converters
      */
     public TypeConvertersLoader(TypeConverters typeConverters) {
         super(new TypeConvertersPackageScanClassResolver(typeConverters.getClass()));
@@ -42,7 +42,7 @@ public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
     protected String[] findPackageNames() throws IOException {
         // this method doesn't change the behavior of the CorePackageScanClassResolver
         String name = typeConverters.getClass().getPackage().getName();
-        return new String[]{name};
+        return new String[] { name };
     }
 
 }

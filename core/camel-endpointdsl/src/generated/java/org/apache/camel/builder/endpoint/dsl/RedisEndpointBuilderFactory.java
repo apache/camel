@@ -45,9 +45,12 @@ public interface RedisEndpointBuilderFactory {
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channels the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder channels(String channels) {
             doSetProperty("channels", channels);
@@ -59,10 +62,14 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.redis.Command</code> type.
+         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
+         * type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder command(Command command) {
             doSetProperty("command", command);
@@ -74,10 +81,14 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.redis.Command</code> type.
+         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
+         * type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder command(String command) {
             doSetProperty("command", command);
@@ -87,9 +98,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
+         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -100,9 +114,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
+         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
@@ -113,9 +130,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder redisTemplate(Object redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
@@ -125,9 +145,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder redisTemplate(String redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
@@ -137,9 +160,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder serializer(Object serializer) {
             doSetProperty("serializer", serializer);
@@ -149,9 +175,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder serializer(String serializer) {
             doSetProperty("serializer", serializer);
@@ -166,10 +195,13 @@ public interface RedisEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -185,10 +217,14 @@ public interface RedisEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -212,10 +248,13 @@ public interface RedisEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -229,9 +268,12 @@ public interface RedisEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -241,9 +283,13 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -254,9 +300,12 @@ public interface RedisEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -268,9 +317,12 @@ public interface RedisEndpointBuilderFactory {
          * to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.listener.RedisMessageListenerContainer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param listenerContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
                 Object listenerContainer) {
@@ -282,9 +334,12 @@ public interface RedisEndpointBuilderFactory {
          * to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.listener.RedisMessageListenerContainer&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param listenerContainer the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
                 String listenerContainer) {
@@ -292,41 +347,16 @@ public interface RedisEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -337,10 +367,14 @@ public interface RedisEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -362,9 +396,12 @@ public interface RedisEndpointBuilderFactory {
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channels the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder channels(String channels) {
             doSetProperty("channels", channels);
@@ -376,10 +413,14 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.redis.Command</code> type.
+         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
+         * type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder command(Command command) {
             doSetProperty("command", command);
@@ -391,10 +432,14 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.redis.Command</code> type.
+         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
+         * type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder command(String command) {
             doSetProperty("command", command);
@@ -404,9 +449,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
+         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -417,9 +465,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
+         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
@@ -430,9 +481,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder redisTemplate(Object redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
@@ -442,9 +496,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder redisTemplate(String redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
@@ -454,9 +511,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder serializer(Object serializer) {
             doSetProperty("serializer", serializer);
@@ -466,9 +526,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder serializer(String serializer) {
             doSetProperty("serializer", serializer);
@@ -485,10 +548,13 @@ public interface RedisEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -506,10 +572,14 @@ public interface RedisEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -528,41 +598,16 @@ public interface RedisEndpointBuilderFactory {
             return (RedisEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -573,10 +618,14 @@ public interface RedisEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -599,9 +648,12 @@ public interface RedisEndpointBuilderFactory {
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channels the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder channels(String channels) {
             doSetProperty("channels", channels);
@@ -613,10 +665,14 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.redis.Command</code> type.
+         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
+         * type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder command(Command command) {
             doSetProperty("command", command);
@@ -628,10 +684,14 @@ public interface RedisEndpointBuilderFactory {
          * SUBSCRIBE.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.redis.Command</code> type.
+         * &lt;code&gt;org.apache.camel.component.redis.Command&lt;/code&gt;
+         * type.
          * 
          * Default: SET
          * Group: common
+         * 
+         * @param command the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder command(String command) {
             doSetProperty("command", command);
@@ -641,9 +701,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
+         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder connectionFactory(Object connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
@@ -653,9 +716,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisConnectionFactory instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
+         * &lt;code&gt;org.springframework.data.redis.connection.RedisConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder connectionFactory(String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
@@ -665,9 +731,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder redisTemplate(Object redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
@@ -677,9 +746,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisTemplate instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
+         * &lt;code&gt;org.springframework.data.redis.core.RedisTemplate&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param redisTemplate the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder redisTemplate(String redisTemplate) {
             doSetProperty("redisTemplate", redisTemplate);
@@ -689,9 +761,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option is a:
-         * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder serializer(Object serializer) {
             doSetProperty("serializer", serializer);
@@ -701,9 +776,12 @@ public interface RedisEndpointBuilderFactory {
          * Reference to a pre-configured RedisSerializer instance to use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
+         * &lt;code&gt;org.springframework.data.redis.serializer.RedisSerializer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serializer the value to set
+         * @return the dsl builder
          */
         default RedisEndpointBuilder serializer(String serializer) {
             doSetProperty("serializer", serializer);
@@ -722,41 +800,16 @@ public interface RedisEndpointBuilderFactory {
             return (RedisEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRedisEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedRedisEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -766,10 +819,14 @@ public interface RedisEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRedisEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -931,6 +988,7 @@ public interface RedisEndpointBuilderFactory {
          * Redis server port number
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default RedisEndpointBuilder springRedis(String path) {
             return RedisEndpointBuilderFactory.endpointBuilder("spring-redis", path);
@@ -954,6 +1012,7 @@ public interface RedisEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default RedisEndpointBuilder springRedis(
                 String componentName,

@@ -25,7 +25,7 @@ import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.Builder.constant;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PredicateAssertHelperTest extends ContextTestSupport {
 
@@ -43,17 +43,7 @@ public class PredicateAssertHelperTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Predicate notNull = PredicateBuilder.isNotNull(constant(null));
 
-        try {
-            PredicateAssertHelper.assertMatches(notNull, "foo is not null", exchange);
-            fail("Should have thrown exception");
-        } catch (AssertionError e) {
-            // expected
-        }
-        try {
-            PredicateAssertHelper.assertMatches(notNull, null, exchange);
-            fail("Should have thrown exception");
-        } catch (AssertionError e) {
-            // expected
-        }
+        assertThrows(AssertionError.class, () -> PredicateAssertHelper.assertMatches(notNull, "foo is not null", exchange));
+        assertThrows(AssertionError.class, () -> PredicateAssertHelper.assertMatches(notNull, null, exchange));
     }
 }

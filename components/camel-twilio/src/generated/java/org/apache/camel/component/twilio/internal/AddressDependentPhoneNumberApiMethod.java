@@ -31,8 +31,6 @@ public enum AddressDependentPhoneNumberApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathAddressSid", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AddressDependentPhoneNumberApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

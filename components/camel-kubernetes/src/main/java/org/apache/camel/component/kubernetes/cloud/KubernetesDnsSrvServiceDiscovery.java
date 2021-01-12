@@ -44,7 +44,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
 
     static {
         LOGGER = LoggerFactory.getLogger(KubernetesDnsSrvServiceDiscovery.class);
-        ATTRIBUTE_IDS = new String[] {"SRV"};
+        ATTRIBUTE_IDS = new String[] { "SRV" };
 
         ENV = new Hashtable<>();
         ENV.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
@@ -60,7 +60,8 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
     public KubernetesDnsSrvServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);
 
-        this.namespace = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
+        this.namespace
+                = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
         this.portName = configuration.getPortName();
         this.portProtocol = configuration.getPortProtocol();
         this.zone = configuration.getDnsDomain();
@@ -79,8 +80,8 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
      * https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#supported-dns-schema
      * https://github.com/kubernetes/dns/blob/master/docs/specification.md
      *
-     * @param serviceName the service name
-     * @return the query
+     * @param  serviceName the service name
+     * @return             the query
      */
     protected String computeQueryString(String serviceName) {
         // _<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.
@@ -98,7 +99,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
                 List<ServiceDefinition> servers = new LinkedList<>();
 
                 while (resolved.hasMore()) {
-                    String record = (String)resolved.next();
+                    String record = (String) resolved.next();
                     String[] items = record.split(" ", -1);
                     String host = items[3].trim();
                     String port = items[2].trim();
@@ -129,7 +130,8 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
 
     @Override
     public String toString() {
-        return "KubernetesDnsSrvServiceDiscovery{" + "namespace='" + namespace + '\'' + ", portName='" + portName + '\'' + ", portProtocol='" + portProtocol + '\'' + ", zone='"
+        return "KubernetesDnsSrvServiceDiscovery{" + "namespace='" + namespace + '\'' + ", portName='" + portName + '\''
+               + ", portProtocol='" + portProtocol + '\'' + ", zone='"
                + zone + '\'' + '}';
     }
 }

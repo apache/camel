@@ -35,7 +35,7 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
 
         String response = (String) template.requestBody("direct:in1", "<a><b>hello</b></a>");
         assertEquals("HELLO", response);
-        
+
         response = (String) template.requestBody("direct:in2", "<a><b>hello</b></a>");
         assertEquals("HELLO", response);
     }
@@ -49,7 +49,8 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + NamespaceConstant.OBJECT_MODEL_SAXON, "net.sf.saxon.xpath.XPathFactoryImpl");
+                System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + NamespaceConstant.OBJECT_MODEL_SAXON,
+                        "net.sf.saxon.xpath.XPathFactoryImpl");
                 from("direct:in1").bean("myBean", "readImplicit");
                 from("direct:in2").bean("myBean", "readExplicit");
             }

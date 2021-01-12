@@ -18,11 +18,8 @@ package org.apache.camel.component.arangodb;
 
 import java.util.Arrays;
 
-import com.arangodb.ArangoCollection;
 import com.arangodb.entity.BaseDocument;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_DELETE;
@@ -30,31 +27,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ArangoCollectionDeleteTest extends AbstractArangoDbTest {
-
-    private ArangoCollection collection;
-
-    @BeforeEach
-    public void beforeEach() {
-        arangoDatabase.createCollection(COLLECTION_NAME);
-        collection = arangoDatabase.collection(COLLECTION_NAME);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
-    }
+public class ArangoCollectionDeleteTest extends BaseCollectionTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:delete")
-                        .to("arangodb:{{arangodb.testDb}}?collection={{arangodb.testCollection}}&operation=DELETE_DOCUMENT");
+                        .to("arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=DELETE_DOCUMENT");
             }
         };
     }
-
 
     @Test
     public void deleteOneDocument() {
@@ -63,9 +46,7 @@ public class ArangoCollectionDeleteTest extends AbstractArangoDbTest {
         myObject.addAttribute("foo", "bar");
         collection.insertDocument(myObject);
 
-        template.request("direct:delete", exchange -> {
-            exchange.getMessage().setBody("myKey");
-        });
+        template.request("direct:delete", exchange -> exchange.getMessage().setBody("myKey"));
 
         BaseDocument documentDeleted = collection.getDocument(myObject.getKey(), BaseDocument.class);
         assertNull(documentDeleted);
@@ -99,6 +80,5 @@ public class ArangoCollectionDeleteTest extends AbstractArangoDbTest {
         assertNotNull(document);
         assertEquals(test3.getFoo(), document.getFoo());
     }
-
 
 }

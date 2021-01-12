@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpringRouteTemplateRefTest extends SpringTestSupport {
@@ -130,7 +129,7 @@ public class SpringRouteTemplateRefTest extends SpringTestSupport {
         String routeId = context.addRouteFromTemplate(null, "myTemplate", parameters);
 
         assertNotNull(routeId);
-        assertTrue(!routeId.equals("route1"), "Should not be named route1");
+        assertNotEquals("route1", routeId, "Should not be named route1");
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
         assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());

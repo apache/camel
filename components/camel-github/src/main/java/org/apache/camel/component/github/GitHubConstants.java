@@ -21,18 +21,20 @@ public interface GitHubConstants {
     String GITHUB_REPOSITORY_SERVICE = "githubRepositoryService";
 
     String GITHUB_COMMIT_SERVICE = "githubCommitService";
-    
+
     String GITHUB_DATA_SERVICE = "githubDataService";
 
     String GITHUB_PULL_REQUEST_SERVICE = "githubPullRequestService";
-    
+
     String GITHUB_ISSUE_SERVICE = "githbIssueService";
-    
+
     String GITHUB_PULLREQUEST = "GitHubPullRequest";
-    
+
     String GITHUB_INRESPONSETO = "GitHubInResponseTo";
-    
+
     String GITHUB_PULLREQUEST_HEAD_COMMIT_SHA = "GitHubPullRequestHeadCommitSHA";
-    
+
     String GITHUB_ISSUE_TITLE = "GitHubIssueTitle";
+
+    String GITHUB_EVENT_SERVICE = "GitHubEventService";
 }

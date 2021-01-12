@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-microprofile-fault-tolerance</artifactId>
@@ -35,14 +35,13 @@
     <properties>
         <firstVersion>3.3.0</firstVersion>
         <label>eip,microservice</label>
-        <supportLevel>preview</supportLevel>
     </properties>
 
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
+            <artifactId>camel-core-reifier</artifactId>
         </dependency>
 
         <dependency>

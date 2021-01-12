@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class IOHelperTest {
     @Test
     public void testLookupEnvironmentVariable() throws Exception {

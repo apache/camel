@@ -26,8 +26,8 @@ public interface HBaseConstants {
     String DELETE = "CamelHBaseDelete";
 
     String HBASE_MAX_SCAN_RESULTS = "CamelHBaseMaxScanResults";
-    
+
     String FROM_ROW = "CamelHBaseStartRow";
-    
+
     String STOP_ROW = "CamelHBaseStopRow";
 }

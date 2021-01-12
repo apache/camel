@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Strategy used to convert between a Camel {@link Exchange} and {@link org.apache.camel.component.jms.JmsMessage}
- * to and from a Qpid JMS {@link JmsMessage}
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link org.apache.camel.component.jms.JmsMessage} to
+ * and from a Qpid JMS {@link JmsMessage}
  */
 public class AMQPJmsBinding extends JmsBinding {
 

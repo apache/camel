@@ -25,8 +25,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 
 /**
- * * The <a href="http://camel.apache.org/file.html">File Component</a> provides
- * access to file systems.
+ * * The <a href="http://camel.apache.org/file.html">File Component</a> provides access to file systems.
  */
 @Component("file")
 public class FileComponent extends GenericFileComponent<File> {
@@ -48,11 +47,13 @@ public class FileComponent extends GenericFileComponent<File> {
     }
 
     @Override
-    protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         // the starting directory must be a static (not containing dynamic
         // expressions)
         if (StringHelper.hasStartToken(remaining, "simple")) {
-            throw new IllegalArgumentException("Invalid directory: " + remaining + ". Dynamic expressions with ${ } placeholders is not allowed."
+            throw new IllegalArgumentException(
+                    "Invalid directory: " + remaining + ". Dynamic expressions with ${ } placeholders is not allowed."
                                                + " Use the fileName option to set the dynamic expression.");
         }
 

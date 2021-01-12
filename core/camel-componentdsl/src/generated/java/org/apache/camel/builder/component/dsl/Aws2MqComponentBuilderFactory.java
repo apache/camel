@@ -37,6 +37,8 @@ public interface Aws2MqComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
+     * 
+     * @return the dsl builder
      */
     static Aws2MqComponentBuilder aws2Mq() {
         return new Aws2MqComponentBuilderImpl();
@@ -50,9 +52,13 @@ public interface Aws2MqComponentBuilderFactory {
          * To use a existing configured AmazonMQClient as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.mq.MqClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.mq.MqClient&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param amazonMqClient the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder amazonMqClient(
                 software.amazon.awssdk.services.mq.MqClient amazonMqClient) {
@@ -60,28 +66,15 @@ public interface Aws2MqComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2MqComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.mq.MQ2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.mq.MQ2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder configuration(
                 org.apache.camel.component.aws2.mq.MQ2Configuration configuration) {
@@ -99,10 +92,13 @@ public interface Aws2MqComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -114,9 +110,12 @@ public interface Aws2MqComponentBuilderFactory {
          * listBrokers,createBroker,deleteBroker.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.mq.MQ2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.mq.MQ2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder operation(
                 org.apache.camel.component.aws2.mq.MQ2Operations operation) {
@@ -126,10 +125,13 @@ public interface Aws2MqComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -138,9 +140,12 @@ public interface Aws2MqComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the MQ client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -149,9 +154,12 @@ public interface Aws2MqComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the MQ client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -160,11 +168,14 @@ public interface Aws2MqComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MQ client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -177,9 +188,12 @@ public interface Aws2MqComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -189,10 +203,13 @@ public interface Aws2MqComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -200,25 +217,34 @@ public interface Aws2MqComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default Aws2MqComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2MqComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -227,9 +253,12 @@ public interface Aws2MqComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2MqComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -260,7 +289,6 @@ public interface Aws2MqComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonMqClient": getOrCreateConfiguration((MQ2Component) component).setAmazonMqClient((software.amazon.awssdk.services.mq.MqClient) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((MQ2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((MQ2Component) component).setConfiguration((org.apache.camel.component.aws2.mq.MQ2Configuration) value); return true;
             case "lazyStartProducer": ((MQ2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((MQ2Component) component).setOperation((org.apache.camel.component.aws2.mq.MQ2Operations) value); return true;
@@ -270,7 +298,7 @@ public interface Aws2MqComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((MQ2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((MQ2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((MQ2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((MQ2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MQ2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MQ2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((MQ2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

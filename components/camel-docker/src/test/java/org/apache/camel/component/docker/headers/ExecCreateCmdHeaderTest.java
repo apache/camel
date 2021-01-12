@@ -45,7 +45,6 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
         boolean stdOut = true;
         boolean stdIn = true;
 
-
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_CONTAINER_ID, containerId);
         headers.put(DockerConstants.DOCKER_TTY, tty);
@@ -54,7 +53,6 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
         headers.put(DockerConstants.DOCKER_ATTACH_STD_IN, stdIn);
         headers.put(DockerConstants.DOCKER_CMD, "date;whoami");
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).execCreateCmd(eq(containerId));
@@ -62,8 +60,7 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(eq(stdErr));
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(eq(stdOut));
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(eq(stdIn));
-        Mockito.verify(mockObject, Mockito.times(1)).withCmd(new String[]{"date", "whoami"});
-
+        Mockito.verify(mockObject, Mockito.times(1)).withCmd(new String[] { "date", "whoami" });
 
     }
 

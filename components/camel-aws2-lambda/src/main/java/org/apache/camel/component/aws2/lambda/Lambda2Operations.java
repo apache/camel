@@ -18,8 +18,22 @@ package org.apache.camel.component.aws2.lambda;
 
 public enum Lambda2Operations {
 
-    listFunctions, getFunction, createAlias, deleteAlias, getAlias, 
-    listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, 
-    createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, 
-    listTags, tagResource, untagResource, publishVersion, listVersions
+    listFunctions,
+    getFunction,
+    createAlias,
+    deleteAlias,
+    getAlias,
+    listAliases,
+    createFunction,
+    deleteFunction,
+    invokeFunction,
+    updateFunction,
+    createEventSourceMapping,
+    deleteEventSourceMapping,
+    listEventSourceMapping,
+    listTags,
+    tagResource,
+    untagResource,
+    publishVersion,
+    listVersions
 }

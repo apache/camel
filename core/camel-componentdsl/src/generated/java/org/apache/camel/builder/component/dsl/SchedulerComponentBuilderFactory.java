@@ -39,6 +39,8 @@ public interface SchedulerComponentBuilderFactory {
      * Category: core,scheduling
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-scheduler
+     * 
+     * @return the dsl builder
      */
     static SchedulerComponentBuilder scheduler() {
         return new SchedulerComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface SchedulerComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SchedulerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,27 +75,37 @@ public interface SchedulerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default SchedulerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SchedulerComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * Number of threads used by the scheduling thread pool. Is by default
          * using a single thread.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: scheduler
+         * 
+         * @param concurrentTasks the value to set
+         * @return the dsl builder
          */
         default SchedulerComponentBuilder concurrentTasks(int concurrentTasks) {
             doSetProperty("concurrentTasks", concurrentTasks);
@@ -114,7 +129,7 @@ public interface SchedulerComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((SchedulerComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "basicPropertyBinding": ((SchedulerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SchedulerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "concurrentTasks": ((SchedulerComponent) component).setConcurrentTasks((int) value); return true;
             default: return false;
             }

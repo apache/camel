@@ -20,13 +20,13 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxTasksManagerApiMethod implements ApiMethod {
 
-    ADDASSIGNMENTTOTASK(
+    ADD_ASSIGNMENT_TO_TASK(
         com.box.sdk.BoxTask.class,
         "addAssignmentToTask",
         arg("taskId", String.class),
         arg("assignTo", com.box.sdk.BoxUser.class)),
 
-    ADDFILETASK(
+    ADD_FILE_TASK(
         com.box.sdk.BoxTask.class,
         "addFileTask",
         arg("fileId", String.class),
@@ -34,43 +34,41 @@ public enum BoxTasksManagerApiMethod implements ApiMethod {
         arg("dueAt", java.util.Date.class),
         arg("message", String.class)),
 
-    DELETETASK(
+    DELETE_TASK(
         void.class,
         "deleteTask",
         arg("taskId", String.class)),
 
-    DELETETASKASSIGNMENT(
+    DELETE_TASK_ASSIGNMENT(
         void.class,
         "deleteTaskAssignment",
         arg("taskAssignmentId", String.class)),
 
-    GETFILETASKS(
+    GET_FILE_TASKS(
         java.util.List.class,
         "getFileTasks",
         arg("fileId", String.class)),
 
-    GETTASKASSIGNMENTINFO(
+    GET_TASK_ASSIGNMENT_INFO(
         com.box.sdk.BoxTaskAssignment.Info.class,
         "getTaskAssignmentInfo",
         arg("taskAssignmentId", String.class)),
 
-    GETTASKASSIGNMENTS(
+    GET_TASK_ASSIGNMENTS(
         java.util.List.class,
         "getTaskAssignments",
         arg("taskId", String.class)),
 
-    GETTASKINFO(
+    GET_TASK_INFO(
         com.box.sdk.BoxTask.Info.class,
         "getTaskInfo",
         arg("taskId", String.class)),
 
-    UPDATETASKINFO(
+    UPDATE_TASK_INFO(
         com.box.sdk.BoxTask.class,
         "updateTaskInfo",
         arg("taskId", String.class),
         arg("info", com.box.sdk.BoxTask.Info.class));
-
-    
 
     private final ApiMethod apiMethod;
 

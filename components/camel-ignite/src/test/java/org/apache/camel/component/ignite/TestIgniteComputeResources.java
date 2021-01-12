@@ -39,7 +39,7 @@ import org.apache.ignite.lang.IgniteRunnable;
 
 public final class TestIgniteComputeResources {
 
-    public static final AtomicInteger COUNTER = new AtomicInteger(0);
+    public static final AtomicInteger COUNTER = new AtomicInteger();
 
     public static final IgniteRunnable TEST_RUNNABLE = new IgniteRunnable() {
         private static final long serialVersionUID = -4961602602993218883L;
@@ -142,8 +142,8 @@ public final class TestIgniteComputeResources {
             return answer;
         }
     };
-    
+
     private TestIgniteComputeResources() {
-        
+
     }
 }

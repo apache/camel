@@ -33,7 +33,7 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected String getAhcEndpointUri() {
         return super.getAhcEndpointUri() + "?throwExceptionOnFailure=false";
@@ -45,8 +45,8 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {

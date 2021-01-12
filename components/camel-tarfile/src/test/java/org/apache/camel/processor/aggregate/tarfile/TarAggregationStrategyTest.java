@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TarAggregationStrategyTest extends CamelTestSupport {
@@ -58,7 +59,7 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
         Thread.sleep(500);
 
         File[] files = new File("target/out").listFiles();
-        assertTrue(files != null);
+        assertNotNull(files);
         assertTrue(files.length > 0, "Should be a file in target/out directory");
 
         File resultFile = files[0];
@@ -83,14 +84,14 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?delay=1000&noop=true")
-                    .setHeader("foo", constant("bar"))
-                    .aggregate(tar)
+                        .setHeader("foo", constant("bar"))
+                        .aggregate(tar)
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
-                    .to("file:target/out")
-                    .to("mock:aggregateToTarEntry")
-                    .log("Done processing tar file: ${header.CamelFileName}");
+                        .to("file:target/out")
+                        .to("mock:aggregateToTarEntry")
+                        .log("Done processing tar file: ${header.CamelFileName}");
             }
         };
 

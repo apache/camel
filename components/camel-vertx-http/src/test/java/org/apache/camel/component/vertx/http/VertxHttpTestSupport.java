@@ -34,4 +34,8 @@ public class VertxHttpTestSupport extends CamelTestSupport {
     protected String getProducerUri() {
         return String.format("vertx-http:http://localhost:%d", port);
     }
+
+    protected int getPort() {
+        return port;
+    }
 }

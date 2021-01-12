@@ -31,8 +31,6 @@ public enum AvailablePhoneNumberCountryTollFreeApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("pathCountryCode", String.class));
 
-    
-
     private final ApiMethod apiMethod;
 
     private AvailablePhoneNumberCountryTollFreeApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {

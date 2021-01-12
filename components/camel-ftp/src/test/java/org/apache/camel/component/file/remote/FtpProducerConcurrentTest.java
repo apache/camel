@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public class FtpProducerConcurrentTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/concurrent?binary=false&password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/concurrent?binary=false&password=admin";
     }
 
     @Test
@@ -49,7 +49,7 @@ public class FtpProducerConcurrentTest extends FtpServerTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
-            getMockEndpoint("mock:result").expectedFileExists(FTP_ROOT_DIR + "/concurrent/" + i + ".txt");
+            getMockEndpoint("mock:result").expectedFileExists(service.getFtpRootDir() + "/concurrent/" + i + ".txt");
 
             final int index = i;
             executor.submit(new Callable<Object>() {

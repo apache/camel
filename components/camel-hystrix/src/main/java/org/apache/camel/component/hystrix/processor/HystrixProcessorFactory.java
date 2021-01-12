@@ -18,8 +18,8 @@ package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.CircuitBreakerDefinition;
+import org.apache.camel.support.TypedProcessorFactory;
 
 /**
  * To integrate camel-hystrix with the Camel routes using the Hystrix EIP.

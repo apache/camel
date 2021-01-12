@@ -26,9 +26,9 @@ public class LogEventVerifier extends LogVerifier {
     @Override
     protected void doAppend(org.apache.logging.log4j.core.LogEvent event) {
         events.add(new LogEvent(
-            event.getLevel().toString(),
-            event.getLoggerName(),
-            event.getMessage().getFormattedMessage()));
+                event.getLevel().toString(),
+                event.getLoggerName(),
+                event.getMessage().getFormattedMessage()));
     }
 
     public List<LogEvent> getEvents() {

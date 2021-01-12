@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OnExceptionErrorHandlerNoRouteOnExchangeIssueTest  extends ContextTestSupport {
+public class OnExceptionErrorHandlerNoRouteOnExchangeIssueTest extends ContextTestSupport {
 
     @Test
     public void testOk() throws Exception {

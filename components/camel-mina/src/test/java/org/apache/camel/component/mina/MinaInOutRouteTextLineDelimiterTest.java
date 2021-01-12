@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
- * from a remote server and using MAC textline delimiter.
+ * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data from a remote
+ * server and using MAC textline delimiter.
  */
 public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
 
@@ -35,7 +35,8 @@ public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
         // we should preserve headers
         mock.setResultWaitTime(5000);
 
-        Object out = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()), "Chad");
+        Object out = template.requestBody(
+                String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()), "Chad");
 
         assertMockEndpointsSatisfied();
         assertEquals("Bye Chad", out);
@@ -46,10 +47,11 @@ public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort())).process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    exchange.getMessage().setBody("Bye " + body);
-                }).to("mock:result");
+                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()))
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Bye " + body);
+                        }).to("mock:result");
             }
         };
     }

@@ -52,10 +52,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: amazonaws.com
          * Group: common
+         * 
+         * @param amazonAWSHost the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder amazonAWSHost(String amazonAWSHost) {
             doSetProperty("amazonAWSHost", amazonAWSHost);
@@ -65,9 +68,12 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder amazonSQSClient(
                 Object amazonSQSClient) {
@@ -78,9 +84,12 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder amazonSQSClient(
                 String amazonSQSClient) {
@@ -90,10 +99,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder autoCreateQueue(
                 boolean autoCreateQueue) {
@@ -103,10 +115,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder autoCreateQueue(
                 String autoCreateQueue) {
@@ -114,42 +130,16 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointConsumerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointConsumerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -160,9 +150,13 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -172,10 +166,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -184,11 +181,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -198,10 +198,13 @@ public interface Sqs2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SQS client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -211,9 +214,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queueOwnerAWSAccountId the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
@@ -226,9 +232,12 @@ public interface Sqs2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
@@ -238,10 +247,13 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -252,10 +264,14 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -263,12 +279,50 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * A list of attribute names to receive when consuming. Multiple names
          * can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param attributeNames the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder attributeNames(String attributeNames) {
             doSetProperty("attributeNames", attributeNames);
@@ -283,10 +337,13 @@ public interface Sqs2EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -302,10 +359,14 @@ public interface Sqs2EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -316,10 +377,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Allows you to use multiple threads to poll the sqs queue to increase
          * throughput.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -330,10 +394,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Allows you to use multiple threads to poll the sqs queue to increase
          * throughput.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -343,9 +410,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The default visibility timeout (in seconds).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param defaultVisibilityTimeout the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder defaultVisibilityTimeout(
                 Integer defaultVisibilityTimeout) {
@@ -355,10 +425,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The default visibility timeout (in seconds).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param defaultVisibilityTimeout the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder defaultVisibilityTimeout(
                 String defaultVisibilityTimeout) {
@@ -368,10 +441,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delete message from SQS after it has been read.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder deleteAfterRead(
                 boolean deleteAfterRead) {
@@ -381,10 +457,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delete message from SQS after it has been read.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder deleteAfterRead(
                 String deleteAfterRead) {
@@ -397,10 +477,13 @@ public interface Sqs2EndpointBuilderFactory {
          * not make it through a Camel filter upstream in the route, then don't
          * send DeleteMessage.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteIfFiltered the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder deleteIfFiltered(
                 boolean deleteIfFiltered) {
@@ -413,10 +496,14 @@ public interface Sqs2EndpointBuilderFactory {
          * not make it through a Camel filter upstream in the route, then don't
          * send DeleteMessage.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteIfFiltered the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder deleteIfFiltered(
                 String deleteIfFiltered) {
@@ -429,10 +516,13 @@ public interface Sqs2EndpointBuilderFactory {
          * process the message. If set to true defaultVisibilityTimeout must be
          * set. See details at Amazon docs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param extendMessageVisibility the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder extendMessageVisibility(
                 boolean extendMessageVisibility) {
@@ -445,10 +535,14 @@ public interface Sqs2EndpointBuilderFactory {
          * process the message. If set to true defaultVisibilityTimeout must be
          * set. See details at Amazon docs.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param extendMessageVisibility the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder extendMessageVisibility(
                 String extendMessageVisibility) {
@@ -461,9 +555,12 @@ public interface Sqs2EndpointBuilderFactory {
          * integer representing seconds, between 60 seconds (1 minute) and
          * 86,400 seconds (24 hours). Default: 300 (5 minutes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param kmsDataKeyReusePeriodSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
                 Integer kmsDataKeyReusePeriodSeconds) {
@@ -476,10 +573,13 @@ public interface Sqs2EndpointBuilderFactory {
          * integer representing seconds, between 60 seconds (1 minute) and
          * 86,400 seconds (24 hours). Default: 300 (5 minutes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param kmsDataKeyReusePeriodSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
                 String kmsDataKeyReusePeriodSeconds) {
@@ -490,9 +590,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SQS or
          * a custom CMK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param kmsMasterKeyId the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder kmsMasterKeyId(String kmsMasterKeyId) {
             doSetProperty("kmsMasterKeyId", kmsMasterKeyId);
@@ -503,9 +606,12 @@ public interface Sqs2EndpointBuilderFactory {
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -517,9 +623,12 @@ public interface Sqs2EndpointBuilderFactory {
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -530,9 +639,12 @@ public interface Sqs2EndpointBuilderFactory {
          * A list of message attribute names to receive when consuming. Multiple
          * names can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param messageAttributeNames the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder messageAttributeNames(
                 String messageAttributeNames) {
@@ -543,10 +655,13 @@ public interface Sqs2EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -557,10 +672,14 @@ public interface Sqs2EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -570,10 +689,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
@@ -583,10 +705,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
@@ -601,9 +727,12 @@ public interface Sqs2EndpointBuilderFactory {
          * make sense if its different from defaultVisibilityTimeout. It changes
          * the queue visibility timeout attribute permanently.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder visibilityTimeout(
                 Integer visibilityTimeout) {
@@ -618,10 +747,13 @@ public interface Sqs2EndpointBuilderFactory {
          * make sense if its different from defaultVisibilityTimeout. It changes
          * the queue visibility timeout attribute permanently.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder visibilityTimeout(
                 String visibilityTimeout) {
@@ -632,9 +764,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
          * will wait until a message is in the queue to include in the response.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param waitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder waitTimeSeconds(
                 Integer waitTimeSeconds) {
@@ -645,10 +780,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Duration in seconds (0 to 20) that the ReceiveMessage action call
          * will wait until a message is in the queue to include in the response.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param waitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder waitTimeSeconds(
                 String waitTimeSeconds) {
@@ -658,9 +796,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -669,9 +810,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -680,10 +824,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -693,9 +840,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
@@ -706,10 +856,13 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder maximumMessageSize(
                 String maximumMessageSize) {
@@ -720,9 +873,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
@@ -733,10 +889,13 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
@@ -744,11 +903,16 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -759,9 +923,12 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
@@ -773,10 +940,13 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
@@ -787,9 +957,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param redrivePolicy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder redrivePolicy(String redrivePolicy) {
             doSetProperty("redrivePolicy", redrivePolicy);
@@ -799,9 +972,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -812,9 +988,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -825,9 +1004,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -838,9 +1020,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -855,9 +1040,12 @@ public interface Sqs2EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -872,9 +1060,12 @@ public interface Sqs2EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -884,10 +1075,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -896,10 +1090,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -909,10 +1106,13 @@ public interface Sqs2EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -922,10 +1122,14 @@ public interface Sqs2EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -934,10 +1138,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -946,10 +1153,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -960,10 +1170,13 @@ public interface Sqs2EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -974,10 +1187,13 @@ public interface Sqs2EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -987,10 +1203,14 @@ public interface Sqs2EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -1002,10 +1222,13 @@ public interface Sqs2EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -1018,9 +1241,12 @@ public interface Sqs2EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -1033,9 +1259,12 @@ public interface Sqs2EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -1044,12 +1273,32 @@ public interface Sqs2EndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1059,13 +1308,17 @@ public interface Sqs2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -1077,13 +1330,16 @@ public interface Sqs2EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -1092,10 +1348,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -1105,10 +1364,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -1117,10 +1380,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1130,10 +1397,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1143,10 +1413,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1156,10 +1429,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1168,9 +1445,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1179,9 +1459,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1205,10 +1488,13 @@ public interface Sqs2EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1222,9 +1508,12 @@ public interface Sqs2EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1234,9 +1523,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1247,9 +1540,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1263,9 +1559,12 @@ public interface Sqs2EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -1279,9 +1578,12 @@ public interface Sqs2EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -1289,41 +1591,16 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder delayQueue(
                 boolean delayQueue) {
@@ -1334,10 +1611,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder delayQueue(String delayQueue) {
             doSetProperty("delayQueue", delayQueue);
@@ -1349,9 +1630,12 @@ public interface Sqs2EndpointBuilderFactory {
          * used, to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder queueUrl(String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -1361,10 +1645,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1375,10 +1662,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1400,10 +1691,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: amazonaws.com
          * Group: common
+         * 
+         * @param amazonAWSHost the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder amazonAWSHost(String amazonAWSHost) {
             doSetProperty("amazonAWSHost", amazonAWSHost);
@@ -1413,9 +1707,12 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder amazonSQSClient(
                 Object amazonSQSClient) {
@@ -1426,9 +1723,12 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder amazonSQSClient(
                 String amazonSQSClient) {
@@ -1438,10 +1738,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder autoCreateQueue(
                 boolean autoCreateQueue) {
@@ -1451,10 +1754,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder autoCreateQueue(
                 String autoCreateQueue) {
@@ -1462,42 +1769,16 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointProducerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointProducerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1508,9 +1789,13 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1520,10 +1805,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -1532,11 +1820,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -1546,10 +1837,13 @@ public interface Sqs2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SQS client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -1559,9 +1853,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queueOwnerAWSAccountId the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
@@ -1574,9 +1871,12 @@ public interface Sqs2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
@@ -1586,10 +1886,13 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -1600,10 +1903,14 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -1611,11 +1918,49 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Delay sending messages for a number of seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param delaySeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder delaySeconds(Integer delaySeconds) {
             doSetProperty("delaySeconds", delaySeconds);
@@ -1624,10 +1969,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Delay sending messages for a number of seconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param delaySeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder delaySeconds(String delaySeconds) {
             doSetProperty("delaySeconds", delaySeconds);
@@ -1644,10 +1992,13 @@ public interface Sqs2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1665,10 +2016,14 @@ public interface Sqs2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1682,10 +2037,13 @@ public interface Sqs2EndpointBuilderFactory {
          * option, no messageDeduplicationId will be set on the message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy&lt;/code&gt; type.
          * 
          * Default: useExchangeId
          * Group: producer
+         * 
+         * @param messageDeduplicationIdStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder messageDeduplicationIdStrategy(
                 Object messageDeduplicationIdStrategy) {
@@ -1699,10 +2057,13 @@ public interface Sqs2EndpointBuilderFactory {
          * option, no messageDeduplicationId will be set on the message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy&lt;/code&gt; type.
          * 
          * Default: useExchangeId
          * Group: producer
+         * 
+         * @param messageDeduplicationIdStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder messageDeduplicationIdStrategy(
                 String messageDeduplicationIdStrategy) {
@@ -1716,9 +2077,12 @@ public interface Sqs2EndpointBuilderFactory {
          * value of property CamelAwsMessageGroupId will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageGroupIdStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder messageGroupIdStrategy(
                 Object messageGroupIdStrategy) {
@@ -1732,9 +2096,12 @@ public interface Sqs2EndpointBuilderFactory {
          * value of property CamelAwsMessageGroupId will be used.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageGroupIdStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder messageGroupIdStrategy(
                 String messageGroupIdStrategy) {
@@ -1746,9 +2113,12 @@ public interface Sqs2EndpointBuilderFactory {
          * message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sqs.Sqs2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.Sqs2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder operation(Sqs2Operations operation) {
             doSetProperty("operation", operation);
@@ -1759,9 +2129,12 @@ public interface Sqs2EndpointBuilderFactory {
          * message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.sqs.Sqs2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sqs.Sqs2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -1770,9 +2143,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -1781,9 +2157,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1792,10 +2171,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1805,9 +2187,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
@@ -1818,10 +2203,13 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder maximumMessageSize(
                 String maximumMessageSize) {
@@ -1832,9 +2220,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
@@ -1845,10 +2236,13 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
@@ -1856,11 +2250,16 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -1871,9 +2270,12 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
@@ -1885,10 +2287,13 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
@@ -1899,9 +2304,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param redrivePolicy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder redrivePolicy(String redrivePolicy) {
             doSetProperty("redrivePolicy", redrivePolicy);
@@ -1910,9 +2318,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1921,9 +2332,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1942,41 +2356,16 @@ public interface Sqs2EndpointBuilderFactory {
             return (Sqs2EndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointProducerBuilder delayQueue(
                 boolean delayQueue) {
@@ -1987,10 +2376,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointProducerBuilder delayQueue(String delayQueue) {
             doSetProperty("delayQueue", delayQueue);
@@ -2002,9 +2395,12 @@ public interface Sqs2EndpointBuilderFactory {
          * used, to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointProducerBuilder queueUrl(String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -2014,10 +2410,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -2028,10 +2427,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -2053,10 +2456,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The hostname of the Amazon AWS cloud.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: amazonaws.com
          * Group: common
+         * 
+         * @param amazonAWSHost the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder amazonAWSHost(String amazonAWSHost) {
             doSetProperty("amazonAWSHost", amazonAWSHost);
@@ -2066,9 +2472,12 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder amazonSQSClient(Object amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
@@ -2078,9 +2487,12 @@ public interface Sqs2EndpointBuilderFactory {
          * To use the AmazonSQS as client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.sqs.SqsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sqs.SqsClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder amazonSQSClient(String amazonSQSClient) {
             doSetProperty("amazonSQSClient", amazonSQSClient);
@@ -2089,10 +2501,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder autoCreateQueue(boolean autoCreateQueue) {
             doSetProperty("autoCreateQueue", autoCreateQueue);
@@ -2101,51 +2516,30 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Setting the autocreation of the queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateQueue the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder autoCreateQueue(String autoCreateQueue) {
             doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -2156,9 +2550,13 @@ public interface Sqs2EndpointBuilderFactory {
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -2168,10 +2566,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * The underlying protocol used to communicate with SQS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -2180,11 +2581,14 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SQS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -2194,10 +2598,13 @@ public interface Sqs2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SQS client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -2207,9 +2614,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queueOwnerAWSAccountId the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
@@ -2222,9 +2632,12 @@ public interface Sqs2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -2234,10 +2647,13 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -2248,10 +2664,14 @@ public interface Sqs2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -2259,11 +2679,49 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -2272,9 +2730,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -2283,10 +2744,13 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SQS client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -2296,9 +2760,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
@@ -2309,10 +2776,13 @@ public interface Sqs2EndpointBuilderFactory {
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param maximumMessageSize the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder maximumMessageSize(String maximumMessageSize) {
             doSetProperty("maximumMessageSize", maximumMessageSize);
@@ -2322,9 +2792,12 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
@@ -2335,10 +2808,13 @@ public interface Sqs2EndpointBuilderFactory {
          * The messageRetentionPeriod (in seconds) a message will be retained by
          * SQS for this queue.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageRetentionPeriod the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
@@ -2346,11 +2822,16 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -2361,9 +2842,12 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
@@ -2375,10 +2859,13 @@ public interface Sqs2EndpointBuilderFactory {
          * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
          * to wait.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param receiveMessageWaitTimeSeconds the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
@@ -2389,9 +2876,12 @@ public interface Sqs2EndpointBuilderFactory {
          * Specify the policy that send message to DeadLetter queue. See detail
          * at Amazon docs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param redrivePolicy the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder redrivePolicy(String redrivePolicy) {
             doSetProperty("redrivePolicy", redrivePolicy);
@@ -2400,9 +2890,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -2411,9 +2904,12 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -2433,41 +2929,16 @@ public interface Sqs2EndpointBuilderFactory {
             return (Sqs2EndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointBuilder delayQueue(boolean delayQueue) {
             doSetProperty("delayQueue", delayQueue);
@@ -2477,10 +2948,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param delayQueue the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointBuilder delayQueue(String delayQueue) {
             doSetProperty("delayQueue", delayQueue);
@@ -2492,9 +2967,12 @@ public interface Sqs2EndpointBuilderFactory {
          * used, to connect to a mock implementation of SQS, for testing
          * purposes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointBuilder queueUrl(String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -2504,10 +2982,13 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2517,10 +2998,14 @@ public interface Sqs2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqs2EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2563,6 +3048,7 @@ public interface Sqs2EndpointBuilderFactory {
          * Queue name or ARN
          * 
          * @param path queueNameOrArn
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder aws2Sqs(String path) {
             return Sqs2EndpointBuilderFactory.endpointBuilder("aws2-sqs", path);
@@ -2584,6 +3070,7 @@ public interface Sqs2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path queueNameOrArn
+         * @return the dsl builder
          */
         default Sqs2EndpointBuilder aws2Sqs(String componentName, String path) {
             return Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);

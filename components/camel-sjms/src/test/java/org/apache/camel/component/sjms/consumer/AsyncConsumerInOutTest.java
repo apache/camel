@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.consumer;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
@@ -42,7 +43,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -64,19 +65,19 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // enable async in only mode on the consumer
-                from("sjms:queue:start?synchronous=false")
+                from("sjms:queue:start?asyncConsumer=true")
                         .choice()
-                            .when(body().contains("Camel"))
-                            .to("async:camel?delay=2000")
-                            .inOut("sjms:queue:in.out.test?namedReplyTo=response.queue&synchronous=false")
-                            .to("mock:result")
+                        .when(body().contains("Camel"))
+                        .to("async:camel?delay=2000")
+                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test?replyTo=response.queue")
+                        .to("mock:result")
                         .otherwise()
-                            .to("log:other")
-                            .to("mock:result");
+                        .to("log:other")
+                        .to("mock:result");
 
-                from("sjms:queue:in.out.test?exchangePattern=InOut&synchronous=false")
-                    .to("log:camel")
-                    .transform(constant("Bye Camel"));
+                from("sjms:queue:in.out.test?asyncConsumer=true")
+                        .to("log:camel")
+                        .transform(constant("Bye Camel"));
             }
         };
     }

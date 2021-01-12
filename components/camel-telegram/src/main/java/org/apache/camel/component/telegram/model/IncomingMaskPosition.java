@@ -73,10 +73,10 @@ public class IncomingMaskPosition {
     @Override
     public String toString() {
         return "IncomingMaskPosition{"
-            + "point='" + point + '\''
-            + ", xShift=" + xShift
-            + ", yShift=" + yShift
-            + ", scale=" + scale
-            + '}';
+               + "point='" + point + '\''
+               + ", xShift=" + xShift
+               + ", yShift=" + yShift
+               + ", scale=" + scale
+               + '}';
     }
 }

@@ -4,27 +4,33 @@
  */
 package org.apache.camel.component.fhir;
 
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirLoadPage
+ * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirLoadPage}.
  */
+@ApiParams(apiName = "load-page", 
+           description = "API that Loads the previous/next bundle of resources from a paged set, using the link specified in the link type=next tag within the atom bundle",
+           apiMethods = {@ApiMethod(methodName = "byUrl", description="Load a page of results using the given URL and bundle type and return a DSTU1 Atom bundle", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle byUrl(String url, Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "next", description="Load the next page of results using the link with relation next in the bundle", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle next(org.hl7.fhir.instance.model.api.IBaseBundle bundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "previous", description="Load the previous page of results using the link with relation prev in the bundle", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle previous(org.hl7.fhir.instance.model.api.IBaseBundle bundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class FhirLoadPageEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "next", description="The IBaseBundle"), @ApiMethod(methodName = "previous", description="The IBaseBundle")})
     private org.hl7.fhir.instance.model.api.IBaseBundle bundle;
-
     @UriParam
-    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "byUrl", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "next", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "previous", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})
+    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters;
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "byUrl", description="The return type")})
     private Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType;
-
     @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "byUrl", description="The search url")})
     private String url;
 
     public org.hl7.fhir.instance.model.api.IBaseBundle getBundle() {
@@ -35,11 +41,11 @@ public final class FhirLoadPageEndpointConfiguration extends FhirConfiguration {
         this.bundle = bundle;
     }
 
-    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {
+    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {
         return extraParameters;
     }
 
-    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters) {
+    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters) {
         this.extraParameters = extraParameters;
     }
 

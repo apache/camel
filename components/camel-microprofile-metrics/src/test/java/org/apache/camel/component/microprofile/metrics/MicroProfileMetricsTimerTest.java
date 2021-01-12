@@ -59,16 +59,16 @@ public class MicroProfileMetricsTimerTest extends MicroProfileMetricsTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:timer")
-                    .to("microprofile-metrics:timer:test-timer?action=start")
-                    .delayer(DELAY)
-                    .to("microprofile-metrics:timer:test-timer?action=stop");
+                        .to("microprofile-metrics:timer:test-timer?action=start")
+                        .delayer(DELAY)
+                        .to("microprofile-metrics:timer:test-timer?action=stop");
 
                 from("direct:timerFromHeader")
-                    .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.START))
-                    .to("microprofile-metrics:timer:test-timer-header")
-                    .delayer(DELAY)
-                    .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.STOP))
-                    .to("microprofile-metrics:timer:test-timer-header");
+                        .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.START))
+                        .to("microprofile-metrics:timer:test-timer-header")
+                        .delayer(DELAY)
+                        .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.STOP))
+                        .to("microprofile-metrics:timer:test-timer-header");
             }
         };
     }

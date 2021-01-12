@@ -45,6 +45,7 @@ import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.ParallelTransferOptions;
 import com.azure.storage.blob.models.PublicAccessType;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 
 public class BlobExchangeHeaders {
 
@@ -85,7 +86,8 @@ public class BlobExchangeHeaders {
                 .metadata(properties.getMetadata());
     }
 
-    public static BlobExchangeHeaders createBlobExchangeHeadersFromBlobDownloadHeaders(final BlobDownloadHeaders blobDownloadHeaders) {
+    public static BlobExchangeHeaders createBlobExchangeHeadersFromBlobDownloadHeaders(
+            final BlobDownloadHeaders blobDownloadHeaders) {
         return createBlobExchangeHeadersFromBlobProperties(buildBlobProperties(blobDownloadHeaders));
     }
 
@@ -126,7 +128,8 @@ public class BlobExchangeHeaders {
     }
 
     private static BlobProperties buildBlobProperties(final BlobDownloadHeaders hd) {
-        return new BlobProperties(null, hd.getLastModified(), hd.getETag(),
+        return new BlobProperties(
+                null, hd.getLastModified(), hd.getETag(),
                 hd.getContentLength() == null ? 0 : hd.getContentLength(), hd.getContentType(), null,
                 hd.getContentEncoding(), hd.getContentDisposition(), hd.getContentLanguage(), hd.getCacheControl(),
                 hd.getBlobSequenceNumber(), hd.getBlobType(), hd.getLeaseStatus(), hd.getLeaseState(),
@@ -163,6 +166,10 @@ public class BlobExchangeHeaders {
 
     public static String getPrefixFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.PREFIX, String.class);
+    }
+
+    public static String getRegexFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.REGEX, String.class);
     }
 
     public static Integer getMaxResultsPerPageFromHeaders(final Exchange exchange) {
@@ -242,7 +249,7 @@ public class BlobExchangeHeaders {
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
-        return exchange.getIn().getHeader(headerName, classType);
+        return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }
 
     public Map<String, Object> toMap() {

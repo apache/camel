@@ -58,7 +58,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak" + "&move=${id}.bak").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak" + "&move=${id}.bak")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();
@@ -69,7 +70,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/filelanguage/", "Hello World", Exchange.FILE_NAME, "report.txt");
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/data/filelanguage/" + id + ".bak");
@@ -81,8 +82,9 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak" + "&move=backup-${id}-${file:name.noext}.bak").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                     + "&move=backup-${id}-${file:name.noext}.bak").convertBodyTo(String.class)
+                             .to("mock:result");
             }
         });
         context.start();
@@ -93,7 +95,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/filelanguage/", "Bye World", Exchange.FILE_NAME, "report2.txt");
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/data/filelanguage/backup-" + id + "-report2.bak");
@@ -105,8 +107,9 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak" + "&move=backup/${bean:myguidgenerator.guid}.txt").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                     + "&move=backup/${bean:myguidgenerator.guid}.txt").convertBodyTo(String.class)
+                             .to("mock:result");
             }
         });
         context.start();
@@ -124,7 +127,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak" + "&move=../backup/${file:name}.bak").to("mock:result");
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                     + "&move=../backup/${file:name}.bak").to("mock:result");
             }
         });
         context.start();
@@ -160,7 +164,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bean Language Rules The World");
         mock.expectedFileExists("target/data/filelanguage/123");
 
-        template.sendBodyAndHeader("file://target/data/filelanguage/", "Bean Language Rules The World", Exchange.FILE_NAME, "report5.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/", "Bean Language Rules The World", Exchange.FILE_NAME,
+                "report5.txt");
         assertMockEndpointsSatisfied();
     }
 

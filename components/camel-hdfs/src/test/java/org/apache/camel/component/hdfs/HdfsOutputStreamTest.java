@@ -79,7 +79,8 @@ public class HdfsOutputStreamTest {
         when(endpointConfig.isAppend()).thenReturn(false);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(true);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class)))
+                .thenReturn(fsDataOutputStream);
 
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
 
@@ -103,7 +104,8 @@ public class HdfsOutputStreamTest {
         when(endpointConfig.isAppend()).thenReturn(false);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(false);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class)))
+                .thenReturn(fsDataOutputStream);
 
         // when
         underTest = HdfsOutputStream.createOutputStream(hdfsPath, hdfsInfoFactory);
@@ -125,7 +127,8 @@ public class HdfsOutputStreamTest {
         when(endpointConfig.isOverwrite()).thenReturn(true);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(true);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class)))
+                .thenReturn(fsDataOutputStream);
 
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
 
@@ -155,7 +158,8 @@ public class HdfsOutputStreamTest {
         when(endpointConfig.isOverwrite()).thenReturn(false);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(true);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class)))
+                .thenReturn(fsDataOutputStream);
 
         // when
         Throwable expected = null;

@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(DirectoryExtension.class)
-@CreateLdapServer(transports = {@CreateTransport(protocol = "LDAP")})
+@CreateLdapServer(transports = { @CreateTransport(protocol = "LDAP") })
 @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
 public class LdapRouteTest extends AbstractLdapTestUnit {
 
@@ -72,7 +72,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
     public void tearDown() throws Exception {
         camel.stop();
     }
-    
+
     @Test
     public void testLdapRouteStandard() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));
@@ -139,7 +139,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         // make sure this att is NOT returned anymore 
         assertNull(theOneResultAtts.get("sn"));
     }
-    
+
     @Test
     public void testLdapRoutePreserveHeader() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));
@@ -149,7 +149,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
             exchange.getIn().setBody("(!(ou=test1))");
             exchange.getIn().setHeader("ldapTest", "Camel");
         });
-        
+
         Collection<SearchResult> searchResults = defaultLdapModuleOutAssertions(out);
 
         assertFalse(contains("uid=test1,ou=test,ou=system", searchResults));

@@ -23,7 +23,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.oauth2.jwt.MappedJwtClaimSetConverter;
 
 /**
- * See https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html5/#oauth2resourceserver-jwt-claimsetmapping-rename
+ * See
+ * https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html5/#oauth2resourceserver-jwt-claimsetmapping-rename
  * for more information.
  */
 public class KeycloakUsernameSubClaimAdapter implements Converter<Map<String, Object>, Map<String, Object>> {

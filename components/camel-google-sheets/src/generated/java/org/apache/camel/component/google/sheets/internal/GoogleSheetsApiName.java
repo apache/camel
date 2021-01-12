@@ -16,8 +16,6 @@ public enum GoogleSheetsApiName implements ApiName {
     DATA("data");
 
 
-    private static final GoogleSheetsApiName[] VALUES = values();
-    
     private final String name;
 
     private GoogleSheetsApiName(String name) {
@@ -29,12 +27,4 @@ public enum GoogleSheetsApiName implements ApiName {
         return name;
     }
 
-    public static GoogleSheetsApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

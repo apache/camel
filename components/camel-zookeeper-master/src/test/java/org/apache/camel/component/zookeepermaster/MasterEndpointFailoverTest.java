@@ -24,14 +24,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MasterEndpointFailoverTest {
+    @RegisterExtension
+    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+
     private static final transient Logger LOG = LoggerFactory.getLogger(MasterEndpointFailoverTest.class);
 
     protected ProducerTemplate template;
@@ -41,15 +47,12 @@ public class MasterEndpointFailoverTest {
     protected MockEndpoint result1Endpoint;
     protected MockEndpoint result2Endpoint;
     protected AtomicInteger messageCounter = new AtomicInteger(1);
-    protected ZKContainer zkContainer = new ZKContainer();
     protected CuratorFactoryBean zkClientBean = new CuratorFactoryBean();
 
     @BeforeEach
     public void beforeRun() throws Exception {
-        zkContainer.start();
-
         // Create the zkClientBean
-        zkClientBean.setConnectString(zkContainer.getConnectionString());
+        zkClientBean.setConnectString(service.getConnectionString());
         CuratorFramework client = zkClientBean.getObject();
 
         // Need to bind the zookeeper client with the name "curator"
@@ -72,8 +75,8 @@ public class MasterEndpointFailoverTest {
             @Override
             public void configure() throws Exception {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
-                    .to("log:result1")
-                    .to("mock:result1");
+                        .to("log:result1")
+                        .to("mock:result1");
             }
         });
         consumerContext2 = new DefaultCamelContext(registry);
@@ -81,8 +84,8 @@ public class MasterEndpointFailoverTest {
             @Override
             public void configure() throws Exception {
                 from("zookeeper-master:MasterEndpointFailoverTest:vm:start")
-                    .to("log:result2")
-                    .to("mock:result2");
+                        .to("log:result2")
+                        .to("mock:result2");
             }
         });
         // Need to start at less one consumerContext to enable the vm queue for producerContext
@@ -99,7 +102,6 @@ public class MasterEndpointFailoverTest {
         consumerContext2.stop();
         producerContext.stop();
         zkClientBean.destroy();
-        zkContainer.stop();
     }
 
     @Test
@@ -117,14 +119,16 @@ public class MasterEndpointFailoverTest {
         assertMessageReceivedLoop(result2Endpoint, result1Endpoint, 3);
     }
 
-    protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count) throws Exception {
+    protected void assertMessageReceivedLoop(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint, int count)
+            throws Exception {
         for (int i = 0; i < count; i++) {
             Thread.sleep(1000);
             assertMessageReceived(masterEndpoint, standbyEndpoint);
         }
     }
 
-    protected void assertMessageReceived(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint) throws InterruptedException {
+    protected void assertMessageReceived(MockEndpoint masterEndpoint, MockEndpoint standbyEndpoint)
+            throws InterruptedException {
         masterEndpoint.reset();
         standbyEndpoint.reset();
 

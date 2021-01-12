@@ -19,11 +19,15 @@ package org.apache.camel.component.soroushbot.utils;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MultiQueueWithTopicThreadPoolTest {
+    private static final Logger LOG = LoggerFactory.getLogger(MultiQueueWithTopicThreadPoolTest.class);
+
     @Test
     public void singleThreadSuccessful() throws InterruptedException {
         LinkedBlockingQueue<Integer> finalResultsOrder = new LinkedBlockingQueue<>();
@@ -40,7 +44,7 @@ public class MultiQueueWithTopicThreadPoolTest {
                     Thread.sleep((capacity - finalI) * 100);
                     finalResultsOrder.add(finalI);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOG.warn("Interrupted while running the test", e);
                 }
             });
         }
@@ -58,7 +62,7 @@ public class MultiQueueWithTopicThreadPoolTest {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        LOG.warn("Interrupted while running the test", e);
                     }
                 });
             }
@@ -72,8 +76,7 @@ public class MultiQueueWithTopicThreadPoolTest {
         Integer[] results = new Integer[totalJobs];
         for (int i = 0; i < totalJobs / 3; i++) {
             /**
-              0 1 2 3 4 5 6 7 8
-              0 3 6 1 4 7 2 5 8 <- start order should be this
+             * 0 1 2 3 4 5 6 7 8 0 3 6 1 4 7 2 5 8 <- start order should be this
              */
             results[i] = i * 3;
             results[i + 3] = 3 * i + 1;
@@ -88,7 +91,7 @@ public class MultiQueueWithTopicThreadPoolTest {
                     Thread.sleep((mod3 == 0 ? 1 : mod3 == 1 ? 4 : 13) * 10);
                     finalResultsOrder.add(finalI);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOG.warn("Interrupted while running the test", e);
                 }
             });
         }
@@ -117,7 +120,7 @@ public class MultiQueueWithTopicThreadPoolTest {
                     finalResultsOrder.add(finalI);
                     Thread.sleep((mod3 == 0 ? 1 : mod3 == 1 ? 4 : 13) * 10);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOG.warn("Interrupted while running the test", e);
                 }
             });
         }
@@ -141,7 +144,7 @@ public class MultiQueueWithTopicThreadPoolTest {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        LOG.warn("Interrupted while running the test", e);
                     }
                 });
             }

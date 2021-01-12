@@ -77,7 +77,8 @@ public class XPathTest extends CamelTestSupport {
     public void testXPathFunctionTokenizeUsingObjectModel() throws Exception {
         // START SNIPPET: e2
         // create a builder to evaluate the xpath using saxon based on its object model uri
-        XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]").objectModel("http://saxon.sf.net/jaxp/xpath/om");
+        XPathBuilder builder
+                = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]").objectModel("http://saxon.sf.net/jaxp/xpath/om");
 
         // evaluate as a String result
         String result = builder.evaluate(context, "<foo><bar>abc_def_ghi</bar></foo>");
@@ -101,7 +102,8 @@ public class XPathTest extends CamelTestSupport {
     public void testXPathFunctionTokenizeUsingSystemProperty() throws Exception {
         // START SNIPPET: e4
         // set system property with the XPath factory to use which is Saxon 
-        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om", "net.sf.saxon.xpath.XPathFactoryImpl");
+        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om",
+                "net.sf.saxon.xpath.XPathFactoryImpl");
 
         // create a builder to evaluate the xpath using saxon
         XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]");

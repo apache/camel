@@ -41,7 +41,8 @@ public class RestNettyMethodNotAllowedTest extends BaseNettyTest {
     @Test
     public void testMethodAllowed() {
         try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "GET");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "GET");
         } catch (Exception e) {
             fail("Shall pass with GET http method!");
         }

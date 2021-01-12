@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents one button of an inline keyboard. You must use exactly one of the optional fields.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinekeyboardbutton">
- *     https://core.telegram.org/bots/api#inlinekeyboardbutton</a>
+ *      https://core.telegram.org/bots/api#inlinekeyboardbutton</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -172,10 +172,10 @@ public class InlineKeyboardButton implements Serializable {
         }
         InlineKeyboardButton that = (InlineKeyboardButton) o;
         return Objects.equals(text, that.text)
-               && Objects.equals(url, that.url)
-               && Objects.equals(loginUrl, that.loginUrl)
-               && Objects.equals(callbackData, that.callbackData)
-               && Objects.equals(callbackGame, that.callbackGame);
+                && Objects.equals(url, that.url)
+                && Objects.equals(loginUrl, that.loginUrl)
+                && Objects.equals(callbackData, that.callbackData)
+                && Objects.equals(callbackGame, that.callbackGame);
     }
 
     @Override

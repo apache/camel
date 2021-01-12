@@ -62,9 +62,7 @@ public class FreemarkerConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        to("freemarker:org/apache/camel/component/freemarker/Concurrent.ftl").
-                        to("mock:result");
+                from("direct:start").to("freemarker:org/apache/camel/component/freemarker/Concurrent.ftl").to("mock:result");
             }
         };
     }

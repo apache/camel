@@ -87,7 +87,8 @@ public class QueueOperationsTest extends CamelTestSupport {
         //mocking
         final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
         final UpdateMessageResult result = new UpdateMessageResult("12", OffsetDateTime.now());
-        when(client.updateMessage(any(), any(), any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, result, null));
+        when(client.updateMessage(any(), any(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, result, null));
 
         final QueueOperations operations = new QueueOperations(configuration, client);
         final Exchange exchange = new DefaultExchange(context);

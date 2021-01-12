@@ -27,7 +27,7 @@ public class SpringSimpleEmptyStringTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleEmptyStringTest.xml");
     }
-    
+
     @Test
     public void testSimpleEmptyString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("");

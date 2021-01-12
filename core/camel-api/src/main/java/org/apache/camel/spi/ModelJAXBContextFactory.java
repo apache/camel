@@ -29,7 +29,7 @@ public interface ModelJAXBContextFactory {
     /**
      * Creates a new javax.xml.bind.JAXBContext used for loading the Camel model
      *
-     * @return a new javax.xml.bind.JAXBContext
+     * @return           a new javax.xml.bind.JAXBContext
      * @throws Exception is thrown if error creating the JAXBContext
      */
     Object newJAXBContext() throws Exception;

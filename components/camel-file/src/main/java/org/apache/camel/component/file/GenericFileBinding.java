@@ -28,8 +28,8 @@ public interface GenericFileBinding<T> {
     /**
      * Gets the body of the file
      *
-     * @param file the file
-     * @return the body
+     * @param  file the file
+     * @return      the body
      */
     Object getBody(GenericFile<T> file);
 
@@ -44,8 +44,8 @@ public interface GenericFileBinding<T> {
     /**
      * Ensures the content is loaded from the file into memory
      *
-     * @param exchange the current exchange
-     * @param file the file
+     * @param  exchange            the current exchange
+     * @param  file                the file
      * @throws java.io.IOException is thrown if the content could not be loaded
      */
     void loadContent(Exchange exchange, GenericFile<?> file) throws IOException;

@@ -20,12 +20,12 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum TransactionGatewayApiMethod implements ApiMethod {
 
-    CANCELRELEASE(
+    CANCEL_RELEASE(
         com.braintreegateway.Result.class,
         "cancelRelease",
         arg("id", String.class)),
 
-    CLONETRANSACTION(
+    CLONE_TRANSACTION(
         com.braintreegateway.Result.class,
         "cloneTransaction",
         arg("id", String.class),
@@ -41,7 +41,7 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
         "find",
         arg("id", String.class)),
 
-    HOLDINESCROW(
+    HOLD_IN_ESCROW(
         com.braintreegateway.Result.class,
         "holdInEscrow",
         arg("id", String.class)),
@@ -63,7 +63,7 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
         arg("id", String.class),
         arg("refundRequest", com.braintreegateway.TransactionRefundRequest.class)),
 
-    RELEASEFROMESCROW(
+    RELEASE_FROM_ESCROW(
         com.braintreegateway.Result.class,
         "releaseFromEscrow",
         arg("id", String.class)),
@@ -78,47 +78,45 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
         "search",
         arg("query", com.braintreegateway.TransactionSearchRequest.class)),
 
-    SUBMITFORPARTIALSETTLEMENT(
+    SUBMIT_FOR_PARTIAL_SETTLEMENT(
         com.braintreegateway.Result.class,
         "submitForPartialSettlement",
         arg("id", String.class),
         arg("amount", java.math.BigDecimal.class)),
 
-    SUBMITFORPARTIALSETTLEMENT_1(
+    SUBMIT_FOR_PARTIAL_SETTLEMENT_1(
         com.braintreegateway.Result.class,
         "submitForPartialSettlement",
         arg("id", String.class),
         arg("request", com.braintreegateway.TransactionRequest.class)),
 
-    SUBMITFORSETTLEMENT(
+    SUBMIT_FOR_SETTLEMENT(
         com.braintreegateway.Result.class,
         "submitForSettlement",
         arg("id", String.class)),
 
-    SUBMITFORSETTLEMENT_1(
+    SUBMIT_FOR_SETTLEMENT_1(
         com.braintreegateway.Result.class,
         "submitForSettlement",
         arg("id", String.class),
         arg("amount", java.math.BigDecimal.class)),
 
-    SUBMITFORSETTLEMENT_2(
+    SUBMIT_FOR_SETTLEMENT_2(
         com.braintreegateway.Result.class,
         "submitForSettlement",
         arg("id", String.class),
         arg("request", com.braintreegateway.TransactionRequest.class)),
 
-    UPDATEDETAILS(
+    UPDATE_DETAILS(
         com.braintreegateway.Result.class,
         "updateDetails",
         arg("id", String.class),
         arg("request", com.braintreegateway.TransactionRequest.class)),
 
-    VOIDTRANSACTION(
+    VOID_TRANSACTION(
         com.braintreegateway.Result.class,
         "voidTransaction",
         arg("id", String.class));
-
-    
 
     private final ApiMethod apiMethod;
 

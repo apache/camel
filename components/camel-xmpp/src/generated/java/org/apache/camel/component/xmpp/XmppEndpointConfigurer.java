@@ -4,8 +4,10 @@ package org.apache.camel.component.xmpp;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -19,8 +21,6 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmppEndpoint target = (XmppEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectionconfig":
@@ -57,38 +57,47 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connectionConfig", org.jivesoftware.smack.ConnectionConfiguration.class);
-        answer.put("connectionPollDelay", int.class);
-        answer.put("createAccount", boolean.class);
-        answer.put("doc", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("login", boolean.class);
-        answer.put("nickname", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("pubsub", boolean.class);
-        answer.put("resource", java.lang.String.class);
-        answer.put("room", java.lang.String.class);
-        answer.put("roomPassword", java.lang.String.class);
-        answer.put("serviceName", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("testConnectionOnStartup", boolean.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectionconfig":
+        case "connectionConfig": return org.jivesoftware.smack.ConnectionConfiguration.class;
+        case "connectionpolldelay":
+        case "connectionPollDelay": return int.class;
+        case "createaccount":
+        case "createAccount": return boolean.class;
+        case "doc": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "login": return boolean.class;
+        case "nickname": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "pubsub": return boolean.class;
+        case "resource": return java.lang.String.class;
+        case "room": return java.lang.String.class;
+        case "roompassword":
+        case "roomPassword": return java.lang.String.class;
+        case "servicename":
+        case "serviceName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XmppEndpoint target = (XmppEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connectionconfig":

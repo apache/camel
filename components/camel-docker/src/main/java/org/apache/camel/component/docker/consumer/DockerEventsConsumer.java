@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.consumer;
 
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.model.Event;
-import com.github.dockerjava.core.command.EventsResultCallback;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -39,17 +39,17 @@ public class DockerEventsConsumer extends DefaultConsumer {
     private DockerEndpoint endpoint;
     private DockerComponent component;
     private EventsCmd eventsCmd;
-    
+
     public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.component = (DockerComponent)endpoint.getComponent();
+        this.component = (DockerComponent) endpoint.getComponent();
 
     }
 
     @Override
     public DockerEndpoint getEndpoint() {
-        return (DockerEndpoint)super.getEndpoint();
+        return (DockerEndpoint) super.getEndpoint();
     }
 
     /**
@@ -57,17 +57,19 @@ public class DockerEventsConsumer extends DefaultConsumer {
      */
     private long processInitialEvent() {
         long currentTime = System.currentTimeMillis();
-        Long initialRange = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
+        Long initialRange
+                = DockerHelper.getProperty(DockerConstants.DOCKER_INITIAL_RANGE, endpoint.getConfiguration(), null, Long.class);
         if (initialRange != null) {
             currentTime = currentTime - initialRange;
         }
-        
+
         return currentTime;
     }
 
     @Override
     protected void doStart() throws Exception {
-        this.eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).eventsCmd().withSince(String.valueOf(processInitialEvent()));
+        this.eventsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).eventsCmd()
+                .withSince(String.valueOf(processInitialEvent()));
         this.eventsCmd.exec(new EventsCallback());
 
         super.doStart();
@@ -76,11 +78,11 @@ public class DockerEventsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         this.eventsCmd.close();
-        
+
         super.doStop();
     }
 
-    protected class EventsCallback extends EventsResultCallback {
+    protected class EventsCallback extends ResultCallback.Adapter<Event> {
 
         @Override
         public void onNext(Event event) {

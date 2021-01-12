@@ -25,16 +25,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 /**
- * Integration test to check that RabbitMQ Endpoint is able handle heavy load
- * using multiple producers and consumers
+ * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and consumers
  */
 public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
@@ -45,10 +46,6 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest" + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
-                    + "&concurrentConsumers=" + CONSUMER_COUNT)
-    private Endpoint rabbitMQEndpoint;
-
     @EndpointInject("mock:producing")
     private MockEndpoint producingMockEndpoint;
 
@@ -57,11 +54,20 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+
+        String rabbitMQEndpoint = String.format("rabbitmq:localhost:%d/ex4?username=%s&password=%s&queue=q4&routingKey=%s"
+                                                + "&threadPoolSize=%d&concurrentConsumers=%d",
+                connectionProperties.port(),
+                connectionProperties.username(), connectionProperties.password(), ROUTING_KEY, CONSUMER_COUNT + 5,
+                CONSUMER_COUNT);
+
         return new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
-                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message").to(ExchangePattern.InOnly, rabbitMQEndpoint)
+                        .to(producingMockEndpoint);
                 from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").to(consumingMockEndpoint);
             }
         };

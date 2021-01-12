@@ -37,8 +37,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
-import org.apache.camel.impl.converter.CoreTypeConverterRegistry.FallbackTypeConverter;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
@@ -48,13 +46,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base implementation of a type converter registry used for
- * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
+ * Base implementation of a type converter registry used for <a href="http://camel.apache.org/type-converter.html">type
+ * converters</a> in Camel.
  */
 public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistry {
 
-    public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER = "META-INF/services/org/apache/camel/TypeConverterLoader";
-    public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
+    public static final String META_INF_SERVICES_TYPE_CONVERTER_LOADER
+            = "META-INF/services/org/apache/camel/TypeConverterLoader";
+    public static final String META_INF_SERVICES_FALLBACK_TYPE_CONVERTER
+            = "META-INF/services/org/apache/camel/FallbackTypeConverter";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseTypeConverterRegistry.class);
 
@@ -62,12 +62,10 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     protected CamelContext camelContext;
     protected PackageScanClassResolver resolver;
     protected Injector injector;
-    protected final FactoryFinder factoryFinder;
 
-    public BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
+    public BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector) {
         this.camelContext = camelContext;
         this.injector = injector;
-        this.factoryFinder = factoryFinder;
         this.resolver = resolver;
     }
 
@@ -108,8 +106,9 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         }
     }
 
-    private void addCoreFallbackTypeConverterToList(TypeConverter typeConverter, boolean canPromote,
-                                                    List<FallbackTypeConverter> converters) {
+    private void addCoreFallbackTypeConverterToList(
+            TypeConverter typeConverter, boolean canPromote,
+            List<FallbackTypeConverter> converters) {
         LOG.trace("Adding core fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
@@ -139,11 +138,12 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     }
 
     /**
-     * Loads the core type converters which is mandatory to use Camel,
-     * and also loads the fast type converters (generated via @Converter(loader = true).
+     * Loads the core type converters which is mandatory to use Camel, and also loads the fast type converters
+     * (generated via @Converter(loader = true).
      */
     public void loadCoreAndFastTypeConverters() throws Exception {
         Collection<String> names = findTypeConverterLoaderClasses();
+
         for (String name : names) {
             LOG.debug("Resolving TypeConverterLoader: {}", name);
             Class<?> clazz = null;
@@ -170,14 +170,15 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     }
 
     /**
-     * Finds the type converter loader classes from the classpath looking
-     * for text files on the classpath at the {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER} location.
+     * Finds the type converter loader classes from the classpath looking for text files on the classpath at the
+     * {@link #META_INF_SERVICES_TYPE_CONVERTER_LOADER} location.
      */
     protected Collection<String> findTypeConverterLoaderClasses() throws IOException {
         Set<String> loaders = new LinkedHashSet<>();
         Collection<URL> loaderResources = getLoaderUrls();
         for (URL url : loaderResources) {
-            LOG.debug("Loading file {} to retrieve list of type converters, from url: {}", META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
+            LOG.debug("Loading file {} to retrieve list of type converters, from url: {}",
+                    META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             String line;
             do {
@@ -220,14 +221,15 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     }
 
     /**
-     * Finds the fallback type converter classes from the classpath looking
-     * for text files on the classpath at the {@link #META_INF_SERVICES_FALLBACK_TYPE_CONVERTER} location.
+     * Finds the fallback type converter classes from the classpath looking for text files on the classpath at the
+     * {@link #META_INF_SERVICES_FALLBACK_TYPE_CONVERTER} location.
      */
     protected Collection<String> findFallbackTypeConverterClasses() throws IOException {
         Set<String> loaders = new LinkedHashSet<>();
         Collection<URL> loaderResources = getFallbackUrls();
         for (URL url : loaderResources) {
-            LOG.debug("Loading file {} to retrieve list of fallback type converters, from url: {}", META_INF_SERVICES_FALLBACK_TYPE_CONVERTER, url);
+            LOG.debug("Loading file {} to retrieve list of fallback type converters, from url: {}",
+                    META_INF_SERVICES_FALLBACK_TYPE_CONVERTER, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             try {
                 reader.lines()
@@ -273,6 +275,8 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
 
     @Override
     protected void doInit() throws Exception {
+        super.doInit();
+
         if (injector == null && camelContext != null) {
             injector = camelContext.getInjector();
         }
@@ -285,8 +289,6 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
         // always convert something to a string so we want it only as the last resort
         // ToStringTypeConverter should NOT allow to be promoted
         addCoreFallbackTypeConverterToList(new ToStringTypeConverter(), false, fallbacks);
-        // enum is okay to be promoted
-        addCoreFallbackTypeConverterToList(new EnumTypeConverter(), true, fallbacks);
         // arrays is okay to be promoted
         addCoreFallbackTypeConverterToList(new ArrayTypeConverter(), true, fallbacks);
         // and future should also not allowed to be promoted

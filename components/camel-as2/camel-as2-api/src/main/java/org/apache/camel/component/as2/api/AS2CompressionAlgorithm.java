@@ -22,7 +22,7 @@ import org.bouncycastle.operator.OutputCompressor;
 
 public enum AS2CompressionAlgorithm {
     ZLIB(new ZlibCompressor());
-    
+
     private OutputCompressor outputCompressor;
 
     private AS2CompressionAlgorithm(OutputCompressor outputCompressor) {
@@ -32,7 +32,7 @@ public enum AS2CompressionAlgorithm {
     public String getAlgorithmName() {
         return this.name();
     }
-    
+
     public ASN1ObjectIdentifier getAlgorithmOID() {
         return outputCompressor.getAlgorithmIdentifier().getAlgorithm();
     }

@@ -37,6 +37,8 @@ public interface QuartzComponentBuilderFactory {
      * Category: scheduling
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-quartz
+     * 
+     * @return the dsl builder
      */
     static QuartzComponentBuilder quartz() {
         return new QuartzComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface QuartzComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -71,10 +76,13 @@ public interface QuartzComponentBuilderFactory {
          * Whether to enable Quartz JMX which allows to manage the Quartz
          * scheduler from JMX. This options is default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param enableJmx the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder enableJmx(boolean enableJmx) {
             doSetProperty("enableJmx", enableJmx);
@@ -87,10 +95,13 @@ public interface QuartzComponentBuilderFactory {
          * can set this option to false to reuse Quartz scheduler instances
          * between multiple CamelContext's.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param prefixInstanceName the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder prefixInstanceName(
                 boolean prefixInstanceName) {
@@ -101,10 +112,13 @@ public interface QuartzComponentBuilderFactory {
          * Whether to prefix the quartz job with the endpoint id. This option is
          * default false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param prefixJobNameWithEndpointId the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder prefixJobNameWithEndpointId(
                 boolean prefixJobNameWithEndpointId) {
@@ -114,9 +128,12 @@ public interface QuartzComponentBuilderFactory {
         /**
          * Properties to configure the Quartz scheduler.
          * 
-         * The option is a: <code>java.util.Map</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder properties(java.util.Map properties) {
             doSetProperty("properties", properties);
@@ -125,9 +142,12 @@ public interface QuartzComponentBuilderFactory {
         /**
          * File name of the properties to load from the classpath.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param propertiesFile the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder propertiesFile(
                 java.lang.String propertiesFile) {
@@ -138,9 +158,12 @@ public interface QuartzComponentBuilderFactory {
          * References to an existing Properties or Map to lookup in the registry
          * to use for configuring quartz.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param propertiesRef the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder propertiesRef(
                 java.lang.String propertiesRef) {
@@ -148,26 +171,35 @@ public interface QuartzComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default QuartzComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default QuartzComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
          * To use the custom configured Quartz scheduler, instead of creating a
          * new Scheduler.
          * 
-         * The option is a: <code>org.quartz.Scheduler</code> type.
+         * The option is a: &lt;code&gt;org.quartz.Scheduler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder scheduler(org.quartz.Scheduler scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -177,9 +209,13 @@ public interface QuartzComponentBuilderFactory {
          * To use the custom SchedulerFactory which is used to create the
          * Scheduler.
          * 
-         * The option is a: <code>org.quartz.SchedulerFactory</code> type.
+         * The option is a: &lt;code&gt;org.quartz.SchedulerFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param schedulerFactory the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder schedulerFactory(
                 org.quartz.SchedulerFactory schedulerFactory) {
@@ -190,10 +226,13 @@ public interface QuartzComponentBuilderFactory {
          * Whether or not the scheduler should be auto started. This options is
          * default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param autoStartScheduler the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder autoStartScheduler(
                 boolean autoStartScheduler) {
@@ -205,10 +244,13 @@ public interface QuartzComponentBuilderFactory {
          * shutdown quicker and attempt to interrupt any running jobs. If this
          * is enabled then any running jobs can fail due to being interrupted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param interruptJobsOnShutdown the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder interruptJobsOnShutdown(
                 boolean interruptJobsOnShutdown) {
@@ -218,9 +260,12 @@ public interface QuartzComponentBuilderFactory {
         /**
          * Seconds to wait before starting the quartz scheduler.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param startDelayedSeconds the value to set
+         * @return the dsl builder
          */
         default QuartzComponentBuilder startDelayedSeconds(
                 int startDelayedSeconds) {
@@ -251,7 +296,7 @@ public interface QuartzComponentBuilderFactory {
             case "properties": ((QuartzComponent) component).setProperties((java.util.Map) value); return true;
             case "propertiesFile": ((QuartzComponent) component).setPropertiesFile((java.lang.String) value); return true;
             case "propertiesRef": ((QuartzComponent) component).setPropertiesRef((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((QuartzComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((QuartzComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "scheduler": ((QuartzComponent) component).setScheduler((org.quartz.Scheduler) value); return true;
             case "schedulerFactory": ((QuartzComponent) component).setSchedulerFactory((org.quartz.SchedulerFactory) value); return true;
             case "autoStartScheduler": ((QuartzComponent) component).setAutoStartScheduler((boolean) value); return true;

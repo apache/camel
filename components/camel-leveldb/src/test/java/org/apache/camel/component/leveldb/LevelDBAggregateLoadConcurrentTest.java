@@ -20,22 +20,19 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.camel.AggregationStrategy;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
-public class LevelDBAggregateLoadConcurrentTest extends CamelTestSupport {
+public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadConcurrentTest.class);
-    private static final char[] KEYS = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    private static final char[] KEYS = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
     private static final int SIZE = 500;
 
     @BeforeEach
@@ -84,31 +81,14 @@ public class LevelDBAggregateLoadConcurrentTest extends CamelTestSupport {
                 LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 from("direct:start")
-                    .to("log:input?groupSize=500")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .to("log:input?groupSize=500")
+                        .aggregate(header("id"), new IntegerAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(SIZE / 10)
                         .to("log:output?showHeaders=true")
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
-    }
-
-    public static class MyAggregationStrategy implements AggregationStrategy {
-
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-
-            Integer body1 = oldExchange.getIn().getBody(Integer.class);
-            Integer body2 = newExchange.getIn().getBody(Integer.class);
-            int sum = body1 + body2;
-
-            oldExchange.getIn().setBody(sum);
-            return oldExchange;
-        }
     }
 }

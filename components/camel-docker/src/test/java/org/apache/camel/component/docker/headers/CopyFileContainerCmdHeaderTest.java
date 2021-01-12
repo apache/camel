@@ -48,7 +48,6 @@ public class CopyFileContainerCmdHeaderTest extends BaseDockerHeaderTest<CopyArc
         headers.put(DockerConstants.DOCKER_RESOURCE, resource);
         headers.put(DockerConstants.DOCKER_HOST_PATH, hostPath);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).copyArchiveFromContainerCmd(containerId, resource);

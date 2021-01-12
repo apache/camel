@@ -62,8 +62,10 @@ public class ElsqlProducer extends DefaultProducer {
     private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
     private final boolean batch;
 
-    public ElsqlProducer(final ElsqlEndpoint endpoint, final ElSql elSql, final String elSqlName, final NamedParameterJdbcTemplate jdbcTemplate, 
-                         final DataSource dataSource, final SqlPrepareStatementStrategy sqlPrepareStatementStrategy, final boolean batch) {
+    public ElsqlProducer(final ElsqlEndpoint endpoint, final ElSql elSql, final String elSqlName,
+                         final NamedParameterJdbcTemplate jdbcTemplate,
+                         final DataSource dataSource, final SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
+                         final boolean batch) {
         super(endpoint);
         this.elSql = elSql;
         this.elSqlName = elSqlName;
@@ -100,16 +102,18 @@ public class ElsqlProducer extends DefaultProducer {
                 ResultSet rs = null;
                 try {
                     boolean isResultSet = false;
-                     
+
                     final int expected = ps.getParameterMetaData().getParameterCount();
-                     
+
                     if (expected > 0 && batch) {
                         final String sqlForDefaultPreparedStamentStrategy = sql.replace(":", ":?");
-                        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sqlForDefaultPreparedStamentStrategy, getEndpoint().isAllowNamedParameters(), exchange);
+                        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(
+                                sqlForDefaultPreparedStamentStrategy, getEndpoint().isAllowNamedParameters(), exchange);
                         final Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                         while (iterator != null && iterator.hasNext()) {
                             final Object value = iterator.next();
-                            final Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sqlForDefaultPreparedStamentStrategy, preparedQuery, expected, exchange, value);
+                            final Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(
+                                    sqlForDefaultPreparedStamentStrategy, preparedQuery, expected, exchange, value);
                             sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                             ps.addBatch();
                         }
@@ -170,21 +174,22 @@ public class ElsqlProducer extends DefaultProducer {
                                 throw new IllegalArgumentException("Invalid outputType=" + outputType);
                             }
                         } else {
-                             // if we are here, there isResultSet is false. This can happen only if we are doing an update operation or there is no result.
-                             // we can simply add the updateCount in this case.
+                            // if we are here, there isResultSet is false. This can happen only if we are doing an update operation or there is no result.
+                            // we can simply add the updateCount in this case.
                             exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                         }
                     }
-                    } finally {
-                        closeResultSet(rs);
-                    }
+                } finally {
+                    closeResultSet(rs);
+                }
 
                 return null;
             }
         });
     }
 
-    protected void processStreamList(final Exchange exchange, final String sql, final SqlParameterSource param) throws Exception {
+    protected void processStreamList(final Exchange exchange, final String sql, final SqlParameterSource param)
+            throws Exception {
         // spring JDBC to parse the SQL and build the prepared statement creator
         // this is what NamedJdbcTemplate does internally
         final ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(sql);
@@ -197,7 +202,9 @@ public class ElsqlProducer extends DefaultProducer {
         processStreamList(exchange, statementCreator, sqlToUse);
     }
 
-    protected void processStreamList(final Exchange exchange, final PreparedStatementCreator statementCreator, final String preparedQuery) throws Exception {
+    protected void processStreamList(
+            final Exchange exchange, final PreparedStatementCreator statementCreator, final String preparedQuery)
+            throws Exception {
         LOG.trace("processStreamList: {}", preparedQuery);
 
         // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method

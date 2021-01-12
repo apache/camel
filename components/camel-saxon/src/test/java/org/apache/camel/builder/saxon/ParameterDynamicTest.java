@@ -23,7 +23,9 @@ import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.ObjectValue;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,10 +39,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ParameterDynamicTest {
 
     private static final String TEST_QUERY = new StringBuilder()
-        .append("xquery version \"3.0\" encoding \"UTF-8\";\n")
-        .append("declare variable $extParam as xs:boolean external := false();\n")
-        .append("if($extParam) then(true()) else (false())")
-        .toString();
+            .append("xquery version \"3.0\" encoding \"UTF-8\";\n")
+            .append("declare variable $extParam as xs:boolean external := false();\n")
+            .append("if($extParam) then(true()) else (false())")
+            .toString();
 
     private Configuration conf = new Configuration();
     private XQueryExpression query;
@@ -82,15 +84,23 @@ public class ParameterDynamicTest {
 
     @Test
     public void testXQueryBuilder() throws Exception {
-        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<foo><bar>abc_def_ghi</bar></foo>");
         exchange.setProperty("extParam", true);
 
-        Object result = xquery(TEST_QUERY).asString().evaluate(exchange, boolean.class);
+        XQueryBuilder xquery = xquery(TEST_QUERY);
+        xquery.init(context);
+
+        Object result = xquery.asString().evaluate(exchange, boolean.class);
         assertEquals(true, result);
 
         exchange.setProperty("extParam", false);
-        result = xquery(TEST_QUERY).asString().evaluate(exchange, boolean.class);
+        result = xquery.evaluate(exchange, boolean.class);
         assertEquals(false, result);
+
+        context.stop();
     }
 }

@@ -62,9 +62,12 @@ public interface FileEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param charset the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder charset(String charset) {
             doSetProperty("charset", charset);
@@ -83,9 +86,12 @@ public interface FileEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder doneFileName(String doneFileName) {
             doSetProperty("doneFileName", doneFileName);
@@ -109,9 +115,13 @@ public interface FileEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -136,9 +146,12 @@ public interface FileEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -153,10 +166,13 @@ public interface FileEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -172,10 +188,14 @@ public interface FileEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -185,10 +205,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder delete(boolean delete) {
             doSetProperty("delete", delete);
@@ -197,10 +220,14 @@ public interface FileEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder delete(String delete) {
             doSetProperty("delete", delete);
@@ -212,9 +239,13 @@ public interface FileEndpointBuilderFactory {
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param moveFailed the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder moveFailed(Expression moveFailed) {
             doSetProperty("moveFailed", moveFailed);
@@ -227,9 +258,12 @@ public interface FileEndpointBuilderFactory {
          * error and will not pick up the file again.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param moveFailed the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder moveFailed(String moveFailed) {
             doSetProperty("moveFailed", moveFailed);
@@ -241,10 +275,13 @@ public interface FileEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param noop the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder noop(boolean noop) {
             doSetProperty("noop", noop);
@@ -256,10 +293,14 @@ public interface FileEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param noop the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder noop(String noop) {
             doSetProperty("noop", noop);
@@ -270,9 +311,13 @@ public interface FileEndpointBuilderFactory {
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param preMove the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder preMove(Expression preMove) {
             doSetProperty("preMove", preMove);
@@ -284,9 +329,12 @@ public interface FileEndpointBuilderFactory {
          * in-progress files into the order directory set this value to order.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param preMove the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder preMove(String preMove) {
             doSetProperty("preMove", preMove);
@@ -300,10 +348,13 @@ public interface FileEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param preSort the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder preSort(boolean preSort) {
             doSetProperty("preSort", preSort);
@@ -317,10 +368,14 @@ public interface FileEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param preSort the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder preSort(String preSort) {
             doSetProperty("preSort", preSort);
@@ -330,10 +385,13 @@ public interface FileEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -343,10 +401,14 @@ public interface FileEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -356,10 +418,13 @@ public interface FileEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -370,10 +435,14 @@ public interface FileEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -385,9 +454,12 @@ public interface FileEndpointBuilderFactory {
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param antExclude the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder antExclude(String antExclude) {
             doSetProperty("antExclude", antExclude);
@@ -396,10 +468,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param antFilterCaseSensitive the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
@@ -409,10 +484,14 @@ public interface FileEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param antFilterCaseSensitive the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
@@ -423,9 +502,12 @@ public interface FileEndpointBuilderFactory {
          * Ant style filter inclusion. Multiple inclusions may be specified in
          * comma-delimited format.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param antInclude the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder antInclude(String antInclude) {
             doSetProperty("antInclude", antInclude);
@@ -439,10 +521,13 @@ public interface FileEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param eagerMaxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
@@ -457,10 +542,14 @@ public interface FileEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param eagerMaxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
@@ -474,12 +563,32 @@ public interface FileEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param exclude the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder exclude(String exclude) {
             doSetProperty("exclude", exclude);
+            return this;
+        }
+        /**
+         * Is used to exclude files matching file extension name (case
+         * insensitive). For example to exclude bak files, then use
+         * excludeExt=bak. Multiple extensions can be separated by comma, for
+         * example to exclude bak and dat files, use excludeExt=bak,dat.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: filter
+         * 
+         * @param excludeExt the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder excludeExt(String excludeExt) {
+            doSetProperty("excludeExt", excludeExt);
             return this;
         }
         /**
@@ -488,9 +597,12 @@ public interface FileEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileFilter&lt;java.io.File&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;java.io.File&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder filter(Object filter) {
             doSetProperty("filter", filter);
@@ -502,9 +614,12 @@ public interface FileEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileFilter&lt;java.io.File&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;java.io.File&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder filter(String filter) {
             doSetProperty("filter", filter);
@@ -515,9 +630,13 @@ public interface FileEndpointBuilderFactory {
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
          * 
-         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param filterDirectory the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
@@ -530,9 +649,12 @@ public interface FileEndpointBuilderFactory {
          * ${date:now:yyyMMdd}.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Predicate</code> type.
+         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filterDirectory the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
@@ -543,9 +665,13 @@ public interface FileEndpointBuilderFactory {
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
          * 
-         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param filterFile the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder filterFile(Predicate filterFile) {
             doSetProperty("filterFile", filterFile);
@@ -556,9 +682,12 @@ public interface FileEndpointBuilderFactory {
          * file size, you can use ${file:size} 5000.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Predicate</code> type.
+         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filterFile the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder filterFile(String filterFile) {
             doSetProperty("filterFile", filterFile);
@@ -570,10 +699,13 @@ public interface FileEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: filter
+         * 
+         * @param idempotent the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder idempotent(Boolean idempotent) {
             doSetProperty("idempotent", idempotent);
@@ -585,11 +717,14 @@ public interface FileEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: filter
+         * 
+         * @param idempotent the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder idempotent(String idempotent) {
             doSetProperty("idempotent", idempotent);
@@ -601,9 +736,13 @@ public interface FileEndpointBuilderFactory {
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentKey the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
@@ -617,9 +756,12 @@ public interface FileEndpointBuilderFactory {
          * idempotentKey=${file:name}-${file:size}.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param idempotentKey the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder idempotentKey(String idempotentKey) {
             doSetProperty("idempotentKey", idempotentKey);
@@ -631,9 +773,13 @@ public interface FileEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
@@ -646,9 +792,13 @@ public interface FileEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
@@ -662,22 +812,45 @@ public interface FileEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param include the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder include(String include) {
             doSetProperty("include", include);
             return this;
         }
         /**
+         * Is used to include files matching file extension name (case
+         * insensitive). For example to include txt files, then use
+         * includeExt=txt. Multiple extensions can be separated by comma, for
+         * example to include txt and xml files, use includeExt=txt,xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: filter
+         * 
+         * @param includeExt the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder includeExt(String includeExt) {
+            doSetProperty("includeExt", includeExt);
+            return this;
+        }
+        /**
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: filter
+         * 
+         * @param maxDepth the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder maxDepth(int maxDepth) {
             doSetProperty("maxDepth", maxDepth);
@@ -687,10 +860,13 @@ public interface FileEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: filter
+         * 
+         * @param maxDepth the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder maxDepth(String maxDepth) {
             doSetProperty("maxDepth", maxDepth);
@@ -707,9 +883,12 @@ public interface FileEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -727,9 +906,12 @@ public interface FileEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -741,9 +923,12 @@ public interface FileEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param minDepth the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder minDepth(int minDepth) {
             doSetProperty("minDepth", minDepth);
@@ -754,9 +939,12 @@ public interface FileEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param minDepth the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder minDepth(String minDepth) {
             doSetProperty("minDepth", minDepth);
@@ -767,9 +955,13 @@ public interface FileEndpointBuilderFactory {
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param move the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder move(Expression move) {
             doSetProperty("move", move);
@@ -781,9 +973,12 @@ public interface FileEndpointBuilderFactory {
          * subdirectory just enter .done.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param move the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder move(String move) {
             doSetProperty("move", move);
@@ -795,9 +990,12 @@ public interface FileEndpointBuilderFactory {
          * implementation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;java.io.File&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;java.io.File&amp;gt;&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param exclusiveReadLockStrategy the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
@@ -810,9 +1008,12 @@ public interface FileEndpointBuilderFactory {
          * implementation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;java.io.File&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;java.io.File&amp;gt;&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param exclusiveReadLockStrategy the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
@@ -859,10 +1060,13 @@ public interface FileEndpointBuilderFactory {
          * repository supports clustering, such as Hazelcast Component or
          * Infinispan.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: none
          * Group: lock
+         * 
+         * @param readLock the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLock(String readLock) {
             doSetProperty("readLock", readLock);
@@ -881,10 +1085,13 @@ public interface FileEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: lock
+         * 
+         * @param readLockCheckInterval the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
@@ -904,10 +1111,13 @@ public interface FileEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: lock
+         * 
+         * @param readLockCheckInterval the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
@@ -923,10 +1133,13 @@ public interface FileEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockDeleteOrphanLockFiles the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
@@ -942,10 +1155,14 @@ public interface FileEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockDeleteOrphanLockFiles the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
@@ -957,10 +1174,13 @@ public interface FileEndpointBuilderFactory {
          * asynchronous. See more details at the readLockIdempotentReleaseDelay
          * option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseAsync the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 boolean readLockIdempotentReleaseAsync) {
@@ -972,10 +1192,14 @@ public interface FileEndpointBuilderFactory {
          * asynchronous. See more details at the readLockIdempotentReleaseDelay
          * option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseAsync the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 String readLockIdempotentReleaseAsync) {
@@ -992,9 +1216,12 @@ public interface FileEndpointBuilderFactory {
          * readLockIdempotentReleaseExecutorService option. See more details at
          * the readLockIdempotentReleaseDelay option.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseAsyncPoolSize the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 int readLockIdempotentReleaseAsyncPoolSize) {
@@ -1011,9 +1238,12 @@ public interface FileEndpointBuilderFactory {
          * readLockIdempotentReleaseExecutorService option. See more details at
          * the readLockIdempotentReleaseDelay option.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseAsyncPoolSize the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 String readLockIdempotentReleaseAsyncPoolSize) {
@@ -1030,9 +1260,12 @@ public interface FileEndpointBuilderFactory {
          * these situations. Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseDelay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 int readLockIdempotentReleaseDelay) {
@@ -1049,9 +1282,12 @@ public interface FileEndpointBuilderFactory {
          * these situations. Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseDelay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 String readLockIdempotentReleaseDelay) {
@@ -1063,9 +1299,12 @@ public interface FileEndpointBuilderFactory {
          * tasks. See more details at the readLockIdempotentReleaseDelay option.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseExecutorService the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
@@ -1077,9 +1316,12 @@ public interface FileEndpointBuilderFactory {
          * tasks. See more details at the readLockIdempotentReleaseDelay option.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param readLockIdempotentReleaseExecutorService the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 String readLockIdempotentReleaseExecutorService) {
@@ -1093,10 +1335,14 @@ public interface FileEndpointBuilderFactory {
          * types: changed, fileLock, idempotent, idempotent-changed,
          * idempotent-rename, rename.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: lock
+         * 
+         * @param readLockLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
@@ -1111,10 +1357,13 @@ public interface FileEndpointBuilderFactory {
          * idempotent-rename, rename.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: lock
+         * 
+         * @param readLockLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
@@ -1129,10 +1378,13 @@ public interface FileEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockMarkerFile the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
@@ -1147,10 +1399,14 @@ public interface FileEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockMarkerFile the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
@@ -1165,10 +1421,13 @@ public interface FileEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: lock
+         * 
+         * @param readLockMinAge the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
             doSetProperty("readLockMinAge", readLockMinAge);
@@ -1182,10 +1441,13 @@ public interface FileEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: lock
+         * 
+         * @param readLockMinAge the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
             doSetProperty("readLockMinAge", readLockMinAge);
@@ -1197,10 +1459,13 @@ public interface FileEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: lock
+         * 
+         * @param readLockMinLength the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
@@ -1213,10 +1478,13 @@ public interface FileEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: lock
+         * 
+         * @param readLockMinLength the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
@@ -1234,10 +1502,13 @@ public interface FileEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: lock
+         * 
+         * @param readLockRemoveOnCommit the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
@@ -1255,10 +1526,14 @@ public interface FileEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: lock
+         * 
+         * @param readLockRemoveOnCommit the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
@@ -1272,10 +1547,13 @@ public interface FileEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockRemoveOnRollback the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
@@ -1289,10 +1567,14 @@ public interface FileEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockRemoveOnRollback the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
@@ -1313,10 +1595,13 @@ public interface FileEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: lock
+         * 
+         * @param readLockTimeout the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
             doSetProperty("readLockTimeout", readLockTimeout);
@@ -1336,10 +1621,13 @@ public interface FileEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: lock
+         * 
+         * @param readLockTimeout the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
@@ -1350,9 +1638,12 @@ public interface FileEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -1363,9 +1654,12 @@ public interface FileEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -1376,9 +1670,12 @@ public interface FileEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -1389,9 +1686,12 @@ public interface FileEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -1406,9 +1706,12 @@ public interface FileEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -1423,9 +1726,12 @@ public interface FileEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -1435,10 +1741,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -1447,10 +1756,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -1460,10 +1772,13 @@ public interface FileEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -1473,10 +1788,14 @@ public interface FileEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -1485,10 +1804,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -1497,10 +1819,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -1511,10 +1836,13 @@ public interface FileEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -1525,10 +1853,13 @@ public interface FileEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -1538,10 +1869,14 @@ public interface FileEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -1553,10 +1888,13 @@ public interface FileEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -1569,9 +1907,12 @@ public interface FileEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -1584,9 +1925,12 @@ public interface FileEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -1595,12 +1939,32 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz
-         * component.
+         * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
+         */
+        default FileEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1610,13 +1974,17 @@ public interface FileEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -1628,13 +1996,16 @@ public interface FileEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -1643,10 +2014,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -1656,10 +2030,14 @@ public interface FileEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -1668,10 +2046,14 @@ public interface FileEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1681,10 +2063,13 @@ public interface FileEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1694,10 +2079,13 @@ public interface FileEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1707,10 +2095,14 @@ public interface FileEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1719,10 +2111,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: sort
+         * 
+         * @param shuffle the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder shuffle(boolean shuffle) {
             doSetProperty("shuffle", shuffle);
@@ -1731,10 +2126,14 @@ public interface FileEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: sort
+         * 
+         * @param shuffle the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder shuffle(String shuffle) {
             doSetProperty("shuffle", shuffle);
@@ -1746,10 +2145,12 @@ public interface FileEndpointBuilderFactory {
          * date.
          * 
          * The option is a:
-         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sortBy the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
             doSetProperty("sortBy", sortBy);
@@ -1761,10 +2162,12 @@ public interface FileEndpointBuilderFactory {
          * date.
          * 
          * The option will be converted to a
-         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sortBy the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder sortBy(String sortBy) {
             doSetProperty("sortBy", sortBy);
@@ -1774,9 +2177,12 @@ public interface FileEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option is a:
-         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;java.io.File&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sorter the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
             doSetProperty("sorter", sorter);
@@ -1786,9 +2192,12 @@ public interface FileEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option will be converted to a
-         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;java.io.File&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sorter the value to set
+         * @return the dsl builder
          */
         default FileEndpointConsumerBuilder sorter(String sorter) {
             doSetProperty("sorter", sorter);
@@ -1809,10 +2218,13 @@ public interface FileEndpointBuilderFactory {
          * Similar to the startingDirectoryMustExist option but this applies
          * during polling (after starting the consumer).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param directoryMustExist the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder directoryMustExist(
                 boolean directoryMustExist) {
@@ -1823,10 +2235,14 @@ public interface FileEndpointBuilderFactory {
          * Similar to the startingDirectoryMustExist option but this applies
          * during polling (after starting the consumer).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param directoryMustExist the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder directoryMustExist(
                 String directoryMustExist) {
@@ -1839,10 +2255,13 @@ public interface FileEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1856,9 +2275,12 @@ public interface FileEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1868,9 +2290,13 @@ public interface FileEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1881,9 +2307,12 @@ public interface FileEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1895,9 +2324,12 @@ public interface FileEndpointBuilderFactory {
          * posix:permissions,posix:owner,basic:lastAccessTime, it supports basic
          * wildcard like posix:, basic:lastAccessTime.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param extendedAttributes the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder extendedAttributes(
                 String extendedAttributes) {
@@ -1911,9 +2343,13 @@ public interface FileEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param inProgressRepository the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
@@ -1927,9 +2363,13 @@ public interface FileEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param inProgressRepository the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
@@ -1942,9 +2382,12 @@ public interface FileEndpointBuilderFactory {
          * content into memory. This is beneficial, if you consume a very big
          * remote file and thus can conserve memory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param localWorkDirectory the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
@@ -1957,10 +2400,13 @@ public interface FileEndpointBuilderFactory {
          * where the consumer does either a commit or rollback. The default
          * implementation will log any exception at WARN level and ignore.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param onCompletionExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
@@ -1974,9 +2420,12 @@ public interface FileEndpointBuilderFactory {
          * implementation will log any exception at WARN level and ignore.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param onCompletionExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
@@ -1990,9 +2439,12 @@ public interface FileEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -2006,9 +2458,12 @@ public interface FileEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -2021,10 +2476,13 @@ public interface FileEndpointBuilderFactory {
          * the content-type of the file, and store that as a header with key
          * Exchange#FILE_CONTENT_TYPE on the Message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param probeContentType the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder probeContentType(
                 boolean probeContentType) {
@@ -2037,10 +2495,14 @@ public interface FileEndpointBuilderFactory {
          * the content-type of the file, and store that as a header with key
          * Exchange#FILE_CONTENT_TYPE on the Message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param probeContentType the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder probeContentType(
                 String probeContentType) {
@@ -2056,9 +2518,12 @@ public interface FileEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;java.io.File&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;java.io.File&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param processStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
@@ -2074,9 +2539,12 @@ public interface FileEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;java.io.File&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;java.io.File&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param processStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
@@ -2090,10 +2558,13 @@ public interface FileEndpointBuilderFactory {
          * and enable this to ensure the starting directory must exist. Will
          * thrown an exception if the directory doesn't exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param startingDirectoryMustExist the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
                 boolean startingDirectoryMustExist) {
@@ -2107,10 +2578,14 @@ public interface FileEndpointBuilderFactory {
          * and enable this to ensure the starting directory must exist. Will
          * thrown an exception if the directory doesn't exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param startingDirectoryMustExist the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
                 String startingDirectoryMustExist) {
@@ -2123,10 +2598,13 @@ public interface FileEndpointBuilderFactory {
          * verify that the directory exists. Will thrown an exception if the
          * directory doesn't have read and write permissions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param startingDirectoryMustHaveAccess the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
                 boolean startingDirectoryMustHaveAccess) {
@@ -2139,10 +2617,14 @@ public interface FileEndpointBuilderFactory {
          * verify that the directory exists. Will thrown an exception if the
          * directory doesn't have read and write permissions.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param startingDirectoryMustHaveAccess the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
                 String startingDirectoryMustHaveAccess) {
@@ -2155,10 +2637,13 @@ public interface FileEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
@@ -2171,51 +2656,30 @@ public interface FileEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -2225,10 +2689,13 @@ public interface FileEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -2239,10 +2706,13 @@ public interface FileEndpointBuilderFactory {
          * could not be renamed directly. This option is not available for the
          * FTP component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
@@ -2254,10 +2724,14 @@ public interface FileEndpointBuilderFactory {
          * could not be renamed directly. This option is not available for the
          * FTP component.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
@@ -2272,10 +2746,13 @@ public interface FileEndpointBuilderFactory {
          * that will automatically fall back to the copy and delete strategy,
          * but only after additional delays.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
@@ -2290,10 +2767,14 @@ public interface FileEndpointBuilderFactory {
          * that will automatically fall back to the copy and delete strategy,
          * but only after additional delays.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
                 String renameUsingCopy) {
@@ -2304,10 +2785,13 @@ public interface FileEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -2318,10 +2802,14 @@ public interface FileEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -2350,9 +2838,12 @@ public interface FileEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param charset the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder charset(String charset) {
             doSetProperty("charset", charset);
@@ -2371,9 +2862,12 @@ public interface FileEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder doneFileName(String doneFileName) {
             doSetProperty("doneFileName", doneFileName);
@@ -2397,9 +2891,13 @@ public interface FileEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -2424,9 +2922,12 @@ public interface FileEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -2439,9 +2940,12 @@ public interface FileEndpointBuilderFactory {
          * or tab (slash-t) characters then escape with an extra slash, eg
          * slash-slash-n.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param appendChars the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder appendChars(String appendChars) {
             doSetProperty("appendChars", appendChars);
@@ -2465,10 +2969,13 @@ public interface FileEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
          * 
          * Default: Override
          * Group: producer
+         * 
+         * @param fileExist the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
             doSetProperty("fileExist", fileExist);
@@ -2492,10 +2999,13 @@ public interface FileEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
          * 
          * Default: Override
          * Group: producer
+         * 
+         * @param fileExist the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder fileExist(String fileExist) {
             doSetProperty("fileExist", fileExist);
@@ -2509,10 +3019,13 @@ public interface FileEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param flatten the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder flatten(boolean flatten) {
             doSetProperty("flatten", flatten);
@@ -2526,10 +3039,14 @@ public interface FileEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param flatten the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
@@ -2543,10 +3060,13 @@ public interface FileEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
@@ -2561,10 +3081,14 @@ public interface FileEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
@@ -2582,10 +3106,13 @@ public interface FileEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -2603,10 +3130,14 @@ public interface FileEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -2623,9 +3154,13 @@ public interface FileEndpointBuilderFactory {
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param moveExisting the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder moveExisting(Expression moveExisting) {
             doSetProperty("moveExisting", moveExisting);
@@ -2642,9 +3177,12 @@ public interface FileEndpointBuilderFactory {
          * relative directory based on current dir as base.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param moveExisting the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder moveExisting(String moveExisting) {
             doSetProperty("moveExisting", moveExisting);
@@ -2659,9 +3197,13 @@ public interface FileEndpointBuilderFactory {
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param tempFileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder tempFileName(Expression tempFileName) {
             doSetProperty("tempFileName", tempFileName);
@@ -2677,9 +3219,12 @@ public interface FileEndpointBuilderFactory {
          * dir.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tempFileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder tempFileName(String tempFileName) {
             doSetProperty("tempFileName", tempFileName);
@@ -2692,9 +3237,12 @@ public interface FileEndpointBuilderFactory {
          * using exclusive read locks) reading in progress files. Is often used
          * by FTP when uploading big files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tempPrefix the value to set
+         * @return the dsl builder
          */
         default FileEndpointProducerBuilder tempPrefix(String tempPrefix) {
             doSetProperty("tempPrefix", tempPrefix);
@@ -2720,10 +3268,13 @@ public interface FileEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
@@ -2739,10 +3290,14 @@ public interface FileEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
@@ -2754,9 +3309,12 @@ public interface FileEndpointBuilderFactory {
          * value must be between 000 and 777; If there is a leading digit like
          * in 0755 we will ignore it.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param chmod the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder chmod(String chmod) {
             doSetProperty("chmod", chmod);
@@ -2767,9 +3325,12 @@ public interface FileEndpointBuilderFactory {
          * missing directories, the chmod value must be between 000 and 777; If
          * there is a leading digit like in 0755 we will ignore it.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param chmodDirectory the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder chmodDirectory(
                 String chmodDirectory) {
@@ -2791,10 +3352,13 @@ public interface FileEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param eagerDeleteTargetFile the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
@@ -2816,10 +3380,14 @@ public interface FileEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param eagerDeleteTargetFile the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
@@ -2832,10 +3400,13 @@ public interface FileEndpointBuilderFactory {
          * writing to logs / audit logs etc; this would yield better
          * performance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param forceWrites the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder forceWrites(
                 boolean forceWrites) {
@@ -2848,10 +3419,14 @@ public interface FileEndpointBuilderFactory {
          * writing to logs / audit logs etc; this would yield better
          * performance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param forceWrites the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder forceWrites(
                 String forceWrites) {
@@ -2867,10 +3442,13 @@ public interface FileEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param keepLastModified the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
@@ -2886,10 +3464,14 @@ public interface FileEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param keepLastModified the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
@@ -2902,9 +3484,12 @@ public interface FileEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param moveExistingFileStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
@@ -2917,9 +3502,12 @@ public interface FileEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param moveExistingFileStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
@@ -2932,10 +3520,13 @@ public interface FileEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
@@ -2948,51 +3539,30 @@ public interface FileEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -3002,10 +3572,13 @@ public interface FileEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -3016,10 +3589,13 @@ public interface FileEndpointBuilderFactory {
          * could not be renamed directly. This option is not available for the
          * FTP component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
@@ -3031,10 +3607,14 @@ public interface FileEndpointBuilderFactory {
          * could not be renamed directly. This option is not available for the
          * FTP component.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
@@ -3049,10 +3629,13 @@ public interface FileEndpointBuilderFactory {
          * that will automatically fall back to the copy and delete strategy,
          * but only after additional delays.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
@@ -3067,10 +3650,14 @@ public interface FileEndpointBuilderFactory {
          * that will automatically fall back to the copy and delete strategy,
          * but only after additional delays.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder renameUsingCopy(
                 String renameUsingCopy) {
@@ -3081,10 +3668,13 @@ public interface FileEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -3095,10 +3685,14 @@ public interface FileEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -3128,9 +3722,12 @@ public interface FileEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param charset the value to set
+         * @return the dsl builder
          */
         default FileEndpointBuilder charset(String charset) {
             doSetProperty("charset", charset);
@@ -3149,9 +3746,12 @@ public interface FileEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointBuilder doneFileName(String doneFileName) {
             doSetProperty("doneFileName", doneFileName);
@@ -3175,9 +3775,13 @@ public interface FileEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -3202,9 +3806,12 @@ public interface FileEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FileEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -3228,10 +3835,13 @@ public interface FileEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder autoCreate(boolean autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -3243,51 +3853,30 @@ public interface FileEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedFileEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -3297,10 +3886,13 @@ public interface FileEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -3311,10 +3903,13 @@ public interface FileEndpointBuilderFactory {
          * could not be renamed directly. This option is not available for the
          * FTP component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
@@ -3326,10 +3921,14 @@ public interface FileEndpointBuilderFactory {
          * could not be renamed directly. This option is not available for the
          * FTP component.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
@@ -3344,10 +3943,13 @@ public interface FileEndpointBuilderFactory {
          * that will automatically fall back to the copy and delete strategy,
          * but only after additional delays.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
@@ -3362,10 +3964,14 @@ public interface FileEndpointBuilderFactory {
          * that will automatically fall back to the copy and delete strategy,
          * but only after additional delays.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder renameUsingCopy(
                 String renameUsingCopy) {
@@ -3376,10 +3982,13 @@ public interface FileEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -3389,10 +3998,14 @@ public interface FileEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFileEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -3428,6 +4041,7 @@ public interface FileEndpointBuilderFactory {
          * The starting directory
          * 
          * @param path directoryName
+         * @return the dsl builder
          */
         default FileEndpointBuilder file(String path) {
             return FileEndpointBuilderFactory.endpointBuilder("file", path);
@@ -3448,6 +4062,7 @@ public interface FileEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path directoryName
+         * @return the dsl builder
          */
         default FileEndpointBuilder file(String componentName, String path) {
             return FileEndpointBuilderFactory.endpointBuilder(componentName, path);

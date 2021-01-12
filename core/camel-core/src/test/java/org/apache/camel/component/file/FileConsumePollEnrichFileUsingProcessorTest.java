@@ -70,7 +70,8 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                         ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
                         try {
                             // try to get the data file
-                            data = con.receive("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
+                            data = con.receive(
+                                    "file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
                         } finally {
                             // stop the consumer as it does not need to poll for
                             // files anymore

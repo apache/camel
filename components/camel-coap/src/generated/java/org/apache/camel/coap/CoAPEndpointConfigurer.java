@@ -4,8 +4,10 @@ package org.apache.camel.coap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -20,8 +22,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         CoAPEndpoint target = (CoAPEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": target.setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "ciphersuites":
@@ -54,25 +54,38 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("alias", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cipherSuites", java.lang.String.class);
-        answer.put("clientAuthentication", java.lang.String.class);
-        answer.put("coapMethodRestrict", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("privateKey", java.security.PrivateKey.class);
-        answer.put("pskStore", org.eclipse.californium.scandium.dtls.pskstore.PskStore.class);
-        answer.put("publicKey", java.security.PublicKey.class);
-        answer.put("recommendedCipherSuitesOnly", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustedRpkStore", org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "alias": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "ciphersuites":
+        case "cipherSuites": return java.lang.String.class;
+        case "clientauthentication":
+        case "clientAuthentication": return java.lang.String.class;
+        case "coapmethodrestrict":
+        case "coapMethodRestrict": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "privatekey":
+        case "privateKey": return java.security.PrivateKey.class;
+        case "pskstore":
+        case "pskStore": return org.eclipse.californium.scandium.dtls.pskstore.PskStore.class;
+        case "publickey":
+        case "publicKey": return java.security.PublicKey.class;
+        case "recommendedciphersuitesonly":
+        case "recommendedCipherSuitesOnly": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "trustedrpkstore":
+        case "trustedRpkStore": return org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -80,8 +93,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         CoAPEndpoint target = (CoAPEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return target.getAlias();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "ciphersuites":

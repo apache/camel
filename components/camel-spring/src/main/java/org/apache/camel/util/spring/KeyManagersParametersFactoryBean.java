@@ -26,9 +26,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class KeyManagersParametersFactoryBean extends AbstractKeyManagersParametersFactoryBean 
+public class KeyManagersParametersFactoryBean extends AbstractKeyManagersParametersFactoryBean
         implements FactoryBean<KeyManagersParameters>, ApplicationContextAware {
-    
+
     KeyStoreParametersFactoryBean keyStore;
 
     @XmlTransient

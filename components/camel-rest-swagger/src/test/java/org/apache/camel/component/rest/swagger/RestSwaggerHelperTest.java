@@ -26,19 +26,19 @@ public class RestSwaggerHelperTest {
     @Test
     public void emptyHostParamsAreNotAllowed() {
         assertThrows(IllegalArgumentException.class,
-            () -> RestSwaggerHelper.isHostParam(""));
+                () -> RestSwaggerHelper.isHostParam(""));
     }
 
     @Test
     public void nonUriHostParametersAreNotAllowed() {
         assertThrows(IllegalArgumentException.class,
-            () -> RestSwaggerHelper.isHostParam("carrot"));
+                () -> RestSwaggerHelper.isHostParam("carrot"));
     }
 
     @Test
     public void nullHostParamsAreNotAllowed() {
         assertThrows(IllegalArgumentException.class,
-            () -> RestSwaggerHelper.isHostParam(null));
+                () -> RestSwaggerHelper.isHostParam(null));
     }
 
     @Test

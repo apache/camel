@@ -66,7 +66,7 @@ public class UnwrapStreamProcessor extends AsyncProcessorSupport {
 
                 private void addData() {
                     Object body;
-                    if (data.size() == 0) {
+                    if (data.isEmpty()) {
                         body = null;
                     } else if (data.size() == 1) {
                         body = data.get(0);
@@ -79,11 +79,13 @@ public class UnwrapStreamProcessor extends AsyncProcessorSupport {
                         Exchange copy = (Exchange) body;
                         exchange.setException(copy.getException());
                         exchange.setIn(copy.getIn());
-                        exchange.setOut(copy.getOut());
+                        if (copy.hasOut()) {
+                            exchange.setOut(copy.getOut());
+                        }
                         exchange.getProperties().clear();
                         exchange.getProperties().putAll(copy.getProperties());
                     } else {
-                        exchange.getOut().setBody(body);
+                        exchange.getMessage().setBody(body);
                     }
                 }
 

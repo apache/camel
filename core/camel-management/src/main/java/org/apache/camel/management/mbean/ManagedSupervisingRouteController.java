@@ -188,7 +188,8 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                 String elapsed = "";
                 String last = "";
                 // we can only track elapsed/time for active supervised routes
-                long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getFirstAttemptTime() : 0;
+                long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                        ? state.getFirstAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
                     elapsed = TimeUtils.printDuration(delta);
@@ -211,8 +212,12 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                     }
                 }
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"index", "routeId", "status", "supervising", "attempts", "elapsed", "last", "error", "stacktrace"},
-                        new Object[]{index, routeId, status, supervising, attempts, elapsed, last, error, stacktrace});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] {
+                                "index", "routeId", "status", "supervising", "attempts", "elapsed", "last", "error",
+                                "stacktrace" },
+                        new Object[] { index, routeId, status, supervising, attempts, elapsed, last, error, stacktrace });
                 answer.put(data);
 
                 // use a counter as the single index in the TabularData as we do not want a multi-value index

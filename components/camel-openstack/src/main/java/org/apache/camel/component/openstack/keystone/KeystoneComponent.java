@@ -33,4 +33,3 @@ public class KeystoneComponent extends DefaultComponent {
         return endpoint;
     }
 }
-

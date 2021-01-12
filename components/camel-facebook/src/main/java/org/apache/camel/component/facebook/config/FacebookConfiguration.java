@@ -185,6 +185,7 @@ public class FacebookConfiguration implements Cloneable {
 
     /**
      * Returns {@link Facebook} instance. If needed, creates one from configuration.
+     * 
      * @return {@link Facebook} instance
      */
     public Facebook getFacebook() throws FacebookException {
@@ -462,8 +463,8 @@ public class FacebookConfiguration implements Cloneable {
     }
 
     /**
-     * Default OAuth permissions. Comma separated permission names.
-     * See https://developers.facebook.com/docs/reference/login/#permissions for the detail
+     * Default OAuth permissions. Comma separated permission names. See
+     * https://developers.facebook.com/docs/reference/login/#permissions for the detail
      */
     public void setOAuthPermissions(String oAuthPermissions) {
         this.oAuthPermissions = oAuthPermissions;
@@ -515,7 +516,7 @@ public class FacebookConfiguration implements Cloneable {
 
     public void validate() {
         if ((oAuthAppId == null || oAuthAppId.isEmpty())
-            || (oAuthAppSecret == null || oAuthAppSecret.isEmpty())) {
+                || (oAuthAppSecret == null || oAuthAppSecret.isEmpty())) {
             throw new IllegalArgumentException("Missing required properties oAuthAppId, oAuthAppSecret");
         }
     }

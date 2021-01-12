@@ -84,11 +84,15 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup().split(body().tokenize(comma)).parallelProcessing().streaming()
-                    .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}")).split(body().tokenize(LS)).parallelProcessing().streaming()
-                    .setBody(body().append(":Status=OK").append(LS)).to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
-                    .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
-                    .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end().to("mock:result");
+                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                        .split(body().tokenize(comma)).parallelProcessing().streaming()
+                        .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
+                        .split(body().tokenize(LS)).parallelProcessing().streaming()
+                        .setBody(body().append(":Status=OK").append(LS))
+                        .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                        .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
+                        .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt").end()
+                        .to("mock:result");
 
             }
         };

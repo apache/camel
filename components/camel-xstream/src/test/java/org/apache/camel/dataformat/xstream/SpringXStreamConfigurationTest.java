@@ -29,7 +29,7 @@ public class SpringXStreamConfigurationTest extends XStreamConfigurationTest {
         setUseRouteBuilder(false);
 
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-            "org/apache/camel/dataformat/xstream/SpringXStreamConfigurationTest.xml");
+                "org/apache/camel/dataformat/xstream/SpringXStreamConfigurationTest.xml");
 
         setCamelContextService(new Service() {
             public void start() {

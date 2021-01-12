@@ -26,8 +26,6 @@ public enum GoogleMailApiName implements ApiName {
     USERS("users");
 
 
-    private static final GoogleMailApiName[] VALUES = values();
-    
     private final String name;
 
     private GoogleMailApiName(String name) {
@@ -39,12 +37,4 @@ public enum GoogleMailApiName implements ApiName {
         return name;
     }
 
-    public static GoogleMailApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
 }

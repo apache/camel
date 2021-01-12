@@ -34,7 +34,8 @@ public class SpringQuartzPersistentStoreRestartAppTest {
     @Test
     public void testQuartzPersistentStoreRestart() throws Exception {
         // load spring app
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
+        AbstractXmlApplicationContext app
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
 
         app.start();
 
@@ -60,7 +61,8 @@ public class SpringQuartzPersistentStoreRestartAppTest {
         // is supposed to handle and start again
 
         // load spring app
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartTest.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartTest.xml");
 
         app2.start();
 

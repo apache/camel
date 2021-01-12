@@ -32,7 +32,8 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
     private final CaffeineConfiguration configuration;
     private final LoadingCache cache;
 
-    public CaffeineLoadCacheProducer(CaffeineLoadCacheEndpoint endpoint, String cacheName, CaffeineConfiguration configuration, LoadingCache cache) throws Exception {
+    public CaffeineLoadCacheProducer(CaffeineLoadCacheEndpoint endpoint, CaffeineConfiguration configuration,
+                                     LoadingCache cache) {
         super(endpoint, CaffeineConstants.ACTION, configuration::getAction);
         this.configuration = configuration;
         this.cache = cache;
@@ -58,7 +59,7 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CaffeineConstants.ACTION_PUT_ALL)
     public void onPutAll(Message message) throws Exception {
-        cache.putAll((Map)getValue(message, Map.class.getName()));
+        cache.putAll((Map) getValue(message, Map.class.getName()));
 
         setResult(message, true, null, null);
     }
@@ -108,7 +109,8 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
         }
 
         if (value == null) {
-            throw new CamelExchangeException("No value provided in header or as default value (" + CaffeineConstants.KEY + ")", message.getExchange());
+            throw new CamelExchangeException(
+                    "No value provided in header or as default value (" + CaffeineConstants.KEY + ")", message.getExchange());
         }
 
         return value;
@@ -126,7 +128,8 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
         }
 
         if (value == null) {
-            throw new CamelExchangeException("No value provided in header or body (" + CaffeineConstants.VALUE + ")", message.getExchange());
+            throw new CamelExchangeException(
+                    "No value provided in header or body (" + CaffeineConstants.VALUE + ")", message.getExchange());
         }
 
         return value;

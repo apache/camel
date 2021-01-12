@@ -63,7 +63,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class, 5);
-        assertEquals(value.intValue(), 5);
+        assertEquals(5, value.intValue());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("size", 200);
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class);
-        assertEquals(value.intValue(), 200);
+        assertEquals(200, value.intValue());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("size", 200);
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "level", Integer.class, 4);
-        assertEquals(value.intValue(), 4);
+        assertEquals(4, value.intValue());
     }
 
     @Test
@@ -122,8 +122,10 @@ public class DefaultComponentTest extends ContextTestSupport {
         try {
             my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
         } catch (TypeConversionException ex) {
-            assertEquals("Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
-                             + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
+            assertEquals(
+                    "Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
+                         + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"",
+                    ex.getMessage());
         }
     }
 

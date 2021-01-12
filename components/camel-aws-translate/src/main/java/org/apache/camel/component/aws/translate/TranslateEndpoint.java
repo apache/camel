@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Translate texts using AWS Translate.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-translate", title = "AWS Translate", syntax = "aws-translate:label", producerOnly = true, category = {Category.CLOUD, Category.MANAGEMENT})
+@UriEndpoint(firstVersion = "3.0.0", scheme = "aws-translate", title = "AWS Translate", syntax = "aws-translate:label",
+             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT })
 public class TranslateEndpoint extends ScheduledPollEndpoint {
 
     private AmazonTranslate translateClient;
@@ -64,7 +65,8 @@ public class TranslateEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        translateClient = configuration.getTranslateClient() != null ? configuration.getTranslateClient() : createTranslateClient();
+        translateClient
+                = configuration.getTranslateClient() != null ? configuration.getTranslateClient() : createTranslateClient();
     }
 
     @Override
@@ -101,7 +103,8 @@ public class TranslateEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonTranslateClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonTranslateClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonTranslateClientBuilder.standard().withCredentials(credentialsProvider);
             }

@@ -64,8 +64,8 @@ public class ManualFromQueueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sjms:queue:foo?asyncStartListener=true")
-                    .to("log:foo")
-                    .to("mock:foo");
+                        .to("log:foo")
+                        .to("mock:foo");
             }
         };
     }

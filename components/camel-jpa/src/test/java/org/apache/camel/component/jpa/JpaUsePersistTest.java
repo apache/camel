@@ -35,7 +35,7 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
     public boolean usePersist() {
         return true;
     }
-    
+
     @Test
     public void produceExistingEntityShouldThrowAnException() throws Exception {
         setUp("jpa://" + Order.class.getName() + "?usePersist=true");
@@ -55,7 +55,7 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
         order.setProductSku("54321");
         order.setQuantity(2);
         assertIsInstanceOf(PersistenceException.class, assertThrows(CamelExecutionException.class,
-            () -> template.requestBody(endpoint, order)).getCause());
+                () -> template.requestBody(endpoint, order)).getCause());
 
         assertEntitiesInDatabase(1, Order.class.getName());
     }

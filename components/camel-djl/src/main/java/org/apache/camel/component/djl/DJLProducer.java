@@ -27,9 +27,11 @@ public class DJLProducer extends DefaultProducer {
     public DJLProducer(DJLEndpoint endpoint) throws Exception {
         super(endpoint);
         if (endpoint.getArtifactId() != null) {
-            this.abstractPredictor = ModelPredictorProducer.getZooPredictor(endpoint.getApplication(), endpoint.getArtifactId());
+            this.abstractPredictor
+                    = ModelPredictorProducer.getZooPredictor(endpoint.getApplication(), endpoint.getArtifactId());
         } else {
-            this.abstractPredictor = ModelPredictorProducer.getCustomPredictor(endpoint.getApplication(), endpoint.getModel(), endpoint.getTranslator());
+            this.abstractPredictor = ModelPredictorProducer.getCustomPredictor(endpoint.getApplication(), endpoint.getModel(),
+                    endpoint.getTranslator());
         }
     }
 

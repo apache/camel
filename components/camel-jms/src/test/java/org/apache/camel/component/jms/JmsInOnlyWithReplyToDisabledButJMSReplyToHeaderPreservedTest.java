@@ -52,13 +52,13 @@ public class JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest extend
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // must use preserveMessageQos to include JMSReplyTo
-                    .to("activemq:queue:foo?replyTo=queue:bar&preserveMessageQos=true")
-                    .to("mock:done");
+                        // must use preserveMessageQos to include JMSReplyTo
+                        .to("activemq:queue:foo?replyTo=queue:bar&preserveMessageQos=true")
+                        .to("mock:done");
 
                 // and disable reply to as we do not want to send back a reply message in this route
                 from("activemq:queue:foo?disableReplyTo=true")
-                    .to("log:foo?showAll=true", "mock:foo");
+                        .to("log:foo?showAll=true", "mock:foo");
             }
         };
     }

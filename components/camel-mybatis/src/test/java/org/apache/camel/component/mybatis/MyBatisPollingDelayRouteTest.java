@@ -42,7 +42,8 @@ public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // run this timer every 2nd second, that will select data from the database and send it to the mock endpoint
-                from("timer://pollTheDatabase?delay=2000").to("mybatis:selectAllAccounts?statementType=SelectList").to("mock:result");
+                from("timer://pollTheDatabase?delay=2000").to("mybatis:selectAllAccounts?statementType=SelectList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

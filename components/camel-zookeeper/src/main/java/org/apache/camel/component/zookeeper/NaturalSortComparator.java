@@ -19,21 +19,20 @@ package org.apache.camel.component.zookeeper;
 import java.util.Comparator;
 
 /**
- * <code>NaturalSortComparator</code> is a fast comparator for sorting a
- * collection of Strings in a human readable fashion.
+ * <code>NaturalSortComparator</code> is a fast comparator for sorting a collection of Strings in a human readable
+ * fashion.
  * <p>
- * This implementation considers sequences of digits to be positive integer
- * values, '.' does not indicate a decimal value nor '-' a negative one. As a
- * result, 12345.12345 will sort higher than 12345.5432 and -12346 will sort
- * higher than 12345.
- *<p>
- * it does work well for sorting software versions e.g. camel-2.2.0 sorting
- * higher than camel-2.1.0
+ * This implementation considers sequences of digits to be positive integer values, '.' does not indicate a decimal
+ * value nor '-' a negative one. As a result, 12345.12345 will sort higher than 12345.5432 and -12346 will sort higher
+ * than 12345.
+ * <p>
+ * it does work well for sorting software versions e.g. camel-2.2.0 sorting higher than camel-2.1.0
  */
 public class NaturalSortComparator implements Comparator<CharSequence> {
 
     public enum Order {
-        Ascending(1), Descending(-1);
+        Ascending(1),
+        Descending(-1);
 
         int direction;
 

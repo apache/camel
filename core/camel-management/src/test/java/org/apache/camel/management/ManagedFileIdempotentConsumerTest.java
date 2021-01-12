@@ -94,7 +94,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
         assertEquals(4, size.intValue());
 
         // remove one from repo
-        mbeanServer.invoke(on, "remove", new Object[]{"1"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "remove", new Object[] { "1" }, new String[] { "java.lang.String" });
 
         // reset
         mbeanServer.invoke(on, "reset", null, null);
@@ -141,8 +141,8 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .idempotentConsumer(header("messageId"), repo)
-                    .to("mock:result");
+                        .idempotentConsumer(header("messageId"), repo)
+                        .to("mock:result");
             }
         };
     }

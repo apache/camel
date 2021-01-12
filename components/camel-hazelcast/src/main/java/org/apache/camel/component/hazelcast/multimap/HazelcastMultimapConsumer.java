@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.multimap;
 
+import java.util.UUID;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.multimap.MultiMap;
 import org.apache.camel.Endpoint;
@@ -25,11 +27,34 @@ import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
 
 public class HazelcastMultimapConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    private final MultiMap<Object, Object> cache;
+
+    private UUID listener;
+
+    public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
+                                     String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
-        MultiMap<Object, Object> cache = hazelcastInstance.getMultiMap(cacheName);
-        cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
+        cache = hazelcastInstance.getMultiMap(cacheName);
     }
 
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStart()
+     */
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        listener = cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
+    }
+
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStop()
+     */
+    @Override
+    protected void doStop() throws Exception {
+        cache.removeEntryListener(listener);
+
+        super.doStop();
+    }
 }

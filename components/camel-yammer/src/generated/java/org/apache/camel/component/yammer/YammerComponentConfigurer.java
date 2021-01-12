@@ -4,8 +4,10 @@ package org.apache.camel.component.yammer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -28,8 +30,8 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
@@ -56,24 +58,35 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.yammer.YammerConfiguration.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("consumerSecret", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("limit", int.class);
-        answer.put("newerThan", long.class);
-        answer.put("olderThan", long.class);
-        answer.put("requestor", org.apache.camel.component.yammer.ApiRequestor.class);
-        answer.put("threaded", java.lang.String.class);
-        answer.put("useJson", boolean.class);
-        answer.put("userId", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.yammer.YammerConfiguration.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "consumersecret":
+        case "consumerSecret": return java.lang.String.class;
+        case "delay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return int.class;
+        case "newerthan":
+        case "newerThan": return long.class;
+        case "olderthan":
+        case "olderThan": return long.class;
+        case "requestor": return org.apache.camel.component.yammer.ApiRequestor.class;
+        case "threaded": return java.lang.String.class;
+        case "usejson":
+        case "useJson": return boolean.class;
+        case "userid":
+        case "userId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -82,8 +95,8 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

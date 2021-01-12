@@ -40,10 +40,13 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Number of copies to print.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param copies the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder copies(int copies) {
             doSetProperty("copies", copies);
@@ -52,10 +55,13 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Number of copies to print.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param copies the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder copies(String copies) {
             doSetProperty("copies", copies);
@@ -64,9 +70,12 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets DocFlavor to use.
          * 
-         * The option is a: <code>javax.print.DocFlavor</code> type.
+         * The option is a: &lt;code&gt;javax.print.DocFlavor&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param docFlavor the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder docFlavor(Object docFlavor) {
             doSetProperty("docFlavor", docFlavor);
@@ -75,10 +84,13 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets DocFlavor to use.
          * 
-         * The option will be converted to a <code>javax.print.DocFlavor</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.print.DocFlavor&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param docFlavor the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder docFlavor(String docFlavor) {
             doSetProperty("docFlavor", docFlavor);
@@ -87,9 +99,12 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets DocFlavor to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param flavor the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder flavor(String flavor) {
             doSetProperty("flavor", flavor);
@@ -106,10 +121,13 @@ public interface PrinterEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -127,10 +145,14 @@ public interface PrinterEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -143,10 +165,13 @@ public interface PrinterEndpointBuilderFactory {
          * is to use North American Letter sized stationary. The value's case is
          * ignored, e.g. values of iso_a4 and ISO_A4 may be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: na-letter
          * Group: producer
+         * 
+         * @param mediaSize the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder mediaSize(String mediaSize) {
             doSetProperty("mediaSize", mediaSize);
@@ -156,9 +181,12 @@ public interface PrinterEndpointBuilderFactory {
          * Sets MediaTray supported by the javax.print.DocFlavor API, for
          * example upper,middle etc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mediaTray the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder mediaTray(String mediaTray) {
             doSetProperty("mediaTray", mediaTray);
@@ -167,9 +195,12 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets mimeTypes supported by the javax.print.DocFlavor API.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mimeType the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder mimeType(String mimeType) {
             doSetProperty("mimeType", mimeType);
@@ -178,10 +209,13 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets the page orientation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: portrait
          * Group: producer
+         * 
+         * @param orientation the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder orientation(String orientation) {
             doSetProperty("orientation", orientation);
@@ -191,9 +225,12 @@ public interface PrinterEndpointBuilderFactory {
          * Sets the prefix name of the printer, it is useful when the printer
          * name does not start with //hostname/printer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param printerPrefix the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder printerPrefix(String printerPrefix) {
             doSetProperty("printerPrefix", printerPrefix);
@@ -203,10 +240,13 @@ public interface PrinterEndpointBuilderFactory {
          * etting this option to false prevents sending of the print data to the
          * printer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param sendToPrinter the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder sendToPrinter(boolean sendToPrinter) {
             doSetProperty("sendToPrinter", sendToPrinter);
@@ -216,10 +256,14 @@ public interface PrinterEndpointBuilderFactory {
          * etting this option to false prevents sending of the print data to the
          * printer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param sendToPrinter the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder sendToPrinter(String sendToPrinter) {
             doSetProperty("sendToPrinter", sendToPrinter);
@@ -229,10 +273,13 @@ public interface PrinterEndpointBuilderFactory {
          * Sets one sided or two sided printing based on the
          * javax.print.attribute.standard.Sides API.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: one-sided
          * Group: producer
+         * 
+         * @param sides the value to set
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder sides(String sides) {
             doSetProperty("sides", sides);
@@ -250,41 +297,16 @@ public interface PrinterEndpointBuilderFactory {
             return (PrinterEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPrinterEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedPrinterEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPrinterEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -294,10 +316,14 @@ public interface PrinterEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPrinterEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -326,6 +352,7 @@ public interface PrinterEndpointBuilderFactory {
          * Name of the printer
          * 
          * @param path hostname:port/printername
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder lpr(String path) {
             return PrinterEndpointBuilderFactory.endpointBuilder("lpr", path);
@@ -352,6 +379,7 @@ public interface PrinterEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path hostname:port/printername
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder lpr(String componentName, String path) {
             return PrinterEndpointBuilderFactory.endpointBuilder(componentName, path);

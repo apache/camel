@@ -39,10 +39,12 @@ import org.apache.ignite.cache.query.Query;
 /**
  * Perform cache operations on an Ignite cache or consume changes from a continuous query.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName", category = {Category.CACHE, Category.DATAGRID})
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName",
+             category = { Category.CACHE, Category.DATAGRID })
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String cacheName;
 
     @UriParam(label = "producer")
@@ -75,7 +77,8 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "consumer", defaultValue = "0", defaultValueNote = "ContinuousQuery.DFLT_TIME_INTERVAL")
     private long timeInterval = ContinuousQuery.DFLT_TIME_INTERVAL;
 
-    public IgniteCacheEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteCacheComponent igniteComponent) {
+    public IgniteCacheEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
+                               IgniteCacheComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         cacheName = remaining;
     }
@@ -96,7 +99,8 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
         IgniteCache<Object, Object> cache = ignite().cache(cacheName);
         if (cache == null) {
             if (failIfInexistentCache) {
-                throw new CamelException(String.format("Ignite cache %s doesn't exist, and failIfInexistentCache is true", cacheName));
+                throw new CamelException(
+                        String.format("Ignite cache %s doesn't exist, and failIfInexistentCache is true", cacheName));
             }
             cache = ignite().createCache(cacheName);
         }
@@ -133,7 +137,9 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The cache operation to invoke.
-     * <p>Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR.</p>
+     * <p>
+     * Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR.
+     * </p>
      *
      * @param operation
      */
@@ -178,8 +184,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Gets the query to execute, only needed for operations that require it,
-     * and for the Continuous Query Consumer.
+     * Gets the query to execute, only needed for operations that require it, and for the Continuous Query Consumer.
      *
      * @return
      */
@@ -188,8 +193,7 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * The {@link Query} to execute, only needed for operations that require it,
-     * and for the Continuous Query Consumer.
+     * The {@link Query} to execute, only needed for operations that require it, and for the Continuous Query Consumer.
      *
      * @param query
      */
@@ -216,8 +220,8 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Gets whether to pack each update in an individual Exchange, even if multiple updates are
-     * received in one batch. Only used by the Continuous Query Consumer.
+     * Gets whether to pack each update in an individual Exchange, even if multiple updates are received in one batch.
+     * Only used by the Continuous Query Consumer.
      *
      * @return
      */
@@ -226,8 +230,8 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Whether to pack each update in an individual Exchange, even if multiple updates are
-     * received in one batch. Only used by the Continuous Query Consumer.
+     * Whether to pack each update in an individual Exchange, even if multiple updates are received in one batch. Only
+     * used by the Continuous Query Consumer.
      *
      * @param oneExchangePerUpdate
      */
@@ -272,8 +276,8 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Gets whether to process existing results that match the query. Used on initialization of
-     * the Continuous Query Consumer.
+     * Gets whether to process existing results that match the query. Used on initialization of the Continuous Query
+     * Consumer.
      *
      * @return
      */
@@ -282,8 +286,8 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * Whether to process existing results that match the query. Used on initialization of
-     * the Continuous Query Consumer.
+     * Whether to process existing results that match the query. Used on initialization of the Continuous Query
+     * Consumer.
      *
      * @param fireExistingQueryResults
      */

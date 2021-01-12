@@ -17,11 +17,11 @@
 package org.apache.camel.component.hbase;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.infra.hbase.services.HBaseService;
+import org.apache.camel.test.infra.hbase.services.HBaseServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.TableNotFoundException;
@@ -34,36 +34,34 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-
-public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
+public abstract class CamelHBaseTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    public static HBaseService service = HBaseServiceFactory.createService();
 
     protected static final String PERSON_TABLE = "person";
     protected static final String INFO_FAMILY = "info";
 
-    protected String[] key = {"1", "2", "3"};
-    protected final String[] family = {"info", "birthdate", "address"};
+    protected String[] key = { "1", "2", "3" };
+    protected final String[] family = { "info", "birthdate", "address" };
     protected final String[][] column = {
-        {"id", "firstName", "lastName"},
-        {"day", "month", "year"},
-        {"street", "number", "zip"}
+            { "id", "firstName", "lastName" },
+            { "day", "month", "year" },
+            { "street", "number", "zip" }
     };
 
     //body[row][family][column]
     protected final String[][][] body = {
-        {{"1", "Ioannis", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
-        {{"2", "John", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
-        {{"3", "Christian", "Mueller"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
+            { { "1", "Ioannis", "Canellos" }, { "09", "03", "1980" }, { "Awesome Street", "23", "15344" } },
+            { { "2", "John", "Dow" }, { "01", "01", "1979" }, { "Unknown Street", "1", "1010" } },
+            { { "3", "Christian", "Mueller" }, { "09", "01", "1979" }, { "Another Unknown Street", "14", "2020" } }
     };
 
     protected final byte[][] families = {
             family[0].getBytes(),
             family[1].getBytes(),
-            family[2].getBytes()};
-
-    // init container once for a class
-    private GenericContainer cont;
+            family[2].getBytes() };
 
     @Override
     @BeforeEach
@@ -87,20 +85,6 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
         super.tearDown();
     }
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        if (cont == null) {
-            cont = new HBaseContainer();
-        }
-        return cont;
-    }
-
-    @Override
-    protected long containersStartupTimeout() {
-        // on my laptop it takes around 30-60 seconds to start the cluster.
-        return TimeUnit.MINUTES.toSeconds(5);
-    }
-
     protected void putMultipleRows() throws IOException {
         Table table = connectHBase().getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
         for (int r = 0; r < key.length; r++) {
@@ -111,12 +95,8 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
         IOHelper.close(table);
     }
 
-    protected Configuration getHBaseConfig() {
-        return HBaseContainer.defaultConf();
-    }
-
     protected Connection connectHBase() throws IOException {
-        Connection connection = ConnectionFactory.createConnection(getHBaseConfig());
+        Connection connection = ConnectionFactory.createConnection(service.getConfiguration());
         return connection;
     }
 
@@ -129,7 +109,7 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
     }
 
     protected void createTable(String name, String family) throws IOException {
-        createTable(name, new byte[][]{family.getBytes()});
+        createTable(name, new byte[][] { family.getBytes() });
     }
 
     protected void deleteTable(String name) throws IOException {

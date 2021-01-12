@@ -29,10 +29,7 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MainIoCTest {
 
@@ -83,10 +80,11 @@ public class MainIoCTest {
         // should have called the configure class
         assertEquals("123", camelContext.getGlobalOptions().get("foo"));
 
-        // and seda should have been auto-configured by type
+        // and seda should be created and use the custom queue factory
         Object qf = seda.getDefaultQueueFactory();
         assertNotNull(qf);
         assertTrue(qf instanceof PriorityBlockingQueueFactory);
+        assertSame(camelContext, seda.getCamelContext());
 
         MyConfiguration.MyCoolBean mcb = (MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
         assertNotNull(mcb);
@@ -122,17 +120,25 @@ public class MainIoCTest {
             }
         }
 
-        @BindToRegistry
+        @BindToRegistry("myQF")
         public BlockingQueueFactory queueFactory(CamelContext myCamel) {
             // we can optionally include camel context as parameter
             assertNotNull(myCamel);
             return new PriorityBlockingQueueFactory();
         }
 
+        @BindToRegistry
+        public SedaComponent seda(@BeanInject BlockingQueueFactory qf) {
+            SedaComponent seda = new SedaComponent();
+            seda.setDefaultQueueFactory(qf);
+            return seda;
+        }
+
         @BindToRegistry("coolStuff")
-        public String cool(@BeanInject MyCoolBean cool,
-                           @PropertyInject(value = "magic", defaultValue = "456") int num,
-                           @BeanInject("myBar") MyBar bar) {
+        public String cool(
+                @BeanInject MyCoolBean cool,
+                @PropertyInject(value = "magic", defaultValue = "456") int num,
+                @BeanInject("myBar") MyBar bar) {
             // should lookup MyCoolBean type from the registry and find the property
             assertNotNull(cool);
             assertEquals(456, num);

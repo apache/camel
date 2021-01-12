@@ -4,8 +4,10 @@ package org.apache.camel.component.git;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.spi.ConfigurerStrategy;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -21,8 +23,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowempty":
         case "allowEmpty": target.setAllowEmpty(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "branchname":
         case "branchName": target.setBranchName(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -49,24 +49,33 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowEmpty", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("branchName", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("remoteName", java.lang.String.class);
-        answer.put("remotePath", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tagName", java.lang.String.class);
-        answer.put("type", org.apache.camel.component.git.consumer.GitType.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowempty":
+        case "allowEmpty": return boolean.class;
+        case "branchname":
+        case "branchName": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "remotename":
+        case "remoteName": return java.lang.String.class;
+        case "remotepath":
+        case "remotePath": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tagname":
+        case "tagName": return java.lang.String.class;
+        case "type": return org.apache.camel.component.git.consumer.GitType.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -75,8 +84,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowempty":
         case "allowEmpty": return target.isAllowEmpty();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "branchname":
         case "branchName": return target.getBranchName();
         case "bridgeerrorhandler":

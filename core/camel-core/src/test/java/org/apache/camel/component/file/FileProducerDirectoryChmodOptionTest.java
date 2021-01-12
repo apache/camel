@@ -75,7 +75,8 @@ public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
         runChmodCheck("666", "rwxrwxrwx", "rw-rw-rw-");
     }
 
-    private void runChmodCheck(String routeSuffix, String expectedDirectoryPermissions, String expectedPermissions) throws Exception {
+    private void runChmodCheck(String routeSuffix, String expectedDirectoryPermissions, String expectedPermissions)
+            throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:chmod" + routeSuffix);
         mock.expectedMessageCount(1);
         String testFileName = "chmod" + routeSuffix + ".txt";

@@ -25,12 +25,12 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&fileExist=Fail";
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&fileExist=Fail";
     }
 
     @Override
@@ -43,15 +43,15 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
 
     @Test
     public void testFail() throws Exception {
-        try {
-            template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(cause.getMessage(), "File already exist: hello.txt. Cannot write new file.");
-        }
+        String uri = getFtpUrl();
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        assertEquals("File already exist: hello.txt. Cannot write new file.", cause.getMessage());
 
         // root file should still exist
-        assertFileExists(FTP_ROOT_DIR + "/hello.txt");
+        assertFileExists(service.getFtpRootDir() + "/hello.txt");
     }
 }

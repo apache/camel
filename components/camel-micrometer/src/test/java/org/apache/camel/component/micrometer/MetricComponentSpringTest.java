@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 @ContextConfiguration(
-        classes = { MetricComponentSpringTest.TestConfig.class })
+                      classes = { MetricComponentSpringTest.TestConfig.class })
 @MockEndpoints
 public class MetricComponentSpringTest {
 
@@ -75,7 +75,8 @@ public class MetricComponentSpringTest {
 
     @Test
     public void testMetricsRegistryFromCamelRegistry() throws Exception {
-        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
+        MeterRegistry mockRegistry = endpoint.getCamelContext().getRegistry()
+                .lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
         Counter mockCounter = Mockito.mock(Counter.class);
         InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
         when(mockRegistry.counter(eq("A"), anyIterable())).thenReturn(mockCounter);

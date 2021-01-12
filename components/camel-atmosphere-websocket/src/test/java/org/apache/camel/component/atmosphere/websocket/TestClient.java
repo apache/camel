@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 
 public class TestClient {
     private static final Logger LOG = LoggerFactory.getLogger(TestClient.class);
-    
+
     private List<Object> received;
     private CountDownLatch latch;
     private AsyncHttpClient client;
     private WebSocket websocket;
     private String url;
-    
+
     public TestClient(String url, AsyncHttpClientConfig conf) {
         this(url, conf, 1);
     }
@@ -60,11 +60,12 @@ public class TestClient {
         this.client = conf == null ? new DefaultAsyncHttpClient() : new DefaultAsyncHttpClient(conf);
         this.url = url;
     }
-    
+
     public void connect() throws InterruptedException, ExecutionException, IOException {
         websocket = client.prepareGet(url).execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new TestWebSocketListener()).build()).get();
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new TestWebSocketListener()).build())
+                .get();
     }
 
     public void sendTextMessage(String message) {
@@ -99,21 +100,21 @@ public class TestClient {
     @SuppressWarnings("unchecked")
     private static <T> T getValue(Object o, Class<T> cls) {
         if (cls.isInstance(o)) {
-            return (T)o;
+            return (T) o;
         } else if (cls == String.class) {
             if (o instanceof byte[]) {
-                return (T)new String((byte[])o);
+                return (T) new String((byte[]) o);
             } else {
-                return (T)o.toString();
+                return (T) o.toString();
             }
         } else if (cls == byte[].class) {
             if (o instanceof String) {
-                return (T)((String)o).getBytes();
+                return (T) ((String) o).getBytes();
             }
         }
         return null;
     }
-    
+
     public void close() throws IOException {
         websocket.sendCloseFrame();
         client.close();
@@ -143,7 +144,6 @@ public class TestClient {
             latch.countDown();
         }
 
-        
         @Override
         public void onTextFrame(String message, boolean finalFragment, int rsv) {
             received.add(message);
@@ -151,7 +151,5 @@ public class TestClient {
             latch.countDown();
         }
 
-       
-        
     }
 }

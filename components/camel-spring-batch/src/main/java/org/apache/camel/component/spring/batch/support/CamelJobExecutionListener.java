@@ -51,7 +51,8 @@ public class CamelJobExecutionListener implements JobExecutionListener {
 
     public enum EventType {
 
-        BEFORE, AFTER;
+        BEFORE,
+        AFTER;
 
         public static final String HEADER_KEY = "SPRING_BATCH_JOB_EVENT_TYPE";
 

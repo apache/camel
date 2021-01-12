@@ -35,28 +35,29 @@ public class SmppCancelSmCommandTest {
     private SMPPSession session;
     private SmppConfiguration config;
     private SmppCancelSmCommand command;
-    
+
     @BeforeEach
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();
-        
+
         command = new SmppCancelSmCommand(session, config);
     }
-    
+
     @Test
     public void executeWithConfigurationData() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
         exchange.getIn().setHeader(SmppConstants.ID, "1");
-        
+
         command.execute(exchange);
-        
-        verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
-        
+
+        verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616",
+                TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
-    
+
     @Test
     public void execute() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -69,11 +70,12 @@ public class SmppCancelSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
-        
+
         command.execute(exchange);
-        
-        verify(session).cancelShortMessage("XXX", "1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919");
-        
+
+        verify(session).cancelShortMessage("XXX", "1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818",
+                TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919");
+
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
 }

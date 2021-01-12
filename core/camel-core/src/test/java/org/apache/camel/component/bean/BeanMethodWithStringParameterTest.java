@@ -67,7 +67,7 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
     public static final class MyBean {
 
         public static String doSomething(String name, int repeat) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < repeat; i++) {
                 sb.append(name);
             }

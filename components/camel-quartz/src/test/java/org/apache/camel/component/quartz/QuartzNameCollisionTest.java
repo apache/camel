@@ -27,8 +27,8 @@ import org.quartz.TriggerKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Check for duplicate name/group collision.
@@ -49,18 +49,16 @@ public class QuartzNameCollisionTest {
         });
         camel1.start();
 
-        try {
-            camel1.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("log:two", "mock:two");
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (FailedToCreateRouteException e) {
-            String reason = e.getMessage();
-            assertTrue(reason.contains("Trigger key myGroup.myTimerName is already in use"));
-        }
+        RouteBuilder routeBuilder = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("log:two", "mock:two");
+            }
+        };
+
+        Exception ex = assertThrows(FailedToCreateRouteException.class, () -> camel1.addRoutes(routeBuilder));
+        String reason = ex.getMessage();
+        assertTrue(reason.contains("Trigger key myGroup.myTimerName is already in use"));
     }
 
     @Test
@@ -140,7 +138,6 @@ public class QuartzNameCollisionTest {
         Thread.sleep(100);
         camel.stop();
     }
-
 
     /**
      * Confirm the quartz trigger is removed on route stop.

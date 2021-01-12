@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -45,7 +44,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Sent and receive messages to/from an Apache Kafka broker.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", category = {Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic",
+             category = { Category.MESSAGING })
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
@@ -62,7 +62,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @Override
     public KafkaComponent getComponent() {
-        return (KafkaComponent)super.getComponent();
+        return (KafkaComponent) super.getComponent();
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -95,13 +95,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return true;
     }
 
-    private void loadParitionerClass(ClassResolver resolver, Properties props) {
-        replaceWithClass(props, "partitioner.class", resolver, Partitioner.class);
-    }
-
     <T> Class<T> loadClass(Object o, ClassResolver resolver, Class<T> type) {
         if (o == null || o instanceof Class) {
-            return CastUtils.cast((Class<?>)o);
+            return CastUtils.cast((Class<?>) o);
         }
         String name = o.toString();
         Class<T> c = resolver.resolveClass(name, type);
@@ -127,25 +123,9 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
                 ClassResolver resolver = getCamelContext().getClassResolver();
                 replaceWithClass(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, resolver, Serializer.class);
                 replaceWithClass(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, resolver, Serializer.class);
+                replaceWithClass(props, ProducerConfig.PARTITIONER_CLASS_CONFIG, resolver, Partitioner.class);
                 replaceWithClass(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
                 replaceWithClass(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, resolver, Deserializer.class);
-
-                try {
-                    // doesn't exist in old version of Kafka client so detect
-                    // and only call the method if
-                    // the field/config actually exists
-                    Field f = ProducerConfig.class.getDeclaredField("PARTITIONER_CLASS_CONFIG");
-                    if (f != null) {
-                        loadParitionerClass(resolver, props);
-                    }
-                } catch (NoSuchFieldException e) {
-                    // ignore
-                } catch (SecurityException e) {
-                    // ignore
-                }
-                // doesn't work as it needs to be List<String> :(
-                // replaceWithClass(props, "partition.assignment.strategy",
-                // resolver, PartitionAssignor.class);
             }
         } catch (Throwable t) {
             // can ignore and Kafka itself might be able to handle it, if not,
@@ -155,13 +135,15 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
+                "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
     }
 
     public ExecutorService createProducerExecutor() {
         int core = getConfiguration().getWorkerPoolCoreSize();
         int max = getConfiguration().getWorkerPoolMaxSize();
-        return getCamelContext().getExecutorServiceManager().newThreadPool(this, "KafkaProducer[" + configuration.getTopic() + "]", core, max);
+        return getCamelContext().getExecutorServiceManager().newThreadPool(this,
+                "KafkaProducer[" + configuration.getTopic() + "]", core, max);
     }
 
     @SuppressWarnings("rawtypes")

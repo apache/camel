@@ -19,10 +19,10 @@ package org.apache.camel.component.bean.issues;
 import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reifier.RouteReifier;
 import org.junit.jupiter.api.Test;
 
 public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
@@ -46,7 +46,7 @@ public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
             }
         });
 
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:extract");

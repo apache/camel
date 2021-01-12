@@ -39,19 +39,15 @@ public class HttpConcurrentTest extends BaseHttpTest {
 
     private final AtomicInteger counter = new AtomicInteger();
 
-
     private HttpServer localServer;
 
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", (request, response, context) -> {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -91,7 +87,9 @@ public class HttpConcurrentTest extends BaseHttpTest {
         // so no need for a thread-safe Map implementation
         Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
-            Future<String> out = executor.submit(() -> template.requestBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null, String.class));
+            Future<String> out = executor.submit(() -> template.requestBody(
+                    "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null,
+                    String.class));
             responses.put(i, out);
         }
 

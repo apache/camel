@@ -17,7 +17,9 @@
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOptionModel> {
@@ -28,11 +30,15 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected String syntax;
     protected String alternativeSyntax;
     protected boolean async;
+    protected boolean api;
+    protected String apiSyntax;
     protected boolean consumerOnly;
     protected boolean producerOnly;
     protected boolean lenientProperties;
     protected String verifiers;
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
+    // lets sort apis A..Z so they are always in the same order
+    protected final Collection<ApiModel> apiOptions = new TreeSet<>(Comparators.apiModelComparator());
 
     public ComponentModel() {
     }
@@ -88,6 +94,22 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public void setAsync(boolean async) {
         this.async = async;
+    }
+
+    public boolean isApi() {
+        return api;
+    }
+
+    public void setApi(boolean api) {
+        this.api = api;
+    }
+
+    public String getApiSyntax() {
+        return apiSyntax;
+    }
+
+    public void setApiSyntax(String apiSyntax) {
+        this.apiSyntax = apiSyntax;
     }
 
     public boolean isConsumerOnly() {
@@ -150,11 +172,52 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
                 .collect(Collectors.toList());
     }
 
+    public Collection<ApiModel> getApiOptions() {
+        return apiOptions;
+    }
+
     public static class ComponentOptionModel extends BaseOptionModel {
 
     }
 
     public static class EndpointOptionModel extends BaseOptionModel {
 
+    }
+
+    public static class ApiOptionModel extends BaseOptionModel implements Cloneable {
+
+        private boolean optional;
+
+        public boolean isOptional() {
+            return optional;
+        }
+
+        public void setOptional(boolean optional) {
+            this.optional = optional;
+        }
+
+        // we need to be able to copy this option for api
+        // options as we output the same options for each supported api methods,
+        // however with a few changes per method
+
+        public ApiOptionModel copy() {
+            try {
+                return (ApiOptionModel) clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            ApiOptionModel copy = (ApiOptionModel) super.clone();
+            if (this.getEnums() != null) {
+                copy.setEnums(new ArrayList<>(this.getEnums()));
+            }
+            if (this.getOneOfs() != null) {
+                copy.setOneOfs(new ArrayList<>(this.getOneOfs()));
+            }
+            return copy;
+        }
     }
 }

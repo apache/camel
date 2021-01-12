@@ -34,7 +34,8 @@ public class CustomDataSetTest extends ContextTestSupport {
         Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
         @Override
-        public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) throws Exception {
+        public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index)
+                throws Exception {
             // lets compare the XPath result
             Predicate predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
             log.debug("evaluating predicate: " + predicate);

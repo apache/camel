@@ -55,7 +55,8 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage());
 
-                from("file://target/data/originalexchange?initialDelay=0&delay=10&noop=true").transform(body().append(" World")).process(new MyThrowProcessor());
+                from("file://target/data/originalexchange?initialDelay=0&delay=10&noop=true").transform(body().append(" World"))
+                        .process(new MyThrowProcessor());
             }
         };
     }

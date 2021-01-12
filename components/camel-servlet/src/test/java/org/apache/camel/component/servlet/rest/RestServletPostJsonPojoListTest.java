@@ -36,7 +36,8 @@ public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSuppo
         mock.expectedMessageCount(1);
 
         String body = "[ {\"id\": 123, \"name\": \"Donald Duck\"}, {\"id\": 456, \"name\": \"John Doe\"} ]";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -66,7 +67,7 @@ public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSuppo
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserPojo[].class)
+                        .post("new").type(UserPojo[].class)
                         .to("mock:input");
             }
         };

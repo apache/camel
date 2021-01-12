@@ -37,6 +37,8 @@ public interface LumberjackComponentBuilderFactory {
      * Category: log
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
+     * 
+     * @return the dsl builder
      */
     static LumberjackComponentBuilder lumberjack() {
         return new LumberjackComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface LumberjackComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -68,17 +73,24 @@ public interface LumberjackComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
-        default LumberjackComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default LumberjackComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -86,9 +98,12 @@ public interface LumberjackComponentBuilderFactory {
          * can also configure it directly at the endpoint level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -98,10 +113,13 @@ public interface LumberjackComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -126,7 +144,7 @@ public interface LumberjackComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((LumberjackComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "basicPropertyBinding": ((LumberjackComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((LumberjackComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "sslContextParameters": ((LumberjackComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((LumberjackComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
