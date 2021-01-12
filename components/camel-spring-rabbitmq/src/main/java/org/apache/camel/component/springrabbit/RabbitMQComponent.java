@@ -20,11 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.util.ErrorHandler;
+
+import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
+import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
 
 @Component("spring-rabbitmq")
 public class RabbitMQComponent extends HeaderFilterStrategyComponent {
@@ -50,6 +55,10 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced",
               description = "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
     private MessagePropertiesConverter messagePropertiesConverter;
+    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
+              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
+                            + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
+    private long replyTimeout = 5000;
     @Metadata(label = "consumer", description = "The name of the dead letter exchange")
     private String deadLetterExchange;
     @Metadata(label = "consumer", description = "The name of the dead letter queue")
@@ -59,6 +68,18 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the dead letter exchange")
     private String deadLetterExchangeType = "direct";
+    @Metadata(label = "consumer,advanced",
+              description = "To use a custom ErrorHandler for handling exceptions from the message listener (consumer)")
+    private ErrorHandler errorHandler;
+    @Metadata(label = "consumer,advanced", defaultValue = "" + DEFAULT_PREFETCH_COUNT,
+              description = "Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput.")
+    private int prefetchCount = DEFAULT_PREFETCH_COUNT;
+    @Metadata(label = "consumer,advanced", javaType = "java.time.Duration", defaultValue = "" + DEFAULT_SHUTDOWN_TIMEOUT,
+              description = "The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes they will be allowed to finish processing as long as they can finish within this timeout.")
+    private long shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
+    @Metadata(label = "consumer,advanced",
+              description = "To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages")
+    private ListenerContainerFactory listenerContainerFactory = new DefaultListenerContainerFactory();
 
     @Override
     protected void doInit() throws Exception {
@@ -87,6 +108,7 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setDeadLetterExchangeType(deadLetterExchangeType);
         endpoint.setDeadLetterQueue(deadLetterQueue);
         endpoint.setDeadLetterRoutingKey(deadLetterRoutingKey);
+        endpoint.setReplyTimeout(replyTimeout);
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -170,5 +192,45 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setDeadLetterExchangeType(String deadLetterExchangeType) {
         this.deadLetterExchangeType = deadLetterExchangeType;
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    public int getPrefetchCount() {
+        return prefetchCount;
+    }
+
+    public void setPrefetchCount(int prefetchCount) {
+        this.prefetchCount = prefetchCount;
+    }
+
+    public long getReplyTimeout() {
+        return replyTimeout;
+    }
+
+    public void setReplyTimeout(long replyTimeout) {
+        this.replyTimeout = replyTimeout;
+    }
+
+    public long getShutdownTimeout() {
+        return shutdownTimeout;
+    }
+
+    public void setShutdownTimeout(long shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
+    }
+
+    public ListenerContainerFactory getListenerContainerFactory() {
+        return listenerContainerFactory;
+    }
+
+    public void setListenerContainerFactory(ListenerContainerFactory listenerContainerFactory) {
+        this.listenerContainerFactory = listenerContainerFactory;
     }
 }

@@ -39,14 +39,22 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "deadLetterQueue": target.setDeadLetterQueue(property(camelContext, java.lang.String.class, value)); return true;
         case "deadletterroutingkey":
         case "deadLetterRoutingKey": target.setDeadLetterRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "errorhandler":
+        case "errorHandler": target.setErrorHandler(property(camelContext, org.springframework.util.ErrorHandler.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "listenercontainerfactory":
+        case "listenerContainerFactory": target.setListenerContainerFactory(property(camelContext, org.apache.camel.component.springrabbit.ListenerContainerFactory.class, value)); return true;
         case "messageconverter":
         case "messageConverter": target.setMessageConverter(property(camelContext, org.springframework.amqp.support.converter.MessageConverter.class, value)); return true;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
+        case "prefetchcount":
+        case "prefetchCount": target.setPrefetchCount(property(camelContext, int.class, value)); return true;
+        case "shutdowntimeout":
+        case "shutdownTimeout": target.setShutdownTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -79,14 +87,22 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "deadLetterQueue": return java.lang.String.class;
         case "deadletterroutingkey":
         case "deadLetterRoutingKey": return java.lang.String.class;
+        case "errorhandler":
+        case "errorHandler": return org.springframework.util.ErrorHandler.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "listenercontainerfactory":
+        case "listenerContainerFactory": return org.apache.camel.component.springrabbit.ListenerContainerFactory.class;
         case "messageconverter":
         case "messageConverter": return org.springframework.amqp.support.converter.MessageConverter.class;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
+        case "prefetchcount":
+        case "prefetchCount": return int.class;
+        case "shutdowntimeout":
+        case "shutdownTimeout": return long.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
         default: return null;
@@ -115,14 +131,22 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "deadLetterQueue": return target.getDeadLetterQueue();
         case "deadletterroutingkey":
         case "deadLetterRoutingKey": return target.getDeadLetterRoutingKey();
+        case "errorhandler":
+        case "errorHandler": return target.getErrorHandler();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "listenercontainerfactory":
+        case "listenerContainerFactory": return target.getListenerContainerFactory();
         case "messageconverter":
         case "messageConverter": return target.getMessageConverter();
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
+        case "prefetchcount":
+        case "prefetchCount": return target.getPrefetchCount();
+        case "shutdowntimeout":
+        case "shutdownTimeout": return target.getShutdownTimeout();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
         default: return null;

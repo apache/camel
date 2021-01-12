@@ -55,6 +55,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
         case "queues": target.setQueues(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytimeout":
+        case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "routingkey":
         case "routingKey": target.setRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -102,6 +104,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
         case "queues": return java.lang.String.class;
+        case "replytimeout":
+        case "replyTimeout": return long.class;
         case "routingkey":
         case "routingKey": return java.lang.String.class;
         case "synchronous": return boolean.class;
@@ -150,6 +154,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
         case "queues": return target.getQueues();
+        case "replytimeout":
+        case "replyTimeout": return target.getReplyTimeout();
         case "routingkey":
         case "routingKey": return target.getRoutingKey();
         case "synchronous": return target.isSynchronous();

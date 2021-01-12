@@ -25,18 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
 public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
-    // TODO: auto create/binding queue via AmqpAdmin
-
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQConsumer.class);
 
-    private DefaultMessageListenerContainer listenerContainer;
+    private AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
 
-    public RabbitMQConsumer(Endpoint endpoint, Processor processor, DefaultMessageListenerContainer listenerContainer) {
+    public RabbitMQConsumer(Endpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
         this.listenerContainer = listenerContainer;
         this.listenerContainer.setMessageListener(getEndpointMessageListener());
@@ -56,9 +55,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
 
     protected void createMessageListener(RabbitMQEndpoint endpoint, Processor processor) {
         messageListener = new EndpointMessageListener(endpoint, processor);
-        getEndpoint().configureMessageListener(messageListener);
-        messageListener.setAsync(endpoint.isAsyncConsumer());
-        messageListener.setDisableReplyTo(endpoint.isDisableReplyTo());
+        endpoint.configureMessageListener(messageListener);
     }
 
     /**

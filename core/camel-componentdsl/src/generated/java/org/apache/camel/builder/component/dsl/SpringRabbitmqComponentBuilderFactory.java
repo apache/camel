@@ -204,6 +204,76 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom ErrorHandler for handling exceptions from the message
+         * listener (consumer).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder errorHandler(
+                org.springframework.util.ErrorHandler errorHandler) {
+            doSetProperty("errorHandler", errorHandler);
+            return this;
+        }
+        /**
+         * To use a custom factory for creating and configuring
+         * ListenerContainer to be used by the consumer for receiving messages.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.springrabbit.ListenerContainerFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param listenerContainerFactory the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder listenerContainerFactory(
+                org.apache.camel.component.springrabbit.ListenerContainerFactory listenerContainerFactory) {
+            doSetProperty("listenerContainerFactory", listenerContainerFactory);
+            return this;
+        }
+        /**
+         * Tell the broker how many messages to send to each consumer in a
+         * single request. Often this can be set quite high to improve
+         * throughput.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 250
+         * Group: consumer (advanced)
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder prefetchCount(int prefetchCount) {
+            doSetProperty("prefetchCount", prefetchCount);
+            return this;
+        }
+        /**
+         * The time to wait for workers in milliseconds after the container is
+         * stopped. If any workers are active when the shutdown signal comes
+         * they will be allowed to finish processing as long as they can finish
+         * within this timeout.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer (advanced)
+         * 
+         * @param shutdownTimeout the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder shutdownTimeout(
+                long shutdownTimeout) {
+            doSetProperty("shutdownTimeout", shutdownTimeout);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -326,6 +396,10 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "deadLetterExchangeType": ((RabbitMQComponent) component).setDeadLetterExchangeType((java.lang.String) value); return true;
             case "deadLetterQueue": ((RabbitMQComponent) component).setDeadLetterQueue((java.lang.String) value); return true;
             case "deadLetterRoutingKey": ((RabbitMQComponent) component).setDeadLetterRoutingKey((java.lang.String) value); return true;
+            case "errorHandler": ((RabbitMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "listenerContainerFactory": ((RabbitMQComponent) component).setListenerContainerFactory((org.apache.camel.component.springrabbit.ListenerContainerFactory) value); return true;
+            case "prefetchCount": ((RabbitMQComponent) component).setPrefetchCount((int) value); return true;
+            case "shutdownTimeout": ((RabbitMQComponent) component).setShutdownTimeout((long) value); return true;
             case "lazyStartProducer": ((RabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((RabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "messageConverter": ((RabbitMQComponent) component).setMessageConverter((org.springframework.amqp.support.converter.MessageConverter) value); return true;

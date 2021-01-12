@@ -16,25 +16,18 @@
  */
 package org.apache.camel.component.springrabbit;
 
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
-public class DefaultMessageListenerContainer extends DirectMessageListenerContainer {
+/**
+ * Factory to create {@link AbstractMessageListenerContainer}
+ */
+public interface ListenerContainerFactory {
 
-    private AmqpAdmin amqpAdmin;
-
-    public DefaultMessageListenerContainer(ConnectionFactory connectionFactory) {
-        super(connectionFactory);
-    }
-
-    @Override
-    public void setAmqpAdmin(AmqpAdmin amqpAdmin) {
-        super.setAmqpAdmin(amqpAdmin);
-        this.amqpAdmin = amqpAdmin;
-    }
-
-    public AmqpAdmin getAmqpAdmin() {
-        return amqpAdmin;
-    }
+    /**
+     * Creates the listener container to use for the consumer.
+     *
+     * @param  endpoint the endpoint
+     * @return          the created and configured listener container
+     */
+    AbstractMessageListenerContainer createListenerContainer(RabbitMQEndpoint endpoint);
 }

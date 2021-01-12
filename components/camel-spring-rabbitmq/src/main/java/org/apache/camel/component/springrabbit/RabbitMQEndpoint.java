@@ -41,8 +41,8 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.support.converter.MessageConverter;
 
 /**
@@ -129,6 +129,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
+    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
+              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
+                            + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
+    private long replyTimeout = 5000;
 
     public RabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
         super(endpointUri, component);
@@ -280,9 +284,17 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.disableReplyTo = disableReplyTo;
     }
 
+    public long getReplyTimeout() {
+        return replyTimeout;
+    }
+
+    public void setReplyTimeout(long replyTimeout) {
+        this.replyTimeout = replyTimeout;
+    }
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        DefaultMessageListenerContainer listenerContainer = createMessageListenerContainer();
+        AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer();
         RabbitMQConsumer consumer = new RabbitMQConsumer(this, processor, listenerContainer);
         configureConsumer(consumer);
         return consumer;
@@ -346,27 +358,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public AsyncRabbitTemplate createInOutTemplate() {
         RabbitTemplate template = new RabbitTemplate(getConnectionFactory());
-        template.setRoutingKey(getRoutingKey());
+        template.setRoutingKey(routingKey);
+        template.setReplyTimeout(replyTimeout);
         return new AsyncRabbitTemplate(template);
     }
 
-    public DefaultMessageListenerContainer createMessageListenerContainer() throws Exception {
-        DefaultMessageListenerContainer listener = new DefaultMessageListenerContainer(getConnectionFactory());
-        if (getQueues() != null) {
-            listener.setQueueNames(getQueues().split(","));
-        }
-
-        AmqpAdmin admin = getComponent().getAmqpAdmin();
-        if (autoDeclare && admin == null) {
-            admin = new RabbitAdmin(getConnectionFactory());
-        }
-        listener.setAutoDeclare(autoDeclare);
-        listener.setAmqpAdmin(admin);
-        return listener;
+    public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
+        return getComponent().getListenerContainerFactory().createListenerContainer(this);
     }
 
     public void configureMessageListener(EndpointMessageListener listener) {
-        // TODO: any endpoint options to configure
+        listener.setAsync(isAsyncConsumer());
+        listener.setDisableReplyTo(isDisableReplyTo());
     }
 
     protected boolean parseArgsBoolean(Map<String, Object> args, String key, String defaultValue) {
@@ -381,10 +384,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         }
     }
 
-    public void declareElements(DefaultMessageListenerContainer container) {
-        AmqpAdmin admin = container.getAmqpAdmin();
+    public void declareElements(AbstractMessageListenerContainer container) {
+        AmqpAdmin admin = null;
+        if (container instanceof DefaultMessageListenerContainer) {
+            admin = ((DefaultMessageListenerContainer) container).getAmqpAdmin();
+        }
         if (admin != null && autoDeclare) {
-
             // bind dead letter exchange
             if (deadLetterExchange != null) {
                 ExchangeBuilder eb = new ExchangeBuilder(deadLetterExchange, deadLetterExchangeType);

@@ -883,6 +883,40 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify the timeout in milliseconds to be used when waiting for a
+         * reply message when doing request/reply messaging. The default value
+         * is 5 seconds. A negative value indicates an indefinite timeout.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: producer
+         * 
+         * @param replyTimeout the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointProducerBuilder replyTimeout(long replyTimeout) {
+            doSetProperty("replyTimeout", replyTimeout);
+            return this;
+        }
+        /**
+         * Specify the timeout in milliseconds to be used when waiting for a
+         * reply message when doing request/reply messaging. The default value
+         * is 5 seconds. A negative value indicates an indefinite timeout.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: producer
+         * 
+         * @param replyTimeout the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointProducerBuilder replyTimeout(String replyTimeout) {
+            doSetProperty("replyTimeout", replyTimeout);
+            return this;
+        }
+        /**
          * Specifies whether to use transacted mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
