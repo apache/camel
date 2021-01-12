@@ -153,6 +153,16 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 </camelContext>
 ----
 
+== Default Exchange Name
+
+To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
+in the endpoint uri, such as:
+
+[source,java]
+----
+to("spring-rabbitmq:default?routingKey=foo")
+----
+
 == Request / Reply
 
 Request and reply messaging is supported using https://www.rabbitmq.com/direct-reply-to.html[RabbitMQ direct reply-to].
@@ -178,7 +188,7 @@ from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
     .transform(body().prepend("Hello "));
 ----
 
-The Spring RabbitMQ will automatic nessasary declare the elements and setup the binding between the exchange, queue and routing keys.
+The Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
 This can be turned off by setting `autoDeclare=false`.
 
 == Reuse endpoint and send to different destinations computed at runtime
@@ -196,8 +206,8 @@ You can specify using the following headers:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=====================================================================
 |Header |Type |Description
-|`CamelRabbitmqExchangeOverrideName` |`String` |The exchange name.
-|`CamelRabbitmqRoutingOverrideKey` |`String` |The routing key.
+|`CamelSpringRabbitmqExchangeOverrideName` |`String` |The exchange name.
+|`CamelSpringRabbitmqRoutingOverrideKey` |`String` |The routing key.
 |=====================================================================
 
 For example, the following route shows how you can compute a destination
@@ -221,7 +231,7 @@ setting the `CamelRabbitmqExchangeOverrideName` header as follows:
 ----
 public void setExchangeHeader(Exchange exchange) {
    String region = ....
-   exchange.getIn().setHeader("CamelRabbitmqExchangeOverrideName", "order-" + region);
+   exchange.getIn().setHeader("CamelSpringRabbitmqExchangeOverrideName", "order-" + region);
 }
 ----
 
@@ -229,7 +239,7 @@ Then Camel will read this header and use it as the exchange name instead
 of the one configured on the endpoint. So, in this example Camel sends
 the message to `spring-rabbitmq:order-emea`, assuming the `region` value was `emea`.
 
-Keep in mind that the producer removes both `CamelRabbitmqExchangeOverrideName` and `CamelRabbitmqRoutingOverrideKey`
+Keep in mind that the producer removes both `CamelSpringRabbitmqExchangeOverrideName` and `CamelSpringRabbitmqRoutingOverrideKey`
 headers from the exchange and do not propagate them to the created Rabbitmq
 message in order to avoid the accidental loops
 in the routes (in scenarios when the message will be forwarded to the
@@ -250,4 +260,4 @@ from("direct:order")
   .toD("spring-rabbit:order-${header.orderType}");
 ----
 
-include::camel-spring-boot::page$rabbitmq-starter.adoc[]
+include::camel-spring-boot::page$spring-rabbitmq-starter.adoc[]

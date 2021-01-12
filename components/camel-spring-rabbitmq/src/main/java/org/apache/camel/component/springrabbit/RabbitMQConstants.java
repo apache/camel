@@ -20,9 +20,9 @@ public final class RabbitMQConstants {
 
     public static final String DEFAULT_EXCHANGE_NAME = "default";
 
-    public static final String CHANNEL = "CamelRabbitmqChannel";
-    public static final String ROUTING_OVERRIDE_KEY = "CamelRabbitmqRoutingOverrideKey";
-    public static final String EXCHANGE_OVERRIDE_NAME = "CamelRabbitmqExchangeOverrideName";
+    public static final String CHANNEL = "CamelSpringRabbitmqChannel";
+    public static final String ROUTING_OVERRIDE_KEY = "CamelSpringRabbitmqRoutingOverrideKey";
+    public static final String EXCHANGE_OVERRIDE_NAME = "CamelSpringRabbitmqExchangeOverrideName";
 
     public static final String DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     public static final String DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
