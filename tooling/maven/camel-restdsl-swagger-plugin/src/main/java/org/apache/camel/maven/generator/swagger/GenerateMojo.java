@@ -100,6 +100,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
                 generator.withApiContextPath(apiContextPath);
             }
 
+            if (clientRequestValidation) {
+                generator.withClientRequestValidation();
+            }
+
             // if its a spring boot project and we use servlet then we should generate additional source code
             if (detectSpringBootFromClasspath() && "servlet".equals(comp)) {
                 try {
