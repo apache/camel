@@ -49,6 +49,9 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "consumer", defaultValue = "true",
               description = "Specifies whether the consumer container should auto-startup.")
     private boolean autoStartup = true;
+    @Metadata(label = "consumer", defaultValue = "true",
+              description = "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting.")
+    private boolean autoDeclare = true;
     @Metadata(label = "advanced",
               description = "To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message.")
     private MessageConverter messageConverter;
@@ -105,6 +108,7 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setMessageConverter(messageConverter);
         endpoint.setMessagePropertiesConverter(messagePropertiesConverter);
         endpoint.setAutoStartup(autoStartup);
+        endpoint.setAutoDeclare(autoDeclare);
         endpoint.setDeadLetterExchange(deadLetterExchange);
         endpoint.setDeadLetterExchangeType(deadLetterExchangeType);
         endpoint.setDeadLetterQueue(deadLetterQueue);
@@ -161,6 +165,14 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public boolean isAutoDeclare() {
+        return autoDeclare;
+    }
+
+    public void setAutoDeclare(boolean autoDeclare) {
+        this.autoDeclare = autoDeclare;
     }
 
     public String getDeadLetterExchange() {

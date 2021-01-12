@@ -23,6 +23,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "amqpadmin":
         case "amqpAdmin": target.setAmqpAdmin(property(camelContext, org.springframework.amqp.core.AmqpAdmin.class, value)); return true;
+        case "autodeclare":
+        case "autoDeclare": target.setAutoDeclare(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -71,6 +73,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "amqpadmin":
         case "amqpAdmin": return org.springframework.amqp.core.AmqpAdmin.class;
+        case "autodeclare":
+        case "autoDeclare": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
         case "autowiredenabled":
@@ -115,6 +119,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "amqpadmin":
         case "amqpAdmin": return target.getAmqpAdmin();
+        case "autodeclare":
+        case "autoDeclare": return target.isAutoDeclare();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
         case "autowiredenabled":

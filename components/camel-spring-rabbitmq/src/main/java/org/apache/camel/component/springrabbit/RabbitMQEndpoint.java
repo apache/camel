@@ -55,6 +55,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public static final String ARG_PREFIX = "arg.";
+    public static final String CONSUMER_ARG_PREFIX = "consumer.";
     public static final String EXCHANGE_ARG_PREFIX = "exchange.";
     public static final String QUEUE_ARG_PREFIX = "queue.";
     public static final String BINDING_ARG_PREFIX = "binding.";
@@ -108,7 +109,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private MessagePropertiesConverter messagePropertiesConverter;
     @UriParam(label = "advanced", prefix = ARG_PREFIX, multiValue = true,
               description = "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
-                            + " arg.exchange. arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue. arg.dlq.binding."
+                            + " arg.consumer. arg.exchange. arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue. arg.dlq.binding."
                             + " For example to declare a queue with message ttl argument: args=arg.queue.x-message-ttl=60000")
     private Map<String, Object> args;
     @UriParam(label = "consumer",
@@ -345,28 +346,46 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return exchange;
     }
 
+    public Map<String, Object> getConsumerArgs() {
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, CONSUMER_ARG_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
+    }
+
     public Map<String, Object> getExchangeArgs() {
-        return PropertiesHelper.extractProperties(args, EXCHANGE_ARG_PREFIX, false);
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, EXCHANGE_ARG_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
     }
 
     public Map<String, Object> getQueueArgs() {
-        return PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX, false);
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
     }
 
     public Map<String, Object> getBindingArgs() {
-        return PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX, false);
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
     }
 
     public Map<String, Object> getDlqExchangeArgs() {
-        return PropertiesHelper.extractProperties(args, DLQ_EXCHANGE_ARG_PREFIX, false);
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, DLQ_EXCHANGE_ARG_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
     }
 
     public Map<String, Object> getDlqQueueArgs() {
-        return PropertiesHelper.extractProperties(args, DLQ_QUEUE_ARG_PREFIX, false);
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, DLQ_QUEUE_ARG_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
     }
 
     public Map<String, Object> getDlqBindingArgs() {
-        return PropertiesHelper.extractProperties(args, DLQ_BINDING_PREFIX, false);
+        Map<String, Object> answer = PropertiesHelper.extractProperties(args, DLQ_BINDING_PREFIX, false);
+        prepareArgs(answer);
+        return answer;
     }
 
     /**
@@ -424,7 +443,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                 if (deadLetterQueue != null) {
                     QueueBuilder qb = QueueBuilder.durable(deadLetterQueue);
                     Map<String, Object> args = getDlqQueueArgs();
-                    formatSpecialQueueArguments(args);
                     qb.withArguments(args);
                     final Queue rabbitQueue = qb.build();
                     admin.declareQueue(rabbitQueue);
@@ -464,8 +482,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
             if (queues != null) {
                 for (String queue : queues.split(",")) {
                     args = getQueueArgs();
-                    populateQueueArgumentsFromDeadLetterExchange(args);
-                    formatSpecialQueueArguments(args);
+                    prepareDeadLetterQueueArgs(args);
                     durable = parseArgsBoolean(args, "durable", "false");
                     autoDelete = parseArgsBoolean(args, "autoDelete", "false");
                     boolean exclusive = parseArgsBoolean(args, "exclusive", "false");
@@ -500,41 +517,41 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         }
     }
 
-    private void populateQueueArgumentsFromDeadLetterExchange(Map<String, Object> queueArgs) {
+    private void prepareDeadLetterQueueArgs(Map<String, Object> args) {
         if (deadLetterExchange != null) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE, deadLetterExchange);
+            args.put(RabbitMQConstants.DEAD_LETTER_EXCHANGE, deadLetterExchange);
 
             if (deadLetterRoutingKey != null) {
-                queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY, deadLetterRoutingKey);
+                args.put(RabbitMQConstants.DEAD_LETTER_ROUTING_KEY, deadLetterRoutingKey);
             }
         }
     }
 
-    private void formatSpecialQueueArguments(Map<String, Object> queueArgs) {
+    private void prepareArgs(Map<String, Object> args) {
         // some arguments must be in numeric values so we need to fix this
-        Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
+        Object queueLengthLimit = args.get(RabbitMQConstants.MAX_LENGTH);
         if (queueLengthLimit instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+            args.put(RabbitMQConstants.MAX_LENGTH, Long.parseLong((String) queueLengthLimit));
         }
 
-        Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY);
+        Object queueMaxPriority = args.get(RabbitMQConstants.MAX_PRIORITY);
         if (queueMaxPriority instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String) queueMaxPriority));
+            args.put(RabbitMQConstants.MAX_PRIORITY, Integer.parseInt((String) queueMaxPriority));
         }
 
-        Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
+        Object queueMessageTtl = args.get(RabbitMQConstants.MESSAGE_TTL);
         if (queueMessageTtl instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
+            args.put(RabbitMQConstants.MESSAGE_TTL, Long.parseLong((String) queueMessageTtl));
         }
 
-        Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
+        Object queueExpiration = args.get(RabbitMQConstants.EXPIRES);
         if (queueExpiration instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+            args.put(RabbitMQConstants.EXPIRES, Long.parseLong((String) queueExpiration));
         }
 
-        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY);
+        Object singleConsumer = args.get(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER);
         if (singleConsumer instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY,
+            args.put(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER,
                     Boolean.parseBoolean((String) singleConsumer));
         }
     }

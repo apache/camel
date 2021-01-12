@@ -46,6 +46,7 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         }
         listener.setPrefetchCount(endpoint.getComponent().getPrefetchCount());
         listener.setShutdownTimeout(endpoint.getComponent().getShutdownTimeout());
+        listener.setConsumerArguments(endpoint.getConsumerArgs());
         return listener;
     }
 

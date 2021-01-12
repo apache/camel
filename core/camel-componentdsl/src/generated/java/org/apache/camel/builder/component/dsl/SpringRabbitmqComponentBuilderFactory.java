@@ -106,6 +106,22 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether the consumer should auto declare binding between
+         * exchange, queue and routing key when starting.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param autoDeclare the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder autoDeclare(boolean autoDeclare) {
+            doSetProperty("autoDeclare", autoDeclare);
+            return this;
+        }
+        /**
          * Specifies whether the consumer container should auto-startup.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -390,6 +406,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "amqpAdmin": ((RabbitMQComponent) component).setAmqpAdmin((org.springframework.amqp.core.AmqpAdmin) value); return true;
             case "connectionFactory": ((RabbitMQComponent) component).setConnectionFactory((org.springframework.amqp.rabbit.connection.ConnectionFactory) value); return true;
             case "testConnectionOnStartup": ((RabbitMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "autoDeclare": ((RabbitMQComponent) component).setAutoDeclare((boolean) value); return true;
             case "autoStartup": ((RabbitMQComponent) component).setAutoStartup((boolean) value); return true;
             case "bridgeErrorHandler": ((RabbitMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deadLetterExchange": ((RabbitMQComponent) component).setDeadLetterExchange((java.lang.String) value); return true;

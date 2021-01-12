@@ -629,10 +629,10 @@ public interface RabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each element: arg.exchange.
-         * arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue.
-         * arg.dlq.binding. For example to declare a queue with message ttl
-         * argument: args=arg.queue.x-message-ttl=60000.
+         * different prefix is required for each element: arg.consumer.
+         * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
+         * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
+         * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -654,10 +654,10 @@ public interface RabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each element: arg.exchange.
-         * arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue.
-         * arg.dlq.binding. For example to declare a queue with message ttl
-         * argument: args=arg.queue.x-message-ttl=60000.
+         * different prefix is required for each element: arg.consumer.
+         * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
+         * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
+         * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -1021,10 +1021,10 @@ public interface RabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each element: arg.exchange.
-         * arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue.
-         * arg.dlq.binding. For example to declare a queue with message ttl
-         * argument: args=arg.queue.x-message-ttl=60000.
+         * different prefix is required for each element: arg.consumer.
+         * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
+         * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
+         * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -1046,10 +1046,10 @@ public interface RabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each element: arg.exchange.
-         * arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue.
-         * arg.dlq.binding. For example to declare a queue with message ttl
-         * argument: args=arg.queue.x-message-ttl=60000.
+         * different prefix is required for each element: arg.consumer.
+         * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
+         * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
+         * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -1329,10 +1329,10 @@ public interface RabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each element: arg.exchange.
-         * arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue.
-         * arg.dlq.binding. For example to declare a queue with message ttl
-         * argument: args=arg.queue.x-message-ttl=60000.
+         * different prefix is required for each element: arg.consumer.
+         * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
+         * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
+         * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -1352,10 +1352,10 @@ public interface RabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify arguments for configuring the different RabbitMQ concepts, a
-         * different prefix is required for each element: arg.exchange.
-         * arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue.
-         * arg.dlq.binding. For example to declare a queue with message ttl
-         * argument: args=arg.queue.x-message-ttl=60000.
+         * different prefix is required for each element: arg.consumer.
+         * arg.exchange. arg.queue. arg.binding. arg.dlq.exchange.
+         * arg.dlq.queue. arg.dlq.binding. For example to declare a queue with
+         * message ttl argument: args=arg.queue.x-message-ttl=60000.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
