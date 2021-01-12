@@ -432,6 +432,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         }
     }
 
+    protected String parseArgsString(Map<String, Object> args, String key, String defaultValue) {
+        Object answer = args.remove(key);
+        if (answer == null) {
+            answer = defaultValue;
+        }
+        if (answer != null) {
+            return getCamelContext().getTypeConverter().convertTo(String.class, answer);
+        } else {
+            return null;
+        }
+    }
+
     // TODO: auto-declare for producer only
 
     public void declareElements(AbstractMessageListenerContainer container) {
@@ -515,6 +527,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                 if (exclusive) {
                     qb.exclusive();
                 }
+                // setup DLQ
+                String dle = parseArgsString(args, "x-dead-letter-exchange", deadLetterExchange);
+                if (dle != null) {
+                    qb.deadLetterExchange(dle);
+                }
+                String dlrk = parseArgsString(args, "x-dead-letter-routing-key", deadLetterRoutingKey);
+                if (dlrk != null) {
+                    qb.deadLetterRoutingKey(dlrk);
+                }
                 qb.withArguments(map);
                 final Queue rabbitQueue = qb.build();
 
@@ -546,7 +567,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private void prepareDeadLetterQueueArgs(Map<String, Object> args) {
         if (deadLetterExchange != null) {
             args.put(RabbitMQConstants.DEAD_LETTER_EXCHANGE, deadLetterExchange);
-
             if (deadLetterRoutingKey != null) {
                 args.put(RabbitMQConstants.DEAD_LETTER_ROUTING_KEY, deadLetterRoutingKey);
             }
@@ -555,30 +575,33 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     private void prepareArgs(Map<String, Object> args) {
         // some arguments must be in numeric values so we need to fix this
-        Object queueLengthLimit = args.get(RabbitMQConstants.MAX_LENGTH);
-        if (queueLengthLimit instanceof String) {
-            args.put(RabbitMQConstants.MAX_LENGTH, Long.parseLong((String) queueLengthLimit));
+        Object arg = args.get(RabbitMQConstants.MAX_LENGTH);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.MAX_LENGTH, Long.parseLong((String) arg));
         }
-
-        Object queueMaxPriority = args.get(RabbitMQConstants.MAX_PRIORITY);
-        if (queueMaxPriority instanceof String) {
-            args.put(RabbitMQConstants.MAX_PRIORITY, Integer.parseInt((String) queueMaxPriority));
+        arg = args.get(RabbitMQConstants.MAX_LENGTH_BYTES);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.MAX_LENGTH_BYTES, Long.parseLong((String) arg));
         }
-
-        Object queueMessageTtl = args.get(RabbitMQConstants.MESSAGE_TTL);
-        if (queueMessageTtl instanceof String) {
-            args.put(RabbitMQConstants.MESSAGE_TTL, Long.parseLong((String) queueMessageTtl));
+        arg = args.get(RabbitMQConstants.MAX_PRIORITY);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.MAX_PRIORITY, Integer.parseInt((String) arg));
         }
-
-        Object queueExpiration = args.get(RabbitMQConstants.EXPIRES);
-        if (queueExpiration instanceof String) {
-            args.put(RabbitMQConstants.EXPIRES, Long.parseLong((String) queueExpiration));
+        arg = args.get(RabbitMQConstants.DELIVERY_LIMIT);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.DELIVERY_LIMIT, Integer.parseInt((String) arg));
         }
-
-        Object singleConsumer = args.get(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER);
-        if (singleConsumer instanceof String) {
-            args.put(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER,
-                    Boolean.parseBoolean((String) singleConsumer));
+        arg = args.get(RabbitMQConstants.MESSAGE_TTL);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.MESSAGE_TTL, Long.parseLong((String) arg));
+        }
+        arg = args.get(RabbitMQConstants.EXPIRES);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.EXPIRES, Long.parseLong((String) arg));
+        }
+        arg = args.get(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER);
+        if (arg instanceof String) {
+            args.put(RabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean((String) arg));
         }
     }
 

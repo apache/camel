@@ -45,7 +45,7 @@ determines the exchange the queue will be bound to.
 == Options
 
 // component options: START
-The Spring RabbitMQ component supports 19 options, which are listed below.
+The Spring RabbitMQ component supports 20 options, which are listed below.
 
 
 
@@ -68,6 +68,7 @@ The Spring RabbitMQ component supports 19 options, which are listed below.
 | *shutdownTimeout* (consumer) | The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes they will be allowed to finish processing as long as they can finish within this timeout. | 5000 | long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *ignoreDeclarationExceptions* (advanced) | Switch on ignore exceptions such as mismatched properties when declaring | false | boolean
 | *messageConverter* (advanced) | To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message. |  | MessageConverter
 | *messagePropertiesConverter* (advanced) | To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties. |  | MessagePropertiesConverter
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
@@ -163,6 +164,44 @@ in the endpoint uri, such as:
 to("spring-rabbitmq:default?routingKey=foo")
 ----
 
+== Auto declare exchanges, queues and bindings
+
+The Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
+This can be turned off by setting `autoDeclare=false`.
+
+The elements can be configured using the multi-valued `args` option.
+
+For example to specify the queue as durable and exclusive, you can configure the endpoint uri with `arg.queue.durable=true&arg.queue.exclusive=true`.
+
+*Exchanges*
+
+[width="100%",cols="10%,10%,70%,10%",options="header",]
+|=====================================================================
+|Option |Type |Description|Default
+| autoDelete | boolean | True if the server should delete the exchange when it is no longer in use (if all bindings are deleted). | false
+| durable | boolean | A durable exchange will survive a server restart. | true
+|=====================================================================
+
+You can also configure any additional `x-` arguments.
+See details in the RabbitMQ documentation.
+
+
+*Queues*
+
+[width="100%",cols="10%,10%,70%,10%",options="header",]
+|=====================================================================
+|Option |Type |Description|Default
+| autoDelete | boolean | True if the server should delete the exchange when it is no longer in use (if all bindings are deleted). | false
+| durable | boolean | A durable queue will survive a server restart. | false
+| exclusive | boolean | Whether the queue is exclusive | false
+| x-dead-letter-exchange | String | The name of the dead letter exchange. If none configured then the component configured value is used. |
+| x-dead-letter-routing-key | String | The routing key for the dead letter exchange. If none configured then the component configured value is used. |
+|=====================================================================
+
+You can also configure any additional `x-` arguments, such as the message time to live, via `x-message-ttl`, and many others.
+See details in the RabbitMQ documentation.
+
+
 == Request / Reply
 
 Request and reply messaging is supported using https://www.rabbitmq.com/direct-reply-to.html[RabbitMQ direct reply-to].
@@ -187,9 +226,6 @@ from("spring-rabbitmq:cheese?queues=myqueue&routingKey=foo.bar")
     .to("log:input")
     .transform(body().prepend("Hello "));
 ----
-
-The Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
-This can be turned off by setting `autoDeclare=false`.
 
 == Reuse endpoint and send to different destinations computed at runtime
 

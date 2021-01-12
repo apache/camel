@@ -37,8 +37,11 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
 
         AmqpAdmin admin = endpoint.getComponent().getAmqpAdmin();
         if (endpoint.isAutoDeclare() && admin == null) {
-            admin = new RabbitAdmin(endpoint.getConnectionFactory());
+            RabbitAdmin ra = new RabbitAdmin(endpoint.getConnectionFactory());
+            ra.setIgnoreDeclarationExceptions(endpoint.getComponent().isIgnoreDeclarationExceptions());
+            admin = ra;
         }
+
         listener.setAutoDeclare(endpoint.isAutoDeclare());
         listener.setAmqpAdmin(admin);
         if (endpoint.getComponent().getErrorHandler() != null) {

@@ -335,6 +335,23 @@ public interface SpringRabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Switch on ignore exceptions such as mismatched properties when
+         * declaring.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param ignoreDeclarationExceptions the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitmqComponentBuilder ignoreDeclarationExceptions(
+                boolean ignoreDeclarationExceptions) {
+            doSetProperty("ignoreDeclarationExceptions", ignoreDeclarationExceptions);
+            return this;
+        }
+        /**
          * To use a custom MessageConverter so you can be in control how to map
          * to/from a org.springframework.amqp.core.Message.
          * 
@@ -419,6 +436,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "shutdownTimeout": ((RabbitMQComponent) component).setShutdownTimeout((long) value); return true;
             case "lazyStartProducer": ((RabbitMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((RabbitMQComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "ignoreDeclarationExceptions": ((RabbitMQComponent) component).setIgnoreDeclarationExceptions((boolean) value); return true;
             case "messageConverter": ((RabbitMQComponent) component).setMessageConverter((org.springframework.amqp.support.converter.MessageConverter) value); return true;
             case "messagePropertiesConverter": ((RabbitMQComponent) component).setMessagePropertiesConverter((org.apache.camel.component.springrabbit.MessagePropertiesConverter) value); return true;
             case "headerFilterStrategy": ((RabbitMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;

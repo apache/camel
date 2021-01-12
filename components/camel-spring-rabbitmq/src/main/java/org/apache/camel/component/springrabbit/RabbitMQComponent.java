@@ -86,6 +86,8 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "consumer,advanced",
               description = "To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages")
     private ListenerContainerFactory listenerContainerFactory = new DefaultListenerContainerFactory();
+    @Metadata(label = "advanced", description = "Switch on ignore exceptions such as mismatched properties when declaring")
+    private boolean ignoreDeclarationExceptions;
 
     @Override
     protected void doInit() throws Exception {
@@ -249,5 +251,13 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
 
     public void setListenerContainerFactory(ListenerContainerFactory listenerContainerFactory) {
         this.listenerContainerFactory = listenerContainerFactory;
+    }
+
+    public boolean isIgnoreDeclarationExceptions() {
+        return ignoreDeclarationExceptions;
+    }
+
+    public void setIgnoreDeclarationExceptions(boolean ignoreDeclarationExceptions) {
+        this.ignoreDeclarationExceptions = ignoreDeclarationExceptions;
     }
 }

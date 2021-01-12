@@ -45,6 +45,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "errorHandler": target.setErrorHandler(property(camelContext, org.springframework.util.ErrorHandler.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "ignoredeclarationexceptions":
+        case "ignoreDeclarationExceptions": target.setIgnoreDeclarationExceptions(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "listenercontainerfactory":
@@ -95,6 +97,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "errorHandler": return org.springframework.util.ErrorHandler.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "ignoredeclarationexceptions":
+        case "ignoreDeclarationExceptions": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "listenercontainerfactory":
@@ -141,6 +145,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "errorHandler": return target.getErrorHandler();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "ignoredeclarationexceptions":
+        case "ignoreDeclarationExceptions": return target.isIgnoreDeclarationExceptions();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "listenercontainerfactory":

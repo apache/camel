@@ -27,8 +27,10 @@ public final class RabbitMQConstants {
     public static final String DEAD_LETTER_EXCHANGE = "x-dead-letter-exchange";
     public static final String DEAD_LETTER_ROUTING_KEY = "x-dead-letter-routing-key";
     public static final String MAX_LENGTH = "x-max-length";
+    public static final String MAX_LENGTH_BYTES = "x-max-length-bytes";
     public static final String MAX_PRIORITY = "x-max-priority";
     public static final String MESSAGE_TTL = "x-message-ttl";
+    public static final String DELIVERY_LIMIT = "x-delivery-limit";
     public static final String EXPIRES = "x-expires";
     public static final String SINGLE_ACTIVE_CONSUMER = "x-single-active-consumer";
 
