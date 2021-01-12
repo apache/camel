@@ -464,9 +464,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                 }
             }
 
-            Map<String, Object> args = getExchangeArgs();
-            boolean durable = parseArgsBoolean(args, "durable", "true");
-            boolean autoDelete = parseArgsBoolean(args, "autoDelete", "false");
+            Map<String, Object> map = getExchangeArgs();
+            boolean durable = parseArgsBoolean(map, "durable", "true");
+            boolean autoDelete = parseArgsBoolean(map, "autoDelete", "false");
             if (!durable || autoDelete) {
                 LOG.info("Auto-declaring a non-durable or auto-delete Exchange ("
                          + exchangeName
@@ -481,7 +481,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
             if (autoDelete) {
                 eb.autoDelete();
             }
-            eb.withArguments(args);
+            eb.withArguments(map);
             final org.springframework.amqp.core.Exchange rabbitExchange = eb.build();
             admin.declareExchange(rabbitExchange);
 
@@ -497,11 +497,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
             for (String queue : queuesToDeclare.split(",")) {
                 queue = queue.trim();
-                args = getQueueArgs();
-                prepareDeadLetterQueueArgs(args);
-                durable = parseArgsBoolean(args, "durable", "false");
-                autoDelete = parseArgsBoolean(args, "autoDelete", autoDeleteDefault);
-                boolean exclusive = parseArgsBoolean(args, "exclusive", "false");
+                map = getQueueArgs();
+                prepareDeadLetterQueueArgs(map);
+                durable = parseArgsBoolean(map, "durable", "false");
+                autoDelete = parseArgsBoolean(map, "autoDelete", autoDeleteDefault);
+                boolean exclusive = parseArgsBoolean(map, "exclusive", "false");
 
                 QueueBuilder qb;
                 if (queue.isEmpty()) {
@@ -515,7 +515,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                 if (exclusive) {
                     qb.exclusive();
                 }
-                qb.withArguments(args);
+                qb.withArguments(map);
                 final Queue rabbitQueue = qb.build();
 
                 if (!durable || autoDelete || exclusive) {

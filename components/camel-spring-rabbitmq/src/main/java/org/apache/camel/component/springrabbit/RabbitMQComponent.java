@@ -23,11 +23,13 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.util.PropertiesHelper;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.util.ErrorHandler;
 
+import static org.apache.camel.component.springrabbit.RabbitMQEndpoint.ARG_PREFIX;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_PREFETCH_COUNT;
 import static org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer.DEFAULT_SHUTDOWN_TIMEOUT;
 
@@ -115,7 +117,9 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
         endpoint.setDeadLetterRoutingKey(deadLetterRoutingKey);
         endpoint.setReplyTimeout(replyTimeout);
 
+        endpoint.setArgs(PropertiesHelper.extractProperties(parameters, ARG_PREFIX));
         setProperties(endpoint, parameters);
+
         return endpoint;
     }
 
