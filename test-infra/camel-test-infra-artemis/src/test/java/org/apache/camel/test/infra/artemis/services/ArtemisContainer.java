@@ -54,7 +54,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      * @return the end point URL as a string
      */
     public String amqpEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), amqpPort());
+        return String.format("amqp://%s:%d", getContainerIpAddress(), amqpPort());
     }
 
     /**
