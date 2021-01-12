@@ -33,6 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.ExchangeBuilder;
@@ -93,10 +94,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean asyncConsumer;
     @UriParam(label = "common", description = "Routing key.")
     private String routingKey;
-    // Transaction related configuration
-    @UriParam(label = "transaction",
-              description = "Specifies whether to use transacted mode")
-    private boolean transacted;
     @UriParam(description = "Specifies whether to test the connection on startup."
                             + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
                             + " If a connection cannot be granted then Camel throws an exception on startup."
@@ -114,6 +111,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                             + " arg.exchange. arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue. arg.dlq.binding."
                             + " For example to declare a queue with message ttl argument: args=arg.queue.x-message-ttl=60000")
     private Map<String, Object> args;
+    @UriParam(label = "consumer",
+              description = "Flag controlling the behaviour of the container with respect to message acknowledgement. The most common usage is to let the container handle the acknowledgements"
+                            + " (so the listener doesn't need to know about the channel or the message)."
+                            + " Set to AcknowledgeMode.MANUAL if the listener will send the acknowledgements itself using Channel.basicAck(long, boolean). Manual acks are consistent with either a transactional or non-transactional channel,"
+                            + " but if you are doing no other work on the channel at the same other than receiving a single message then the transaction is probably unnecessary."
+                            + " Set to AcknowledgeMode.NONE to tell the broker not to expect any acknowledgements, and it will assume all messages are acknowledged as soon as they are sent (this is autoack in native Rabbit broker terms)."
+                            + " If AcknowledgeMode.NONE then the channel cannot be transactional (so the container will fail on start up if that flag is accidentally set).")
+    private AcknowledgeMode acknowledgeMode = AcknowledgeMode.AUTO;
+    @UriParam(label = "consumer", description = "Set to true for an exclusive consumer")
+    private boolean exclusive;
+    @UriParam(label = "consumer", description = "Set to true for an no-local consumer")
+    private boolean noLocal;
     @UriParam(label = "consumer", description = "The name of the dead letter exchange")
     private String deadLetterExchange;
     @UriParam(label = "consumer", description = "The name of the dead letter queue")
@@ -162,14 +171,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public void setQueues(String queues) {
         this.queues = queues;
-    }
-
-    public boolean isTransacted() {
-        return transacted;
-    }
-
-    public void setTransacted(boolean transacted) {
-        this.transacted = transacted;
     }
 
     public boolean isAutoStartup() {
@@ -242,6 +243,30 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public void setArgs(Map<String, Object> args) {
         this.args = args;
+    }
+
+    public AcknowledgeMode getAcknowledgeMode() {
+        return acknowledgeMode;
+    }
+
+    public void setAcknowledgeMode(AcknowledgeMode acknowledgeMode) {
+        this.acknowledgeMode = acknowledgeMode;
+    }
+
+    public boolean isExclusive() {
+        return exclusive;
+    }
+
+    public void setExclusive(boolean exclusive) {
+        this.exclusive = exclusive;
+    }
+
+    public boolean isNoLocal() {
+        return noLocal;
+    }
+
+    public void setNoLocal(boolean noLocal) {
+        this.noLocal = noLocal;
     }
 
     public String getDeadLetterExchange() {

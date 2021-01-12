@@ -179,6 +179,66 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Flag controlling the behaviour of the container with respect to
+         * message acknowledgement. The most common usage is to let the
+         * container handle the acknowledgements (so the listener doesn't need
+         * to know about the channel or the message). Set to
+         * AcknowledgeMode.MANUAL if the listener will send the acknowledgements
+         * itself using Channel.basicAck(long, boolean). Manual acks are
+         * consistent with either a transactional or non-transactional channel,
+         * but if you are doing no other work on the channel at the same other
+         * than receiving a single message then the transaction is probably
+         * unnecessary. Set to AcknowledgeMode.NONE to tell the broker not to
+         * expect any acknowledgements, and it will assume all messages are
+         * acknowledged as soon as they are sent (this is autoack in native
+         * Rabbit broker terms). If AcknowledgeMode.NONE then the channel cannot
+         * be transactional (so the container will fail on start up if that flag
+         * is accidentally set).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.springframework.amqp.core.AcknowledgeMode&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param acknowledgeMode the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder acknowledgeMode(
+                AcknowledgeMode acknowledgeMode) {
+            doSetProperty("acknowledgeMode", acknowledgeMode);
+            return this;
+        }
+        /**
+         * Flag controlling the behaviour of the container with respect to
+         * message acknowledgement. The most common usage is to let the
+         * container handle the acknowledgements (so the listener doesn't need
+         * to know about the channel or the message). Set to
+         * AcknowledgeMode.MANUAL if the listener will send the acknowledgements
+         * itself using Channel.basicAck(long, boolean). Manual acks are
+         * consistent with either a transactional or non-transactional channel,
+         * but if you are doing no other work on the channel at the same other
+         * than receiving a single message then the transaction is probably
+         * unnecessary. Set to AcknowledgeMode.NONE to tell the broker not to
+         * expect any acknowledgements, and it will assume all messages are
+         * acknowledged as soon as they are sent (this is autoack in native
+         * Rabbit broker terms). If AcknowledgeMode.NONE then the channel cannot
+         * be transactional (so the container will fail on start up if that flag
+         * is accidentally set).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.springframework.amqp.core.AcknowledgeMode&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param acknowledgeMode the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder acknowledgeMode(
+                String acknowledgeMode) {
+            doSetProperty("acknowledgeMode", acknowledgeMode);
+            return this;
+        }
+        /**
          * Whether the consumer processes the Exchange asynchronously. If
          * enabled then the consumer may pickup the next message from the queue,
          * while the previous message is being processed asynchronously (by the
@@ -409,6 +469,68 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set to true for an exclusive consumer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder exclusive(boolean exclusive) {
+            doSetProperty("exclusive", exclusive);
+            return this;
+        }
+        /**
+         * Set to true for an exclusive consumer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder exclusive(String exclusive) {
+            doSetProperty("exclusive", exclusive);
+            return this;
+        }
+        /**
+         * Set to true for an no-local consumer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder noLocal(boolean noLocal) {
+            doSetProperty("noLocal", noLocal);
+            return this;
+        }
+        /**
+         * Set to true for an no-local consumer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
+         */
+        default RabbitMQEndpointConsumerBuilder noLocal(String noLocal) {
+            doSetProperty("noLocal", noLocal);
+            return this;
+        }
+        /**
          * The queue(s) to use for consuming messages. Multiple queue names can
          * be separated by comma.
          * 
@@ -421,37 +543,6 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder queues(String queues) {
             doSetProperty("queues", queues);
-            return this;
-        }
-        /**
-         * Specifies whether to use transacted mode.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: transaction
-         * 
-         * @param transacted the value to set
-         * @return the dsl builder
-         */
-        default RabbitMQEndpointConsumerBuilder transacted(boolean transacted) {
-            doSetProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * Specifies whether to use transacted mode.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: transaction
-         * 
-         * @param transacted the value to set
-         * @return the dsl builder
-         */
-        default RabbitMQEndpointConsumerBuilder transacted(String transacted) {
-            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -916,37 +1007,6 @@ public interface RabbitMQEndpointBuilderFactory {
             doSetProperty("replyTimeout", replyTimeout);
             return this;
         }
-        /**
-         * Specifies whether to use transacted mode.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: transaction
-         * 
-         * @param transacted the value to set
-         * @return the dsl builder
-         */
-        default RabbitMQEndpointProducerBuilder transacted(boolean transacted) {
-            doSetProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * Specifies whether to use transacted mode.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: transaction
-         * 
-         * @param transacted the value to set
-         * @return the dsl builder
-         */
-        default RabbitMQEndpointProducerBuilder transacted(String transacted) {
-            doSetProperty("transacted", transacted);
-            return this;
-        }
     }
 
     /**
@@ -1255,37 +1315,6 @@ public interface RabbitMQEndpointBuilderFactory {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
-        /**
-         * Specifies whether to use transacted mode.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: transaction
-         * 
-         * @param transacted the value to set
-         * @return the dsl builder
-         */
-        default RabbitMQEndpointBuilder transacted(boolean transacted) {
-            doSetProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * Specifies whether to use transacted mode.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: transaction
-         * 
-         * @param transacted the value to set
-         * @return the dsl builder
-         */
-        default RabbitMQEndpointBuilder transacted(String transacted) {
-            doSetProperty("transacted", transacted);
-            return this;
-        }
     }
 
     /**
@@ -1444,6 +1473,16 @@ public interface RabbitMQEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>org.springframework.amqp.core.AcknowledgeMode</code>
+     * enum.
+     */
+    enum AcknowledgeMode {
+        NONE,
+        MANUAL,
+        AUTO;
     }
 
     public interface RabbitMQBuilders {

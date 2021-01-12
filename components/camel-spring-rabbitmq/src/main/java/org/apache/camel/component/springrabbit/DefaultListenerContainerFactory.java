@@ -20,6 +20,9 @@ import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 
+/**
+ * Default {@link ListenerContainerFactory}.
+ */
 public class DefaultListenerContainerFactory implements ListenerContainerFactory {
 
     @Override
@@ -28,6 +31,9 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         if (endpoint.getQueues() != null) {
             listener.setQueueNames(endpoint.getQueues().split(","));
         }
+        listener.setAcknowledgeMode(endpoint.getAcknowledgeMode());
+        listener.setExclusive(endpoint.isExclusive());
+        listener.setNoLocal(endpoint.isNoLocal());
 
         AmqpAdmin admin = endpoint.getComponent().getAmqpAdmin();
         if (endpoint.isAutoDeclare() && admin == null) {
@@ -42,4 +48,5 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         listener.setShutdownTimeout(endpoint.getComponent().getShutdownTimeout());
         return listener;
     }
+
 }

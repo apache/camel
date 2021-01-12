@@ -21,6 +21,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RabbitMQEndpoint target = (RabbitMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgemode":
+        case "acknowledgeMode": target.setAcknowledgeMode(property(camelContext, org.springframework.amqp.core.AcknowledgeMode.class, value)); return true;
         case "args": target.setArgs(property(camelContext, java.util.Map.class, value)); return true;
         case "asyncconsumer":
         case "asyncConsumer": target.setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
@@ -48,12 +50,15 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "exchangetype":
         case "exchangeType": target.setExchangeType(property(camelContext, java.lang.String.class, value)); return true;
+        case "exclusive": target.setExclusive(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messageconverter":
         case "messageConverter": target.setMessageConverter(property(camelContext, org.springframework.amqp.support.converter.MessageConverter.class, value)); return true;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": target.setMessagePropertiesConverter(property(camelContext, org.apache.camel.component.springrabbit.MessagePropertiesConverter.class, value)); return true;
+        case "nolocal":
+        case "noLocal": target.setNoLocal(property(camelContext, boolean.class, value)); return true;
         case "queues": target.setQueues(property(camelContext, java.lang.String.class, value)); return true;
         case "replytimeout":
         case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
@@ -62,7 +67,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -70,6 +74,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgemode":
+        case "acknowledgeMode": return org.springframework.amqp.core.AcknowledgeMode.class;
         case "args": return java.util.Map.class;
         case "asyncconsumer":
         case "asyncConsumer": return boolean.class;
@@ -97,12 +103,15 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "exchangetype":
         case "exchangeType": return java.lang.String.class;
+        case "exclusive": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "messageconverter":
         case "messageConverter": return org.springframework.amqp.support.converter.MessageConverter.class;
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return org.apache.camel.component.springrabbit.MessagePropertiesConverter.class;
+        case "nolocal":
+        case "noLocal": return boolean.class;
         case "queues": return java.lang.String.class;
         case "replytimeout":
         case "replyTimeout": return long.class;
@@ -111,7 +120,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
-        case "transacted": return boolean.class;
         default: return null;
         }
     }
@@ -120,6 +128,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RabbitMQEndpoint target = (RabbitMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgemode":
+        case "acknowledgeMode": return target.getAcknowledgeMode();
         case "args": return target.getArgs();
         case "asyncconsumer":
         case "asyncConsumer": return target.isAsyncConsumer();
@@ -147,12 +157,15 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "exchangePattern": return target.getExchangePattern();
         case "exchangetype":
         case "exchangeType": return target.getExchangeType();
+        case "exclusive": return target.isExclusive();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messageconverter":
         case "messageConverter": return target.getMessageConverter();
         case "messagepropertiesconverter":
         case "messagePropertiesConverter": return target.getMessagePropertiesConverter();
+        case "nolocal":
+        case "noLocal": return target.isNoLocal();
         case "queues": return target.getQueues();
         case "replytimeout":
         case "replyTimeout": return target.getReplyTimeout();
@@ -161,7 +174,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
-        case "transacted": return target.isTransacted();
         default: return null;
         }
     }

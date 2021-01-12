@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (23 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,6 +103,7 @@ with the following path and query parameters:
 | *disableReplyTo* (common) | Specifies whether Camel ignores the ReplyTo header in messages. If true, Camel does not send a reply back to the destination specified in the ReplyTo header. You can use this option if you want Camel to consume from a route and you do not want Camel to automatically send back a reply message because another component in your code handles the reply message. You can also use this option if you want to use Camel as a proxy between different message brokers and you want to route message from one system to another. | false | boolean
 | *routingKey* (common) | Routing key. |  | String
 | *testConnectionOnStartup* (common) | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | boolean
+| *acknowledgeMode* (consumer) | Flag controlling the behaviour of the container with respect to message acknowledgement. The most common usage is to let the container handle the acknowledgements (so the listener doesn't need to know about the channel or the message). Set to AcknowledgeMode.MANUAL if the listener will send the acknowledgements itself using Channel.basicAck(long, boolean). Manual acks are consistent with either a transactional or non-transactional channel, but if you are doing no other work on the channel at the same other than receiving a single message then the transaction is probably unnecessary. Set to AcknowledgeMode.NONE to tell the broker not to expect any acknowledgements, and it will assume all messages are acknowledged as soon as they are sent (this is autoack in native Rabbit broker terms). If AcknowledgeMode.NONE then the channel cannot be transactional (so the container will fail on start up if that flag is accidentally set). There are 3 enums and the value can be one of: NONE, MANUAL, AUTO |  | AcknowledgeMode
 | *asyncConsumer* (consumer) | Whether the consumer processes the Exchange asynchronously. If enabled then the consumer may pickup the next message from the queue, while the previous message is being processed asynchronously (by the Asynchronous Routing Engine). This means that messages may be processed not 100% strictly in order. If disabled (as default) then the Exchange is fully processed before the consumer will pickup the next message from the queue. | false | boolean
 | *autoDeclare* (consumer) | Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting. | true | boolean
 | *autoStartup* (consumer) | Specifies whether the consumer container should auto-startup. | true | boolean
@@ -112,6 +113,8 @@ with the following path and query parameters:
 | *deadLetterQueue* (consumer) | The name of the dead letter queue |  | String
 | *deadLetterRoutingKey* (consumer) | The routing key for the dead letter exchange |  | String
 | *exchangeType* (consumer) | The type of the exchange. There are 4 enums and the value can be one of: direct, fanout, headers, topic | direct | String
+| *exclusive* (consumer) | Set to true for an exclusive consumer | false | boolean
+| *noLocal* (consumer) | Set to true for an no-local consumer | false | boolean
 | *queues* (consumer) | The queue(s) to use for consuming messages. Multiple queue names can be separated by comma. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
@@ -121,7 +124,6 @@ with the following path and query parameters:
 | *messageConverter* (advanced) | To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message. |  | MessageConverter
 | *messagePropertiesConverter* (advanced) | To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties. |  | MessagePropertiesConverter
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
 |===
 // endpoint options: END
 
