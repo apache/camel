@@ -107,11 +107,13 @@ public interface SpringRabbitmqComponentBuilderFactory {
         }
         /**
          * Specifies whether the consumer should auto declare binding between
-         * exchange, queue and routing key when starting.
+         * exchange, queue and routing key when starting. Enabling this can be
+         * good for development to make it easy to standup exchanges, queues and
+         * bindings on the broker.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: consumer
          * 
          * @param autoDeclare the value to set

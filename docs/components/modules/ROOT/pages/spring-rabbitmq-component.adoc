@@ -55,7 +55,7 @@ The Spring RabbitMQ component supports 20 options, which are listed below.
 | *amqpAdmin* (common) | *Autowired* Optional AMQP Admin service to use for auto declaring elements (queues, exchanges, bindings) |  | AmqpAdmin
 | *connectionFactory* (common) | *Autowired* The connection factory to be use. A connection factory must be configured either on the component or endpoint. |  | ConnectionFactory
 | *testConnectionOnStartup* (common) | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | boolean
-| *autoDeclare* (consumer) | Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting. | true | boolean
+| *autoDeclare* (consumer) | Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting. Enabling this can be good for development to make it easy to standup exchanges, queues and bindings on the broker. | false | boolean
 | *autoStartup* (consumer) | Specifies whether the consumer container should auto-startup. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *deadLetterExchange* (consumer) | The name of the dead letter exchange |  | String
@@ -166,8 +166,12 @@ to("spring-rabbitmq:default?routingKey=foo")
 
 == Auto declare exchanges, queues and bindings
 
-The Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
-This can be turned off by setting `autoDeclare=false`.
+Before you can send or receive messages from RabbitMQ, then exchanges, queues and bindings must be setup first.
+
+In development mode it may be desirable to let Camel automatic do this.
+You can enable this by setting `autoDeclare=true` on the `RabbitMQComponent`.
+
+Then Spring RabbitMQ will automatic necessary declare the elements and setup the binding between the exchange, queue and routing keys.
 
 The elements can be configured using the multi-valued `args` option.
 

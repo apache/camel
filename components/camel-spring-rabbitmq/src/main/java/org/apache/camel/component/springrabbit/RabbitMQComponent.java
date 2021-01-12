@@ -51,9 +51,10 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "consumer", defaultValue = "true",
               description = "Specifies whether the consumer container should auto-startup.")
     private boolean autoStartup = true;
-    @Metadata(label = "consumer", defaultValue = "true",
-              description = "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting.")
-    private boolean autoDeclare = true;
+    @Metadata(label = "consumer", defaultValue = "false",
+              description = "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting."
+                            + " Enabling this can be good for development to make it easy to standup exchanges, queues and bindings on the broker.")
+    private boolean autoDeclare;
     @Metadata(label = "advanced",
               description = "To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message.")
     private MessageConverter messageConverter;

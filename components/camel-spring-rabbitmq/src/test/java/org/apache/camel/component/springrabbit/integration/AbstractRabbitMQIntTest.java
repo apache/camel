@@ -17,6 +17,7 @@
 package org.apache.camel.component.springrabbit.integration;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.springrabbit.RabbitMQComponent;
 import org.apache.camel.component.springrabbit.test.infra.services.RabbitMQServiceFactory;
 import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -45,6 +46,11 @@ public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("myCF", createConnectionFactory());
+
+        RabbitMQComponent rmq = context.getComponent("spring-rabbitmq", RabbitMQComponent.class);
+        // turn on auto declare
+        rmq.setAutoDeclare(true);
+
         return context;
     }
 }
