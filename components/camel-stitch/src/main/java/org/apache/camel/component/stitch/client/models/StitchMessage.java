@@ -9,7 +9,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#message-object
  */
-public final class StitchMessage {
+public class StitchMessage {
     public enum Action {
         @JsonProperty("upsert")
         UPSERT

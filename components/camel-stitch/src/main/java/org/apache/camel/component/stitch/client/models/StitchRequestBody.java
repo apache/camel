@@ -15,7 +15,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#batch-data--arguments
  */
-public final class StitchRequestBody {
+public class StitchRequestBody {
     @JsonProperty("table_name")
     private final String tableName;
 

@@ -1,6 +1,7 @@
 package org.apache.camel.component.stitch.client;
 
-import org.apache.camel.component.stitch.client.models.StitchMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchResponse;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +18,7 @@ public interface StitchClient {
      * 1. The loading behavior types used by the destination. Stitch supports Upsert and Append-Only loading.
      * 2. Whether the key_names property specifies Primary Key fields. If Primary Keys aren’t specified, data will be loaded using Append-Only loading.
      *
-     * @param message the required arguments as StitchMessage
+     * @param requestBody the required arguments as StitchRequestBody
      */
-    Mono<StitchResponse> batch(final StitchMessage message);
+    Mono<StitchResponse> batch(final StitchRequestBody requestBody) throws JsonProcessingException;
 }
