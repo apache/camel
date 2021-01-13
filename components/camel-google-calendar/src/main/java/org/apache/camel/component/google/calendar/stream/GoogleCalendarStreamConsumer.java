@@ -24,7 +24,6 @@ import java.util.Queue;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.DateTime;
-import com.google.api.client.util.Preconditions;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
@@ -72,7 +71,6 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
     protected int poll() throws Exception {
         Calendar.Events.List request = getClient().events().list(getConfiguration().getCalendarId());
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
-            Preconditions.checkArgument(!getConfiguration().isSyncFlow(), "query is incompatible with sync flow.");
             request.setQ(getConfiguration().getQuery());
         }
         if (ObjectHelper.isNotEmpty(getConfiguration().getMaxResults())) {
@@ -84,7 +82,6 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
             request.setTimeMin(new DateTime(date));
         }
         if (getConfiguration().isConsiderLastUpdate()) {
-            Preconditions.checkArgument(!getConfiguration().isSyncFlow(), "considerLastUpdate is incompatible with sync flow.");
             if (ObjectHelper.isNotEmpty(lastUpdate)) {
                 request.setUpdatedMin(lastUpdate);
             }

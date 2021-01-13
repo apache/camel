@@ -28,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Poll for changes in a Google Calendar.
@@ -56,6 +57,16 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        // check for incompatible configuration options
+        if (configuration.isSyncFlow()) {
+            if (ObjectHelper.isNotEmpty(configuration.getQuery())) {
+                throw new IllegalArgumentException("'query' parameter is incompatible with sync flow.");
+            }
+            if (configuration.isConsiderLastUpdate()) {
+                throw new IllegalArgumentException("'considerLastUpdate' is incompatible with sync flow.");
+            }
+        }
+
         final GoogleCalendarStreamConsumer consumer = new GoogleCalendarStreamConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
