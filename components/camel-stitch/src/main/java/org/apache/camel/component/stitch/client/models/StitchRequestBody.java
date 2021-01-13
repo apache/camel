@@ -1,31 +1,23 @@
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * This represents the schema here: https://www.stitchdata.com/docs/developers/import-api/api#batch-data--arguments
  */
 public class StitchRequestBody {
-    @JsonProperty("table_name")
     private final String tableName;
-
-    @JsonProperty("schema")
     private final StitchSchema schema;
-
-    @JsonProperty("messages")
     private final List<StitchMessage> messages;
-
-    @JsonProperty("key_names")
     private final Set<String> keyNames;
 
     private StitchRequestBody(String tableName, StitchSchema schema, List<StitchMessage> messages, Set<String> keyNames) {
@@ -55,8 +47,15 @@ public class StitchRequestBody {
         return keyNames;
     }
 
-    public String toJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(this);
+    public Map<String, Object> toMap() {
+        final Map<String, Object> resultAsMap = new LinkedHashMap<>();
+
+        resultAsMap.put("table_name", tableName);
+        resultAsMap.put("schema", schema.getKeywords());
+        resultAsMap.put("messages", messages.stream().map(StitchMessage::toMap).collect(Collectors.toList()));
+        resultAsMap.put("key_names", keyNames);
+
+        return resultAsMap;
     }
 
     public static final class Builder {

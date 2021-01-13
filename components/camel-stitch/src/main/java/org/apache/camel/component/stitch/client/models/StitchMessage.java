@@ -3,7 +3,6 @@ package org.apache.camel.component.stitch.client.models;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -11,17 +10,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class StitchMessage {
     public enum Action {
-        @JsonProperty("upsert")
         UPSERT
     };
 
-    @JsonProperty("action")
     private final Action action;
-
-    @JsonProperty("sequence")
     private final long sequence;
-
-    @JsonProperty("data")
     private final Map<String, Object> data;
 
     private StitchMessage(Action action, long sequence, Map<String, Object> data) {
@@ -48,6 +41,16 @@ public class StitchMessage {
 
     public String toJson() {
         return "";
+    }
+
+    public Map<String, Object> toMap() {
+        final Map<String, Object> resultAsMap = new LinkedHashMap<>();
+
+        resultAsMap.put("action", action.name().toLowerCase());
+        resultAsMap.put("sequence", sequence);
+        resultAsMap.put("data", data);
+
+        return resultAsMap;
     }
 
     public static final class Builder {
