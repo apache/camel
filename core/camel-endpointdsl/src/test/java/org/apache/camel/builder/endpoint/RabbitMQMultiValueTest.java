@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory;
-import org.apache.camel.component.springrabbit.RabbitMQEndpoint;
+import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,14 +42,14 @@ public class RabbitMQMultiValueTest extends ContextTestSupport {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder = springRabbitmq("mytopic").advanced()
+                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder = rabbitmq("mytopic").advanced()
                         .args("foo", "123")
                         .args("bar", "456")
                         .args("beer", "yes").basic();
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
-                assertEquals("spring-rabbitmq://mytopic?arg.bar=456&arg.beer=yes&arg.foo=123", endpoint.getEndpointUri());
+                assertEquals("rabbitmq://mytopic?arg.bar=456&arg.beer=yes&arg.foo=123", endpoint.getEndpointUri());
                 RabbitMQEndpoint re = assertIsInstanceOf(RabbitMQEndpoint.class, endpoint);
                 assertEquals("mytopic", re.getExchangeName());
                 Map<String, Object> args = re.getArgs();
@@ -76,12 +76,12 @@ public class RabbitMQMultiValueTest extends ContextTestSupport {
                 map.put("bar", "456");
                 map.put("beer", "yes");
 
-                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder = springRabbitmq("mytopic").advanced()
+                RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder builder = rabbitmq("mytopic").advanced()
                         .args(map).basic();
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
-                assertEquals("spring-rabbitmq://mytopic?arg.bar=456&arg.beer=yes&arg.foo=123", endpoint.getEndpointUri());
+                assertEquals("rabbitmq://mytopic?arg.bar=456&arg.beer=yes&arg.foo=123", endpoint.getEndpointUri());
                 RabbitMQEndpoint re = assertIsInstanceOf(RabbitMQEndpoint.class, endpoint);
                 assertEquals("mytopic", re.getExchangeName());
                 Map<String, Object> args = re.getArgs();
