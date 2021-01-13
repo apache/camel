@@ -65,6 +65,11 @@ pipeline {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
             }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+                }
+            }
         }
 
         stage('Website update') {
@@ -83,6 +88,12 @@ pipeline {
                 sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+                    recordIssues enabledForFailure: true, tool: checkStyle()
+                }
+            }
         }
 
         stage('Test') {
@@ -93,6 +104,7 @@ pipeline {
                 always {
                     junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
                     junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
                 }
             }
         }
@@ -109,4 +121,3 @@ pipeline {
         }
     }
 }
-

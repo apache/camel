@@ -65,11 +65,22 @@ pipeline {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install"
             }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+                }
+            }
         }
 
         stage('Checks') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
+            }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+                    recordIssues enabledForFailure: true, tool: checkStyle()
+                }
             }
         }
 
@@ -81,6 +92,7 @@ pipeline {
                 always {
                     junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
                     junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
                 }
             }
         }
@@ -97,4 +109,3 @@ pipeline {
         }
     }
 }
-

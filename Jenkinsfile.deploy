@@ -65,6 +65,11 @@ pipeline {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
             }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+                }
+            }
         }
 
     }
@@ -79,4 +84,3 @@ pipeline {
         }
     }
 }
-
